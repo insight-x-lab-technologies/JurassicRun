@@ -41,16 +41,19 @@ class Mulberry32Rng implements Rng {
     return this.nextUint32() / UINT32;
   }
 
-  range(_min: number, _max: number): number {
-    throw new Error('not implemented'); // Task 3
+  range(min: number, max: number): number {
+    if (min >= max) return min;
+    return min + this.next() * (max - min);
   }
 
-  int(_min: number, _max: number): number {
-    throw new Error('not implemented'); // Task 3
+  int(min: number, max: number): number {
+    if (min >= max) return min;
+    return min + Math.floor(this.next() * (max - min + 1));
   }
 
-  pick<T>(_array: readonly T[]): T {
-    throw new Error('not implemented'); // Task 3
+  pick<T>(array: readonly T[]): T {
+    if (array.length === 0) throw new Error('pick: array vazio');
+    return array[this.int(0, array.length - 1)];
   }
 
   fork(_streamId: string | number): Rng {
