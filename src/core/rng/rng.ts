@@ -56,8 +56,9 @@ class Mulberry32Rng implements Rng {
     return array[this.int(0, array.length - 1)] as T;
   }
 
-  fork(_streamId: string | number): Rng {
-    throw new Error('not implemented'); // Task 4
+  fork(streamId: string | number): Rng {
+    const childSeed = `${this.seed}::${streamId}`;
+    return new Mulberry32Rng(childSeed, hashSeed(childSeed));
   }
 
   clone(): Rng {
