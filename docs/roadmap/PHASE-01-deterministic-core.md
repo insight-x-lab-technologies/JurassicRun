@@ -11,8 +11,8 @@ determinística e coberta por testes. Esta é a fundação de tudo.
 - [x] Testes: reprodutibilidade, distribuição básica.
 
 ### 1.2 Derivação de seeds
-- [ ] Endless (aleatória externa, exibível), Diária (`hash(dataUTC)`), Semanal (`hash(semanaISO)`).
-- [ ] Testes: mesma data ⇒ mesma seed; datas diferentes ⇒ seeds diferentes.
+- [x] Endless (aleatória externa, exibível), Diária (`hash(dataUTC)`), Semanal (`hash(semanaISO)`).
+- [x] Testes: mesma data ⇒ mesma seed; datas diferentes ⇒ seeds diferentes.
 
 ### 1.3 Modelo de mundo + loop de passo fixo
 - [ ] `WorldState`, `Entity`, `Hitbox`, `sim.step(FIXED_DT, inputs)`.
