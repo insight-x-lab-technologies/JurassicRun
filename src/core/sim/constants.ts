@@ -12,8 +12,9 @@ export const FLAP_SPEED = 240; // unidades/s (impulso para cima)
 export const SCROLL_SPEED = 120; // unidades/s (avanço em +x)
 export const PTERODACTYL_HITBOX: Hitbox = aabb(10, 8);
 
-/** Config padrão totalmente preenchida (merge com WorldConfig parcial em createWorld). */
-export const DEFAULT_WORLD_CONFIG: Required<WorldConfig> = {
+/** Config padrão totalmente preenchida (merge com WorldConfig parcial em createWorld).
+ * seed/spawn não têm default fixo e são omitidos intencionalmente. */
+export const DEFAULT_WORLD_CONFIG: Required<Omit<WorldConfig, 'seed' | 'spawn'>> = {
   worldHeight: WORLD_HEIGHT,
   gravity: GRAVITY,
   flapSpeed: FLAP_SPEED,
@@ -21,3 +22,8 @@ export const DEFAULT_WORLD_CONFIG: Required<WorldConfig> = {
   startY: START_Y,
   pterodactylHitbox: PTERODACTYL_HITBOX,
 };
+
+/** Quão à frente do pterodáctilo (em x) o gerador materializa obstáculos. */
+export const SPAWN_LOOKAHEAD = 400;
+/** Distância atrás do pterodáctilo após a qual obstáculos ultrapassados são removidos. */
+export const CULL_MARGIN = 100;

@@ -1,4 +1,5 @@
-import { FIXED_DT } from './constants';
+import { FIXED_DT, SPAWN_LOOKAHEAD, CULL_MARGIN } from './constants';
+import { boundsOf } from './hitbox';
 import type { InputFrame, WorldState } from './types';
 
 /**
@@ -42,5 +43,16 @@ export function step(world: WorldState, input: InputFrame): void {
   if (pos.y + halfH >= world.worldHeight) {
     pos.y = world.worldHeight - halfH;
     world.alive = false;
+  }
+
+  // Geração de obstáculos keyed por distância + cull dos ultrapassados (hot path: sem alocação
+  // quando nada é emitido/cullado).
+  if (world.spawner) {
+    world.spawner.generateUpTo(world.distance + SPAWN_LOOKAHEAD, world.obstacles);
+    const cullX = pos.x - CULL_MARGIN;
+    const obs = world.obstacles;
+    while (obs.length > 0 && obs[0]!.transform.position.x + boundsOf(obs[0]!.hitbox).maxX < cullX) {
+      obs.shift();
+    }
   }
 }

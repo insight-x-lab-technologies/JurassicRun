@@ -1,3 +1,5 @@
+import type { SpawnGenerator, SpawnConfig } from '@core/spawn';
+
 /** Vetor 2D (dados puros). */
 export interface Vec2 {
   x: number;
@@ -50,6 +52,10 @@ export interface WorldConfig {
   scrollSpeed?: number;
   startY?: number;
   pterodactylHitbox?: Hitbox;
+  /** Seed canônica da partida (de fora do core). Presente ⇒ o mundo gera obstáculos. */
+  seed?: string;
+  /** Overrides parciais da config de spawn (tuning). */
+  spawn?: Partial<SpawnConfig>;
 }
 
 /**
@@ -69,4 +75,6 @@ export interface WorldState {
   pterodactyl: Pterodactyl;
   obstacles: Entity[];
   collectibles: Entity[];
+  /** Gerador de obstáculos (null quando o mundo não tem seed). */
+  spawner: SpawnGenerator | null;
 }
