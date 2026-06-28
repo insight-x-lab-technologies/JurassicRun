@@ -6,9 +6,9 @@ determinística e coberta por testes. Esta é a fundação de tudo.
 ## Itens
 
 ### 1.1 RNG
-- [ ] PRNG portável (mulberry32/xoshiro) + hash de seed estável.
-- [ ] API: `next()`, `range(min,max)`, `pick(array)`, fork por stream.
-- [ ] Testes: reprodutibilidade, distribuição básica.
+- [x] PRNG portável (mulberry32/xoshiro) + hash de seed estável.
+- [x] API: `next()`, `range(min,max)`, `pick(array)`, fork por stream.
+- [x] Testes: reprodutibilidade, distribuição básica.
 
 ### 1.2 Derivação de seeds
 - [ ] Endless (aleatória externa, exibível), Diária (`hash(dataUTC)`), Semanal (`hash(semanaISO)`).

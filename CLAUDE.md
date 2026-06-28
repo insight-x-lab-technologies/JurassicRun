@@ -71,5 +71,13 @@ scripts npm e dev server; i18next via `I18nService` (`src/services/i18n.ts`) com
 JSON (`en` default + es, pt-BR, fr, it, de, ja, zh, ko, hi) e `t()` no app shell; CI em
 GitHub Actions (`.github/workflows/ci.yml`) rodando `check` + `test` + `test:determinism`
 em PRs e pushes no `main`.
-Próximo: **Fase 1 (núcleo determinístico headless)**. Ver `docs/roadmap/ROADMAP.md` e
+
+**Fase 1 (núcleo determinístico headless) — EM ANDAMENTO.** Item 1.1 (RNG) concluído:
+`src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só `Math.imul`/`>>>0`,
+zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/`hashSeed`) com
+`next`/`range`/`int`/`pick`/`fork`/`clone`/`nextUint32` e `seed`/`state`; `fork(streamId)`
+deriva streams independentes do seed inicial (estáveis p/ geradores keyed por distância).
+Testes de determinismo (vetor golden + reprodutibilidade) e distribuição básica; suíte
+verde (`check` limpo, 37 testes, bateria de determinismo 19).
+Próximo: **item 1.2 (derivação de seeds: Endless/Diária/Semanal)**. Ver
 `docs/roadmap/PHASE-01-deterministic-core.md`.
