@@ -30,3 +30,32 @@ describe('step — integração base', () => {
     expect(w.distance).toBeCloseTo(2 * dx, 10);
   });
 });
+
+describe('step — flap (detecção de borda)', () => {
+  it('flap na borda de subida zera a queda e impulsiona para cima', () => {
+    const w = createWorld();
+    step(w, { flap: true });
+    // impulso (-flapSpeed) seguido da gravidade do mesmo step
+    expect(w.pterodactyl.kinematics.velocity.y).toBeCloseTo(-w.flapSpeed + w.gravity * FIXED_DT, 10);
+    expect(w.lastFlap).toBe(true);
+  });
+
+  it('segurar o botão NÃO re-dispara o flap (só gravidade no 2º step)', () => {
+    const w = createWorld();
+    step(w, { flap: true });
+    const vyAfterFirst = w.pterodactyl.kinematics.velocity.y;
+    step(w, { flap: true }); // segurado: sem novo impulso
+    expect(w.pterodactyl.kinematics.velocity.y).toBeCloseTo(vyAfterFirst + w.gravity * FIXED_DT, 10);
+  });
+
+  it('soltar e apertar de novo dispara um novo flap', () => {
+    const w = createWorld();
+    step(w, { flap: true });
+    step(w, { flap: false });
+    const vyBefore = w.pterodactyl.kinematics.velocity.y;
+    step(w, { flap: true }); // nova borda
+    // novo impulso reduz vy em ~flapSpeed (descontada a gravidade do step)
+    expect(w.pterodactyl.kinematics.velocity.y).toBeCloseTo(-w.flapSpeed + w.gravity * FIXED_DT, 10);
+    expect(w.pterodactyl.kinematics.velocity.y).toBeLessThan(vyBefore);
+  });
+});

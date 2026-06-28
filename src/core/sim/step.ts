@@ -5,12 +5,18 @@ import type { InputFrame, WorldState } from './types';
  * Avança a simulação em exatamente um passo fixo, mutando o mundo in-place.
  * Função pura de (world, input): o mundo carrega seus próprios parâmetros.
  */
-export function step(world: WorldState, _input: InputFrame): void {
+export function step(world: WorldState, input: InputFrame): void {
   world.tick += 1;
 
   const ptero = world.pterodactyl;
   const vel = ptero.kinematics.velocity;
   const pos = ptero.transform.position;
+
+  // Flap: impulso na borda de subida do botão (não re-dispara enquanto segurado).
+  if (input.flap && !world.lastFlap) {
+    vel.y = -world.flapSpeed;
+  }
+  world.lastFlap = input.flap;
 
   // Integração vertical (Euler semi-implícito).
   vel.y += world.gravity * FIXED_DT;
