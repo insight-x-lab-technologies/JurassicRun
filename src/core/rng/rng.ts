@@ -53,7 +53,7 @@ class Mulberry32Rng implements Rng {
 
   pick<T>(array: readonly T[]): T {
     if (array.length === 0) throw new Error('pick: array vazio');
-    return array[this.int(0, array.length - 1)];
+    return array[this.int(0, array.length - 1)] as T;
   }
 
   fork(_streamId: string | number): Rng {

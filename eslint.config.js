@@ -8,6 +8,10 @@ export default tseslint.config(
   {
     files: ['src/core/**/*.ts'],
     rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
       'no-restricted-properties': [
         'error',
         { object: 'Math', property: 'random', message: 'Use o serviço de RNG com seed (determinismo).' },
