@@ -37,9 +37,11 @@ autônomas implementem o jogo com segurança.
       bootstrap e teste de paridade de chaves.
 - [x] Função `t()` disponível no app shell (`main.ts` inicializa i18n e usa `t('app.title')`).
 
-### 0.5 CI skeleton (GitHub Actions)
-- [ ] Workflow: instala deps, roda `check` + `test` + `test:determinism` em PRs.
-- [ ] (Deploy GitHub Pages fica na Fase 7.)
+### 0.5 CI skeleton (GitHub Actions) (concluído)
+- [x] Workflow `.github/workflows/ci.yml`: em `pull_request` e `push` no `main`, instala
+      deps com `npm ci` (Node 22) e roda `check` + `test` + `test:determinism`. Menor
+      privilégio (`contents: read`) e `concurrency` com cancel-in-progress.
+- [x] (Deploy GitHub Pages fica na Fase 7.)
 
 ## Definição de pronto
 - `npm run dev` sobe a página. `npm test` roda (mesmo que com 1 teste trivial).
