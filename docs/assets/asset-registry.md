@@ -20,9 +20,10 @@ usada no manifesto de assets do render.
 | id | descrição | status | spec |
 |----|-----------|--------|------|
 | `obstacle.rock_arch` | arco de pedra | placeholder | — |
-| `obstacle.vine` | cipó/coluna vegetal | placeholder | — |
-| `obstacle.stalactite` | estalactite | placeholder | — |
-| `obstacle.tree` | árvore | placeholder | — |
+| `obstacle.tree` | árvore | spec | `specs/obstacle.tree.md` |
+| `obstacle.vine` | cipó/coluna vegetal | spec | `specs/obstacle.vine.md` |
+| `obstacle.boulder` | pedregulho flutuante | spec | `specs/obstacle.boulder.md` |
+| `obstacle.stalactite` | estalactite | spec | `specs/obstacle.stalactite.md` |
 
 ## Coletáveis / power-ups
 | id | descrição | status | spec |
