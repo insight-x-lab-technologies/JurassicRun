@@ -65,7 +65,7 @@ interface ObstacleType {
 |----|--------|--------|-----------|
 | `obstacle.tree` | aabb (alto/estreito, halfH variável) | floor | tronco subindo do chão |
 | `obstacle.vine` | aabb (estreito, halfH variável) | ceiling | cipó pendendo do teto |
-| `obstacle.boulder` | circle (raio variável) | floor | pedregulho no chão |
+| `obstacle.boulder` | circle (raio variável) | floating | pedregulho flutuante |
 | `obstacle.stalactite` | polygon (triângulo convexo p/ baixo) | ceiling | estalactite do teto |
 
 Cobre os três tipos de hitbox (aabb, circle, polygon) → satisfaz "não só retângulos".
