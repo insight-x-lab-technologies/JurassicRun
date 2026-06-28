@@ -15,9 +15,9 @@ determinística e coberta por testes. Esta é a fundação de tudo.
 - [x] Testes: mesma data ⇒ mesma seed; datas diferentes ⇒ seeds diferentes.
 
 ### 1.3 Modelo de mundo + loop de passo fixo
-- [ ] `WorldState`, `Entity`, `Hitbox`, `sim.step(FIXED_DT, inputs)`.
-- [ ] Física do pterodáctilo (gravidade, flap), scroll horizontal.
-- [ ] Testes: independência de fps (1/2/5 steps por "frame" ⇒ estado idêntico).
+- [x] `WorldState`, `Entity`, `Hitbox`, `sim.step(FIXED_DT, inputs)`.
+- [x] Física do pterodáctilo (gravidade, flap), scroll horizontal.
+- [x] Testes: independência de fps (1/2/5 steps por "frame" ⇒ estado idêntico).
 
 ### 1.4 Geração de obstáculos (formatos variados)
 - [ ] Catálogo de tipos de obstáculo com hitboxes distintas (não só retângulos).

@@ -72,8 +72,8 @@ JSON (`en` default + es, pt-BR, fr, it, de, ja, zh, ko, hi) e `t()` no app shell
 GitHub Actions (`.github/workflows/ci.yml`) rodando `check` + `test` + `test:determinism`
 em PRs e pushes no `main`.
 
-**Fase 1 (núcleo determinístico headless) — EM ANDAMENTO.** Itens 1.1 (RNG) e 1.2
-(derivação de seeds) concluídos.
+**Fase 1 (núcleo determinístico headless) — EM ANDAMENTO.** Itens 1.1 (RNG), 1.2
+(derivação de seeds) e 1.3 (modelo de mundo + loop de passo fixo) concluídos.
 
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
@@ -87,8 +87,13 @@ calendário/semana ISO-8601 sobre `CalendarDate {year,month,day}` (Sakamoto p/ d
 `endlessSeed(token)`→`"endless:<token>"` — sem hashear (hashing fica em `createRng`, caminho
 único); `randomEndlessToken(uint32)` formata um token exibível Crockford base32 (7 chars).
 A aleatoriedade do Endless e a conversão relógio→`CalendarDate` UTC vêm de FORA do core
-(esta última é da Fase 5, com o modo Diário/Semanal). Suíte verde (`check` limpo, 60 testes,
-bateria de determinismo 23).
+(esta última é da Fase 5, com o modo Diário/Semanal).
 
-Próximo: **item 1.3 (modelo de mundo + loop de passo fixo)**. Ver
+1.3 (modelo de mundo): `src/core/sim/` com `WorldState`, `Entity`, `Hitbox` (aabb/circle/polygon),
+`createWorld`/`cloneWorld` e `step(world, input)` — gravidade, flap (borda de subida), scroll
+horizontal, clamp de teto, morte no chão, estado congelado após morte. `FIXED_DT = 1/60`. Suíte
+verde (`check` limpo, 81 testes, bateria de determinismo 27 — inclui reprodutibilidade e
+independência de fps 1/2/5 steps por frame).
+
+Próximo: **item 1.4 (geração de obstáculos)**. Ver
 `docs/roadmap/PHASE-01-deterministic-core.md`.

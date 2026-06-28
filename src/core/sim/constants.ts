@@ -1,0 +1,23 @@
+import { aabb } from './hitbox';
+import type { Hitbox, WorldConfig } from './types';
+
+/** Passo fixo da simulação (s). O core nunca recebe dt variável. */
+export const FIXED_DT = 1 / 60;
+
+// Constantes de tuning (placeholders; afinadas na Fase 2). Unidades abstratas, +y para baixo.
+export const WORLD_HEIGHT = 180;
+export const START_Y = WORLD_HEIGHT / 2;
+export const GRAVITY = 540; // unidades/s² (para baixo)
+export const FLAP_SPEED = 240; // unidades/s (impulso para cima)
+export const SCROLL_SPEED = 120; // unidades/s (avanço em +x)
+export const PTERODACTYL_HITBOX: Hitbox = aabb(10, 8);
+
+/** Config padrão totalmente preenchida (merge com WorldConfig parcial em createWorld). */
+export const DEFAULT_WORLD_CONFIG: Required<WorldConfig> = {
+  worldHeight: WORLD_HEIGHT,
+  gravity: GRAVITY,
+  flapSpeed: FLAP_SPEED,
+  scrollSpeed: SCROLL_SPEED,
+  startY: START_Y,
+  pterodactylHitbox: PTERODACTYL_HITBOX,
+};
