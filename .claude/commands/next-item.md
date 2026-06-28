@@ -39,7 +39,8 @@ humana nos checkpoints. Relate o que decidiu para o usuário poder corrigir o ru
 ## Ao terminar
 - Marque o item como `[x]` no arquivo da fase.
 - Atualize o campo "Estado atual" do `CLAUDE.md` se algo mudou.
-- Commits por task na branch de feature são automáticos. **Push, PR e merge para `main`/
-  `master`** (e qualquer ação externa/irreversível) continuam exigindo o usuário pedir —
-  apresente a branch pronta e aguarde.
+- Commits por task na branch de feature são automáticos. **Integre no `main`** sem pedir
+  (pré-autorizado, um desenvolvimento por vez): com remote GitHub + `gh`, abra PR e use merge
+  automático; sem remote, faça merge local no `main` (`--no-ff`) e aposente a branch de
+  feature. Só ações externas/irreversíveis fora isso (deploy, publicar) exigem o usuário pedir.
 </content>

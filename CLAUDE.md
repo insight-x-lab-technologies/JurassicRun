@@ -56,8 +56,11 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
   (o usuário não é especialista em game dev e confia na recomendação) e siga. Relate as
   decisões para permitir correção de rumo, mas não bloqueie.
 - Pergunte só quando travar numa decisão de **produto/escopo** sem default razoável.
-- **Push, PR e merge para `main`/`master`** (e ações externas/irreversíveis) ainda exigem o
-  usuário pedir.
+- **`main` é o branch principal (tronco).** Um desenvolvimento em execução por vez.
+- **Commit, PR e merge para `main` são pré-autorizados** (merge automático): ao terminar um
+  item, integre no `main` sem pedir. Quando houver remote GitHub + `gh`, abra PR e use merge
+  automático; sem remote, faça merge local no `main`. Demais ações externas/irreversíveis
+  (deploy, publicar em loja, etc.) ainda exigem o usuário pedir.
 
 ## Estado atual
 
