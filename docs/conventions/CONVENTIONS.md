@@ -25,7 +25,7 @@
 ## i18n
 
 - Nenhuma string visível ao usuário no código. Use chaves i18next (`t("home.play")`).
-- Idioma default: inglês. Idiomas: en, es, pt-BR, fr, it, de, ja, zh, hi.
+- Idioma default: inglês. Idiomas (10): en, es, pt-BR, fr, it, de, ja, zh, ko, hi.
 - Ao adicionar uma chave, adicione em **todos** os locales (use a skill `add-locale`).
 
 ## Testes

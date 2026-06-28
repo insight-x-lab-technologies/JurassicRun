@@ -31,9 +31,11 @@ autônomas implementem o jogo com segurança.
       `Math.random/Date.now/performance.now`. (Dupla camada: ESLint + teste Vitest.)
 - [x] Atualizar `scripts/run.sh` e `scripts/stop.sh` para o dev server.
 
-### 0.4 i18n scaffold
-- [ ] Setup i18next; arquivos de locale vazios para os 10 idiomas (en default).
-- [ ] Função `t()` disponível no app shell.
+### 0.4 i18n scaffold (concluído)
+- [x] Setup i18next; locales para os 10 idiomas (en default + es, pt-BR, fr, it, de, ja,
+      zh, ko, hi) via `I18nService` (`src/services/i18n.ts`), com namespace `app.*` de
+      bootstrap e teste de paridade de chaves.
+- [x] Função `t()` disponível no app shell (`main.ts` inicializa i18n e usa `t('app.title')`).
 
 ### 0.5 CI skeleton (GitHub Actions)
 - [ ] Workflow: instala deps, roda `check` + `test` + `test:determinism` em PRs.

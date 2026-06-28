@@ -74,7 +74,7 @@ Cada item abaixo deve estar coberto por alguma fase do roadmap. Ver
       moeda 2x/3x, etc.).
 - [ ] Desafio Diário e Semanal, seed fixa, determinístico, leaderboard local + central.
 - [ ] Troféus por conquistas; top-3 do desafio diário ganham troféu no perfil.
-- [ ] 10 idiomas (en default, es, pt-BR, fr, it, de, ja, zh, hi).
+- [ ] 10 idiomas (en default, es, pt-BR, fr, it, de, ja, zh, ko, hi).
 - [ ] Trilha sonora menu + gameplay; SFX nos botões.
 - [ ] HUD: distância, comida, fps, nível, velocidade, seed.
 - [ ] Tempos do dia (manhã/tarde/noite — cosmético) e clima (chuva/tempestade/vento/neve —
