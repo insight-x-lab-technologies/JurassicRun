@@ -7,3 +7,5 @@ dist/
 build/
 .DS_Store
 .claudebot/
+.devserver.pid
+dev-dist/
