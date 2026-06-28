@@ -5,7 +5,7 @@ description: Use ao adicionar ou alterar qualquer texto visível ao usuário no 
 
 # Adicionar/Editar Locale (i18n)
 
-Idiomas suportados: `en` (default), `es`, `pt-BR`, `fr`, `it`, `de`, `ja`, `zh`, `hi`.
+Idiomas suportados (10): `en` (default), `es`, `pt-BR`, `fr`, `it`, `de`, `ja`, `zh`, `ko`, `hi`.
 
 ## Regras
 - Nenhuma string visível hardcoded no código. Sempre `t("namespace.chave")`.
