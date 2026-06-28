@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { aabb, circle, cloneHitbox } from '@core/sim';
+import { aabb, circle, cloneHitbox, polygon, boundsOf } from '@core/sim';
 import { FIXED_DT, DEFAULT_WORLD_CONFIG } from '@core/sim';
 
 describe('hitbox — construtores de dados', () => {
@@ -20,6 +20,28 @@ describe('hitbox — construtores de dados', () => {
       expect(copy.points).not.toBe(poly.points);
       expect(copy.points[0]).not.toBe(poly.points[0]);
     }
+  });
+});
+
+describe('polygon', () => {
+  it('copia os pontos (não compartilha referência)', () => {
+    const pts = [{ x: 0, y: -5 }, { x: 4, y: 5 }, { x: -4, y: 5 }];
+    const h = polygon(pts);
+    expect(h).toEqual({ kind: 'polygon', points: pts });
+    if (h.kind === 'polygon') expect(h.points).not.toBe(pts);
+  });
+});
+
+describe('boundsOf', () => {
+  it('aabb: ±half em cada eixo', () => {
+    expect(boundsOf(aabb(6, 8))).toEqual({ minX: -6, maxX: 6, minY: -8, maxY: 8 });
+  });
+  it('circle: ±radius em cada eixo', () => {
+    expect(boundsOf(circle(10))).toEqual({ minX: -10, maxX: 10, minY: -10, maxY: 10 });
+  });
+  it('polygon: min/max dos pontos', () => {
+    const h = polygon([{ x: -4, y: -3 }, { x: 6, y: -3 }, { x: 0, y: 9 }]);
+    expect(boundsOf(h)).toEqual({ minX: -4, maxX: 6, minY: -3, maxY: 9 });
   });
 });
 
