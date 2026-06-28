@@ -64,8 +64,10 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 
 ## Estado atual
 
-Fase 0 (Fundações) — docs/infra SDD prontas; item 0.3 (esqueleto técnico) concluído:
-Vite+TS estrito, aliases, estrutura `src/`, bootstrap Preact vazio, guarda anti-não-
-determinismo em dupla camada (ESLint + teste Vitest), scripts npm e dev server.
-Falta na Fase 0: 0.4 (scaffold i18n) e 0.5 (CI GitHub Actions).
+Fase 0 (Fundações) — docs/infra SDD prontas; itens 0.3 (esqueleto técnico) e 0.4
+(scaffold i18n) concluídos: Vite+TS estrito, aliases, estrutura `src/`, bootstrap Preact
+que inicializa i18n, guarda anti-não-determinismo em dupla camada (ESLint + teste Vitest),
+scripts npm e dev server; i18next via `I18nService` (`src/services/i18n.ts`) com 10 locales
+JSON (`en` default + es, pt-BR, fr, it, de, ja, zh, ko, hi) e `t()` no app shell.
+Falta na Fase 0: 0.5 (CI GitHub Actions).
 Depois: Fase 1 (núcleo determinístico headless). Ver `docs/roadmap/ROADMAP.md`.
