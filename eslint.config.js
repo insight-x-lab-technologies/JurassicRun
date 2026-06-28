@@ -27,7 +27,7 @@ export default tseslint.config(
       ],
       'no-restricted-imports': [
         'error',
-        { patterns: ['phaser', 'preact', 'preact/*', '@preact/*'] },
+        { patterns: ['phaser', 'phaser/*', 'preact', 'preact/*', '@preact/*'] },
       ],
     },
   },

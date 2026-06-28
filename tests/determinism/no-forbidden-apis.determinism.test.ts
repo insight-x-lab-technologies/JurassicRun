@@ -13,7 +13,11 @@ const FORBIDDEN: { pattern: RegExp; label: string }[] = [
   { pattern: /\bsetTimeout\s*\(/, label: 'setTimeout' },
   { pattern: /\bsetInterval\s*\(/, label: 'setInterval' },
   { pattern: /\brequestAnimationFrame\s*\(/, label: 'requestAnimationFrame' },
-  { pattern: /from\s+['"]phaser['"]/, label: "import 'phaser'" },
+  { pattern: /\bwindow\b/, label: 'window' },
+  { pattern: /\bdocument\b/, label: 'document' },
+  { pattern: /\blocalStorage\b/, label: 'localStorage' },
+  { pattern: /\bfetch\s*\(/, label: 'fetch' },
+  { pattern: /['"]phaser(\/[^'"]*)?['"]/, label: "import 'phaser'" },
   { pattern: /from\s+['"]preact/, label: "import 'preact'" },
   { pattern: /from\s+['"]@preact\//, label: "import '@preact/*'" },
 ];
@@ -34,8 +38,8 @@ function collectTsFiles(dir: string): string[] {
 
 describe('guarda de determinismo do core (camada B)', () => {
   it('o detector pega APIs proibidas numa fixture', () => {
-    const bad = `const r = Math.random(); const t = Date.now();`;
-    expect(findForbiddenApis(bad).sort()).toEqual(['Date.now', 'Math.random']);
+    const bad = `const r = Math.random(); const t = Date.now(); window.alert('x');`;
+    expect(findForbiddenApis(bad).sort()).toEqual(['Date.now', 'Math.random', 'window']);
   });
 
   it('o detector não acusa código limpo', () => {

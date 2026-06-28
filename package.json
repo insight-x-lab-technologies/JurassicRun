@@ -1,7 +1,7 @@
 {
   "name": "jurassicrun",
   "version": "1.0.0",
-  "description": "PWA mobile-first, side-scroller estilo Flappy Bird com temática de dinossauros — o jogador é um **pterodáctilo**. Jogo determinístico (desafios diário/semanal justos entre dispositivos), arte trocável (geométrico → PNG AAA), 10 idiomas, leaderboards e packs cosméticos.",
+  "description": "PWA mobile-first, side-scroller estilo Flappy Bird com temática de dinossauros — o jogador é um pterodáctilo. Jogo determinístico (desafios diário/semanal justos entre dispositivos), arte trocável (geométrico → PNG AAA), 10 idiomas, leaderboards e packs cosméticos.",
   "type": "module",
   "scripts": {
     "dev": "vite",
