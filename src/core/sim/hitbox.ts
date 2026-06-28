@@ -35,6 +35,21 @@ export interface Bounds {
   maxY: number;
 }
 
+/** Extensão horizontal à direita do centro (maxX), sem alocar — para o hot path do step. */
+export function rightExtent(h: Hitbox): number {
+  switch (h.kind) {
+    case 'aabb':
+      return h.halfW;
+    case 'circle':
+      return h.radius;
+    case 'polygon': {
+      let maxX = -Infinity;
+      for (const p of h.points) if (p.x > maxX) maxX = p.x;
+      return maxX;
+    }
+  }
+}
+
 /** Calcula os extents (AABB envolvente) de qualquer hitbox, relativos ao centro. */
 export function boundsOf(h: Hitbox): Bounds {
   switch (h.kind) {

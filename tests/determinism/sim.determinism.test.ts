@@ -97,12 +97,17 @@ describe('determinismo de spawn integrado ao step', () => {
     expect(five.obstacles).toEqual(one.obstacles);
   });
 
-  it('cloneWorld isola o spawner: avançar o clone não muda o original', () => {
+  it('cloneWorld isola o spawner: avançar o original não muda o clone', () => {
     const w = createWorld(SEEDED);
-    for (let i = 0; i < 300; i++) step(w, { flap: false });
+    // Mantém o pterodáctilo vivo para que o spawner siga gerando durante o voo.
+    for (let i = 0; i < 300; i++) step(w, { flap: i % 8 === 0 });
+    expect(w.alive).toBe(true);
     const snap = cloneWorld(w);
-    const before = snap.obstacles.length;
-    for (let i = 0; i < 600; i++) step(w, { flap: false });
-    expect(snap.obstacles.length).toBe(before);
+    const snapIds = snap.obstacles.map((o) => o.id);
+    expect(snapIds.length).toBeGreaterThan(0);
+    for (let i = 0; i < 600; i++) step(w, { flap: i % 8 === 0 });
+    // O clone permanece intacto mesmo após o original gerar/cullar mais obstáculos.
+    expect(snap.obstacles.map((o) => o.id)).toEqual(snapIds);
+    expect(w.obstacles.map((o) => o.id)).not.toEqual(snapIds);
   });
 });
