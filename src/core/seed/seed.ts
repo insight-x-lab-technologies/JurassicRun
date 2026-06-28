@@ -1,6 +1,6 @@
 // Derivação da seed canônica (string) por modo de jogo.
 // NÃO hasheia: `createRng` (em @core/rng) já hasheia a string via xmur3.
-// A aleatoriedade do Endless vem de FORA do core (Math.random/crypto na camada de app).
+// A aleatoriedade do Endless vem de FORA do core (gerada por crypto/PRNG na camada de app).
 
 import { type CalendarDate, formatCalendarDate, formatIsoWeek, isoWeekOf } from './calendar';
 
