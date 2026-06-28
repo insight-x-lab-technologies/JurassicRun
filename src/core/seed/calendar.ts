@@ -42,7 +42,8 @@ export function dayOfWeek(date: CalendarDate): number {
   return w === 0 ? 7 : w;
 }
 
-// Dia da semana (0=dom..6=sáb) de 31/dez do ano, via fórmula de Gauss.
+// Dia da semana (0=dom..6=sáb) de 31/dez do ano (Sakamoto sem o termo mês/dia,
+// pois SAKAMOTO[11] + 31 ≡ 0 mod 7), usado para detectar anos de 53 semanas ISO.
 function decemberDoomsday(year: number): number {
   return (year + Math.floor(year / 4) - Math.floor(year / 100) + Math.floor(year / 400)) % 7;
 }

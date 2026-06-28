@@ -52,6 +52,11 @@ describe('randomEndlessToken', () => {
     expect(token).toMatch(/^[0-9ABCDEFGHJKMNPQRSTVWXYZ]{7}$/);
   });
 
+  it('vetor golden: trava ordem/charset contra regressão', () => {
+    expect(randomEndlessToken(0xdeadbeef)).toBe('3FAVFQF');
+    expect(randomEndlessToken(0xffffffff)).toBe('3ZZZZZZ');
+  });
+
   it('values distintos ⇒ tokens distintos', () => {
     expect(randomEndlessToken(0)).not.toBe(randomEndlessToken(1));
   });
