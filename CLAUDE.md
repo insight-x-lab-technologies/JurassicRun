@@ -48,6 +48,19 @@ Ver `docs/conventions/CONVENTIONS.md`. Resumo:
 - Toda feature segue o fluxo SDD (`docs/WORKFLOW.md`): spec → plano → TDD → review.
 - Commits pequenos e descritivos. Não fazer commit/push sem o usuário pedir.
 
+## Modo de operação (autônomo)
+
+Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em contrário:
+- **Execução por sub-agentes** (`subagent-driven-development`): um implementador por task +
+  review por task + review final. Não pergunte qual método usar.
+- **Branch de feature + um commit por task**, automático. Não pergunte.
+- **Sem gate humano de aprovação** de spec nem de plano: decida pelas suas recomendações
+  (o usuário não é especialista em game dev e confia na recomendação) e siga. Relate as
+  decisões para permitir correção de rumo, mas não bloqueie.
+- Pergunte só quando travar numa decisão de **produto/escopo** sem default razoável.
+- **Push, PR e merge para `main`/`master`** (e ações externas/irreversíveis) ainda exigem o
+  usuário pedir.
+
 ## Estado atual
 
 Fase 0 (Fundações) — documentação e infra SDD criadas. Código do jogo ainda não iniciado.
