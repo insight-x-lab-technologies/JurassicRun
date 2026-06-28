@@ -20,9 +20,9 @@ determinística e coberta por testes. Esta é a fundação de tudo.
 - [x] Testes: independência de fps (1/2/5 steps por "frame" ⇒ estado idêntico).
 
 ### 1.4 Geração de obstáculos (formatos variados)
-- [ ] Catálogo de tipos de obstáculo com hitboxes distintas (não só retângulos).
-- [ ] `SpawnGenerator` keyed por distância, consumindo o Rng.
-- [ ] Testes: mesma seed ⇒ mesma sequência de obstáculos.
+- [x] Catálogo de tipos de obstáculo com hitboxes distintas (não só retângulos).
+- [x] `SpawnGenerator` keyed por distância, consumindo o Rng.
+- [x] Testes: mesma seed ⇒ mesma sequência de obstáculos.
 
 ### 1.5 Coletáveis (pássaros-moeda)
 - [ ] Geração determinística; coleta incrementa "comida".

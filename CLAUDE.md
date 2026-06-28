@@ -73,7 +73,8 @@ GitHub Actions (`.github/workflows/ci.yml`) rodando `check` + `test` + `test:det
 em PRs e pushes no `main`.
 
 **Fase 1 (núcleo determinístico headless) — EM ANDAMENTO.** Itens 1.1 (RNG), 1.2
-(derivação de seeds) e 1.3 (modelo de mundo + loop de passo fixo) concluídos.
+(derivação de seeds), 1.3 (modelo de mundo + loop de passo fixo) e 1.4 (geração de
+obstáculos) concluídos.
 
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
@@ -95,5 +96,15 @@ horizontal, clamp de teto, morte no chão, estado congelado após morte. `FIXED_
 verde (`check` limpo, 81 testes, bateria de determinismo 27 — inclui reprodutibilidade e
 independência de fps 1/2/5 steps por frame).
 
-Próximo: **item 1.4 (geração de obstáculos)**. Ver
+1.4 (obstáculos): `src/core/spawn/` com `OBSTACLE_CATALOG` (tree=aabb/floor, vine=aabb/ceiling,
+boulder=circle/floating, stalactite=polygon/ceiling — cobre aabb/circle/polygon) e
+`SpawnGenerator` keyed por distância (consome `createRng(seed).fork('obstacles')`; cursor avança
+por obstáculo emitido ⇒ independente de batching). Integrado: `WorldConfig.seed?`/`spawn?`,
+`WorldState.spawner` (null sem seed); `step` gera até `distance+SPAWN_LOOKAHEAD` e culla os
+ultrapassados (cull via `rightExtent`, sem alocação por frame). Helpers `polygon`/`boundsOf`/
+`rightExtent` em `sim/hitbox`. Asset-specs dos 4 obstáculos + registro (REGRA 5). Suíte verde
+(`check` limpo, 99 testes, determinismo 34). `rock_arch` adiado (arco real exige hitbox
+não-convexa/multi-hitbox).
+
+Próximo: **item 1.5 (coletáveis — pássaros-moeda)**. Ver
 `docs/roadmap/PHASE-01-deterministic-core.md`.

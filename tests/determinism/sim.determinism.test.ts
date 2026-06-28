@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createWorld, cloneWorld, step, FIXED_DT } from '@core/sim';
 import type { InputFrame, WorldConfig, WorldState } from '@core/sim';
+import { SpawnGenerator } from '@core/spawn';
 
 // Config fixa (independente das constantes de tuning de gameplay) para pinos de regressão.
 const FIXED_CONFIG: WorldConfig = {
@@ -67,5 +68,46 @@ describe('determinismo da simulação', () => {
     for (let i = 0; i < 50; i++) step(w, { flap: i % 5 === 0 });
     // snapshot permanece no estado de tick=1
     expect(snapshot.tick).toBe(1);
+  });
+});
+
+describe('determinismo de spawn integrado ao step', () => {
+  const SEEDED: WorldConfig = { ...FIXED_CONFIG, seed: 'endless:RUN1' };
+
+  it('sem seed ⇒ sem spawner e sem obstáculos', () => {
+    const w = createWorld(FIXED_CONFIG);
+    expect(w.spawner).toBeNull();
+    for (let i = 0; i < 300; i++) step(w, { flap: i % 12 === 0 });
+    expect(w.obstacles).toEqual([]);
+  });
+
+  it('com seed ⇒ obstáculos aparecem ao avançar', () => {
+    const w = createWorld(SEEDED);
+    expect(w.spawner).toBeInstanceOf(SpawnGenerator);
+    for (let i = 0; i < 400; i++) step(w, { flap: i % 12 === 0 });
+    expect(w.obstacles.length).toBeGreaterThan(0);
+  });
+
+  it('fps-independência: 1, 2 e 5 steps por frame ⇒ obstáculos idênticos', () => {
+    const timeline = makeTimeline(900);
+    const one = runBatched(SEEDED, timeline, 1);
+    const two = runBatched(SEEDED, timeline, 2);
+    const five = runBatched(SEEDED, timeline, 5);
+    expect(two.obstacles).toEqual(one.obstacles);
+    expect(five.obstacles).toEqual(one.obstacles);
+  });
+
+  it('cloneWorld isola o spawner: avançar o original não muda o clone', () => {
+    const w = createWorld(SEEDED);
+    // Mantém o pterodáctilo vivo para que o spawner siga gerando durante o voo.
+    for (let i = 0; i < 300; i++) step(w, { flap: i % 8 === 0 });
+    expect(w.alive).toBe(true);
+    const snap = cloneWorld(w);
+    const snapIds = snap.obstacles.map((o) => o.id);
+    expect(snapIds.length).toBeGreaterThan(0);
+    for (let i = 0; i < 600; i++) step(w, { flap: i % 8 === 0 });
+    // O clone permanece intacto mesmo após o original gerar/cullar mais obstáculos.
+    expect(snap.obstacles.map((o) => o.id)).toEqual(snapIds);
+    expect(w.obstacles.map((o) => o.id)).not.toEqual(snapIds);
   });
 });

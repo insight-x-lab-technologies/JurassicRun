@@ -1,10 +1,19 @@
 import { DEFAULT_WORLD_CONFIG } from './constants';
 import { cloneHitbox } from './hitbox';
 import type { Entity, WorldConfig, WorldState } from './types';
+import { createRng } from '@core/rng';
+import { SpawnGenerator, DEFAULT_SPAWN_CONFIG } from '@core/spawn';
+import type { SpawnConfig } from '@core/spawn';
+
+function buildSpawner(seed: string, worldHeight: number, override?: Partial<SpawnConfig>): SpawnGenerator {
+  const config: SpawnConfig = { ...DEFAULT_SPAWN_CONFIG, ...override, worldHeight };
+  return new SpawnGenerator(createRng(seed).fork('obstacles'), config);
+}
 
 /** Constrói o mundo inicial a partir de uma config parcial (ausências usam os defaults). */
 export function createWorld(config: WorldConfig = {}): WorldState {
   const c = { ...DEFAULT_WORLD_CONFIG, ...config };
+  const spawner = config.seed === undefined ? null : buildSpawner(config.seed, c.worldHeight, config.spawn);
   return {
     tick: 0,
     distance: 0,
@@ -21,6 +30,7 @@ export function createWorld(config: WorldConfig = {}): WorldState {
     },
     obstacles: [],
     collectibles: [],
+    spawner,
   };
 }
 
@@ -53,5 +63,6 @@ export function cloneWorld(w: WorldState): WorldState {
     },
     obstacles: w.obstacles.map(cloneEntity),
     collectibles: w.collectibles.map(cloneEntity),
+    spawner: w.spawner ? w.spawner.clone() : null,
   };
 }
