@@ -20,16 +20,16 @@ autônomas implementem o jogo com segurança.
 - [x] Skills de projeto: `add-gameplay-entity`, `add-locale`, `verify-determinism`,
       `create-asset-spec`.
 
-### 0.3 Esqueleto técnico (a executar)
-- [ ] `npm init`, instalar: typescript, vite, vite-plugin-pwa, phaser, preact,
+### 0.3 Esqueleto técnico (concluído)
+- [x] `npm init`, instalar: typescript, vite, vite-plugin-pwa, phaser, preact,
       @preact/signals, i18next, vitest.
-- [ ] `tsconfig.json` estrito; aliases de import (`@core`, `@app`, etc.).
-- [ ] Estrutura de pastas `src/` conforme `ARCHITECTURE.md`.
-- [ ] `index.html` + bootstrap mínimo (Vite roda, tela em branco/canvas vazio).
-- [ ] Scripts npm: `dev`, `build`, `test`, `test:determinism`, `check` (typecheck+lint).
-- [ ] ESLint/regra que falha se `src/core/` importar runtime gráfico ou usar
-      `Math.random/Date.now/performance.now`.
-- [ ] Atualizar `scripts/run.sh` e `scripts/stop.sh` para o dev server.
+- [x] `tsconfig.json` estrito; aliases de import (`@core`, `@app`, etc.).
+- [x] Estrutura de pastas `src/` conforme `ARCHITECTURE.md`.
+- [x] `index.html` + bootstrap mínimo (Vite roda, tela em branco/canvas vazio).
+- [x] Scripts npm: `dev`, `build`, `test`, `test:determinism`, `check` (typecheck+lint).
+- [x] ESLint/regra que falha se `src/core/` importar runtime gráfico ou usar
+      `Math.random/Date.now/performance.now`. (Dupla camada: ESLint + teste Vitest.)
+- [x] Atualizar `scripts/run.sh` e `scripts/stop.sh` para o dev server.
 
 ### 0.4 i18n scaffold
 - [ ] Setup i18next; arquivos de locale vazios para os 10 idiomas (en default).

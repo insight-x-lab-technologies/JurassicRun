@@ -30,15 +30,13 @@ Como trabalhar aqui: `docs/WORKFLOW.md`
 5. **Toda imagem trocável** precisa de um asset-spec em `docs/assets/specs/` (ver skill
    `create-asset-spec`).
 
-## Como rodar (preenchido na Fase 1/2)
+## Como rodar
 
-- Dev: `npm run dev`
+- Dev: `npm run dev` (ou `bash scripts/run.sh` em background; `bash scripts/stop.sh` para parar)
 - Testes: `npm test` (Vitest)
 - Verificar determinismo: `npm run test:determinism` (ou skill `verify-determinism`)
 - Build: `npm run build`
 - Lint/typecheck: `npm run check`
-
-> Enquanto esses scripts não existem (pré-Fase 1), eles serão criados como parte do setup.
 
 ## Convenções
 
@@ -48,7 +46,23 @@ Ver `docs/conventions/CONVENTIONS.md`. Resumo:
 - Toda feature segue o fluxo SDD (`docs/WORKFLOW.md`): spec → plano → TDD → review.
 - Commits pequenos e descritivos. Não fazer commit/push sem o usuário pedir.
 
+## Modo de operação (autônomo)
+
+Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em contrário:
+- **Execução por sub-agentes** (`subagent-driven-development`): um implementador por task +
+  review por task + review final. Não pergunte qual método usar.
+- **Branch de feature + um commit por task**, automático. Não pergunte.
+- **Sem gate humano de aprovação** de spec nem de plano: decida pelas suas recomendações
+  (o usuário não é especialista em game dev e confia na recomendação) e siga. Relate as
+  decisões para permitir correção de rumo, mas não bloqueie.
+- Pergunte só quando travar numa decisão de **produto/escopo** sem default razoável.
+- **Push, PR e merge para `main`/`master`** (e ações externas/irreversíveis) ainda exigem o
+  usuário pedir.
+
 ## Estado atual
 
-Fase 0 (Fundações) — documentação e infra SDD criadas. Código do jogo ainda não iniciado.
-Próximo: Fase 1 (núcleo determinístico headless). Ver `docs/roadmap/ROADMAP.md`.
+Fase 0 (Fundações) — docs/infra SDD prontas; item 0.3 (esqueleto técnico) concluído:
+Vite+TS estrito, aliases, estrutura `src/`, bootstrap Preact vazio, guarda anti-não-
+determinismo em dupla camada (ESLint + teste Vitest), scripts npm e dev server.
+Falta na Fase 0: 0.4 (scaffold i18n) e 0.5 (CI GitHub Actions).
+Depois: Fase 1 (núcleo determinístico headless). Ver `docs/roadmap/ROADMAP.md`.

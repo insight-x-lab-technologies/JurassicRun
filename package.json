@@ -1,0 +1,32 @@
+{
+  "name": "jurassicrun",
+  "version": "1.0.0",
+  "description": "PWA mobile-first, side-scroller estilo Flappy Bird com temática de dinossauros — o jogador é um pterodáctilo. Jogo determinístico (desafios diário/semanal justos entre dispositivos), arte trocável (geométrico → PNG AAA), 10 idiomas, leaderboards e packs cosméticos.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "test:determinism": "vitest run tests/determinism",
+    "check": "tsc --noEmit && eslint ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@preact/signals": "^2.9.2",
+    "i18next": "^26.3.3",
+    "phaser": "^4.2.0",
+    "preact": "^10.29.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.1",
+    "eslint": "^10.6.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.62.0",
+    "vite": "^8.1.0",
+    "vite-plugin-pwa": "^1.3.0",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.9"
+  }
+}
