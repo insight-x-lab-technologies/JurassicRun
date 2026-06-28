@@ -9,3 +9,4 @@ build/
 .claudebot/
 .devserver.pid
 dev-dist/
+.superpowers/
