@@ -22,8 +22,14 @@ function placeY(anchor: ObstacleAnchor, hitbox: Hitbox, config: SpawnConfig, rng
       return config.worldHeight - m - b.maxY;
     case 'ceiling':
       return m - b.minY;
-    case 'floating':
-      return rng.range(m - b.minY, config.worldHeight - m - b.maxY);
+    case 'floating': {
+      const lo = m - b.minY;
+      const hi = config.worldHeight - m - b.maxY;
+      // Sempre consome exatamente 1 saque (estabilidade do stream); idêntico a
+      // rng.range(lo, hi) quando cabe; centraliza quando a hitbox não cabe nas margens.
+      const t = rng.next();
+      return hi > lo ? lo + t * (hi - lo) : (lo + hi) / 2;
+    }
   }
 }
 
