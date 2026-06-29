@@ -4,13 +4,18 @@ import { boundsOf } from '@core/sim/hitbox';
 import { OBSTACLE_CATALOG } from './catalog';
 import type { Anchor, SpawnType } from './catalog';
 
-/** Parâmetros de geração de obstáculos. Placeholders desta fase; 1.7/Fase 2 afinam. */
+/** Parâmetros de geração. Dados puros (sem comportamento). 1.7/Fase 2 afinam tuning. */
 export interface SpawnConfig {
-  worldHeight: number;
-  yMargin: number;
-  startX: number;
-  gapMin: number;
-  gapMax: number;
+  readonly worldHeight: number;
+  readonly yMargin: number;
+  readonly startX: number;
+  readonly gapMin: number;
+  readonly gapMax: number;
+}
+
+/** Escala de gap neutra (sem dificuldade). Referência estável para comparação de estado. */
+function noScale(_x: number): number {
+  return 1;
 }
 
 /** Calcula o y (centro) de uma entidade conforme a âncora, mantendo a hitbox nas margens. */
@@ -43,6 +48,7 @@ export class SpawnGenerator {
   private readonly config: SpawnConfig;
   private readonly catalog: readonly SpawnType[];
   private readonly entityType: EntityType;
+  private readonly gapScale: (x: number) => number;
   private nextSpawnX: number;
   private nextId: number;
 
@@ -51,11 +57,13 @@ export class SpawnGenerator {
     config: SpawnConfig,
     catalog: readonly SpawnType[] = OBSTACLE_CATALOG,
     entityType: EntityType = 'obstacle',
+    gapScale: (x: number) => number = noScale,
   ) {
     this.rng = rng;
     this.config = config;
     this.catalog = catalog;
     this.entityType = entityType;
+    this.gapScale = gapScale;
     this.nextSpawnX = config.startX;
     this.nextId = 0;
   }
@@ -75,13 +83,20 @@ export class SpawnGenerator {
         hitbox,
       });
       this.nextId += 1;
-      this.nextSpawnX += this.rng.range(this.config.gapMin, this.config.gapMax);
+      const s = this.gapScale(this.nextSpawnX);
+      this.nextSpawnX += this.rng.range(this.config.gapMin * s, this.config.gapMax * s);
     }
   }
 
   /** Cópia independente (rng clonado + cursor). Para cloneWorld/snapshots. */
   clone(): SpawnGenerator {
-    const c = new SpawnGenerator(this.rng.clone(), this.config, this.catalog, this.entityType);
+    const c = new SpawnGenerator(
+      this.rng.clone(),
+      this.config,
+      this.catalog,
+      this.entityType,
+      this.gapScale,
+    );
     c.nextSpawnX = this.nextSpawnX;
     c.nextId = this.nextId;
     return c;

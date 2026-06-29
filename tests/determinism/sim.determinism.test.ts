@@ -50,7 +50,7 @@ describe('determinismo da simulação', () => {
 
   it('config fixa: avanço de distance e tick é estável e previsível antes da morte', () => {
     // Sem flap: cai até morrer; verifica relações exatas até o passo da morte.
-    const w = createWorld(FIXED_CONFIG);
+    const w = createWorld({ ...FIXED_CONFIG, difficulty: false });
     let steps = 0;
     while (w.alive && steps < 10000) {
       step(w, { flap: false });

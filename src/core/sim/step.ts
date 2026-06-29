@@ -2,6 +2,7 @@ import { FIXED_DT, SPAWN_LOOKAHEAD, CULL_MARGIN, NEAR_MISS_MARGIN } from './cons
 import { rightExtent, boundsOf } from './hitbox';
 import { collect } from './collect';
 import { overlaps } from '@core/collision';
+import { difficultyAt } from '@core/difficulty';
 import type { InputFrame, WorldState } from './types';
 
 /**
@@ -27,10 +28,18 @@ export function step(world: WorldState, input: InputFrame): void {
   vel.y += world.gravity * FIXED_DT;
   pos.y += vel.y * FIXED_DT;
 
-  // Scroll horizontal.
+  // Scroll horizontal (usa scrollSpeed efetiva do step anterior; ver dificuldade abaixo).
   const dx = world.scrollSpeed * FIXED_DT;
   pos.x += dx;
   world.distance += dx;
+
+  // Dificuldade: amostra após o avanço de distância deste step (função pura ⇒ determinística).
+  // scrollSpeed e level refletem a distância atual; o próximo step usa esta velocidade efetiva.
+  if (world.difficultyEnabled) {
+    const d = difficultyAt(world.distance);
+    world.scrollSpeed = world.baseScrollSpeed * d.speedScale;
+    world.level = d.level;
+  }
 
   // Bordas verticais via extents da hitbox (assume AABB no pterodáctilo).
   const halfH = ptero.hitbox.kind === 'aabb' ? ptero.hitbox.halfH : 0;

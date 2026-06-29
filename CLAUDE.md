@@ -74,7 +74,7 @@ em PRs e pushes no `main`.
 
 **Fase 1 (núcleo determinístico headless) — EM ANDAMENTO.** Itens 1.1 (RNG), 1.2
 (derivação de seeds), 1.3 (modelo de mundo + loop de passo fixo), 1.4 (geração de
-obstáculos), 1.5 (coletáveis) e 1.6 (colisão) concluídos.
+obstáculos), 1.5 (coletáveis), 1.6 (colisão) e 1.7 (dificuldade) concluídos.
 
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
@@ -126,6 +126,22 @@ contado 1× por obstáculo ultrapassado (transição em x via `dx`, stateless) c
 margem — só obstáculos, `boundsOf` chamado só no step pontual do cruzamento. Suíte verde
 (`check` limpo, 147 testes, determinismo 42; determinism-guardian "contrato intacto").
 
-Próximo: **item 1.7 (dificuldade — função pura difficulty(distância|nível) → gaps,
-velocidade, densidade; nível reinicia a cada partida)**. Ver
+1.7 (dificuldade): `src/core/difficulty/` com curva PURA `difficultyAt(distance) →
+{level, speedScale, gapScale}` + `levelForDistance` (forma hiperbólica assintótica
+`d/(d+H)`, só aritmética + `Math.floor` — sem transcendentais; escalas adimensionais
+ancoradas em 1.0 em `distance=0` ⇒ **reinicia a cada partida**). Velocidade e gaps são os dois
+eixos: `step` deriva `scrollSpeed` efetiva = `baseScrollSpeed × speedScale(distance)` e
+`level` (amostrados APÓS `distance+=dx` ⇒ estado pós-step auto-consistente, lag de 1 step na
+velocidade); `SpawnGenerator` ganhou 5º param `gapScale?(x)` que encolhe o espaçamento dos
+obstáculos na posição x do spawn (gaps↔densidade são um eixo no modelo de 1 hitbox por
+obstáculo). Refs de função ESTÁVEIS de módulo (`noScale` no spawn, `OBSTACLE_GAP_SCALE` no
+`world.ts`) p/ o `toEqual` de `WorldState` continuar válido. `WorldState.{baseScrollSpeed,
+level,difficultyEnabled}`; `WorldConfig.difficulty?:boolean` (default true; `false` ⇒ velocidade
+constante e level 1). `SpawnConfig` agora `readonly` + defaults `Object.freeze` (pendência de
+1.4). Suíte verde (`check` limpo, 164 testes, determinismo 45; determinism-guardian "contrato
+intacto", review final "READY TO MERGE"). **Adiados:** distribuição ponderada de tipos de
+obstáculo e densidade de coletáveis (tuning Fase 2); constantes de tuning são placeholders.
+
+Próximo: **item 1.8 (economia e score — comida coletada, multiplicadores, distância como
+score base; inclui multiplicadores e bordas)**. Ver
 `docs/roadmap/PHASE-01-deterministic-core.md`.

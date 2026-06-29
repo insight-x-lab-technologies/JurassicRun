@@ -4,10 +4,20 @@ import type { Entity, WorldConfig, WorldState } from './types';
 import { createRng } from '@core/rng';
 import { SpawnGenerator, DEFAULT_SPAWN_CONFIG, DEFAULT_COLLECTIBLE_CONFIG, COLLECTIBLE_CATALOG } from '@core/spawn';
 import type { SpawnConfig } from '@core/spawn';
+import { difficultyAt } from '@core/difficulty';
 
-function buildSpawner(seed: string, worldHeight: number, override?: Partial<SpawnConfig>): SpawnGenerator {
+/** Referência de função ESTÁVEL (não realocar por createWorld) p/ igualdade estrutural
+ * (toEqual) em testes de determinismo/replay. Mesmo motivo do `noScale` do spawn. */
+const OBSTACLE_GAP_SCALE = (x: number): number => difficultyAt(x).gapScale;
+
+function buildSpawner(
+  seed: string,
+  worldHeight: number,
+  override?: Partial<SpawnConfig>,
+  gapScale?: (x: number) => number,
+): SpawnGenerator {
   const config: SpawnConfig = { ...DEFAULT_SPAWN_CONFIG, ...override, worldHeight };
-  return new SpawnGenerator(createRng(seed).fork('obstacles'), config);
+  return new SpawnGenerator(createRng(seed).fork('obstacles'), config, undefined, undefined, gapScale);
 }
 
 function buildCollectibleSpawner(seed: string, worldHeight: number, override?: Partial<SpawnConfig>): SpawnGenerator {
@@ -18,7 +28,9 @@ function buildCollectibleSpawner(seed: string, worldHeight: number, override?: P
 /** Constrói o mundo inicial a partir de uma config parcial (ausências usam os defaults). */
 export function createWorld(config: WorldConfig = {}): WorldState {
   const c = { ...DEFAULT_WORLD_CONFIG, ...config };
-  const spawner = config.seed === undefined ? null : buildSpawner(config.seed, c.worldHeight, config.spawn);
+  const difficultyEnabled = config.difficulty ?? true;
+  const gapScale = difficultyEnabled ? OBSTACLE_GAP_SCALE : undefined;
+  const spawner = config.seed === undefined ? null : buildSpawner(config.seed, c.worldHeight, config.spawn, gapScale);
   const collectibleSpawner =
     config.seed === undefined ? null : buildCollectibleSpawner(config.seed, c.worldHeight, config.collectibleSpawn);
   return {
@@ -29,6 +41,9 @@ export function createWorld(config: WorldConfig = {}): WorldState {
     alive: true,
     lastFlap: false,
     scrollSpeed: c.scrollSpeed,
+    baseScrollSpeed: c.scrollSpeed,
+    level: 1,
+    difficultyEnabled,
     gravity: c.gravity,
     flapSpeed: c.flapSpeed,
     worldHeight: c.worldHeight,
@@ -65,6 +80,9 @@ export function cloneWorld(w: WorldState): WorldState {
     alive: w.alive,
     lastFlap: w.lastFlap,
     scrollSpeed: w.scrollSpeed,
+    baseScrollSpeed: w.baseScrollSpeed,
+    level: w.level,
+    difficultyEnabled: w.difficultyEnabled,
     gravity: w.gravity,
     flapSpeed: w.flapSpeed,
     worldHeight: w.worldHeight,
