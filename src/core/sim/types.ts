@@ -69,6 +69,8 @@ export interface WorldState {
   distance: number;
   /** Comida coletada (pássaros-moeda). Multiplicadores/score completos ficam para 1.8. */
   food: number;
+  /** Near-misses: passar perto de um obstáculo sem colidir. Multiplicador/score são 1.8. */
+  nearMisses: number;
   alive: boolean;
   /** Estado do botão de flap no step anterior (detecção de borda de subida). */
   lastFlap: boolean;

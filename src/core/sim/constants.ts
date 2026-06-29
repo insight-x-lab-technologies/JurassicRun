@@ -27,3 +27,7 @@ export const DEFAULT_WORLD_CONFIG: Required<Omit<WorldConfig, 'seed' | 'spawn' |
 export const SPAWN_LOOKAHEAD = 400;
 /** Distância atrás do pterodáctilo após a qual obstáculos ultrapassados são removidos. */
 export const CULL_MARGIN = 100;
+
+/** Gap vertical máximo (unidades) entre dino e obstáculo ultrapassado para contar near-miss.
+ * Placeholder de tuning (Fase 2). */
+export const NEAR_MISS_MARGIN = 12;

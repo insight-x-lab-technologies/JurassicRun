@@ -98,15 +98,18 @@ describe('determinismo de spawn integrado ao step', () => {
   });
 
   it('cloneWorld isola o spawner: avançar o original não muda o clone', () => {
+    // Gera obstáculos diretamente no spawner (sem step) para não depender do dino sobreviver
+    // a colisões — comportamento correto após integrar a passada de colisão em 1.6.
+    // O que testamos: cloneWorld cria SpawnGenerator independente (o obstacle list do clone
+    // permanece intacto enquanto o original continua gerando).
     const w = createWorld(SEEDED);
-    // Mantém o pterodáctilo vivo para que o spawner siga gerando durante o voo.
-    for (let i = 0; i < 300; i++) step(w, { flap: i % 8 === 0 });
-    expect(w.alive).toBe(true);
+    w.spawner!.generateUpTo(800, w.obstacles);
     const snap = cloneWorld(w);
     const snapIds = snap.obstacles.map((o) => o.id);
     expect(snapIds.length).toBeGreaterThan(0);
-    for (let i = 0; i < 600; i++) step(w, { flap: i % 8 === 0 });
-    // O clone permanece intacto mesmo após o original gerar/cullar mais obstáculos.
+    // Avança o spawner do original além do ponto do clone.
+    w.spawner!.generateUpTo(1600, w.obstacles);
+    // O clone permanece intacto mesmo após o original gerar mais obstáculos.
     expect(snap.obstacles.map((o) => o.id)).toEqual(snapIds);
     expect(w.obstacles.map((o) => o.id)).not.toEqual(snapIds);
   });

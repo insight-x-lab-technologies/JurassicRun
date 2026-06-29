@@ -1,5 +1,7 @@
-import { FIXED_DT, SPAWN_LOOKAHEAD, CULL_MARGIN } from './constants';
-import { rightExtent } from './hitbox';
+import { FIXED_DT, SPAWN_LOOKAHEAD, CULL_MARGIN, NEAR_MISS_MARGIN } from './constants';
+import { rightExtent, boundsOf } from './hitbox';
+import { collect } from './collect';
+import { overlaps } from '@core/collision';
 import type { InputFrame, WorldState } from './types';
 
 /**
@@ -62,6 +64,44 @@ export function step(world: WorldState, input: InputFrame): void {
     const cols = world.collectibles;
     while (cols.length > 0 && cols[0]!.transform.position.x + rightExtent(cols[0]!.hitbox) < cullX) {
       cols.shift();
+    }
+  }
+
+  // Passada de colisão (só enquanto vivo). O dino é o agente; obstáculos/coletáveis estão em
+  // coords de mundo. `overlaps` é alocação-zero (REGRA 3).
+  if (world.alive) {
+    const dinoHalfW = rightExtent(ptero.hitbox); // dino é AABB ⇒ = halfW
+    const dinoHalfH = ptero.hitbox.kind === 'aabb' ? ptero.hitbox.halfH : 0;
+    const dinoLeft = pos.x - dinoHalfW;
+    const obstacles = world.obstacles;
+    for (let i = 0; i < obstacles.length; i++) {
+      const o = obstacles[i]!;
+      const oPos = o.transform.position;
+      if (overlaps(ptero.hitbox, pos, o.hitbox, oPos)) {
+        world.alive = false;
+        break;
+      }
+      // Near-miss: conta 1× no step em que o dino ULTRAPASSA o obstáculo em x (transição),
+      // se o gap vertical ≤ margem. Detecção stateless via dx deste step.
+      const obsRight = oPos.x + rightExtent(o.hitbox);
+      if (dinoLeft - dx <= obsRight && obsRight < dinoLeft) {
+        const ob = boundsOf(o.hitbox); // pontual (só no cruzamento) ⇒ não é alocação por frame
+        const obsTop = oPos.y + ob.minY;
+        const obsBot = oPos.y + ob.maxY;
+        const gap = Math.max(0, Math.max(pos.y - dinoHalfH - obsBot, obsTop - (pos.y + dinoHalfH)));
+        if (gap > 0 && gap <= NEAR_MISS_MARGIN) world.nearMisses += 1;
+      }
+    }
+  }
+
+  if (world.alive) {
+    const collectibles = world.collectibles;
+    // Itera de trás para frente: `collect` faz splice na lista.
+    for (let i = collectibles.length - 1; i >= 0; i--) {
+      const c = collectibles[i]!;
+      if (overlaps(ptero.hitbox, pos, c.hitbox, c.transform.position)) {
+        collect(world, c);
+      }
     }
   }
 }
