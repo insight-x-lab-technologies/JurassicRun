@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createWorld, cloneWorld, DEFAULT_WORLD_CONFIG } from '@core/sim';
+import { createWorld, cloneWorld, DEFAULT_WORLD_CONFIG, NEAR_MISS_MARGIN } from '@core/sim';
 
 describe('createWorld', () => {
   it('usa os defaults e começa vivo, parado, no centro', () => {
@@ -46,5 +46,19 @@ describe('cloneWorld', () => {
     expect(w.pterodactyl.transform.position.y).toBe(DEFAULT_WORLD_CONFIG.startY);
     expect(w.pterodactyl.kinematics.velocity.x).toBe(0);
     expect(w.obstacles).toEqual([]);
+  });
+});
+
+describe('WorldState.nearMisses', () => {
+  it('createWorld inicia nearMisses em 0', () => {
+    expect(createWorld().nearMisses).toBe(0);
+  });
+  it('cloneWorld copia nearMisses', () => {
+    const w = createWorld();
+    w.nearMisses = 3;
+    expect(cloneWorld(w).nearMisses).toBe(3);
+  });
+  it('NEAR_MISS_MARGIN é um número positivo', () => {
+    expect(NEAR_MISS_MARGIN).toBeGreaterThan(0);
   });
 });
