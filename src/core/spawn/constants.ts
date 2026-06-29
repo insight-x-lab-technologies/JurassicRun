@@ -15,3 +15,17 @@ export const DEFAULT_SPAWN_CONFIG: SpawnConfig = {
   gapMin: SPAWN_GAP_MIN,
   gapMax: SPAWN_GAP_MAX,
 };
+
+// Coletáveis: aparecem mais intercalados que obstáculos. Placeholders; 1.7/Fase 2 afinam.
+export const COLLECTIBLE_START_X = 150;
+export const COLLECTIBLE_GAP_MIN = 90;
+export const COLLECTIBLE_GAP_MAX = 160;
+
+/** Config padrão do gerador de coletáveis (createWorld sobrescreve worldHeight). */
+export const DEFAULT_COLLECTIBLE_CONFIG: SpawnConfig = {
+  worldHeight: WORLD_HEIGHT,
+  yMargin: SPAWN_Y_MARGIN,
+  startX: COLLECTIBLE_START_X,
+  gapMin: COLLECTIBLE_GAP_MIN,
+  gapMax: COLLECTIBLE_GAP_MAX,
+};
