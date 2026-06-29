@@ -29,9 +29,9 @@ determinística e coberta por testes. Esta é a fundação de tudo.
 - [x] Testes.
 
 ### 1.6 Colisão
-- [ ] AABB/círculo/polígono; detecção dino×obstáculo e dino×coletável.
-- [ ] Detecção de near-miss (passar perto sem colidir).
-- [ ] Testes.
+- [x] AABB/círculo/polígono; detecção dino×obstáculo e dino×coletável.
+- [x] Detecção de near-miss (passar perto sem colidir).
+- [x] Testes.
 
 ### 1.7 Dificuldade
 - [ ] Função pura `difficulty(distância|nível)` → gaps, velocidade, densidade.

@@ -74,7 +74,7 @@ em PRs e pushes no `main`.
 
 **Fase 1 (núcleo determinístico headless) — EM ANDAMENTO.** Itens 1.1 (RNG), 1.2
 (derivação de seeds), 1.3 (modelo de mundo + loop de passo fixo), 1.4 (geração de
-obstáculos) e 1.5 (coletáveis) concluídos.
+obstáculos), 1.5 (coletáveis) e 1.6 (colisão) concluídos.
 
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
@@ -115,5 +115,17 @@ culla coletáveis espelhando os obstáculos (sem alocação por frame). `collect
 idempotente (o GATILHO por colisão é 1.6; multiplicadores/score são 1.8). Asset-spec do
 `bird.coin` + registro (REGRA 5). Suíte verde (`check` limpo, 112 testes, determinismo 38).
 
-Próximo: **item 1.6 (colisão — dino×obstáculo, dino×coletável, near-miss)**. Ver
+1.6 (colisão): `src/core/collision/` com `overlaps(ha,pa,hb,pb)` — predicado simétrico e
+alocação-zero (REGRA 3) cobrindo os 6 pares aabb/circle/polygon: casos diretos
+(aabb-aabb/circle-circle/aabb-circle) e SAT por projeção escalar para pares com polígono
+(eixos não-normalizados; círculo via `sqrt(ax²+ay²)` portável, não `Math.hypot`; eixo extra
+círculo→vértice mais próximo). `WorldState.nearMisses` (inicia 0) + `NEAR_MISS_MARGIN`.
+A passada de colisão no `step` (após spawn/cull, guardada por `alive`): dino×obstáculo ⇒
+morte; dino×coletável ⇒ `collect()` (itera de trás p/ frente por causa do splice); near-miss
+contado 1× por obstáculo ultrapassado (transição em x via `dx`, stateless) com gap vertical ≤
+margem — só obstáculos, `boundsOf` chamado só no step pontual do cruzamento. Suíte verde
+(`check` limpo, 147 testes, determinismo 42; determinism-guardian "contrato intacto").
+
+Próximo: **item 1.7 (dificuldade — função pura difficulty(distância|nível) → gaps,
+velocidade, densidade; nível reinicia a cada partida)**. Ver
 `docs/roadmap/PHASE-01-deterministic-core.md`.
