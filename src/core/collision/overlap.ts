@@ -107,7 +107,10 @@ function projectMin(h: Hitbox, p: Vec2, ax: number, ay: number): number {
     case 'aabb':
       return c - (Math.abs(ax) * h.halfW + Math.abs(ay) * h.halfH);
     case 'circle':
-      return c - h.radius * Math.hypot(ax, ay);
+      // Raio do círculo projetado no eixo não-normalizado = r·|eixo|. Usamos
+      // sqrt(ax²+ay²) (corretamente arredondado por IEEE-754, portável entre engines) em vez
+      // de Math.hypot (arredondamento livre por engine) — REGRA de determinismo (DETERMINISM.md §5).
+      return c - h.radius * Math.sqrt(ax * ax + ay * ay);
     case 'polygon': {
       let min = Infinity;
       for (const pt of h.points) {
@@ -125,7 +128,8 @@ function projectMax(h: Hitbox, p: Vec2, ax: number, ay: number): number {
     case 'aabb':
       return c + (Math.abs(ax) * h.halfW + Math.abs(ay) * h.halfH);
     case 'circle':
-      return c + h.radius * Math.hypot(ax, ay);
+      // Ver nota em projectMin: sqrt portável em vez de Math.hypot (DETERMINISM.md §5).
+      return c + h.radius * Math.sqrt(ax * ax + ay * ay);
     case 'polygon': {
       let max = -Infinity;
       for (const pt of h.points) {
