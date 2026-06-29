@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createWorld, step } from '@core/sim';
-import { FOOD_SCORE_VALUE, NEAR_MISS_SCORE_VALUE } from '@core/economy';
+import { FOOD_SCORE_VALUE } from '@core/economy';
 
 describe('integração da economia no step', () => {
   it('mundo recém-criado: score 0 e scoreMultiplier 1', () => {
@@ -74,6 +74,3 @@ describe('integração da economia no step', () => {
     expect(w.score).toBe(scoreAtDeath);
   });
 });
-
-// NEAR_MISS_SCORE_VALUE is imported to document intent (used in determinism tests, Task 3).
-void NEAR_MISS_SCORE_VALUE;
