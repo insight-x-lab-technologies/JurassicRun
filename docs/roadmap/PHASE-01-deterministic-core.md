@@ -39,8 +39,8 @@ determinística e coberta por testes. Esta é a fundação de tudo.
 - [x] Testes.
 
 ### 1.8 Economia e score
-- [ ] Comida coletada, multiplicadores, distância como score base.
-- [ ] Testes (inclui multiplicadores e bordas).
+- [x] Comida coletada, multiplicadores, distância como score base.
+- [x] Testes (inclui multiplicadores e bordas).
 
 ### 1.9 Replay / golden master
 - [ ] Suporte a rodar `sim(seed, InputTimeline)` headless e hashear o estado.

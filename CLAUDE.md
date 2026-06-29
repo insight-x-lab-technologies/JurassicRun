@@ -74,7 +74,8 @@ em PRs e pushes no `main`.
 
 **Fase 1 (núcleo determinístico headless) — EM ANDAMENTO.** Itens 1.1 (RNG), 1.2
 (derivação de seeds), 1.3 (modelo de mundo + loop de passo fixo), 1.4 (geração de
-obstáculos), 1.5 (coletáveis), 1.6 (colisão) e 1.7 (dificuldade) concluídos.
+obstáculos), 1.5 (coletáveis), 1.6 (colisão), 1.7 (dificuldade) e 1.8 (economia e score)
+concluídos.
 
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
@@ -142,6 +143,22 @@ constante e level 1). `SpawnConfig` agora `readonly` + defaults `Object.freeze` 
 intacto", review final "READY TO MERGE"). **Adiados:** distribuição ponderada de tipos de
 obstáculo e densidade de coletáveis (tuning Fase 2); constantes de tuning são placeholders.
 
-Próximo: **item 1.8 (economia e score — comida coletada, multiplicadores, distância como
-score base; inclui multiplicadores e bordas)**. Ver
+1.8 (economia e score): `src/core/economy/` módulo-folha puro com `scoreDelta(distanceDelta,
+foodDelta, nearMissDelta, multiplier)` = `(dist·DISTANCE_SCORE_WEIGHT + food·FOOD_SCORE_VALUE +
+nearMiss·NEAR_MISS_SCORE_VALUE)·multiplier` (só `+ − ·`, sem transcendentais/arredondamento ⇒
+`score` é float canônico; presentação faz floor na Fase 2). Pesos placeholder 1/10/5 (tuning
+Fase 2). Score **acumulado incrementalmente** no fim do `step` (`world.score += scoreDelta(dx,
+food−foodBefore, nearMisses−nearMissBefore, scoreMultiplier)`; deltas capturados após
+`distance+=dx`) ⇒ multiplicador temporário banca pontos à taxa ativa no momento (semântica
+correta p/ power-ups da Fase 3, que NÃO recomputa do total). `WorldState.{score(0),
+scoreMultiplier(1)}`, copiados por `cloneWorld`; sem novos campos em `WorldConfig` (multiplier é
+mutado em runtime). Na morte o `dx` daquele step conta; food/near-miss não (estão sob `if(alive)`).
+Alocação-zero no hot path (só escalares). Near-miss (de 1.6) passa a pontuar. Suíte verde
+(`check` limpo, 180 testes, determinismo 48 — economia reprodutível e fps-independente com
+food/near-miss > 0 exercitados; determinism-guardian "contrato intacto"). **Adiados (Fase 3):**
+multiplicador de comida ("moeda dobrada") e fontes de `scoreMultiplier` (power-ups); conversão
+comida→saldo de moedas e exibição de score (HUD/Game Over, Fase 2/4).
+
+Próximo: **item 1.9 (replay / golden master — rodar `sim(seed, InputTimeline)` headless e
+hashear o estado; golden master p/ seeds fixas detecta regressão de determinismo)**. Ver
 `docs/roadmap/PHASE-01-deterministic-core.md`.
