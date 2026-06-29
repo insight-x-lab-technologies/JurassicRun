@@ -1,13 +1,21 @@
 import { describe, it, expect } from 'vitest';
 import { createWorld, step } from '@core/sim';
 import type { InputFrame, WorldConfig, WorldState } from '@core/sim';
+import { FOOD_SCORE_VALUE, NEAR_MISS_SCORE_VALUE, DISTANCE_SCORE_WEIGHT } from '@core/economy';
 
-// Mundo alto p/ a partida durar; seed liga obstáculos e coletáveis (comida/near-miss pontuam).
-const SEEDED: WorldConfig = { worldHeight: 100000, startY: 50000, seed: 'endless:ECON1' };
+// Config escolhida empiricamente para que food > 0 E nearMisses > 0 dentro da corrida:
+// worldHeight=180 (padrão) mantém o corredor de voo na faixa das entidades geradas pelo
+// SpawnGenerator; seed 'endless:GAME1' com flapEvery=25 produz a trajetória que intercepta
+// coletáveis e passa perto de obstáculos. Valores medidos: food=2, nearMisses=1,
+// score≈690.14, distance≈665.14 (dino morre antes de 2000 steps; estado congela).
+const SEEDED: WorldConfig = { worldHeight: 180, startY: 90, seed: 'endless:GAME1' };
+const STEPS = 2000;
 
 function makeTimeline(n: number): InputFrame[] {
   const out: InputFrame[] = [];
-  for (let i = 0; i < n; i++) out.push({ flap: i % 2 === 0 });
+  // Flap a cada 25 steps (borda de subida): mantém o pterodáctilo em voo nivelado sem
+  // acumular drift para o teto, atravessando o corredor onde os coletáveis/obstáculos são gerados.
+  for (let i = 0; i < n; i++) out.push({ flap: i % 25 === 0 });
   return out;
 }
 
@@ -21,32 +29,50 @@ function runBatched(config: WorldConfig, timeline: InputFrame[], batch: number):
 }
 
 describe('determinismo da economia/score', () => {
-  it('reprodutibilidade: mesma seed+timeline ⇒ score idêntico', () => {
-    const t = makeTimeline(1500);
+  it('reprodutibilidade: mesma seed+timeline ⇒ score/food/nearMisses idênticos e não-triviais', () => {
+    const t = makeTimeline(STEPS);
     const a = runBatched(SEEDED, t, 1);
     const b = runBatched(SEEDED, t, 1);
+
+    // Guarda de cobertura: confirma que os três componentes do score foram exercitados.
+    // Se a coleta ou o near-miss deixarem de funcionar, estes guards falham primeiro.
+    expect(a.food).toBeGreaterThan(0);
+    expect(a.nearMisses).toBeGreaterThan(0);
+
+    // Reprodutibilidade (valores não-triviais: food e nearMisses > 0, score ≠ distance).
     expect(a.score).toBe(b.score);
     expect(a.food).toBe(b.food);
     expect(a.nearMisses).toBe(b.nearMisses);
+    expect(a.distance).toBe(b.distance);
   });
 
-  it('independência de fps: 1, 2 e 5 steps por frame ⇒ score idêntico', () => {
-    const t = makeTimeline(1500);
+  it('independência de fps: 1, 2 e 5 steps por frame ⇒ estado idêntico', () => {
+    const t = makeTimeline(STEPS);
     const one = runBatched(SEEDED, t, 1);
     const two = runBatched(SEEDED, t, 2);
     const five = runBatched(SEEDED, t, 5);
     expect(two.score).toBe(one.score);
     expect(five.score).toBe(one.score);
-    // Estado completo idêntico (score incluso) reforça o contrato.
+    // Estado completo idêntico (score/food/nearMisses/distance e spawners).
     expect(two).toEqual(one);
     expect(five).toEqual(one);
   });
 
-  it('duas partidas frescas com a mesma seed ⇒ mesmo score na mesma distância', () => {
-    const t = makeTimeline(900);
+  it('score agrega os três componentes: distância + comida + near-miss', () => {
+    const t = makeTimeline(STEPS);
     const a = runBatched(SEEDED, t, 1);
-    const b = runBatched(SEEDED, t, 1);
-    expect(a.distance).toBe(b.distance);
-    expect(a.score).toBe(b.score);
+
+    // Guarda primária: caminhos de comida e near-miss foram de fato percorridos.
+    expect(a.food).toBeGreaterThan(0);
+    expect(a.nearMisses).toBeGreaterThan(0);
+
+    // Fórmula de acúmulo incremental (scoreMultiplier=1 o tempo todo):
+    // score = distance × DISTANCE_SCORE_WEIGHT + food × FOOD_SCORE_VALUE + nearMisses × NEAR_MISS_SCORE_VALUE
+    // Comparado com toBeCloseTo para absorver diferença de ordem de soma em floating point.
+    const expected = a.distance * DISTANCE_SCORE_WEIGHT + a.food * FOOD_SCORE_VALUE + a.nearMisses * NEAR_MISS_SCORE_VALUE;
+    expect(a.score).toBeCloseTo(expected, 6);
+
+    // Confirma que score É MAIOR que distância (comida+near-miss contribuem positivamente).
+    expect(a.score).toBeGreaterThan(a.distance);
   });
 });
