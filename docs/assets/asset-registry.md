@@ -28,7 +28,7 @@ usada no manifesto de assets do render.
 ## Coletáveis / power-ups
 | id | descrição | status | spec |
 |----|-----------|--------|------|
-| `bird.coin` | pássaro-moeda (comida) | placeholder | — |
+| `bird.coin` | pássaro-moeda (comida) | spec | `specs/bird.coin.md` |
 | `powerup.shield` | escudo | placeholder | — |
 | `powerup.extralife` | vida extra | placeholder | — |
 | `powerup.slowmo` | câmera lenta | placeholder | — |
