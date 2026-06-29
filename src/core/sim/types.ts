@@ -58,6 +58,8 @@ export interface WorldConfig {
   spawn?: Partial<SpawnConfig>;
   /** Overrides parciais da config de spawn de coletáveis (tuning). */
   collectibleSpawn?: Partial<SpawnConfig>;
+  /** Liga a curva de dificuldade (velocidade/gaps crescentes). Default true. */
+  difficulty?: boolean;
 }
 
 /**
@@ -74,7 +76,14 @@ export interface WorldState {
   alive: boolean;
   /** Estado do botão de flap no step anterior (detecção de borda de subida). */
   lastFlap: boolean;
+  /** Velocidade de scroll EFETIVA do step atual (base × speedScale; ver baseScrollSpeed). */
   scrollSpeed: number;
+  /** Velocidade-base imutável (a `scrollSpeed` efetiva = base × speedScale(distance)). */
+  baseScrollSpeed: number;
+  /** Nível atual (1-based), derivado da distância. Reinicia a cada partida (distance=0). */
+  level: number;
+  /** Se a curva de dificuldade está ativa (escala velocidade/gaps). */
+  difficultyEnabled: boolean;
   gravity: number;
   flapSpeed: number;
   worldHeight: number;

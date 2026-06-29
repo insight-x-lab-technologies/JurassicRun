@@ -21,7 +21,7 @@ describe('step — integração base', () => {
   });
 
   it('scroll avança x e distance em scrollSpeed*FIXED_DT por step', () => {
-    const w = createWorld();
+    const w = createWorld({ difficulty: false });
     const dx = w.scrollSpeed * FIXED_DT;
     step(w, NO_FLAP);
     expect(w.pterodactyl.transform.position.x).toBeCloseTo(dx, 10);
