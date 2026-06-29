@@ -1,5 +1,7 @@
 import { FIXED_DT, SPAWN_LOOKAHEAD, CULL_MARGIN } from './constants';
 import { rightExtent } from './hitbox';
+import { collect } from './collect';
+import { overlaps } from '@core/collision';
 import type { InputFrame, WorldState } from './types';
 
 /**
@@ -62,6 +64,30 @@ export function step(world: WorldState, input: InputFrame): void {
     const cols = world.collectibles;
     while (cols.length > 0 && cols[0]!.transform.position.x + rightExtent(cols[0]!.hitbox) < cullX) {
       cols.shift();
+    }
+  }
+
+  // Passada de colisão (só enquanto vivo). O dino é o agente; obstáculos/coletáveis estão em
+  // coords de mundo. `overlaps` é alocação-zero (REGRA 3).
+  if (world.alive) {
+    const obstacles = world.obstacles;
+    for (let i = 0; i < obstacles.length; i++) {
+      const o = obstacles[i]!;
+      if (overlaps(ptero.hitbox, pos, o.hitbox, o.transform.position)) {
+        world.alive = false;
+        break;
+      }
+    }
+  }
+
+  if (world.alive) {
+    const collectibles = world.collectibles;
+    // Itera de trás para frente: `collect` faz splice na lista.
+    for (let i = collectibles.length - 1; i >= 0; i--) {
+      const c = collectibles[i]!;
+      if (overlaps(ptero.hitbox, pos, c.hitbox, c.transform.position)) {
+        collect(world, c);
+      }
     }
   }
 }
