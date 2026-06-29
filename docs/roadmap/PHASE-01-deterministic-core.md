@@ -34,9 +34,9 @@ determinística e coberta por testes. Esta é a fundação de tudo.
 - [x] Testes.
 
 ### 1.7 Dificuldade
-- [ ] Função pura `difficulty(distância|nível)` → gaps, velocidade, densidade.
-- [ ] Nível aumenta com a distância; **reinicia a cada partida**.
-- [ ] Testes.
+- [x] Função pura `difficulty(distância|nível)` → gaps, velocidade, densidade.
+- [x] Nível aumenta com a distância; **reinicia a cada partida**.
+- [x] Testes.
 
 ### 1.8 Economia e score
 - [ ] Comida coletada, multiplicadores, distância como score base.
