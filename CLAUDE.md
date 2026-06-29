@@ -73,8 +73,8 @@ GitHub Actions (`.github/workflows/ci.yml`) rodando `check` + `test` + `test:det
 em PRs e pushes no `main`.
 
 **Fase 1 (núcleo determinístico headless) — EM ANDAMENTO.** Itens 1.1 (RNG), 1.2
-(derivação de seeds), 1.3 (modelo de mundo + loop de passo fixo) e 1.4 (geração de
-obstáculos) concluídos.
+(derivação de seeds), 1.3 (modelo de mundo + loop de passo fixo), 1.4 (geração de
+obstáculos) e 1.5 (coletáveis) concluídos.
 
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
@@ -106,5 +106,14 @@ ultrapassados (cull via `rightExtent`, sem alocação por frame). Helpers `polyg
 (`check` limpo, 99 testes, determinismo 34). `rock_arch` adiado (arco real exige hitbox
 não-convexa/multi-hitbox).
 
-Próximo: **item 1.5 (coletáveis — pássaros-moeda)**. Ver
+1.5 (coletáveis): `SpawnGenerator` generalizado (catálogo + `entityType`, defaults
+retrocompatíveis) reaproveitado para `COLLECTIBLE_CATALOG` (`bird.coin`=circle/floating) num
+stream de RNG dedicado `createRng(seed).fork('collectibles')` ⇒ independente dos obstáculos.
+`WorldState.food` (inicia 0) + `WorldState.collectibleSpawner` (null sem seed); `step` gera e
+culla coletáveis espelhando os obstáculos (sem alocação por frame). `collect(world, entity)` em
+`src/core/sim/collect.ts`: busca por referência, remove o coletável e faz `food += 1`,
+idempotente (o GATILHO por colisão é 1.6; multiplicadores/score são 1.8). Asset-spec do
+`bird.coin` + registro (REGRA 5). Suíte verde (`check` limpo, 112 testes, determinismo 38).
+
+Próximo: **item 1.6 (colisão — dino×obstáculo, dino×coletável, near-miss)**. Ver
 `docs/roadmap/PHASE-01-deterministic-core.md`.
