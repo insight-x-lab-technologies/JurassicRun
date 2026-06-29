@@ -3,6 +3,7 @@ import { rightExtent, boundsOf } from './hitbox';
 import { collect } from './collect';
 import { overlaps } from '@core/collision';
 import { difficultyAt } from '@core/difficulty';
+import { scoreDelta } from '@core/economy';
 import type { InputFrame, WorldState } from './types';
 
 /**
@@ -32,6 +33,10 @@ export function step(world: WorldState, input: InputFrame): void {
   const dx = world.scrollSpeed * FIXED_DT;
   pos.x += dx;
   world.distance += dx;
+
+  // Economia: captura as contagens antes das passadas de colisão (item 1.8).
+  const foodBefore = world.food;
+  const nearMissBefore = world.nearMisses;
 
   // Dificuldade: amostra após o avanço de distância deste step (função pura ⇒ determinística).
   // scrollSpeed e level refletem a distância atual; o próximo step usa esta velocidade efetiva.
@@ -113,4 +118,9 @@ export function step(world: WorldState, input: InputFrame): void {
       }
     }
   }
+
+  // Acúmulo incremental do score: distância deste step + comida/near-miss ganhos, à taxa do
+  // multiplicador ativo agora (item 1.8). Alocação-zero (escalares). Na morte, foodDelta/
+  // nearMissDelta deste step são 0 (contados só sob `if (world.alive)`); a distância dx conta.
+  world.score += scoreDelta(dx, world.food - foodBefore, world.nearMisses - nearMissBefore, world.scoreMultiplier);
 }

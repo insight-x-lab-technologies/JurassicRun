@@ -69,10 +69,15 @@ export interface WorldConfig {
 export interface WorldState {
   tick: number;
   distance: number;
-  /** Comida coletada (pássaros-moeda). Multiplicadores/score completos ficam para 1.8. */
+  /** Comida coletada (pássaros-moeda). Pontua via score (item 1.8). */
   food: number;
-  /** Near-misses: passar perto de um obstáculo sem colidir. Multiplicador/score são 1.8. */
+  /** Near-misses: passar perto de um obstáculo sem colidir. Pontua via score (item 1.8). */
   nearMisses: number;
+  /** Pontuação canônica acumulada da partida (float). Distância base + comida + near-miss,
+   * escalado por scoreMultiplier, bancado por step. Apresentação faz floor (Fase 2). */
+  score: number;
+  /** Multiplicador de score ativo (default 1). Mutável em runtime (power-ups da Fase 3). */
+  scoreMultiplier: number;
   alive: boolean;
   /** Estado do botão de flap no step anterior (detecção de borda de subida). */
   lastFlap: boolean;
