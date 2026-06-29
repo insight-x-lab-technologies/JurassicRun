@@ -56,6 +56,8 @@ export interface WorldConfig {
   seed?: string;
   /** Overrides parciais da config de spawn (tuning). */
   spawn?: Partial<SpawnConfig>;
+  /** Overrides parciais da config de spawn de coletáveis (tuning). */
+  collectibleSpawn?: Partial<SpawnConfig>;
 }
 
 /**
@@ -65,6 +67,8 @@ export interface WorldConfig {
 export interface WorldState {
   tick: number;
   distance: number;
+  /** Comida coletada (pássaros-moeda). Multiplicadores/score completos ficam para 1.8. */
+  food: number;
   alive: boolean;
   /** Estado do botão de flap no step anterior (detecção de borda de subida). */
   lastFlap: boolean;
@@ -77,4 +81,6 @@ export interface WorldState {
   collectibles: Entity[];
   /** Gerador de obstáculos (null quando o mundo não tem seed). */
   spawner: SpawnGenerator | null;
+  /** Gerador de coletáveis (null quando o mundo não tem seed). */
+  collectibleSpawner: SpawnGenerator | null;
 }

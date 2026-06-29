@@ -25,8 +25,8 @@ determinística e coberta por testes. Esta é a fundação de tudo.
 - [x] Testes: mesma seed ⇒ mesma sequência de obstáculos.
 
 ### 1.5 Coletáveis (pássaros-moeda)
-- [ ] Geração determinística; coleta incrementa "comida".
-- [ ] Testes.
+- [x] Geração determinística; coleta incrementa "comida".
+- [x] Testes.
 
 ### 1.6 Colisão
 - [ ] AABB/círculo/polígono; detecção dino×obstáculo e dino×coletável.

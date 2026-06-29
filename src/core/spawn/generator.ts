@@ -1,8 +1,8 @@
 import type { Rng } from '@core/rng';
-import type { Entity, Hitbox } from '@core/sim/types';
+import type { Entity, EntityType, Hitbox } from '@core/sim/types';
 import { boundsOf } from '@core/sim/hitbox';
 import { OBSTACLE_CATALOG } from './catalog';
-import type { ObstacleAnchor } from './catalog';
+import type { Anchor, SpawnType } from './catalog';
 
 /** Parâmetros de geração de obstáculos. Placeholders desta fase; 1.7/Fase 2 afinam. */
 export interface SpawnConfig {
@@ -13,8 +13,8 @@ export interface SpawnConfig {
   gapMax: number;
 }
 
-/** Calcula o y (centro) de um obstáculo conforme a âncora, mantendo a hitbox nas margens. */
-function placeY(anchor: ObstacleAnchor, hitbox: Hitbox, config: SpawnConfig, rng: Rng): number {
+/** Calcula o y (centro) de uma entidade conforme a âncora, mantendo a hitbox nas margens. */
+function placeY(anchor: Anchor, hitbox: Hitbox, config: SpawnConfig, rng: Rng): number {
   const b = boundsOf(hitbox);
   const m = config.yMargin;
   switch (anchor) {
@@ -34,31 +34,41 @@ function placeY(anchor: ObstacleAnchor, hitbox: Hitbox, config: SpawnConfig, rng
 }
 
 /**
- * Gerador determinístico de obstáculos, keyed por posição x do mundo. Avança um cursor por
- * obstáculo emitido (não por chamada) ⇒ independente de batching/fps. Consome só o Rng dado.
+ * Gerador determinístico de entidades (obstáculos ou coletáveis), keyed por posição x do
+ * mundo. Avança um cursor por entidade emitida (não por chamada) ⇒ independente de
+ * batching/fps. Consome só o Rng dado.
  */
 export class SpawnGenerator {
   private readonly rng: Rng;
   private readonly config: SpawnConfig;
+  private readonly catalog: readonly SpawnType[];
+  private readonly entityType: EntityType;
   private nextSpawnX: number;
   private nextId: number;
 
-  constructor(rng: Rng, config: SpawnConfig) {
+  constructor(
+    rng: Rng,
+    config: SpawnConfig,
+    catalog: readonly SpawnType[] = OBSTACLE_CATALOG,
+    entityType: EntityType = 'obstacle',
+  ) {
     this.rng = rng;
     this.config = config;
+    this.catalog = catalog;
+    this.entityType = entityType;
     this.nextSpawnX = config.startX;
     this.nextId = 0;
   }
 
-  /** Empurra em `sink` todo obstáculo com spawnX <= upToX (ordem de x crescente). */
+  /** Empurra em `sink` toda entidade com spawnX <= upToX (ordem de x crescente). */
   generateUpTo(upToX: number, sink: Entity[]): void {
     while (this.nextSpawnX <= upToX) {
-      const type = this.rng.pick(OBSTACLE_CATALOG);
+      const type = this.rng.pick(this.catalog);
       const hitbox = type.makeHitbox(this.rng);
       const y = placeY(type.anchor, hitbox, this.config, this.rng);
       sink.push({
         id: this.nextId,
-        type: 'obstacle',
+        type: this.entityType,
         tags: [type.id],
         transform: { position: { x: this.nextSpawnX, y } },
         kinematics: { velocity: { x: 0, y: 0 } },
@@ -71,7 +81,7 @@ export class SpawnGenerator {
 
   /** Cópia independente (rng clonado + cursor). Para cloneWorld/snapshots. */
   clone(): SpawnGenerator {
-    const c = new SpawnGenerator(this.rng.clone(), this.config);
+    const c = new SpawnGenerator(this.rng.clone(), this.config, this.catalog, this.entityType);
     c.nextSpawnX = this.nextSpawnX;
     c.nextId = this.nextId;
     return c;

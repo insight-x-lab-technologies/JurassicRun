@@ -55,4 +55,13 @@ export function step(world: WorldState, input: InputFrame): void {
       obs.shift();
     }
   }
+
+  if (world.collectibleSpawner) {
+    world.collectibleSpawner.generateUpTo(world.distance + SPAWN_LOOKAHEAD, world.collectibles);
+    const cullX = pos.x - CULL_MARGIN;
+    const cols = world.collectibles;
+    while (cols.length > 0 && cols[0]!.transform.position.x + rightExtent(cols[0]!.hitbox) < cullX) {
+      cols.shift();
+    }
+  }
 }

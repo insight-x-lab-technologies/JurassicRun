@@ -13,8 +13,8 @@ export const SCROLL_SPEED = 120; // unidades/s (avanço em +x)
 export const PTERODACTYL_HITBOX: Hitbox = aabb(10, 8);
 
 /** Config padrão totalmente preenchida (merge com WorldConfig parcial em createWorld).
- * seed/spawn não têm default fixo e são omitidos intencionalmente. */
-export const DEFAULT_WORLD_CONFIG: Required<Omit<WorldConfig, 'seed' | 'spawn'>> = {
+ * seed/spawn/collectibleSpawn não têm default fixo e são omitidos intencionalmente. */
+export const DEFAULT_WORLD_CONFIG: Required<Omit<WorldConfig, 'seed' | 'spawn' | 'collectibleSpawn'>> = {
   worldHeight: WORLD_HEIGHT,
   gravity: GRAVITY,
   flapSpeed: FLAP_SPEED,
