@@ -170,9 +170,13 @@ estado interno privado dos `SpawnGenerator` (só presença): numa timeline fixa 
 já se manifesta nas entidades emitidas. Golden master em
 `tests/determinism/replay.determinism.test.ts`: pinos commitados de `(seed, timeline)` fixos
 (sem-seed, `endless:GOLD1` com/sem difficulty, `endless:GOLD2`) + asserções de que seeds e
-difficulty distintos ⇒ hashes distintos. Suíte verde (`check` limpo, 199 testes, determinismo
-54; determinism-guardian "contrato intacto"). **Adiado:** cenário golden que exercite
-`nearMisses>0` (redundante — já coberto por `economy.determinism.test.ts`).
+difficulty distintos ⇒ hashes distintos. Guardas de completude impedem que o hash omita
+silenciosamente um campo novo: `default: never` no switch de `Hitbox` (erro de `tsc` ao
+adicionar um kind) + teste que pina as chaves de `WorldState`/`Entity` (falha ao adicionar um
+campo sem atualizar `hashState` e re-pinar os goldens). Suíte verde (`check` limpo, 202 testes,
+determinismo 54; determinism-guardian "contrato intacto", review final "READY TO MERGE").
+**Adiado:** cenário golden que exercite `nearMisses>0` (redundante — já coberto por
+`economy.determinism.test.ts`).
 
 Próximo: **Fase 2 (vertical slice jogável Endless — 1º milestone: render Phaser, parallax, HUD,
 input, loop fixo↔render)**. Ver `docs/roadmap/PHASE-02-endless-vertical-slice.md`.
