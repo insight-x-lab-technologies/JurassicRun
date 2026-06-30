@@ -4,6 +4,7 @@ import type { Entity, Hitbox, WorldState } from '@core/sim';
 import { FixedStepLoop } from './loop';
 import { renderableFor, DINO_TYPE_ID } from './manifest';
 import type { InputSource } from './input';
+import type { PauseController } from './input';
 import {
   VIEW_WIDTH,
   VIEW_HEIGHT,
@@ -11,19 +12,24 @@ import {
   GROUND_COLOR,
   CEILING_COLOR,
   GROUND_THICKNESS,
+  PAUSE_OVERLAY_COLOR,
+  PAUSE_OVERLAY_ALPHA,
 } from './constants';
 
 /** Renderiza o WorldState lido do core. Não altera a simulação (REGRA 1). */
 export class GameScene extends Phaser.Scene {
   private readonly world: WorldState;
   private readonly inputSource: InputSource;
+  private readonly pause: PauseController;
   private loop!: FixedStepLoop;
   private gfx!: Phaser.GameObjects.Graphics;
+  private pauseOverlay!: Phaser.GameObjects.Graphics;
 
-  constructor(world: WorldState, input: InputSource) {
+  constructor(world: WorldState, input: InputSource, pause: PauseController) {
     super('GameScene');
     this.world = world;
     this.inputSource = input;
+    this.pause = pause;
   }
 
   create(): void {
@@ -37,9 +43,20 @@ export class GameScene extends Phaser.Scene {
     // Graphics do mundo (scrollFactor 1 ⇒ acompanha a câmera).
     this.gfx = this.add.graphics();
     this.loop = new FixedStepLoop(this.world, this.inputSource);
+
+    // Overlay de pausa: retângulo semitransparente de tela cheia (scrollFactor 0, depth 1000).
+    this.pauseOverlay = this.add.graphics().setScrollFactor(0);
+    this.pauseOverlay.fillStyle(PAUSE_OVERLAY_COLOR, PAUSE_OVERLAY_ALPHA);
+    this.pauseOverlay.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+    this.pauseOverlay.setDepth(1000);
+    this.pauseOverlay.setVisible(false);
   }
 
   override update(_time: number, deltaMs: number): void {
+    const paused = this.pause.paused;
+    this.pauseOverlay.setVisible(paused);
+    if (paused) return; // congela a sim; o último frame desenhado permanece sob o overlay
+
     this.loop.advance(deltaMs / 1000);
 
     // Câmera segue o dino interpolado; vertical não scrolla (o mundo cabe na altura).
