@@ -43,8 +43,8 @@ determinística e coberta por testes. Esta é a fundação de tudo.
 - [x] Testes (inclui multiplicadores e bordas).
 
 ### 1.9 Replay / golden master
-- [ ] Suporte a rodar `sim(seed, InputTimeline)` headless e hashear o estado.
-- [ ] Golden master para seeds fixas (detecta regressão de determinismo).
+- [x] Suporte a rodar `sim(seed, InputTimeline)` headless e hashear o estado.
+- [x] Golden master para seeds fixas (detecta regressão de determinismo).
 
 ## Definição de pronto
 - Toda a simulação roda headless. Bateria de determinismo verde no CI.
