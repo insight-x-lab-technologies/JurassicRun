@@ -72,10 +72,10 @@ JSON (`en` default + es, pt-BR, fr, it, de, ja, zh, ko, hi) e `t()` no app shell
 GitHub Actions (`.github/workflows/ci.yml`) rodando `check` + `test` + `test:determinism`
 em PRs e pushes no `main`.
 
-**Fase 1 (núcleo determinístico headless) — EM ANDAMENTO.** Itens 1.1 (RNG), 1.2
+**Fase 1 (núcleo determinístico headless) — CONCLUÍDA.** Itens 1.1 (RNG), 1.2
 (derivação de seeds), 1.3 (modelo de mundo + loop de passo fixo), 1.4 (geração de
-obstáculos), 1.5 (coletáveis), 1.6 (colisão), 1.7 (dificuldade) e 1.8 (economia e score)
-concluídos.
+obstáculos), 1.5 (coletáveis), 1.6 (colisão), 1.7 (dificuldade), 1.8 (economia e score) e
+1.9 (replay / golden master) concluídos.
 
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
@@ -159,6 +159,24 @@ food/near-miss > 0 exercitados; determinism-guardian "contrato intacto"). **Adia
 multiplicador de comida ("moeda dobrada") e fontes de `scoreMultiplier` (power-ups); conversão
 comida→saldo de moedas e exibição de score (HUD/Game Over, Fase 2/4).
 
-Próximo: **item 1.9 (replay / golden master — rodar `sim(seed, InputTimeline)` headless e
-hashear o estado; golden master p/ seeds fixas detecta regressão de determinismo)**. Ver
-`docs/roadmap/PHASE-01-deterministic-core.md`.
+1.9 (replay / golden master): `src/core/replay/` módulo-folha puro. `simulate(config, timeline)`
+roda a simulação headless do início ao fim (compõe `createWorld`+`step`, fps-independente);
+`buildTimeline(length, pattern)` monta uma `InputTimeline` (`readonly InputFrame[]`)
+determinística. `hashState(world)` é um digest canônico **portável** de 128 bits (32 hex) do
+estado VISÍVEL do mundo: percorre os campos em ordem fixa e absorve cada número pelos **bits
+IEEE-754 do float64** via `DataView` com `littleEndian=true` explícito (independe da endianness
+da plataforma; `-0`→`+0`), num acumulador de 4 lanes uint32 estilo `xmur3`/`scramble`. Não lê o
+estado interno privado dos `SpawnGenerator` (só presença): numa timeline fixa todo draw de RNG
+já se manifesta nas entidades emitidas. Golden master em
+`tests/determinism/replay.determinism.test.ts`: pinos commitados de `(seed, timeline)` fixos
+(sem-seed, `endless:GOLD1` com/sem difficulty, `endless:GOLD2`) + asserções de que seeds e
+difficulty distintos ⇒ hashes distintos. Guardas de completude impedem que o hash omita
+silenciosamente um campo novo: `default: never` no switch de `Hitbox` (erro de `tsc` ao
+adicionar um kind) + teste que pina as chaves de `WorldState`/`Entity` (falha ao adicionar um
+campo sem atualizar `hashState` e re-pinar os goldens). Suíte verde (`check` limpo, 202 testes,
+determinismo 54; determinism-guardian "contrato intacto", review final "READY TO MERGE").
+**Adiado:** cenário golden que exercite `nearMisses>0` (redundante — já coberto por
+`economy.determinism.test.ts`).
+
+Próximo: **Fase 2 (vertical slice jogável Endless — 1º milestone: render Phaser, parallax, HUD,
+input, loop fixo↔render)**. Ver `docs/roadmap/PHASE-02-endless-vertical-slice.md`.
