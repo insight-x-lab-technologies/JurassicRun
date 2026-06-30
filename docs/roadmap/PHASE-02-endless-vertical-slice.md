@@ -6,9 +6,9 @@ com input, parallax, HUD e Game Over. Tudo geométrico. **60fps+**. Prova a base
 ## Itens
 
 ### 2.1 Render Phaser sobre o core
-- [ ] `GameScene` lê `WorldState`; interpolação entre steps.
-- [ ] Loop: acumulador + passo fixo (render desacoplado da sim).
-- [ ] Pterodáctilo, obstáculos e pássaros-moeda desenhados via manifesto (primitivas).
+- [x] `GameScene` lê `WorldState`; interpolação entre steps.
+- [x] Loop: acumulador + passo fixo (render desacoplado da sim).
+- [x] Pterodáctilo, obstáculos e pássaros-moeda desenhados via manifesto (primitivas).
 
 ### 2.2 Input
 - [ ] Flap por toque/clique/tecla. Input amostrado por step da simulação.
