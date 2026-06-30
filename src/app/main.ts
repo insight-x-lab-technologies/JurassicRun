@@ -1,16 +1,16 @@
-import { render, h } from 'preact';
 import { i18n } from '@services/i18n';
+import { createWorld } from '@core/sim';
+import { createGame } from '@render/game';
 
 async function bootstrap(): Promise<void> {
   await i18n.init();
   document.documentElement.lang = i18n.getLanguage();
   document.title = i18n.t('app.title');
 
-  const root = document.getElementById('app');
-  if (root) {
-    // Shell vazio: a árvore de telas entra na Fase 4. Sem texto hardcoded — via i18n.
-    render(h('div', { id: 'app-shell' }), root);
-  }
+  // Mundo de demonstração para o vertical slice (seed aleatória/fluxo real é 2.5).
+  // O shell Preact de telas entra na Fase 4; em 2.1 o canvas ocupa a tela.
+  const world = createWorld({ seed: 'endless:DEMO' });
+  createGame('app', world);
 }
 
 void bootstrap();

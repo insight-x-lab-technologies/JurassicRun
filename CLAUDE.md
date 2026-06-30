@@ -77,6 +77,9 @@ em PRs e pushes no `main`.
 obstáculos), 1.5 (coletáveis), 1.6 (colisão), 1.7 (dificuldade), 1.8 (economia e score) e
 1.9 (replay / golden master) concluídos.
 
+**Fase 2 (vertical slice jogável Endless) — EM ANDAMENTO.** Item 2.1 (render Phaser sobre
+o core) concluído; faltam 2.2 (input) … 2.7 (performance).
+
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
 `hashSeed`) com `next`/`range`/`int`/`pick`/`fork`/`clone`/`nextUint32` e `seed`/`state`;
@@ -178,5 +181,26 @@ determinismo 54; determinism-guardian "contrato intacto", review final "READY TO
 **Adiado:** cenário golden que exercite `nearMisses>0` (redundante — já coberto por
 `economy.determinism.test.ts`).
 
-Próximo: **Fase 2 (vertical slice jogável Endless — 1º milestone: render Phaser, parallax, HUD,
-input, loop fixo↔render)**. Ver `docs/roadmap/PHASE-02-endless-vertical-slice.md`.
+2.1 (render Phaser sobre o core): `src/render/` — primeira camada de render, dividida em
+módulos PUROS testáveis (sem `phaser`, env node) e a casca Phaser (sem teste de unidade).
+`FixedStepLoop` (`loop.ts`) roda o loop canônico acumulador+passo fixo (clamp `MAX_FRAME_TIME`
+anti spiral-of-death; consulta `InputSource` 1×/step; chama `step` do core) e expõe interpolação
+do dino via `renderX/renderY`=`lerp(prev,curr,alpha)`, `alpha=accumulator/FIXED_DT`. O estado de
+interpolação é SÓ a posição do dino (obstáculos são estáticos em coords de mundo ⇒ câmera seguindo
+o dino interpolado suaviza o cenário) ⇒ zero clone de `WorldState` por frame (REGRA 3). Manifesto
+de assets (`manifest.ts`, REGRA 2): `id lógico → Renderable` (`primitive {color, shape?}` agora;
+`sprite` depois) + guarda de completude testada (todo id de `OBSTACLE_CATALOG`/`COLLECTIBLE_CATALOG`
++ `DINO_TYPE_ID`). `GameScene` (Phaser) lê `WorldState`, câmera scrolla em x seguindo `renderX`,
+desenha cada entity pela geometria da hitbox na cor do manifesto (dino = triângulo cosmético);
+canvas lógico 320×180 (`Scale.FIT`, 1 unidade=1px). `InputSource`/`NullInputSource` (input real é
+2.2). `import * as Phaser from 'phaser'` só em `GameScene`/`game`; `src/render/index.ts` reexporta
+só os módulos puros (não vaza phaser p/ testes). `main.ts` cria um mundo de demo (`endless:DEMO`)
+e monta o jogo. **Core NÃO tocado** ⇒ determinismo intacto. Suíte verde (`check` limpo, 216 testes,
+determinismo 54; review final "READY TO MERGE"). Verificação visual (playwright) confirmada.
+**Adiados (Fase 2):** alocação-zero no `update` — `points.map`/`boundsOf` alocam por frame — e
+`default: never` no switch de `drawPrimitive` (guarda de exaustividade) p/ 2.7 (pooling/culling);
+input real p/ 2.2 (e `NullInputSource` reusar objeto); teste-guarda estático "render puro não
+importa phaser" (backlog).
+
+Próximo: **2.2 (input)** — flap por toque/clique/tecla amostrado por step; pausar/retomar. Ver
+`docs/roadmap/PHASE-02-endless-vertical-slice.md`.
