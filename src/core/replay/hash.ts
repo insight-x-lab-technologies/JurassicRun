@@ -79,6 +79,12 @@ function encodeHitbox(d: Digest, h: Hitbox): void {
       d.word(h.points.length);
       for (const p of h.points) encodeVec2(d, p);
       break;
+    default: {
+      // Se um novo kind for adicionado a Hitbox sem atualizar este switch,
+      // o TypeScript emite erro de compilação aqui (narrowing para never).
+      const _exhaustive: never = h;
+      void _exhaustive;
+    }
   }
 }
 
@@ -103,6 +109,14 @@ function encodePterodactyl(d: Digest, p: Pterodactyl): void {
  * obstáculos + coletáveis + presença dos geradores). Não lê o estado interno privado dos
  * SpawnGenerator: numa timeline fixa todo draw de RNG já se manifesta nas entidades emitidas.
  * Saída: 32 chars hex (128 bits).
+ *
+ * MANUTENCAO: se você adicionar um campo a WorldState ou Entity (src/core/sim/types.ts),
+ * ou um novo kind a Hitbox, você DEVE:
+ *   1. Codificar o novo campo aqui (em encodeHitbox/encodeEntity/hashState).
+ *   2. Re-gerar os pinos dourados em tests/determinism/replay.determinism.test.ts.
+ *   3. Atualizar o teste de completude em tests/core/replay/hash-completeness.test.ts.
+ * O teste de completude e o narrowing `never` no encodeHitbox existem para forçar
+ * esse lembrete de forma ruidosa (falha de compilação ou falha de teste).
  */
 export function hashState(world: WorldState): string {
   const d = new Digest();
