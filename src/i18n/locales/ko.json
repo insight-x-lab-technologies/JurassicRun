@@ -2,5 +2,13 @@
   "app": {
     "title": "JurassicRun",
     "loading": "불러오는 중…"
+  },
+  "hud": {
+    "distance": "거리: {{value}}m",
+    "food": "먹이: {{value}}",
+    "fps": "FPS: {{value}}",
+    "level": "Lv {{value}}",
+    "speed": "속도: {{value}}",
+    "seed": "시드: {{value}}"
   }
 }

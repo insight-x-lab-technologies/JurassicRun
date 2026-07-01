@@ -2,5 +2,13 @@
   "app": {
     "title": "JurassicRun",
     "loading": "लोड हो रहा है…"
+  },
+  "hud": {
+    "distance": "दूरी: {{value}}m",
+    "food": "भोजन: {{value}}",
+    "fps": "FPS: {{value}}",
+    "level": "स्तर {{value}}",
+    "speed": "गति: {{value}}",
+    "seed": "सीड: {{value}}"
   }
 }

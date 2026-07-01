@@ -18,8 +18,8 @@ com input, parallax, HUD e Game Over. Tudo geométrico. **60fps+**. Prova a base
 - [x] ≥3 camadas de fundo com scrollFactors distintos (profundidade).
 
 ### 2.4 HUD
-- [ ] Distância, comida (moedas), **fps**, nível, velocidade do dino, **seed** em execução.
-- [ ] Atualização com throttle (não custa fps).
+- [x] Distância, comida (moedas), **fps**, nível, velocidade do dino, **seed** em execução.
+- [x] Atualização com throttle (não custa fps).
 
 ### 2.5 Fluxo de partida
 - [ ] Iniciar Endless com seed aleatória (exibida).

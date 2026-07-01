@@ -5,3 +5,4 @@ export * from './input';
 export * from './manifest';
 export * from './loop';
 export * from './parallax';
+export * from './hud';
