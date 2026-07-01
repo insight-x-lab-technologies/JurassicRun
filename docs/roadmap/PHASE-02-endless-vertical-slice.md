@@ -11,8 +11,8 @@ com input, parallax, HUD e Game Over. Tudo geométrico. **60fps+**. Prova a base
 - [x] Pterodáctilo, obstáculos e pássaros-moeda desenhados via manifesto (primitivas).
 
 ### 2.2 Input
-- [ ] Flap por toque/clique/tecla. Input amostrado por step da simulação.
-- [ ] Pausar/retomar.
+- [x] Flap por toque/clique/tecla. Input amostrado por step da simulação.
+- [x] Pausar/retomar.
 
 ### 2.3 Parallax multicamadas
 - [ ] ≥3 camadas de fundo com scrollFactors distintos (profundidade).

@@ -13,3 +13,11 @@ export const SKY_COLOR = 0x9ad4e6;
 export const GROUND_COLOR = 0x4a7a3a;
 export const CEILING_COLOR = 0x3a2f4a;
 export const GROUND_THICKNESS = 6;
+
+/** event.code das teclas. Flap e pausa são DISJUNTAS (pausar nunca conta como flap). */
+export const FLAP_KEYS: readonly string[] = ['Space', 'ArrowUp'];
+export const PAUSE_KEYS: readonly string[] = ['KeyP', 'Escape'];
+
+/** Overlay de pausa: escurecimento sem texto (rótulo i18n é 2.4/2.6). */
+export const PAUSE_OVERLAY_COLOR = 0x000000;
+export const PAUSE_OVERLAY_ALPHA = 0.45;
