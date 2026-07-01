@@ -78,7 +78,7 @@ obstáculos), 1.5 (coletáveis), 1.6 (colisão), 1.7 (dificuldade), 1.8 (economi
 1.9 (replay / golden master) concluídos.
 
 **Fase 2 (vertical slice jogável Endless) — EM ANDAMENTO.** Itens 2.1 (render Phaser sobre
-o core) e 2.2 (input) concluídos; faltam 2.3 (parallax) … 2.7 (performance).
+o core), 2.2 (input) e 2.3 (parallax) concluídos; faltam 2.4 (HUD) … 2.7 (performance).
 
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
@@ -224,5 +224,25 @@ após o load — tuning de demo herdado de 2.1, fora do escopo de input; fluxo/s
 e usar o cleanup ao entrar a shell Preact (2.5/Fase 4); `preventDefault` no `Escape`/fullscreen
 (2.7/Fase 7).
 
-Próximo: **2.3 (parallax multicamadas)** — ≥3 camadas de fundo com scrollFactors distintos. Ver
-`docs/roadmap/PHASE-02-endless-vertical-slice.md`.
+2.3 (parallax multicamadas): `src/render/parallax.ts` — módulo PURO (sem `phaser`, testável)
+com `PARALLAX_LAYERS` (catálogo trás→frente: `bg.layer.far` scrollFactor 0.2 / `mid` 0.4 /
+`near` 0.7, `scrollFactor` em `[0,1)` estritamente crescente = profundidade pela ordem do
+array) e `parallaxTileOffset(scrollX, factor)=scrollX·factor`. `ParallaxVisual` espelha o
+`Renderable` do manifesto (`primitive` geométrico agora / `sprite` na Fase 8, REGRA 2). Casca
+na `GameScene`: `ensureLayerTexture` gera 1× (idempotente + `destroy`, sem leak) uma textura de
+tile transparente com linha de triângulos (silhueta) por camada; um `TileSprite` por camada
+(`setOrigin(0,0)`/`setScrollFactor(0)`/`setDepth(-(N-index))` ⇒ far=-3/mid=-2/near=-1, atrás do
+mundo/faixas e do overlay de pausa em 1000). No ramo NÃO-pausado do `update` (congela sob pausa,
+como 2.2), laço `for` indexado seta `tilePositionX = parallaxTileOffset(cameras.main.scrollX,
+factor)` ⇒ tiling infinito, **zero alocação por frame** (REGRA 3; só escalares). Derivado do
+`scrollX` ABSOLUTO ⇒ fps-independente sem drift. **Core NÃO tocado** ⇒ determinismo intacto.
+3 asset-specs (`docs/assets/specs/bg.layer.{far,mid,near}.md`) + registry placeholder→spec
+(REGRA 5). Suíte verde (`check` limpo, 240 testes, determinismo 54; review final "READY TO
+MERGE"). Verificação visual (Playwright, exposição TEMP revertida): `tilePositionX/scrollX` =
+`[0.2,0.4,0.7]` exatos em runtime; 3 camadas com profundidade correta. **Adiados (Fase 8):**
+ramo `sprite` de `ensureLayerTexture` não carrega textura ainda; `bg.layer.far` (`baseFromBottom
+40`) flutua ~40px (tuning cosmético); cores/alturas são placeholders. `default: never` do switch
+segue adiado p/ 2.7 (herdado de 2.1).
+
+Próximo: **2.4 (HUD)** — distância, comida, fps, nível, velocidade e seed em execução, com
+throttle. Ver `docs/roadmap/PHASE-02-endless-vertical-slice.md`.
