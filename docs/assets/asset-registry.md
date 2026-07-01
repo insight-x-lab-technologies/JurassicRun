@@ -38,9 +38,9 @@ usada no manifesto de assets do render.
 ## Fundos / parallax
 | id | descrição | status | spec |
 |----|-----------|--------|------|
-| `bg.layer.far` | camada distante | placeholder | — |
-| `bg.layer.mid` | camada média | placeholder | — |
-| `bg.layer.near` | camada próxima | placeholder | — |
+| `bg.layer.far` | montanhas distantes (parallax) | spec | `specs/bg.layer.far.md` |
+| `bg.layer.mid` | colinas médias (parallax) | spec | `specs/bg.layer.mid.md` |
+| `bg.layer.near` | samambaias próximas (parallax) | spec | `specs/bg.layer.near.md` |
 
 ## Clima / tempo do dia (overlays)
 | id | descrição | status | spec |

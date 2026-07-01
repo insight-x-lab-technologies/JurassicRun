@@ -8,7 +8,7 @@ export const DINO_SCREEN_X = 80;
 /** Clamp do dt de frame (s): evita spiral-of-death quando a aba volta do background. */
 export const MAX_FRAME_TIME = 0.25;
 
-// Cores de cenário (placeholder; parallax real é 2.3).
+// Cores de cenário fixo (céu de fundo, faixas de teto/chão). Parallax multicamadas: parallax.ts.
 export const SKY_COLOR = 0x9ad4e6;
 export const GROUND_COLOR = 0x4a7a3a;
 export const CEILING_COLOR = 0x3a2f4a;

@@ -15,7 +15,7 @@ com input, parallax, HUD e Game Over. Tudo geométrico. **60fps+**. Prova a base
 - [x] Pausar/retomar.
 
 ### 2.3 Parallax multicamadas
-- [ ] ≥3 camadas de fundo com scrollFactors distintos (profundidade).
+- [x] ≥3 camadas de fundo com scrollFactors distintos (profundidade).
 
 ### 2.4 HUD
 - [ ] Distância, comida (moedas), **fps**, nível, velocidade do dino, **seed** em execução.

@@ -4,3 +4,4 @@ export * from './interpolate';
 export * from './input';
 export * from './manifest';
 export * from './loop';
+export * from './parallax';
