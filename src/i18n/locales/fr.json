@@ -2,5 +2,13 @@
   "app": {
     "title": "JurassicRun",
     "loading": "Chargement…"
+  },
+  "hud": {
+    "distance": "Dist: {{value}}m",
+    "food": "Nourriture: {{value}}",
+    "fps": "FPS: {{value}}",
+    "level": "Niv {{value}}",
+    "speed": "Vit: {{value}}",
+    "seed": "Graine: {{value}}"
   }
 }
