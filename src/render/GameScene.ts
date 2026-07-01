@@ -3,8 +3,7 @@ import { boundsOf } from '@core/sim';
 import type { Entity, Hitbox, WorldState } from '@core/sim';
 import { FixedStepLoop } from './loop';
 import { renderableFor, DINO_TYPE_ID } from './manifest';
-import type { InputSource } from './input';
-import type { PauseController } from './input';
+import type { InputSource, PauseController } from './input';
 import {
   VIEW_WIDTH,
   VIEW_HEIGHT,

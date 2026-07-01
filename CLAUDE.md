@@ -77,8 +77,8 @@ em PRs e pushes no `main`.
 obstáculos), 1.5 (coletáveis), 1.6 (colisão), 1.7 (dificuldade), 1.8 (economia e score) e
 1.9 (replay / golden master) concluídos.
 
-**Fase 2 (vertical slice jogável Endless) — EM ANDAMENTO.** Item 2.1 (render Phaser sobre
-o core) concluído; faltam 2.2 (input) … 2.7 (performance).
+**Fase 2 (vertical slice jogável Endless) — EM ANDAMENTO.** Itens 2.1 (render Phaser sobre
+o core) e 2.2 (input) concluídos; faltam 2.3 (parallax) … 2.7 (performance).
 
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
@@ -202,5 +202,27 @@ determinismo 54; review final "READY TO MERGE"). Verificação visual (playwrigh
 input real p/ 2.2 (e `NullInputSource` reusar objeto); teste-guarda estático "render puro não
 importa phaser" (backlog).
 
-Próximo: **2.2 (input)** — flap por toque/clique/tecla amostrado por step; pausar/retomar. Ver
+2.2 (input): `src/render/` ganha input real, mantendo módulos PUROS testáveis × casca DOM
+(sem teste de unidade, como 2.1). `FlapInputSource` (puro) reporta o estado ATUAL do botão
+(a borda "1 flap por pressão" continua no core via `lastFlap`); rastreia multi-fonte (dedo +
+tecla) por `Set<string>` de ids e um `latch` que garante 1 flap num tap sub-frame; flag
+`wasHeld` distingue autorepeat de tap (evita flap-fantasma). `sample()` é alocação-zero (reusa
+um `InputFrame`; `NullInputSource` idem — fecha pendência de 2.1). `PauseController` (puro):
+`paused`/`toggle`/`pause`/`resume` + hook `onPause`. Casca: `controls.ts` (`bindGameControls`
+liga pointerdown/up/cancel + keydown/up → flap; `P`/`Escape` → pausa; `blur` → auto-pausa;
+`preventDefault` só em Space/ArrowUp; retorna cleanup) e o gate na `GameScene` (quando
+`paused`, `update` não chama `loop.advance` ⇒ sim congela sem acumular tempo; overlay
+escurecido não-textual, sem string de UI — rótulo i18n fica p/ 2.4/2.6). `game.ts` passa a
+`createGame(parent, world, {input?, pause?})`; `main.ts` cabeia tudo (`onPause=()=>flap.reset()`).
+**Core NÃO tocado** ⇒ determinismo intacto. Suíte verde (`check` limpo, 232 testes,
+determinismo 54; reviews spec✅/qualidade e review final "READY TO MERGE"). Verificação visual
+(Playwright, via exposição TEMP revertida): flap trava/reverte a queda do dino; `P`/`Escape`
+congela o tick (606→606) e retoma (609→627); overlay escurece a cena. **Observado (adiado p/
+2.5):** o mundo de demo nasce o dino a 8px do chão (startY 172, worldHeight 180) ⇒ morre ~0,5s
+após o load — tuning de demo herdado de 2.1, fora do escopo de input; fluxo/seed de partida é
+2.5. **Adiados (Fase 2/4):** rótulo textual de pausa (2.4/2.6); escopar `pointerdown` ao canvas
+e usar o cleanup ao entrar a shell Preact (2.5/Fase 4); `preventDefault` no `Escape`/fullscreen
+(2.7/Fase 7).
+
+Próximo: **2.3 (parallax multicamadas)** — ≥3 camadas de fundo com scrollFactors distintos. Ver
 `docs/roadmap/PHASE-02-endless-vertical-slice.md`.
