@@ -54,4 +54,16 @@ describe('formatHudValues', () => {
       seed: 'endless:DEMO',
     });
   });
+
+  it('arredonda .5 para cima (Math.round) e formata zeros', () => {
+    const view = formatHudValues({ distance: 0, food: 0, fps: 59.5, level: 1, speed: 0.5, seed: '' });
+    expect(view).toEqual({
+      distance: '0',
+      food: '0',
+      fps: '60',
+      level: '1',
+      speed: '1',
+      seed: '',
+    });
+  });
 });
