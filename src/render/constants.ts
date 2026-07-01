@@ -28,3 +28,8 @@ export const HUD_TEXT_X = 4;
 export const HUD_TEXT_Y = 4;
 export const HUD_FONT_SIZE = '8px';
 export const HUD_TEXT_COLOR = '#ffffff';
+
+/** Prompt do estado `ready` (2.5): centralizado, entre HUD (900) e overlay de pausa (1000). */
+export const READY_PROMPT_DEPTH = 950;
+export const READY_PROMPT_FONT_SIZE = '12px';
+export const READY_PROMPT_COLOR = '#ffffff';

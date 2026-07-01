@@ -1,23 +1,19 @@
 import * as Phaser from 'phaser';
-import type { WorldState } from '@core/sim';
 import { GameScene } from './GameScene';
-import { NullInputSource, PauseController } from './input';
-import type { InputSource } from './input';
+import { PauseController } from './input';
+import type { MatchController } from './match';
 import { VIEW_WIDTH, VIEW_HEIGHT, SKY_COLOR } from './constants';
 
 export interface GameDeps {
-  input?: InputSource;
   pause?: PauseController;
-  seedLabel?: string;
 }
 
-/** Cria o Phaser.Game montando a GameScene que renderiza `world`. Deps default = nulo/sem pausa (2.2 pluga real). */
+/** Cria o Phaser.Game montando a GameScene que renderiza a partida corrente do `match`. */
 export function createGame(
   parent: string | HTMLElement,
-  world: WorldState,
+  match: MatchController,
   deps: GameDeps = {},
 ): Phaser.Game {
-  const input = deps.input ?? new NullInputSource();
   const pause = deps.pause ?? new PauseController();
   return new Phaser.Game({
     type: Phaser.AUTO,
@@ -26,6 +22,6 @@ export function createGame(
     height: VIEW_HEIGHT,
     backgroundColor: SKY_COLOR,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [new GameScene(world, input, pause, deps.seedLabel ?? '')],
+    scene: [new GameScene(match, pause)],
   });
 }
