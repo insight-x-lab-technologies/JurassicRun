@@ -78,7 +78,8 @@ obstáculos), 1.5 (coletáveis), 1.6 (colisão), 1.7 (dificuldade), 1.8 (economi
 1.9 (replay / golden master) concluídos.
 
 **Fase 2 (vertical slice jogável Endless) — EM ANDAMENTO.** Itens 2.1 (render Phaser sobre
-o core), 2.2 (input) e 2.3 (parallax) concluídos; faltam 2.4 (HUD) … 2.7 (performance).
+o core), 2.2 (input), 2.3 (parallax) e 2.4 (HUD) concluídos; faltam 2.5 (fluxo de partida) …
+2.7 (performance).
 
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
@@ -244,5 +245,28 @@ ramo `sprite` de `ensureLayerTexture` não carrega textura ainda; `bg.layer.far`
 40`) flutua ~40px (tuning cosmético); cores/alturas são placeholders. `default: never` do switch
 segue adiado p/ 2.7 (herdado de 2.1).
 
-Próximo: **2.4 (HUD)** — distância, comida, fps, nível, velocidade e seed em execução, com
-throttle. Ver `docs/roadmap/PHASE-02-endless-vertical-slice.md`.
+2.4 (HUD): `src/render/hud.ts` — módulo PURO (sem `phaser`, testável) com `HudTicker`
+(throttle de refresh que, ao fechar a janela de `HUD_REFRESH_INTERVAL`=0.2s, devolve o
+**fps** = frames÷tempo decorrido; `tick(dt)` alocação-zero, só escalares — REGRA 3) e
+`formatHudValues(raw)→HudView` (floor de distância/comida/nível, round de fps/velocidade,
+seed passthrough; rótulos/unidades vivem nas chaves i18n). Casca na `GameScene`: um
+`Phaser.Text` (`setScrollFactor(0)`/`setDepth(900)` — acima do mundo/parallax, ABAIXO do
+overlay de pausa em 1000) criado em `create()` com refresh inicial; no ramo NÃO-pausado do
+`update()` (congela sob pausa, como 2.2/2.3) chama `hudTicker.tick(dt)` e, só quando fecha a
+janela (~5 Hz), `refreshHud(fps)` monta as 6 linhas via `i18n.t('hud.<campo>', {value})` sobre
+`formatHudValues` lido do `world` por referência (distância, comida, fps, nível,
+`world.scrollSpeed`, seed) ⇒ `setText`/alocação de string SÓ no refresh, fora do hot path.
+Chaves i18n `hud.{distance,food,fps,level,speed,seed}` (com `{{value}}`) nos 10 locales
+(REGRA 4; paridade garantida por `tests/i18n/locales.test.ts`). Seed plumbada por
+`GameDeps.seedLabel` (→ `GameScene`, 4º arg; `main.ts` reusa a mesma const p/ `createWorld` e
+`createGame`) — 2.5 liga à seed real da partida. **Core NÃO tocado** ⇒ determinismo intacto.
+Suíte verde (`check` limpo, 247 testes; determinismo 54 intactos; reviews de task spec✅/
+qualidade e review final "READY TO MERGE"). Verificação visual (Playwright): os 6 campos
+aparecem legíveis no canto, `Seed: endless:DEMO` bate com a config, `Speed: 123`=`scrollSpeed`
+base, e o FPS refresca ao vivo (30→47). **Adiados:** o dino de demo ainda morre nos primeiros
+frames (startY perto do chão) ⇒ distância não avança na demo — é o **fluxo de partida 2.5**
+(fora do escopo do HUD); rótulo textual de pausa segue p/ 2.6.
+
+Próximo: **2.5 (fluxo de partida)** — iniciar Endless com seed aleatória (exibida), morte ao
+colidir, dificuldade crescente, reinício do zero a cada partida (resolve a morte-imediata da
+demo). Ver `docs/roadmap/PHASE-02-endless-vertical-slice.md`.
