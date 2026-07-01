@@ -10,5 +10,8 @@
     "level": "Niv {{value}}",
     "speed": "Vit: {{value}}",
     "seed": "Graine: {{value}}"
+  },
+  "match": {
+    "tapToStart": "Touchez pour commencer"
   }
 }

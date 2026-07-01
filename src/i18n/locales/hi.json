@@ -10,5 +10,8 @@
     "level": "स्तर {{value}}",
     "speed": "गति: {{value}}",
     "seed": "सीड: {{value}}"
+  },
+  "match": {
+    "tapToStart": "शुरू करने के लिए टैप करें"
   }
 }

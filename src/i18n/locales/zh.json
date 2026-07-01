@@ -10,5 +10,8 @@
     "level": "等级 {{value}}",
     "speed": "速度: {{value}}",
     "seed": "种子: {{value}}"
+  },
+  "match": {
+    "tapToStart": "点击开始"
   }
 }

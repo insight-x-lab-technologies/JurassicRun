@@ -10,5 +10,8 @@
     "level": "Nív {{value}}",
     "speed": "Vel: {{value}}",
     "seed": "Semente: {{value}}"
+  },
+  "match": {
+    "tapToStart": "Toque para começar"
   }
 }
