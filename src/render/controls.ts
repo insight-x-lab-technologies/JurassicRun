@@ -7,10 +7,12 @@ import type { FlapInputSource, PauseController } from './input';
  */
 export function bindGameControls(
   target: Window,
-  controls: { flap: FlapInputSource; pause: PauseController },
+  controls: { flap: FlapInputSource; pause: PauseController; onFlap?: () => void },
 ): () => void {
-  const { flap, pause } = controls;
-  const onPointerDown = (e: PointerEvent): void => flap.press(`pointer:${e.pointerId}`);
+  const { flap, pause, onFlap } = controls;
+  const onPointerDown = (e: PointerEvent): void => {
+    if (flap.press(`pointer:${e.pointerId}`)) onFlap?.();
+  };
   const onPointerUp = (e: PointerEvent): void => flap.release(`pointer:${e.pointerId}`);
   const onKeyDown = (e: KeyboardEvent): void => {
     if (PAUSE_KEYS.includes(e.code)) {
@@ -19,7 +21,7 @@ export function bindGameControls(
     }
     if (FLAP_KEYS.includes(e.code)) {
       e.preventDefault(); // Space/ArrowUp não rolam a página
-      flap.press(`key:${e.code}`);
+      if (flap.press(`key:${e.code}`)) onFlap?.();
     }
   };
   const onKeyUp = (e: KeyboardEvent): void => {

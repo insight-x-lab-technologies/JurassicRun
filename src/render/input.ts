@@ -29,15 +29,16 @@ export class FlapInputSource implements InputSource {
   private wasHeld = false;
   private readonly frame: InputFrame = { flap: false };
 
-  /** Pressiona uma fonte (id estável: `pointer:<id>`, `key:Space`, …). */
-  press(id: string): void {
+  /** Pressiona uma fonte (id estável). Retorna true numa pressão fresca (borda), false no autorepeat. */
+  press(id: string): boolean {
     if (this.active.has(id)) {
       // autorepeat: mesmo id pressionado enquanto já ativo — marca "segurado"
       this.wasHeld = true;
-    } else {
-      this.active.add(id);
-      this.latched = true;
+      return false;
     }
+    this.active.add(id);
+    this.latched = true;
+    return true;
   }
 
   /** Solta uma fonte; soltar id ausente é no-op. */
