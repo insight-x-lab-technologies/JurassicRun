@@ -78,8 +78,8 @@ obstáculos), 1.5 (coletáveis), 1.6 (colisão), 1.7 (dificuldade), 1.8 (economi
 1.9 (replay / golden master) concluídos.
 
 **Fase 2 (vertical slice jogável Endless) — EM ANDAMENTO.** Itens 2.1 (render Phaser sobre
-o core), 2.2 (input), 2.3 (parallax) e 2.4 (HUD) concluídos; faltam 2.5 (fluxo de partida) …
-2.7 (performance).
+o core), 2.2 (input), 2.3 (parallax), 2.4 (HUD) e 2.5 (fluxo de partida) concluídos; faltam
+2.6 (Game Over overlay) e 2.7 (performance).
 
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
@@ -267,6 +267,30 @@ base, e o FPS refresca ao vivo (30→47). **Adiados:** o dino de demo ainda morr
 frames (startY perto do chão) ⇒ distância não avança na demo — é o **fluxo de partida 2.5**
 (fora do escopo do HUD); rótulo textual de pausa segue p/ 2.6.
 
-Próximo: **2.5 (fluxo de partida)** — iniciar Endless com seed aleatória (exibida), morte ao
-colidir, dificuldade crescente, reinício do zero a cada partida (resolve a morte-imediata da
-demo). Ver `docs/roadmap/PHASE-02-endless-vertical-slice.md`.
+2.5 (fluxo de partida): ciclo de partida real por cima do core (intocado ⇒ morte por colisão/
+chão, dificuldade crescente e reinício-do-zero já vinham das Fases 1.6/1.7). Três peças novas em
+`src/render/` no padrão puro×casca: (1) `seedSource.ts` — seed Endless aleatória FORA do core:
+parte pura `endlessSeedFromUint32(v)=endlessSeed(randomEndlessToken(v>>>0))` (testada) + casca
+`randomEndlessSeed()` via `crypto.getRandomValues` (único ponto de aleatoriedade real). (2)
+`match.ts` — `MatchController` PURO (sem phaser, testável): máquina de estados
+`ready→playing→dead→restart`; possui o `WorldState`+`FixedStepLoop`+`seedLabel` da partida
+corrente via `factory` injetável; `advance(dt)` só roda a sim em `playing` (no-op em `ready`/
+`dead` ⇒ **resolve a morte-imediata da demo**: sim congelada até o 1º tap) e vira `dead` quando
+`world.alive` cai; `notifyFlap()` (borda) faz `ready→playing` (o mesmo tap vira o 1º flap via
+latch) e, em `dead`, monta nova partida (nova seed/world) + hook `onNewMatch`. (3) borda de flap:
+`FlapInputSource.press` passa a retornar `boolean` (fresco×autorepeat) e `bindGameControls` ganha
+`onFlap?` disparado só na borda genuína → `notifyFlap`. Casca `GameScene` agora é dirigida pelo
+`MatchController` (lê `world`/`loop`/`seedLabel`/`phase` por frame) + prompt central i18n
+`match.tapToStart` (10 locales, REGRA 4) visível só em `ready` (depth 950, entre HUD 900 e overlay
+1000); `game.ts`=`createGame(parent, match, {pause?})`; `main.ts` monta o ciclo com factory
+`randomEndlessSeed()`+`createWorld` e `onNewMatch=()=>flap.reset()` (tap de restart não vira 1º
+flap). Gate de pausa preservado (congela qualquer fase). Hot path alocação-zero (trabalho só nas
+transições). **Core NÃO tocado** ⇒ determinismo intacto. Suíte verde (`check` limpo, 260 testes,
+determinismo 54; reviews de task spec✅/qualidade — Minors não-bloqueadores: `!` de atribuição em
+`_world`/`_loop` e `deltaMs/1000` recalculado). **Adiados:** overlay de Game Over com estatísticas
+(distância/comida/near-misses) e botões reiniciar/sair é o **2.6** — em 2.5 o restart-on-tap em
+`dead` já funciona, sem UI de morte; pooling/culling é 2.7.
+
+Próximo: **2.6 (Game Over overlay básico)** — overlay no estado `dead` com estatísticas
+(distância, comida, near-misses) e botões reiniciar/sair. Ver
+`docs/roadmap/PHASE-02-endless-vertical-slice.md`.
