@@ -1,9 +1,9 @@
 import * as Phaser from 'phaser';
 import { boundsOf } from '@core/sim';
-import type { Entity, Hitbox, WorldState } from '@core/sim';
-import { FixedStepLoop } from './loop';
+import type { Entity, Hitbox } from '@core/sim';
 import { renderableFor, DINO_TYPE_ID } from './manifest';
-import type { InputSource, PauseController } from './input';
+import type { MatchController } from './match';
+import type { PauseController } from './input';
 import { PARALLAX_LAYERS, parallaxTileOffset } from './parallax';
 import type { ParallaxLayer } from './parallax';
 import { i18n } from '@services/i18n';
@@ -22,27 +22,26 @@ import {
   HUD_TEXT_Y,
   HUD_FONT_SIZE,
   HUD_TEXT_COLOR,
+  READY_PROMPT_DEPTH,
+  READY_PROMPT_FONT_SIZE,
+  READY_PROMPT_COLOR,
 } from './constants';
 
-/** Renderiza o WorldState lido do core. Não altera a simulação (REGRA 1). */
+/** Renderiza o WorldState lido do core via MatchController. Não altera a simulação (REGRA 1). */
 export class GameScene extends Phaser.Scene {
-  private readonly world: WorldState;
-  private readonly inputSource: InputSource;
+  private readonly match: MatchController;
   private readonly pause: PauseController;
-  private loop!: FixedStepLoop;
   private parallaxTiles: Phaser.GameObjects.TileSprite[] = [];
   private gfx!: Phaser.GameObjects.Graphics;
   private pauseOverlay!: Phaser.GameObjects.Graphics;
   private hudText!: Phaser.GameObjects.Text;
   private hudTicker!: HudTicker;
-  private readonly seedLabel: string;
+  private readyPrompt!: Phaser.GameObjects.Text;
 
-  constructor(world: WorldState, input: InputSource, pause: PauseController, seedLabel = '') {
+  constructor(match: MatchController, pause: PauseController) {
     super('GameScene');
-    this.world = world;
-    this.inputSource = input;
+    this.match = match;
     this.pause = pause;
-    this.seedLabel = seedLabel;
   }
 
   create(): void {
@@ -67,7 +66,6 @@ export class GameScene extends Phaser.Scene {
 
     // Graphics do mundo (scrollFactor 1 ⇒ acompanha a câmera).
     this.gfx = this.add.graphics();
-    this.loop = new FixedStepLoop(this.world, this.inputSource);
 
     // Overlay de pausa: retângulo semitransparente de tela cheia (scrollFactor 0, depth 1000).
     this.pauseOverlay = this.add.graphics().setScrollFactor(0);
@@ -83,6 +81,16 @@ export class GameScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(HUD_DEPTH);
     this.refreshHud(0);
+
+    // Prompt de início (2.5): visível só no estado `ready`.
+    this.readyPrompt = this.add
+      .text(VIEW_WIDTH / 2, VIEW_HEIGHT / 2, i18n.t('match.tapToStart'), {
+        fontSize: READY_PROMPT_FONT_SIZE,
+        color: READY_PROMPT_COLOR,
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(READY_PROMPT_DEPTH);
   }
 
   override update(_time: number, deltaMs: number): void {
@@ -90,10 +98,15 @@ export class GameScene extends Phaser.Scene {
     this.pauseOverlay.setVisible(paused);
     if (paused) return; // congela a sim; o último frame desenhado permanece sob o overlay
 
-    this.loop.advance(deltaMs / 1000);
+    const match = this.match;
+    match.advance(deltaMs / 1000); // no-op fora de `playing`
+    this.readyPrompt.setVisible(match.phase === 'ready');
+
+    const loop = match.loop;
+    const world = match.world;
 
     // Câmera segue o dino interpolado; vertical não scrolla (o mundo cabe na altura).
-    this.cameras.main.scrollX = this.loop.renderX - DINO_SCREEN_X;
+    this.cameras.main.scrollX = loop.renderX - DINO_SCREEN_X;
 
     const scrollX = this.cameras.main.scrollX;
     for (let i = 0; i < this.parallaxTiles.length; i++) {
@@ -102,15 +115,9 @@ export class GameScene extends Phaser.Scene {
 
     const g = this.gfx;
     g.clear();
-    for (const o of this.world.obstacles) this.drawEntity(g, o);
-    for (const c of this.world.collectibles) this.drawEntity(g, c);
-    this.drawPrimitive(
-      g,
-      DINO_TYPE_ID,
-      this.world.pterodactyl.hitbox,
-      this.loop.renderX,
-      this.loop.renderY,
-    );
+    for (const o of world.obstacles) this.drawEntity(g, o);
+    for (const c of world.collectibles) this.drawEntity(g, c);
+    this.drawPrimitive(g, DINO_TYPE_ID, world.pterodactyl.hitbox, loop.renderX, loop.renderY);
 
     const fps = this.hudTicker.tick(deltaMs / 1000);
     if (fps !== null) this.refreshHud(fps);
@@ -118,13 +125,14 @@ export class GameScene extends Phaser.Scene {
 
   /** Reconstrói o texto do HUD (só no refresh throttled ⇒ fora do hot path por frame). */
   private refreshHud(fps: number): void {
+    const world = this.match.world;
     const v = formatHudValues({
-      distance: this.world.distance,
-      food: this.world.food,
+      distance: world.distance,
+      food: world.food,
       fps,
-      level: this.world.level,
-      speed: this.world.scrollSpeed,
-      seed: this.seedLabel,
+      level: world.level,
+      speed: world.scrollSpeed,
+      seed: this.match.seedLabel,
     });
     this.hudText.setText([
       i18n.t('hud.distance', { value: v.distance }),

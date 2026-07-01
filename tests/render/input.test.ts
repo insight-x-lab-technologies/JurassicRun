@@ -84,6 +84,27 @@ describe('FlapInputSource', () => {
   });
 });
 
+describe('FlapInputSource.press (borda)', () => {
+  it('retorna true na 1ª pressão de um id e false no autorepeat', () => {
+    const src = new FlapInputSource();
+    expect(src.press('key:Space')).toBe(true);
+    expect(src.press('key:Space')).toBe(false); // autorepeat do mesmo id
+  });
+
+  it('volta a retornar true só após release completo do id', () => {
+    const src = new FlapInputSource();
+    expect(src.press('pointer:1')).toBe(true);
+    src.release('pointer:1');
+    expect(src.press('pointer:1')).toBe(true); // novo toque = borda de novo
+  });
+
+  it('ids distintos são bordas independentes', () => {
+    const src = new FlapInputSource();
+    expect(src.press('pointer:1')).toBe(true);
+    expect(src.press('pointer:2')).toBe(true);
+  });
+});
+
 describe('PauseController', () => {
   it('inicial: paused === false', () => {
     const p = new PauseController();

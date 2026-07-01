@@ -6,3 +6,5 @@ export * from './manifest';
 export * from './loop';
 export * from './parallax';
 export * from './hud';
+export * from './seedSource';
+export * from './match';

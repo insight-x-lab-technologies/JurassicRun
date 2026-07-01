@@ -10,5 +10,8 @@
     "level": "Stufe {{value}}",
     "speed": "Tempo: {{value}}",
     "seed": "Seed: {{value}}"
+  },
+  "match": {
+    "tapToStart": "Zum Starten tippen"
   }
 }

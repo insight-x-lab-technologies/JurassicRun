@@ -10,5 +10,8 @@
     "level": "Lv {{value}}",
     "speed": "속도: {{value}}",
     "seed": "시드: {{value}}"
+  },
+  "match": {
+    "tapToStart": "탭하여 시작"
   }
 }
