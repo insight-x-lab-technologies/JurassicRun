@@ -10,12 +10,12 @@ async function bootstrap(): Promise<void> {
   document.title = i18n.t('app.title');
 
   // Mundo de demonstração para o vertical slice (seed aleatória/fluxo real é 2.5).
-  // O shell Preact de telas entra na Fase 4; em 2.1 o canvas ocupa a tela.
-  const world = createWorld({ seed: 'endless:DEMO' });
+  const seed = 'endless:DEMO';
+  const world = createWorld({ seed });
   const flap = new FlapInputSource();
   const pause = new PauseController();
   pause.onPause = () => flap.reset(); // anti-flap-fantasma ao pausar
-  createGame('app', world, { input: flap, pause });
+  createGame('app', world, { input: flap, pause, seedLabel: seed });
   bindGameControls(window, { flap, pause });
 }
 

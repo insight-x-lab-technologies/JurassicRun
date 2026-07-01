@@ -21,3 +21,10 @@ export const PAUSE_KEYS: readonly string[] = ['KeyP', 'Escape'];
 /** Overlay de pausa: escurecimento sem texto (rótulo i18n é 2.4/2.6). */
 export const PAUSE_OVERLAY_COLOR = 0x000000;
 export const PAUSE_OVERLAY_ALPHA = 0.45;
+
+/** HUD (2.4): texto de leitura da partida. Depth abaixo do overlay de pausa (1000). */
+export const HUD_DEPTH = 900;
+export const HUD_TEXT_X = 4;
+export const HUD_TEXT_Y = 4;
+export const HUD_FONT_SIZE = '8px';
+export const HUD_TEXT_COLOR = '#ffffff';

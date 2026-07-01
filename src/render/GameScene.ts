@@ -6,6 +6,8 @@ import { renderableFor, DINO_TYPE_ID } from './manifest';
 import type { InputSource, PauseController } from './input';
 import { PARALLAX_LAYERS, parallaxTileOffset } from './parallax';
 import type { ParallaxLayer } from './parallax';
+import { i18n } from '@services/i18n';
+import { HudTicker, formatHudValues } from './hud';
 import {
   VIEW_WIDTH,
   VIEW_HEIGHT,
@@ -15,6 +17,11 @@ import {
   GROUND_THICKNESS,
   PAUSE_OVERLAY_COLOR,
   PAUSE_OVERLAY_ALPHA,
+  HUD_DEPTH,
+  HUD_TEXT_X,
+  HUD_TEXT_Y,
+  HUD_FONT_SIZE,
+  HUD_TEXT_COLOR,
 } from './constants';
 
 /** Renderiza o WorldState lido do core. Não altera a simulação (REGRA 1). */
@@ -26,12 +33,16 @@ export class GameScene extends Phaser.Scene {
   private parallaxTiles: Phaser.GameObjects.TileSprite[] = [];
   private gfx!: Phaser.GameObjects.Graphics;
   private pauseOverlay!: Phaser.GameObjects.Graphics;
+  private hudText!: Phaser.GameObjects.Text;
+  private hudTicker!: HudTicker;
+  private readonly seedLabel: string;
 
-  constructor(world: WorldState, input: InputSource, pause: PauseController) {
+  constructor(world: WorldState, input: InputSource, pause: PauseController, seedLabel = '') {
     super('GameScene');
     this.world = world;
     this.inputSource = input;
     this.pause = pause;
+    this.seedLabel = seedLabel;
   }
 
   create(): void {
@@ -64,6 +75,14 @@ export class GameScene extends Phaser.Scene {
     this.pauseOverlay.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
     this.pauseOverlay.setDepth(1000);
     this.pauseOverlay.setVisible(false);
+
+    // HUD (2.4): texto de leitura throttled. Depth abaixo do overlay de pausa.
+    this.hudTicker = new HudTicker();
+    this.hudText = this.add
+      .text(HUD_TEXT_X, HUD_TEXT_Y, '', { fontSize: HUD_FONT_SIZE, color: HUD_TEXT_COLOR })
+      .setScrollFactor(0)
+      .setDepth(HUD_DEPTH);
+    this.refreshHud(0);
   }
 
   override update(_time: number, deltaMs: number): void {
@@ -92,6 +111,29 @@ export class GameScene extends Phaser.Scene {
       this.loop.renderX,
       this.loop.renderY,
     );
+
+    const fps = this.hudTicker.tick(deltaMs / 1000);
+    if (fps !== null) this.refreshHud(fps);
+  }
+
+  /** Reconstrói o texto do HUD (só no refresh throttled ⇒ fora do hot path por frame). */
+  private refreshHud(fps: number): void {
+    const v = formatHudValues({
+      distance: this.world.distance,
+      food: this.world.food,
+      fps,
+      level: this.world.level,
+      speed: this.world.scrollSpeed,
+      seed: this.seedLabel,
+    });
+    this.hudText.setText([
+      i18n.t('hud.distance', { value: v.distance }),
+      i18n.t('hud.food', { value: v.food }),
+      i18n.t('hud.fps', { value: v.fps }),
+      i18n.t('hud.level', { value: v.level }),
+      i18n.t('hud.speed', { value: v.speed }),
+      i18n.t('hud.seed', { value: v.seed }),
+    ]);
   }
 
   private drawEntity(g: Phaser.GameObjects.Graphics, e: Entity): void {

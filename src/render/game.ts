@@ -8,6 +8,7 @@ import { VIEW_WIDTH, VIEW_HEIGHT, SKY_COLOR } from './constants';
 export interface GameDeps {
   input?: InputSource;
   pause?: PauseController;
+  seedLabel?: string;
 }
 
 /** Cria o Phaser.Game montando a GameScene que renderiza `world`. Deps default = nulo/sem pausa (2.2 pluga real). */
@@ -25,6 +26,6 @@ export function createGame(
     height: VIEW_HEIGHT,
     backgroundColor: SKY_COLOR,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [new GameScene(world, input, pause)],
+    scene: [new GameScene(world, input, pause, deps.seedLabel ?? '')],
   });
 }
