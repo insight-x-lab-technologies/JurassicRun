@@ -13,5 +13,13 @@
   },
   "match": {
     "tapToStart": "Zum Starten tippen"
+  },
+  "gameover": {
+    "title": "Spiel vorbei",
+    "distance": "Distanz: {{value}} m",
+    "food": "Futter: {{value}}",
+    "nearMisses": "Beinahe-Kollisionen: {{value}}",
+    "restart": "Neu starten",
+    "quit": "Beenden"
   }
 }
