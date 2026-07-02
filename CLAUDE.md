@@ -77,9 +77,10 @@ em PRs e pushes no `main`.
 obstáculos), 1.5 (coletáveis), 1.6 (colisão), 1.7 (dificuldade), 1.8 (economia e score) e
 1.9 (replay / golden master) concluídos.
 
-**Fase 2 (vertical slice jogável Endless) — EM ANDAMENTO.** Itens 2.1 (render Phaser sobre
-o core), 2.2 (input), 2.3 (parallax), 2.4 (HUD), 2.5 (fluxo de partida) e 2.6 (Game Over
-overlay) concluídos; falta 2.7 (performance).
+**Fase 2 (vertical slice jogável Endless) — CONCLUÍDA.** Itens 2.1 (render Phaser sobre
+o core), 2.2 (input), 2.3 (parallax), 2.4 (HUD), 2.5 (fluxo de partida), 2.6 (Game Over
+overlay) e 2.7 (performance) concluídos. **1º milestone atingido:** dá para jogar Endless do
+início ao Game Over, com HUD completo, a 60fps (evidência registrada).
 
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
@@ -314,6 +315,30 @@ e teclas Space/ArrowUp/Enter em `dead` → `ready` (tick 0, nova seed, sem auto-
 espaço vazio/Sair → não reinicia. **Adiados:** menu/home e destino real do "Sair" (Fase 4); score
 final/high-score/persistência (Fases 3/4); animações e hit-area maior dos botões (cosmético/Fase 8).
 
-Próximo: **2.7 (Performance)** — object pooling no render, culling de fora-de-tela, medir fps em
-desktop e mobile (alvo 60fps+) e registrar evidência. Ver
-`docs/roadmap/PHASE-02-endless-vertical-slice.md`.
+2.7 (performance): item de fechamento da Fase 2, **só `src/render/`** (+ helper puro `leftExtent`
+em `src/core/sim/hitbox.ts`) ⇒ core de simulação intocado, determinismo intacto. Realidade do
+renderer: **um único `Graphics` em modo imediato** (redesenhado por frame, sem GameObject por
+entidade), então "object pooling" clássico de sprites não se aplica na fase geométrica (adiado p/
+Fase 8, quando entram PNGs) — o objetivo real (sem GC no hot path + 60fps) foi atingido por
+**desenho alocação-zero + culling**. (1) **Culling horizontal** (`src/render/culling.ts` PURO,
+testável): `isHorizontallyVisible(worldX, extentLeft, extentRight, scrollX, viewWidth, margin)` —
+visível sse `[worldX+extentLeft−scrollX, worldX+extentRight−scrollX]` intersecta
+`[−margin, viewWidth+margin]`; só x sai da tela (mundo cabe na altura). Extents alocação-zero:
+`rightExtent` (existente) + novo espelho `leftExtent`. `CULL_MARGIN=4`. Wiring na `GameScene`
+(`drawVisible` pula obstáculos/coletáveis fora do viewport; o dino nunca é cullado). (2) **Hot
+path alocação-zero** na casca `GameScene.drawPrimitive`: polígono via API de path do Graphics
+(`beginPath`/`moveTo`/`lineTo`/`closePath`/`fillPath`) em vez de `points.map(new Vector2)`; bounds
+do triângulo do dino cacheados (recomputa só quando a ref da hitbox muda — no restart); guarda
+`default: never` no `switch (hitbox.kind)` (dívida herdada de 2.1) ⇒ `tsc` quebra se um novo kind
+for adicionado sem tratar o desenho. **Core NÃO tocado** (só `leftExtent`, geometria pura) ⇒
+determinismo intacto. Suíte verde (`check` limpo, 272 testes, determinismo 54; reviews de task
+spec✅/qualidade Approved, sem findings). **Evidência de fps** (Playwright, rAF real, partida do
+início ao Game Over): mobile emulado 390×844 = **60fps sustentado** (p50 16,7ms, 0 frames >33ms em
+480); desktop 780×493 = 56fps média mas **0 jank** (cadência de refresh do ambiente headless
+~57Hz, não custo do jogo — mesmo desenho lógico 320×180 nos dois). Detalhes/limitações em
+`docs/superpowers/specs/2026-07-01-render-performance-design.md`. **Adiados:** pooling de sprites
+real + batching de atlas (Fase 8); culling vertical (desnecessário); medição sob throttle de CPU e
+em device físico (Fase 7 — CDP não exposto no ambiente headless).
+
+Próximo: **Fase 3 (Power-ups & clima)** — ver `docs/roadmap/PHASE-03-powerups-and-weather.md` e
+`docs/roadmap/ROADMAP.md`.

@@ -1,11 +1,12 @@
 import * as Phaser from 'phaser';
-import { boundsOf } from '@core/sim';
+import { boundsOf, leftExtent, rightExtent } from '@core/sim';
 import type { Entity, Hitbox } from '@core/sim';
 import { renderableFor, DINO_TYPE_ID } from './manifest';
 import type { MatchController } from './match';
 import type { PauseController } from './input';
 import { PARALLAX_LAYERS, parallaxTileOffset } from './parallax';
 import type { ParallaxLayer } from './parallax';
+import { isHorizontallyVisible } from './culling';
 import { i18n } from '@services/i18n';
 import { HudTicker, formatHudValues } from './hud';
 import { formatGameOverStats } from './gameover';
@@ -13,6 +14,7 @@ import {
   VIEW_WIDTH,
   VIEW_HEIGHT,
   DINO_SCREEN_X,
+  CULL_MARGIN,
   GROUND_COLOR,
   CEILING_COLOR,
   GROUND_THICKNESS,
@@ -53,6 +55,8 @@ export class GameScene extends Phaser.Scene {
   private gameOverRestart!: Phaser.GameObjects.Text;
   private gameOverQuit!: Phaser.GameObjects.Text;
   private wasDead = false;
+  private dinoBoundsHitbox: Hitbox | null = null;
+  private dinoBounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
 
   constructor(match: MatchController, pause: PauseController) {
     super('GameScene');
@@ -185,8 +189,8 @@ export class GameScene extends Phaser.Scene {
 
     const g = this.gfx;
     g.clear();
-    for (const o of world.obstacles) this.drawEntity(g, o);
-    for (const c of world.collectibles) this.drawEntity(g, c);
+    this.drawVisible(g, world.obstacles, scrollX);
+    this.drawVisible(g, world.collectibles, scrollX);
     this.drawPrimitive(g, DINO_TYPE_ID, world.pterodactyl.hitbox, loop.renderX, loop.renderY);
 
     const fps = this.hudTicker.tick(deltaMs / 1000);
@@ -241,6 +245,17 @@ export class GameScene extends Phaser.Scene {
     this.drawPrimitive(g, typeId, e.hitbox, e.transform.position.x, e.transform.position.y);
   }
 
+  /** Desenha só as entidades cuja extensão horizontal intersecta o viewport (culling, REGRA 3). */
+  private drawVisible(g: Phaser.GameObjects.Graphics, entities: readonly Entity[], scrollX: number): void {
+    for (const e of entities) {
+      const x = e.transform.position.x;
+      if (!isHorizontallyVisible(x, leftExtent(e.hitbox), rightExtent(e.hitbox), scrollX, VIEW_WIDTH, CULL_MARGIN)) {
+        continue;
+      }
+      this.drawEntity(g, e);
+    }
+  }
+
   /** Gera (1×) a textura de tile de uma camada: linha de triângulos como silhueta. Chave = id. */
   private ensureLayerTexture(layer: ParallaxLayer): string {
     const key = `parallax:${layer.id}`;
@@ -274,7 +289,11 @@ export class GameScene extends Phaser.Scene {
     g.fillStyle(r.color, 1);
 
     if (r.shape === 'triangle') {
-      const b = boundsOf(hitbox); // ápice em +x (pássaro voltado para a direita)
+      if (this.dinoBoundsHitbox !== hitbox) {
+        this.dinoBounds = boundsOf(hitbox); // ápice em +x (pássaro voltado para a direita)
+        this.dinoBoundsHitbox = hitbox;
+      }
+      const b = this.dinoBounds;
       g.fillTriangle(cx + b.minX, cy + b.minY, cx + b.minX, cy + b.maxY, cx + b.maxX, cy);
       return;
     }
@@ -286,12 +305,19 @@ export class GameScene extends Phaser.Scene {
       case 'circle':
         g.fillCircle(cx, cy, hitbox.radius);
         break;
-      case 'polygon':
-        g.fillPoints(
-          hitbox.points.map((p) => new Phaser.Math.Vector2(cx + p.x, cy + p.y)),
-          true,
-        );
+      case 'polygon': {
+        const pts = hitbox.points;
+        g.beginPath();
+        g.moveTo(cx + pts[0]!.x, cy + pts[0]!.y);
+        for (let i = 1; i < pts.length; i++) g.lineTo(cx + pts[i]!.x, cy + pts[i]!.y);
+        g.closePath();
+        g.fillPath();
         break;
+      }
+      default: {
+        const _exhaustive: never = hitbox;
+        return _exhaustive;
+      }
     }
   }
 }
