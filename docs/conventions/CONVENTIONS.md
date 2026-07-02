@@ -38,9 +38,11 @@
 
 ## Performance
 
-- Sem alocação por frame no hot path do render (use object pooling).
+- Sem alocação por frame no hot path do render (só escalares; desenho alocação-zero). Na fase
+  geométrica (um único `Graphics` em modo imediato) não há sprite por entidade para reciclar, então
+  o object pooling clássico só passa a valer com os PNGs/atlases da Fase 8.
 - Sem trabalho síncrono pesado no game loop.
-- Atlases, não imagens soltas. Culling de fora-de-tela.
+- Culling de fora-de-tela. Atlases (não imagens soltas) quando entrar a arte PNG (Fase 8).
 
 ## Git
 
