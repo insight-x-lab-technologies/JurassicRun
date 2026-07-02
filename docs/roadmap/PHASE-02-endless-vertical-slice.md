@@ -26,7 +26,7 @@ com input, parallax, HUD e Game Over. Tudo geométrico. **60fps+**. Prova a base
 - [x] Morte ao colidir; dificuldade cresce; reinicia do zero a cada partida.
 
 ### 2.6 Game Over overlay (básico)
-- [ ] Estatísticas: distância, comida, near-misses. Botões reiniciar/sair.
+- [x] Estatísticas: distância, comida, near-misses. Botões reiniciar/sair.
 
 ### 2.7 Performance
 - [ ] Object pooling no render; culling de fora-de-tela.

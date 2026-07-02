@@ -56,15 +56,19 @@ export class MatchController {
     if (!this._world.alive) this._phase = 'dead';
   }
 
-  /** Borda de pressão de flap vinda da casca. */
+  /** Borda de pressão de flap vinda da casca. Só inicia a partida em `ready`. */
   notifyFlap(): void {
     if (this._phase === 'ready') {
       this._phase = 'playing';
-    } else if (this._phase === 'dead') {
-      this.startMatch();
-      this.hooks.onNewMatch?.();
     }
-    // em `playing`: no-op (o flap é tratado pelo core via InputSource).
+    // em `playing`: o flap é tratado pelo core via InputSource. Em `dead`: no-op (restart é explícito).
+  }
+
+  /** Reinicia após a morte: nova partida (nova seed/world) + hook. No-op fora de `dead`. */
+  restart(): void {
+    if (this._phase !== 'dead') return;
+    this.startMatch();
+    this.hooks.onNewMatch?.();
   }
 
   private startMatch(): void {

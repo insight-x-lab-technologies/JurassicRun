@@ -78,8 +78,8 @@ obstáculos), 1.5 (coletáveis), 1.6 (colisão), 1.7 (dificuldade), 1.8 (economi
 1.9 (replay / golden master) concluídos.
 
 **Fase 2 (vertical slice jogável Endless) — EM ANDAMENTO.** Itens 2.1 (render Phaser sobre
-o core), 2.2 (input), 2.3 (parallax), 2.4 (HUD) e 2.5 (fluxo de partida) concluídos; faltam
-2.6 (Game Over overlay) e 2.7 (performance).
+o core), 2.2 (input), 2.3 (parallax), 2.4 (HUD), 2.5 (fluxo de partida) e 2.6 (Game Over
+overlay) concluídos; falta 2.7 (performance).
 
 1.1 (RNG): `src/core/rng/` com PRNG portável `mulberry32` + hash de seed `xmur3` (só
 `Math.imul`/`>>>0`, zero fontes proibidas), classe `Rng` (`createRng`/`rngFromState`/
@@ -291,6 +291,29 @@ determinismo 54; reviews de task spec✅/qualidade — Minors não-bloqueadores:
 (distância/comida/near-misses) e botões reiniciar/sair é o **2.6** — em 2.5 o restart-on-tap em
 `dead` já funciona, sem UI de morte; pooling/culling é 2.7.
 
-Próximo: **2.6 (Game Over overlay básico)** — overlay no estado `dead` com estatísticas
-(distância, comida, near-misses) e botões reiniciar/sair. Ver
+2.6 (Game Over overlay básico): overlay no estado `dead`, no padrão puro×casca. `src/render/
+gameover.ts` PURO: `formatGameOverStats(raw)→GameOverView` (floor de distância/comida/near-misses
+em strings; molde de `formatHudValues`). `MatchController` (match.ts) separou os dois sentidos de
+`notifyFlap`: agora `notifyFlap()` só faz `ready→playing` e o novo `restart()` só age em `dead`
+(monta nova partida via `factory` + `onNewMatch`) — restart deixou de ser "tap em qualquer lugar"
+e passou a ser dirigido pelo botão/tecla. Casca na `GameScene`: overlay (fundo escuro depth 960 +
+título/3 stats/botões depth 970, entre HUD 900 e pausa 1000) visível só em `dead` via
+`syncGameOver()` (chamado no ramo pausado e após `advance`); estatísticas refeitas **1× na
+transição** para `dead` (flag `wasDead`) ⇒ zero alocação por frame (REGRA 3); botão **Reiniciar**
+interativo→`match.restart()`, botão **Sair** acinzentado e NÃO interativo (stub — decisão de
+produto: sem destino até o menu da Fase 4). Restart de teclado vive no **caminho único** de
+`bindGameControls` (controls.ts ganhou `onRestart`/`isDead`): em `dead`, `CONFIRM_KEYS`
+(Space/ArrowUp/Enter) chama `onRestart` e retorna (não vira flap) — isso corrige uma **corrida de
+evento** (o listener de keydown próprio da GameScene reiniciava ANTES do handler global de flap,
+que então via `ready` e auto-iniciava a partida + flap-fantasma; achado crítico da review,
+reproduzido e consertado). Chaves i18n `gameover.{title,distance,food,nearMisses,restart,quit}`
+nos 10 locales (REGRA 4). **Core NÃO tocado** ⇒ determinismo intacto. Suíte verde (`check` limpo,
+264 testes, determinismo 54; reviews de task spec✅/qualidade Approved). Verificação visual
+(Playwright): overlay renderiza título + 3 stats (batendo com o HUD); clique real no **Reiniciar**
+e teclas Space/ArrowUp/Enter em `dead` → `ready` (tick 0, nova seed, sem auto-start); toque em
+espaço vazio/Sair → não reinicia. **Adiados:** menu/home e destino real do "Sair" (Fase 4); score
+final/high-score/persistência (Fases 3/4); animações e hit-area maior dos botões (cosmético/Fase 8).
+
+Próximo: **2.7 (Performance)** — object pooling no render, culling de fora-de-tela, medir fps em
+desktop e mobile (alvo 60fps+) e registrar evidência. Ver
 `docs/roadmap/PHASE-02-endless-vertical-slice.md`.

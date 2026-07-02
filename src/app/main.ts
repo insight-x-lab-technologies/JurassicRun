@@ -26,7 +26,13 @@ async function bootstrap(): Promise<void> {
   );
 
   createGame('app', match, { pause });
-  bindGameControls(window, { flap, pause, onFlap: () => match.notifyFlap() });
+  bindGameControls(window, {
+    flap,
+    pause,
+    onFlap: () => match.notifyFlap(),
+    onRestart: () => match.restart(),
+    isDead: () => match.phase === 'dead',
+  });
 }
 
 void bootstrap();

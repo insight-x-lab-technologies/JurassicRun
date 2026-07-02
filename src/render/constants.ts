@@ -33,3 +33,17 @@ export const HUD_TEXT_COLOR = '#ffffff';
 export const READY_PROMPT_DEPTH = 950;
 export const READY_PROMPT_FONT_SIZE = '12px';
 export const READY_PROMPT_COLOR = '#ffffff';
+
+/** Game Over (2.6): overlay no estado `dead`. Entre o HUD (900) e a pausa (1000). */
+export const GAMEOVER_OVERLAY_ALPHA = 0.6;
+export const GAMEOVER_OVERLAY_DEPTH = 960; // fundo escuro
+export const GAMEOVER_CONTENT_DEPTH = 970; // título/stats/botões (acima do fundo)
+export const GAMEOVER_TITLE_FONT_SIZE = '16px';
+export const GAMEOVER_STAT_FONT_SIZE = '9px';
+export const GAMEOVER_BUTTON_FONT_SIZE = '11px';
+export const GAMEOVER_TEXT_COLOR = '#ffffff';
+export const GAMEOVER_BUTTON_COLOR = '#ffe08a'; // Reiniciar (ativo)
+export const GAMEOVER_BUTTON_DISABLED_COLOR = '#777777'; // Sair (stub desabilitado)
+
+/** Teclas de confirmação que reiniciam quando em `dead` (conveniência desktop). */
+export const CONFIRM_KEYS: readonly string[] = ['Space', 'ArrowUp', 'Enter'];

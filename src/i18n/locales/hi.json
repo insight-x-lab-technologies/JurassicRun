@@ -13,5 +13,13 @@
   },
   "match": {
     "tapToStart": "शुरू करने के लिए टैप करें"
+  },
+  "gameover": {
+    "title": "गेम ओवर",
+    "distance": "दूरी: {{value}} मी",
+    "food": "भोजन: {{value}}",
+    "nearMisses": "करीबी टक्कर: {{value}}",
+    "restart": "फिर से शुरू करें",
+    "quit": "बाहर निकलें"
   }
 }

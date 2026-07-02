@@ -8,6 +8,7 @@ import { PARALLAX_LAYERS, parallaxTileOffset } from './parallax';
 import type { ParallaxLayer } from './parallax';
 import { i18n } from '@services/i18n';
 import { HudTicker, formatHudValues } from './hud';
+import { formatGameOverStats } from './gameover';
 import {
   VIEW_WIDTH,
   VIEW_HEIGHT,
@@ -25,6 +26,15 @@ import {
   READY_PROMPT_DEPTH,
   READY_PROMPT_FONT_SIZE,
   READY_PROMPT_COLOR,
+  GAMEOVER_OVERLAY_ALPHA,
+  GAMEOVER_OVERLAY_DEPTH,
+  GAMEOVER_CONTENT_DEPTH,
+  GAMEOVER_TITLE_FONT_SIZE,
+  GAMEOVER_STAT_FONT_SIZE,
+  GAMEOVER_BUTTON_FONT_SIZE,
+  GAMEOVER_TEXT_COLOR,
+  GAMEOVER_BUTTON_COLOR,
+  GAMEOVER_BUTTON_DISABLED_COLOR,
 } from './constants';
 
 /** Renderiza o WorldState lido do core via MatchController. Não altera a simulação (REGRA 1). */
@@ -37,6 +47,12 @@ export class GameScene extends Phaser.Scene {
   private hudText!: Phaser.GameObjects.Text;
   private hudTicker!: HudTicker;
   private readyPrompt!: Phaser.GameObjects.Text;
+  private gameOverBg!: Phaser.GameObjects.Graphics;
+  private gameOverTitle!: Phaser.GameObjects.Text;
+  private gameOverStats!: Phaser.GameObjects.Text;
+  private gameOverRestart!: Phaser.GameObjects.Text;
+  private gameOverQuit!: Phaser.GameObjects.Text;
+  private wasDead = false;
 
   constructor(match: MatchController, pause: PauseController) {
     super('GameScene');
@@ -91,16 +107,70 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(READY_PROMPT_DEPTH);
+
+    // Game Over (2.6): overlay no estado `dead`. Criado 1×, escondido por default.
+    this.gameOverBg = this.add.graphics().setScrollFactor(0).setDepth(GAMEOVER_OVERLAY_DEPTH);
+    this.gameOverBg.fillStyle(PAUSE_OVERLAY_COLOR, GAMEOVER_OVERLAY_ALPHA);
+    this.gameOverBg.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+    this.gameOverBg.setVisible(false);
+
+    this.gameOverTitle = this.add
+      .text(VIEW_WIDTH / 2, 36, i18n.t('gameover.title'), {
+        fontSize: GAMEOVER_TITLE_FONT_SIZE,
+        color: GAMEOVER_TEXT_COLOR,
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(GAMEOVER_CONTENT_DEPTH)
+      .setVisible(false);
+
+    this.gameOverStats = this.add
+      .text(VIEW_WIDTH / 2, 78, '', {
+        fontSize: GAMEOVER_STAT_FONT_SIZE,
+        color: GAMEOVER_TEXT_COLOR,
+        align: 'center',
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(GAMEOVER_CONTENT_DEPTH)
+      .setVisible(false);
+
+    this.gameOverRestart = this.add
+      .text(VIEW_WIDTH / 2 - 44, 130, i18n.t('gameover.restart'), {
+        fontSize: GAMEOVER_BUTTON_FONT_SIZE,
+        color: GAMEOVER_BUTTON_COLOR,
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(GAMEOVER_CONTENT_DEPTH)
+      .setVisible(false)
+      .setInteractive({ useHandCursor: true });
+    this.gameOverRestart.on('pointerdown', () => this.match.restart());
+
+    this.gameOverQuit = this.add
+      .text(VIEW_WIDTH / 2 + 44, 130, i18n.t('gameover.quit'), {
+        fontSize: GAMEOVER_BUTTON_FONT_SIZE,
+        color: GAMEOVER_BUTTON_DISABLED_COLOR,
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(GAMEOVER_CONTENT_DEPTH)
+      .setVisible(false); // stub desabilitado: não interativo (ativa na Fase 4)
+
+    // Teclado de restart em `dead` vive no caminho único de `bindGameControls` (evita a corrida
+    // com este listener e o flap-de-início global). Aqui só o botão Reiniciar (ponteiro) reinicia.
   }
 
   override update(_time: number, deltaMs: number): void {
     const paused = this.pause.paused;
     this.pauseOverlay.setVisible(paused);
+    this.syncGameOver();
     if (paused) return; // congela a sim; o último frame desenhado permanece sob o overlay
 
     const match = this.match;
     match.advance(deltaMs / 1000); // no-op fora de `playing`
     this.readyPrompt.setVisible(match.phase === 'ready');
+    this.syncGameOver(); // reflete morte ocorrida neste frame
 
     const loop = match.loop;
     const world = match.world;
@@ -141,6 +211,28 @@ export class GameScene extends Phaser.Scene {
       i18n.t('hud.level', { value: v.level }),
       i18n.t('hud.speed', { value: v.speed }),
       i18n.t('hud.seed', { value: v.seed }),
+    ]);
+  }
+
+  /** Mostra/esconde o overlay de Game Over; refaz as estatísticas 1× ao ENTRAR em `dead`. */
+  private syncGameOver(): void {
+    const dead = this.match.phase === 'dead';
+    this.gameOverBg.setVisible(dead);
+    this.gameOverTitle.setVisible(dead);
+    this.gameOverStats.setVisible(dead);
+    this.gameOverRestart.setVisible(dead);
+    this.gameOverQuit.setVisible(dead);
+    if (dead && !this.wasDead) this.refreshGameOverStats(); // transição ⇒ 1× (REGRA 3)
+    this.wasDead = dead;
+  }
+
+  private refreshGameOverStats(): void {
+    const w = this.match.world;
+    const v = formatGameOverStats({ distance: w.distance, food: w.food, nearMisses: w.nearMisses });
+    this.gameOverStats.setText([
+      i18n.t('gameover.distance', { value: v.distance }),
+      i18n.t('gameover.food', { value: v.food }),
+      i18n.t('gameover.nearMisses', { value: v.nearMisses }),
     ]);
   }
 

@@ -65,7 +65,17 @@ describe('MatchController', () => {
     expect(m.seedLabel).toBe(seedBefore);
   });
 
-  it('notifyFlap em dead reinicia: nova seed, world novo, ready, onNewMatch chamado', () => {
+  it('notifyFlap em dead é no-op (restart é explícito)', () => {
+    const m = new MatchController(new NullInputSource(), makeFactory());
+    m.notifyFlap();
+    advanceUntilDead(m);
+    const seedBefore = m.seedLabel;
+    m.notifyFlap();
+    expect(m.phase).toBe('dead');
+    expect(m.seedLabel).toBe(seedBefore);
+  });
+
+  it('restart em dead reinicia: nova seed, world novo, ready, onNewMatch chamado', () => {
     let resets = 0;
     const m = new MatchController(new NullInputSource(), makeFactory(), {
       onNewMatch: () => { resets++; },
@@ -74,7 +84,7 @@ describe('MatchController', () => {
     advanceUntilDead(m);
     expect(m.phase).toBe('dead');
 
-    m.notifyFlap(); // restart
+    m.restart();
     expect(m.phase).toBe('ready');
     expect(m.seedLabel).toBe('endless:TEST1');
     expect(m.world.tick).toBe(0);
@@ -82,11 +92,22 @@ describe('MatchController', () => {
     expect(resets).toBe(1);
   });
 
+  it('restart fora de dead é no-op', () => {
+    const m = new MatchController(new NullInputSource(), makeFactory());
+    m.restart(); // em ready
+    expect(m.phase).toBe('ready');
+    expect(m.seedLabel).toBe('endless:TEST0');
+    m.notifyFlap(); // playing
+    m.restart(); // em playing
+    expect(m.phase).toBe('playing');
+    expect(m.seedLabel).toBe('endless:TEST0');
+  });
+
   it('o loop aponta para o world corrente após restart', () => {
     const m = new MatchController(new NullInputSource(), makeFactory());
     m.notifyFlap();
     advanceUntilDead(m);
-    m.notifyFlap(); // restart → ready, world novo
+    m.restart(); // → ready, world novo
     expect(m.loop.world).toBe(m.world);
   });
 });

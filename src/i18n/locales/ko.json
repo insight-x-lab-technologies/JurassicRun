@@ -13,5 +13,13 @@
   },
   "match": {
     "tapToStart": "탭하여 시작"
+  },
+  "gameover": {
+    "title": "게임 오버",
+    "distance": "거리: {{value}}m",
+    "food": "먹이: {{value}}",
+    "nearMisses": "아슬아슬: {{value}}",
+    "restart": "다시 시작",
+    "quit": "나가기"
   }
 }

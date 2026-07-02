@@ -13,5 +13,13 @@
   },
   "match": {
     "tapToStart": "タップして開始"
+  },
+  "gameover": {
+    "title": "ゲームオーバー",
+    "distance": "距離: {{value}}m",
+    "food": "エサ: {{value}}",
+    "nearMisses": "ニアミス: {{value}}",
+    "restart": "リスタート",
+    "quit": "やめる"
   }
 }
