@@ -55,6 +55,8 @@ export class GameScene extends Phaser.Scene {
   private gameOverRestart!: Phaser.GameObjects.Text;
   private gameOverQuit!: Phaser.GameObjects.Text;
   private wasDead = false;
+  private dinoBoundsHitbox: Hitbox | null = null;
+  private dinoBounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
 
   constructor(match: MatchController, pause: PauseController) {
     super('GameScene');
@@ -287,7 +289,11 @@ export class GameScene extends Phaser.Scene {
     g.fillStyle(r.color, 1);
 
     if (r.shape === 'triangle') {
-      const b = boundsOf(hitbox); // ápice em +x (pássaro voltado para a direita)
+      if (this.dinoBoundsHitbox !== hitbox) {
+        this.dinoBounds = boundsOf(hitbox); // ápice em +x (pássaro voltado para a direita)
+        this.dinoBoundsHitbox = hitbox;
+      }
+      const b = this.dinoBounds;
       g.fillTriangle(cx + b.minX, cy + b.minY, cx + b.minX, cy + b.maxY, cx + b.maxX, cy);
       return;
     }
@@ -299,12 +305,19 @@ export class GameScene extends Phaser.Scene {
       case 'circle':
         g.fillCircle(cx, cy, hitbox.radius);
         break;
-      case 'polygon':
-        g.fillPoints(
-          hitbox.points.map((p) => new Phaser.Math.Vector2(cx + p.x, cy + p.y)),
-          true,
-        );
+      case 'polygon': {
+        const pts = hitbox.points;
+        g.beginPath();
+        g.moveTo(cx + pts[0]!.x, cy + pts[0]!.y);
+        for (let i = 1; i < pts.length; i++) g.lineTo(cx + pts[i]!.x, cy + pts[i]!.y);
+        g.closePath();
+        g.fillPath();
         break;
+      }
+      default: {
+        const _exhaustive: never = hitbox;
+        return _exhaustive;
+      }
     }
   }
 }
