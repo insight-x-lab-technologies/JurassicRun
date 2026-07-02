@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { aabb, circle, cloneHitbox, polygon, boundsOf } from '@core/sim';
+import { aabb, circle, cloneHitbox, polygon, boundsOf, rightExtent, leftExtent } from '@core/sim';
 import { FIXED_DT, DEFAULT_WORLD_CONFIG } from '@core/sim';
 
 describe('hitbox — construtores de dados', () => {
@@ -42,6 +42,26 @@ describe('boundsOf', () => {
   it('polygon: min/max dos pontos', () => {
     const h = polygon([{ x: -4, y: -3 }, { x: 6, y: -3 }, { x: 0, y: 9 }]);
     expect(boundsOf(h)).toEqual({ minX: -4, maxX: 6, minY: -3, maxY: 9 });
+  });
+});
+
+describe('leftExtent / rightExtent', () => {
+  it('aabb: extents são ∓halfW', () => {
+    expect(leftExtent(aabb(6, 8))).toBe(-6);
+    expect(rightExtent(aabb(6, 8))).toBe(6);
+  });
+  it('circle: extents são ∓radius', () => {
+    expect(leftExtent(circle(10))).toBe(-10);
+    expect(rightExtent(circle(10))).toBe(10);
+  });
+  it('polygon: extents são min/max dos x dos pontos', () => {
+    const h = polygon([
+      { x: -4, y: -3 },
+      { x: 6, y: 0 },
+      { x: 2, y: 9 },
+    ]);
+    expect(leftExtent(h)).toBe(-4);
+    expect(rightExtent(h)).toBe(6);
   });
 });
 

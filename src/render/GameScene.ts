@@ -1,11 +1,12 @@
 import * as Phaser from 'phaser';
-import { boundsOf } from '@core/sim';
+import { boundsOf, leftExtent, rightExtent } from '@core/sim';
 import type { Entity, Hitbox } from '@core/sim';
 import { renderableFor, DINO_TYPE_ID } from './manifest';
 import type { MatchController } from './match';
 import type { PauseController } from './input';
 import { PARALLAX_LAYERS, parallaxTileOffset } from './parallax';
 import type { ParallaxLayer } from './parallax';
+import { isHorizontallyVisible } from './culling';
 import { i18n } from '@services/i18n';
 import { HudTicker, formatHudValues } from './hud';
 import { formatGameOverStats } from './gameover';
@@ -13,6 +14,7 @@ import {
   VIEW_WIDTH,
   VIEW_HEIGHT,
   DINO_SCREEN_X,
+  CULL_MARGIN,
   GROUND_COLOR,
   CEILING_COLOR,
   GROUND_THICKNESS,
@@ -185,8 +187,8 @@ export class GameScene extends Phaser.Scene {
 
     const g = this.gfx;
     g.clear();
-    for (const o of world.obstacles) this.drawEntity(g, o);
-    for (const c of world.collectibles) this.drawEntity(g, c);
+    this.drawVisible(g, world.obstacles, scrollX);
+    this.drawVisible(g, world.collectibles, scrollX);
     this.drawPrimitive(g, DINO_TYPE_ID, world.pterodactyl.hitbox, loop.renderX, loop.renderY);
 
     const fps = this.hudTicker.tick(deltaMs / 1000);
@@ -239,6 +241,17 @@ export class GameScene extends Phaser.Scene {
   private drawEntity(g: Phaser.GameObjects.Graphics, e: Entity): void {
     const typeId = e.tags[0] ?? '';
     this.drawPrimitive(g, typeId, e.hitbox, e.transform.position.x, e.transform.position.y);
+  }
+
+  /** Desenha só as entidades cuja extensão horizontal intersecta o viewport (culling, REGRA 3). */
+  private drawVisible(g: Phaser.GameObjects.Graphics, entities: readonly Entity[], scrollX: number): void {
+    for (const e of entities) {
+      const x = e.transform.position.x;
+      if (!isHorizontallyVisible(x, leftExtent(e.hitbox), rightExtent(e.hitbox), scrollX, VIEW_WIDTH, CULL_MARGIN)) {
+        continue;
+      }
+      this.drawEntity(g, e);
+    }
   }
 
   /** Gera (1×) a textura de tile de uma camada: linha de triângulos como silhueta. Chave = id. */

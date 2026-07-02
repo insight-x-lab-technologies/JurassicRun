@@ -5,6 +5,9 @@ export const VIEW_HEIGHT = 180;
 /** x de tela fixo do pterodáctilo (≈¼ da largura); a câmera scrolla em x para segui-lo. */
 export const DINO_SCREEN_X = 80;
 
+/** Margem (px) do culling horizontal de render: evita "pop" de entidades entrando na borda. */
+export const CULL_MARGIN = 4;
+
 /** Clamp do dt de frame (s): evita spiral-of-death quando a aba volta do background. */
 export const MAX_FRAME_TIME = 0.25;
 

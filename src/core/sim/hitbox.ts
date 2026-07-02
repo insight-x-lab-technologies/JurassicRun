@@ -50,6 +50,21 @@ export function rightExtent(h: Hitbox): number {
   }
 }
 
+/** Extensão horizontal à esquerda do centro (minX), sem alocar — espelho de rightExtent. */
+export function leftExtent(h: Hitbox): number {
+  switch (h.kind) {
+    case 'aabb':
+      return -h.halfW;
+    case 'circle':
+      return -h.radius;
+    case 'polygon': {
+      let minX = Infinity;
+      for (const p of h.points) if (p.x < minX) minX = p.x;
+      return minX;
+    }
+  }
+}
+
 /** Calcula os extents (AABB envolvente) de qualquer hitbox, relativos ao centro. */
 export function boundsOf(h: Hitbox): Bounds {
   switch (h.kind) {
