@@ -35,7 +35,6 @@ import {
   GAMEOVER_TEXT_COLOR,
   GAMEOVER_BUTTON_COLOR,
   GAMEOVER_BUTTON_DISABLED_COLOR,
-  CONFIRM_KEYS,
 } from './constants';
 
 /** Renderiza o WorldState lido do core via MatchController. Não altera a simulação (REGRA 1). */
@@ -158,10 +157,8 @@ export class GameScene extends Phaser.Scene {
       .setDepth(GAMEOVER_CONTENT_DEPTH)
       .setVisible(false); // stub desabilitado: não interativo (ativa na Fase 4)
 
-    // Teclado (desktop): confirmar reinicia só em `dead`.
-    this.input.keyboard?.on('keydown', (e: KeyboardEvent) => {
-      if (this.match.phase === 'dead' && CONFIRM_KEYS.includes(e.code)) this.match.restart();
-    });
+    // Teclado de restart em `dead` vive no caminho único de `bindGameControls` (evita a corrida
+    // com este listener e o flap-de-início global). Aqui só o botão Reiniciar (ponteiro) reinicia.
   }
 
   override update(_time: number, deltaMs: number): void {
