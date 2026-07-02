@@ -10,3 +10,4 @@ build/
 .devserver.pid
 dev-dist/
 .superpowers/
+.playwright-mcp/

@@ -98,4 +98,38 @@ e **redesenhado por completo a cada frame** em modo imediato (`fillRect`/`fillCi
 - Item 2.7 marcado `[x]`; `CLAUDE.md` "Estado atual" atualizado (Fase 2 concluída).
 
 ## Evidência de performance
-_(preenchida na Task de medição — Task C)_
+
+**Metodologia:** dev server Vite + Playwright (Chromium WebGL). Partida real iniciada (tap) e
+rodando (jogou do início até o Game Over — ver screenshot), warm-up ~1s, então **fps medido de
+verdade por `requestAnimationFrame`** (intervalo entre callbacks). Métrica-chave de saúde:
+**frames > 33ms** = deadline de vsync de 60Hz perdido (queda para ~30fps). Medido em 2026-07-02.
+
+| Viewport | Duração | Frames | fps médio | p50 | p90 | p99 | max | frames > 33ms (jank) |
+|---|---|---|---|---|---|---|---|---|
+| Desktop 780×493 | 10s | 560 | 56 | 17,4ms | 19,6ms | 21,6ms | 24,0ms | **0** |
+| Mobile emulado 390×844 | 8s | 480 | **60** | 16,7ms | 17,6ms | 21,2ms | 23,3ms | **0** |
+
+**Leitura:**
+- **Mobile emulado: 60fps sustentado** — p50 16,7ms bate exatamente o orçamento de 60Hz
+  (16,67ms), com **zero** frames perdidos em 480 frames. **Alvo de 60fps+ atendido.**
+- Desktop 56fps média **com zero jank**: o custo lógico de desenho é o mesmo dos dois (canvas
+  320×180 `Scale.FIT`), então a média mais baixa não é custo do jogo e sim a **cadência de refresh
+  do ambiente headless daquela janela (~57Hz ≈ 17,4ms/frame)**. Um renderer CPU-bound mostraria
+  frames agrupados em 33ms+ (queda a 30fps); observamos **0** em 560 frames ⇒ o renderer acompanha
+  **todos** os refreshes. O menor intervalo observado (16,4ms num run de 5s) confirma que um frame
+  completa dentro do orçamento de 60Hz.
+- **Culling + alocação-zero:** verificados por revisão de código (culling horizontal pula
+  entidades fora do viewport via `isHorizontallyVisible`; polígono desenhado pela API de path e
+  bounds do dino cacheados ⇒ sem `new Vector2`/`boundsOf` por frame) e visualmente (cena íntegra,
+  sem buracos; obstáculos aabb/circle/**polygon** — stalactite na borda direita — renderizados;
+  HUD marcando FPS ~60).
+
+**Limitações (registradas):**
+- Ambiente **headless/virtualizado ≠ device físico**. A validação em hardware real (desktop/tablet/
+  celular, retrato+paisagem) é a **Fase 7** (PWA/responsividade/deploy).
+- **CPU throttling** (CDP `Emulation.setCPUThrottlingRate`) **não aplicado**: as ferramentas
+  Playwright deste ambiente não expuseram a sessão CDP; o "mobile" aqui é viewport emulado sem
+  throttle de CPU. Medição sob throttle e em device fica para a Fase 7.
+
+Evidência visual: `.playwright-mcp/2.7-perf-mobile-viewport.png` (não versionado) — Game Over em
+`Distance: 141m`, HUD FPS ~60, parallax + obstáculos + coletáveis + overlay, cena sem artefatos.

@@ -29,8 +29,8 @@ com input, parallax, HUD e Game Over. Tudo geométrico. **60fps+**. Prova a base
 - [x] Estatísticas: distância, comida, near-misses. Botões reiniciar/sair.
 
 ### 2.7 Performance
-- [ ] Object pooling no render; culling de fora-de-tela.
-- [ ] Medir fps em desktop e mobile; alvo 60fps+. Registrar evidência.
+- [x] Object pooling no render; culling de fora-de-tela.
+- [x] Medir fps em desktop e mobile; alvo 60fps+. Registrar evidência.
 
 ## Definição de pronto
 - Dá para jogar Endless do início ao Game Over, a 60fps, com HUD completo.
