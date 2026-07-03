@@ -73,10 +73,10 @@ de tuning (como os demais power-ups do 3.1).
 5. **`replay/hash.ts`** — **nenhuma mudança**: `ActiveEffect.kind` é absorvido como string
    (`d.string(eff.kind)`, `hash.ts:147`), não por switch de exaustividade. O novo kind é
    hasheado pelos bytes da string automaticamente; basta re-pinar os goldens (item 6).
-6. **Golden master** (`tests/determinism/replay.determinism.test.ts`) — os 3 cenários **com
-   seed** (`GOLD1`, `GOLD1 difficulty:false`, `GOLD2`) rodam o `powerupSpawner`; a 5ª entrada
-   no catálogo muda a distribuição do `pick` ⇒ **re-pinar** esses 3 hashes. O cenário sem
-   seed não tem spawner ⇒ inalterado.
+6. **Golden master** (`tests/determinism/replay.determinism.test.ts`) — os cenários **seeded**
+   cujo `pick` de power-up cai num índice deslocado pela 5ª entrada (na prática 2 dos 3:
+   `GOLD1` com e sem difficulty; `GOLD2` ficou igual porque seu sorteio caiu no mesmo índice)
+   precisam ser **re-pinados**. O cenário sem seed não tem spawner ⇒ inalterado.
 
 > **Nota:** o efeito `slowMo` não altera nenhum campo de `WorldState` (só entra no array
 > `effects` já existente), então a guarda de completude de chaves do `hashState` (24 chaves)
