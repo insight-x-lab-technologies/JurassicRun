@@ -27,28 +27,28 @@ const SCENARIOS: Scenario[] = [
     config: { ...BASE },
     length: 400,
     pattern: () => false,
-    golden: 'f2037ecb0e5865531c2b7765bc7aa5ad',
+    golden: 'a38628a66ad6c6de49ef8f023ef6baeb',
   },
   {
     name: 'com seed — sobrevive bastante (flap regular)',
     config: { ...BASE, seed: 'endless:GOLD1' },
     length: 1500,
     pattern: flapEvery(6),
-    golden: 'f7d71f87cf91d9baf756e054e851fb18',
+    golden: '2e53836f0f87258eaff4a0b159060cac',
   },
   {
     name: 'com seed — difficulty:false',
     config: { ...BASE, seed: 'endless:GOLD1', difficulty: false },
     length: 1500,
     pattern: flapEvery(6),
-    golden: '165410db46944c0e4adf997c1f4dd822',
+    golden: '9f643a09c1159e23c79d95644df3069e',
   },
   {
     name: 'com seed diferente',
     config: { ...BASE, seed: 'endless:GOLD2' },
     length: 1500,
     pattern: flapEvery(6),
-    golden: 'c5a345fc47ed7b08288495405304dac5',
+    golden: '26f2b8a04a1a697ea39b64d540c66609',
   },
 ];
 

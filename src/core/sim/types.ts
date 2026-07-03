@@ -1,4 +1,5 @@
 import type { SpawnGenerator, SpawnConfig } from '@core/spawn';
+import type { ActiveEffect } from '@core/powerup';
 
 /** Vetor 2D (dados puros). */
 export interface Vec2 {
@@ -58,6 +59,8 @@ export interface WorldConfig {
   spawn?: Partial<SpawnConfig>;
   /** Overrides parciais da config de spawn de coletáveis (tuning). */
   collectibleSpawn?: Partial<SpawnConfig>;
+  /** Overrides parciais da config de spawn de power-ups (tuning). */
+  powerupSpawn?: Partial<SpawnConfig>;
   /** Liga a curva de dificuldade (velocidade/gaps crescentes). Default true. */
   difficulty?: boolean;
 }
@@ -99,4 +102,12 @@ export interface WorldState {
   spawner: SpawnGenerator | null;
   /** Gerador de coletáveis (null quando o mundo não tem seed). */
   collectibleSpawner: SpawnGenerator | null;
+  /** Pickups de power-up materializados no mundo (item 3.1). */
+  powerups: Entity[];
+  /** Gerador de power-ups (null quando o mundo não tem seed). */
+  powerupSpawner: SpawnGenerator | null;
+  /** Efeitos temporários ativos (duração em steps). */
+  effects: ActiveEffect[];
+  /** Cargas de vida extra acumuladas (não é efeito temporário). */
+  extraLives: number;
 }

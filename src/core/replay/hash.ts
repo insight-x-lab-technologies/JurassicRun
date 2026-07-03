@@ -140,7 +140,16 @@ export function hashState(world: WorldState): string {
   for (const e of world.obstacles) encodeEntity(d, e);
   d.word(world.collectibles.length);
   for (const e of world.collectibles) encodeEntity(d, e);
+  d.word(world.powerups.length);
+  for (const e of world.powerups) encodeEntity(d, e);
+  d.word(world.effects.length);
+  for (const eff of world.effects) {
+    d.string(eff.kind);
+    d.number(eff.remaining);
+  }
+  d.number(world.extraLives);
   d.bool(world.spawner !== null);
   d.bool(world.collectibleSpawner !== null);
+  d.bool(world.powerupSpawner !== null);
   return d.hex();
 }

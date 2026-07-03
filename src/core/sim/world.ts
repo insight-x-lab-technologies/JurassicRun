@@ -5,6 +5,7 @@ import { createRng } from '@core/rng';
 import { SpawnGenerator, DEFAULT_SPAWN_CONFIG, DEFAULT_COLLECTIBLE_CONFIG, COLLECTIBLE_CATALOG } from '@core/spawn';
 import type { SpawnConfig } from '@core/spawn';
 import { difficultyAt } from '@core/difficulty';
+import { POWERUP_CATALOG, DEFAULT_POWERUP_CONFIG, cloneEffects } from '@core/powerup';
 
 /** Referência de função ESTÁVEL (não realocar por createWorld) p/ igualdade estrutural
  * (toEqual) em testes de determinismo/replay. Mesmo motivo do `noScale` do spawn. */
@@ -25,6 +26,11 @@ function buildCollectibleSpawner(seed: string, worldHeight: number, override?: P
   return new SpawnGenerator(createRng(seed).fork('collectibles'), config, COLLECTIBLE_CATALOG, 'collectible');
 }
 
+function buildPowerupSpawner(seed: string, worldHeight: number, override?: Partial<SpawnConfig>): SpawnGenerator {
+  const config: SpawnConfig = { ...DEFAULT_POWERUP_CONFIG, ...override, worldHeight };
+  return new SpawnGenerator(createRng(seed).fork('powerups'), config, POWERUP_CATALOG, 'collectible');
+}
+
 /** Constrói o mundo inicial a partir de uma config parcial (ausências usam os defaults). */
 export function createWorld(config: WorldConfig = {}): WorldState {
   const c = { ...DEFAULT_WORLD_CONFIG, ...config };
@@ -33,6 +39,8 @@ export function createWorld(config: WorldConfig = {}): WorldState {
   const spawner = config.seed === undefined ? null : buildSpawner(config.seed, c.worldHeight, config.spawn, gapScale);
   const collectibleSpawner =
     config.seed === undefined ? null : buildCollectibleSpawner(config.seed, c.worldHeight, config.collectibleSpawn);
+  const powerupSpawner =
+    config.seed === undefined ? null : buildPowerupSpawner(config.seed, c.worldHeight, config.powerupSpawn);
   return {
     tick: 0,
     distance: 0,
@@ -58,6 +66,10 @@ export function createWorld(config: WorldConfig = {}): WorldState {
     collectibles: [],
     spawner,
     collectibleSpawner,
+    powerups: [],
+    powerupSpawner,
+    effects: [],
+    extraLives: 0,
   };
 }
 
@@ -99,5 +111,9 @@ export function cloneWorld(w: WorldState): WorldState {
     collectibles: w.collectibles.map(cloneEntity),
     spawner: w.spawner ? w.spawner.clone() : null,
     collectibleSpawner: w.collectibleSpawner ? w.collectibleSpawner.clone() : null,
+    powerups: w.powerups.map(cloneEntity),
+    powerupSpawner: w.powerupSpawner ? w.powerupSpawner.clone() : null,
+    effects: cloneEffects(w.effects),
+    extraLives: w.extraLives,
   };
 }

@@ -4,6 +4,7 @@ import { collect } from './collect';
 import { overlaps } from '@core/collision';
 import { difficultyAt } from '@core/difficulty';
 import { scoreDelta } from '@core/economy';
+import { pickupPowerup, tickEffects } from '@core/powerup';
 import type { InputFrame, WorldState } from './types';
 
 /**
@@ -81,6 +82,15 @@ export function step(world: WorldState, input: InputFrame): void {
     }
   }
 
+  if (world.powerupSpawner) {
+    world.powerupSpawner.generateUpTo(world.distance + SPAWN_LOOKAHEAD, world.powerups);
+    const cullX = pos.x - CULL_MARGIN;
+    const pw = world.powerups;
+    while (pw.length > 0 && pw[0]!.transform.position.x + rightExtent(pw[0]!.hitbox) < cullX) {
+      pw.shift();
+    }
+  }
+
   // Passada de colisão (só enquanto vivo). O dino é o agente; obstáculos/coletáveis estão em
   // coords de mundo. `overlaps` é alocação-zero (REGRA 3).
   if (world.alive) {
@@ -119,8 +129,21 @@ export function step(world: WorldState, input: InputFrame): void {
     }
   }
 
+  if (world.alive) {
+    const powerups = world.powerups;
+    for (let i = powerups.length - 1; i >= 0; i--) {
+      const p = powerups[i]!;
+      if (overlaps(ptero.hitbox, pos, p.hitbox, p.transform.position)) {
+        pickupPowerup(world, p);
+      }
+    }
+  }
+
   // Acúmulo incremental do score: distância deste step + comida/near-miss ganhos, à taxa do
   // multiplicador ativo agora (item 1.8). Alocação-zero (escalares). Na morte, foodDelta/
   // nearMissDelta deste step são 0 (contados só sob `if (world.alive)`); a distância dx conta.
   world.score += scoreDelta(dx, world.food - foodBefore, world.nearMisses - nearMissBefore, world.scoreMultiplier);
+
+  // Decremento de duração dos efeitos temporários (1×/step, no fim).
+  tickEffects(world.effects);
 }
