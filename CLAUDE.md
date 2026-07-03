@@ -340,5 +340,31 @@ início ao Game Over): mobile emulado 390×844 = **60fps sustentado** (p50 16,7m
 real + batching de atlas (Fase 8); culling vertical (desnecessário); medição sob throttle de CPU e
 em device físico (Fase 7 — CDP não exposto no ambiente headless).
 
-Próximo: **Fase 3 (Power-ups & clima)** — ver `docs/roadmap/PHASE-03-powerups-and-weather.md` e
-`docs/roadmap/ROADMAP.md`.
+**Fase 3 (Power-ups & clima) — EM ANDAMENTO.** Item 3.1 concluído.
+
+3.1 (sistema de power-ups): módulo-folha puro `src/core/powerup/` (framework de efeitos
+temporários com duração em STEPS + catálogo). `ActiveEffect {kind, remaining}` em
+`WorldState.effects`; `activateEffect` (estende via `max`, nunca encurta), `tickEffects` (1×/step
+no fim, remove ao zerar), `isEffectActive` (busca linear alocação-zero), `cloneEffects`. Quatro
+power-ups (`POWERUP_CATALOG`, tag→kind por `powerupKindForTag`): **escudo** (invuln. a obstáculo por
+duração), **vida extra** (carga `WorldState.extraLives`, não é efeito temporário; `killOrRevive`
+consome 1 e revive ao centro `worldHeight/2` com escudo-de-graça, salvando colisão E chão),
+**ímã** (`applyMagnet` puxa coletáveis dentro de `MAGNET_RADIUS` em direção ao dino via
+`Math.sqrt`/`FIXED_DT`, antes da coleta), **moeda dobrada** (`collect` dá `food += 2` ativo).
+Slow-mo ADIADO ao 3.2 (não spawna pickup inerte; gancho pronto no framework). Geração keyed por
+distância reusa `SpawnGenerator` num 3º stream `createRng(seed).fork('powerups')` (independente de
+obstáculos/coletáveis); `WorldState.{powerups, powerupSpawner}` + `WorldConfig.powerupSpawn`; step
+gera/culla/coleta espelhando coletáveis, com passada de pickup (ativa efeito / incrementa vida) e
+escudo amostrado 1×/step (após revive no loop, `shielded=true` ⇒ ≤1 carga por step). `hashState`
+codifica os 4 campos novos (guarda de completude 20→24 chaves; goldens re-pinados). Render: 4 cores
+no `ASSET_MANIFEST` + `drawVisible(world.powerups)` (culling reusado) + 4 asset-specs (REGRA 5) e
+registro. Sem strings i18n novas (indicadores de efeito ativo/HUD adiados). **Core determinístico
+intocado no contrato** (determinism-guardian "CONTRATO INTACTO"; review final "READY TO MERGE").
+Suíte verde (`check` limpo, 296 testes, determinismo 58; execução SDD por subagentes: 5 tasks +
+review por task + 1 fix de review de task + review final + 2 Minors do review final aplicados com
+teste de regressão). **Adiados:** slow-mo (3.2); indicadores visuais de efeito ativo + HUD de
+power-up + rótulos i18n; tuning de durações/raio/frequência (placeholders); `DEFAULT_POWERUP_CONFIG.
+worldHeight:0` sobrescrito em runtime; `pickupPowerup`/`collect` refazem `indexOf` (padrão de 1.5/1.6).
+
+Próximo: **Fase 3, item 3.2 (câmera lenta sem quebrar determinismo)** — ver
+`docs/roadmap/PHASE-03-powerups-and-weather.md` e `docs/roadmap/ROADMAP.md`.

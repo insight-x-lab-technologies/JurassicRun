@@ -4,6 +4,7 @@ import { collect } from './collect';
 import { overlaps } from '@core/collision';
 import { difficultyAt } from '@core/difficulty';
 import { scoreDelta } from '@core/economy';
+import { pickupPowerup, tickEffects, isEffectActive, applyMagnet, killOrRevive } from '@core/powerup';
 import type { InputFrame, WorldState } from './types';
 
 /**
@@ -55,10 +56,14 @@ export function step(world: WorldState, input: InputFrame): void {
     vel.y = 0;
   }
 
-  // Chão: tocar = morte; repousa exatamente sobre o chão.
+  // Chão: tocar = morte (ou consome vida extra e revive).
   if (pos.y + halfH >= world.worldHeight) {
-    pos.y = world.worldHeight - halfH;
-    world.alive = false;
+    if (world.extraLives > 0) {
+      killOrRevive(world); // revive ao centro
+    } else {
+      pos.y = world.worldHeight - halfH;
+      killOrRevive(world); // marca morte, repousa sobre o chão
+    }
   }
 
   // Geração de obstáculos keyed por distância + cull dos ultrapassados (hot path: rightExtent
@@ -81,6 +86,15 @@ export function step(world: WorldState, input: InputFrame): void {
     }
   }
 
+  if (world.powerupSpawner) {
+    world.powerupSpawner.generateUpTo(world.distance + SPAWN_LOOKAHEAD, world.powerups);
+    const cullX = pos.x - CULL_MARGIN;
+    const pw = world.powerups;
+    while (pw.length > 0 && pw[0]!.transform.position.x + rightExtent(pw[0]!.hitbox) < cullX) {
+      pw.shift();
+    }
+  }
+
   // Passada de colisão (só enquanto vivo). O dino é o agente; obstáculos/coletáveis estão em
   // coords de mundo. `overlaps` é alocação-zero (REGRA 3).
   if (world.alive) {
@@ -88,12 +102,19 @@ export function step(world: WorldState, input: InputFrame): void {
     const dinoHalfH = ptero.hitbox.kind === 'aabb' ? ptero.hitbox.halfH : 0;
     const dinoLeft = pos.x - dinoHalfW;
     const obstacles = world.obstacles;
+    let shielded = isEffectActive(world.effects, 'shield'); // 1×/step, não por obstáculo
     for (let i = 0; i < obstacles.length; i++) {
       const o = obstacles[i]!;
       const oPos = o.transform.position;
       if (overlaps(ptero.hitbox, pos, o.hitbox, oPos)) {
-        world.alive = false;
-        break;
+        if (!shielded) {
+          killOrRevive(world);
+          if (!world.alive) break;
+          // vida-extra reviveu: o escudo-de-graça agora protege os demais obstáculos deste step
+          // (evita consumir >1 carga num único step com obstáculos sobrepostos).
+          shielded = true;
+        }
+        // com escudo/vida-extra: sobrevive e ignora esta colisão
       }
       // Near-miss: conta 1× no step em que o dino ULTRAPASSA o obstáculo em x (transição),
       // se o gap vertical ≤ margem. Detecção stateless via dx deste step.
@@ -108,6 +129,8 @@ export function step(world: WorldState, input: InputFrame): void {
     }
   }
 
+  if (world.alive && isEffectActive(world.effects, 'magnet')) applyMagnet(world);
+
   if (world.alive) {
     const collectibles = world.collectibles;
     // Itera de trás para frente: `collect` faz splice na lista.
@@ -119,8 +142,21 @@ export function step(world: WorldState, input: InputFrame): void {
     }
   }
 
+  if (world.alive) {
+    const powerups = world.powerups;
+    for (let i = powerups.length - 1; i >= 0; i--) {
+      const p = powerups[i]!;
+      if (overlaps(ptero.hitbox, pos, p.hitbox, p.transform.position)) {
+        pickupPowerup(world, p);
+      }
+    }
+  }
+
   // Acúmulo incremental do score: distância deste step + comida/near-miss ganhos, à taxa do
   // multiplicador ativo agora (item 1.8). Alocação-zero (escalares). Na morte, foodDelta/
   // nearMissDelta deste step são 0 (contados só sob `if (world.alive)`); a distância dx conta.
   world.score += scoreDelta(dx, world.food - foodBefore, world.nearMisses - nearMissBefore, world.scoreMultiplier);
+
+  // Decremento de duração dos efeitos temporários (1×/step, no fim).
+  tickEffects(world.effects);
 }
