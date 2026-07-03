@@ -4,7 +4,7 @@ import { collect } from './collect';
 import { overlaps } from '@core/collision';
 import { difficultyAt } from '@core/difficulty';
 import { scoreDelta } from '@core/economy';
-import { pickupPowerup, tickEffects } from '@core/powerup';
+import { pickupPowerup, tickEffects, isEffectActive, applyMagnet, killOrRevive } from '@core/powerup';
 import type { InputFrame, WorldState } from './types';
 
 /**
@@ -56,10 +56,14 @@ export function step(world: WorldState, input: InputFrame): void {
     vel.y = 0;
   }
 
-  // Chão: tocar = morte; repousa exatamente sobre o chão.
+  // Chão: tocar = morte (ou consome vida extra e revive).
   if (pos.y + halfH >= world.worldHeight) {
-    pos.y = world.worldHeight - halfH;
-    world.alive = false;
+    if (world.extraLives > 0) {
+      killOrRevive(world); // revive ao centro
+    } else {
+      pos.y = world.worldHeight - halfH;
+      killOrRevive(world); // marca morte, repousa sobre o chão
+    }
   }
 
   // Geração de obstáculos keyed por distância + cull dos ultrapassados (hot path: rightExtent
@@ -98,12 +102,16 @@ export function step(world: WorldState, input: InputFrame): void {
     const dinoHalfH = ptero.hitbox.kind === 'aabb' ? ptero.hitbox.halfH : 0;
     const dinoLeft = pos.x - dinoHalfW;
     const obstacles = world.obstacles;
+    const shielded = isEffectActive(world.effects, 'shield'); // 1×/step, não por obstáculo
     for (let i = 0; i < obstacles.length; i++) {
       const o = obstacles[i]!;
       const oPos = o.transform.position;
       if (overlaps(ptero.hitbox, pos, o.hitbox, oPos)) {
-        world.alive = false;
-        break;
+        if (!shielded) {
+          killOrRevive(world);
+          if (!world.alive) break;
+        }
+        // com escudo/vida-extra: sobrevive e ignora esta colisão
       }
       // Near-miss: conta 1× no step em que o dino ULTRAPASSA o obstáculo em x (transição),
       // se o gap vertical ≤ margem. Detecção stateless via dx deste step.
@@ -117,6 +125,8 @@ export function step(world: WorldState, input: InputFrame): void {
       }
     }
   }
+
+  if (isEffectActive(world.effects, 'magnet')) applyMagnet(world);
 
   if (world.alive) {
     const collectibles = world.collectibles;
