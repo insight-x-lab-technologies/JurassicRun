@@ -1,8 +1,9 @@
 import { FIXED_DT, step } from '@core/sim';
 import type { WorldState } from '@core/sim';
+import { isEffectActive } from '@core/powerup';
 import type { InputSource } from './input';
 import { lerp } from './interpolate';
-import { MAX_FRAME_TIME } from './constants';
+import { MAX_FRAME_TIME, SLOW_MO_TIME_SCALE } from './constants';
 
 /**
  * Loop canônico de passo fixo (ARCHITECTURE.md): acumulador + steps fixos, render desacoplado.
@@ -27,7 +28,8 @@ export class FixedStepLoop {
   /** Acumula dt (clampado) e roda os steps fixos devidos. Retorna quantos steps rodaram. */
   advance(dtSeconds: number): number {
     const dt = dtSeconds > MAX_FRAME_TIME ? MAX_FRAME_TIME : dtSeconds;
-    this.accumulator += dt;
+    const scale = isEffectActive(this.world.effects, 'slowMo') ? SLOW_MO_TIME_SCALE : 1;
+    this.accumulator += dt * scale;
     const pos = this.world.pterodactyl.transform.position;
     let steps = 0;
     while (this.accumulator >= FIXED_DT) {

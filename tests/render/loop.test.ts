@@ -3,7 +3,8 @@ import { createWorld, FIXED_DT } from '@core/sim';
 import type { InputFrame } from '@core/sim';
 import { FixedStepLoop } from '@render/loop';
 import { NullInputSource } from '@render/input';
-import { MAX_FRAME_TIME } from '@render/constants';
+import { MAX_FRAME_TIME, SLOW_MO_TIME_SCALE } from '@render/constants';
+import { activateEffect } from '@core/powerup';
 
 /** Mundo alto: o dino não toca o chão em poucos steps ⇒ tick avança sem morte. */
 function tallWorld() {
@@ -68,5 +69,45 @@ describe('FixedStepLoop', () => {
     loop.advance(FIXED_DT * 1.5);
     const currX = world.pterodactyl.transform.position.x;
     expect(loop.renderX).toBeLessThanOrEqual(currX);
+  });
+});
+
+describe('FixedStepLoop — slow-mo (escala de tempo)', () => {
+  it('com slowMo ativo, um frame de FIXED_DT roda 0 steps (dt encolhido)', () => {
+    const w = tallWorld();
+    activateEffect(w.effects, 'slowMo', 600);
+    const loop = new FixedStepLoop(w, new NullInputSource());
+    // scale 0.4: FIXED_DT*0.4 < FIXED_DT ⇒ nenhum step completa neste frame.
+    expect(loop.advance(FIXED_DT)).toBe(0);
+    expect(loop.world.tick).toBe(0);
+  });
+
+  it('com slowMo ativo rodam menos steps que sem, para o mesmo dt total', () => {
+    const slow = tallWorld();
+    activateEffect(slow.effects, 'slowMo', 600);
+    const slowLoop = new FixedStepLoop(slow, new NullInputSource());
+    const fastLoop = new FixedStepLoop(tallWorld(), new NullInputSource());
+
+    let slowSteps = 0;
+    let fastSteps = 0;
+    for (let i = 0; i < 10; i++) {
+      slowSteps += slowLoop.advance(FIXED_DT);
+      fastSteps += fastLoop.advance(FIXED_DT);
+    }
+    expect(fastSteps).toBe(10);
+    // 10 frames · scale 0.4 = 4·FIXED_DT acumulados ⇒ 4 steps.
+    expect(slowSteps).toBe(Math.floor(10 * SLOW_MO_TIME_SCALE));
+    expect(slowSteps).toBeLessThan(fastSteps);
+  });
+
+  it('ao expirar o slowMo, o ritmo volta ao normal (1 step por FIXED_DT)', () => {
+    const w = tallWorld();
+    activateEffect(w.effects, 'slowMo', 1); // dura 1 step
+    const loop = new FixedStepLoop(w, new NullInputSource());
+    // Junta dt suficiente (2.5 frames · 0.4 = 1 step) p/ rodar 1 step lento e o tickEffects zerar.
+    loop.advance(FIXED_DT * 2.5);
+    expect(loop.world.tick).toBe(1);
+    // slowMo já expirou no step anterior ⇒ agora um frame normal roda 1 step.
+    expect(loop.advance(FIXED_DT)).toBe(1);
   });
 });
