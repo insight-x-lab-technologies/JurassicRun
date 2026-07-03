@@ -9,6 +9,9 @@ export const DOUBLE_COIN_DURATION_STEPS = 480;
 /** Escudo curto concedido ao reviver com vida extra (steps). ~1 s. */
 export const EXTRA_LIFE_GRACE_STEPS = 60;
 
+/** Duração do slow-mo (steps de mundo). ~3 s de conteúdo; tempo REAL sentido = steps·FIXED_DT ÷ SLOW_MO_TIME_SCALE. Placeholder de tuning. */
+export const SLOW_MO_DURATION_STEPS = 180;
+
 /** Raio (unidades) dentro do qual o ímã atrai coletáveis. */
 export const MAGNET_RADIUS = 60;
 /** Velocidade de atração do ímã (unidades/s). */

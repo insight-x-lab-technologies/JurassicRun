@@ -25,6 +25,7 @@ export const ASSET_MANIFEST: Readonly<Record<string, Renderable>> = {
   'powerup.extraLife': { kind: 'primitive', color: 0xff5a7a },
   'powerup.magnet': { kind: 'primitive', color: 0xc061ff },
   'powerup.doubleCoin': { kind: 'primitive', color: 0xffe14a },
+  'powerup.slowMo': { kind: 'primitive', color: 0x66ffcc },
 };
 
 /** Visual de um tipo lógico; fallback primitivo para ids desconhecidos. */

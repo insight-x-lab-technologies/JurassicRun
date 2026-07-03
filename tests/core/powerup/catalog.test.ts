@@ -3,13 +3,14 @@ import { POWERUP_CATALOG, powerupKindForTag } from '@core/powerup';
 import { createRng } from '@core/rng';
 
 describe('powerup catalog', () => {
-  it('has the 4 power-up types, all floating with a circle hitbox', () => {
+  it('has the 5 power-up types, all floating with a circle hitbox', () => {
     const ids = POWERUP_CATALOG.map((t) => t.id);
     expect(ids).toEqual([
       'powerup.shield',
       'powerup.extraLife',
       'powerup.magnet',
       'powerup.doubleCoin',
+      'powerup.slowMo',
     ]);
     const rng = createRng('endless:CAT');
     for (const t of POWERUP_CATALOG) {
@@ -23,6 +24,7 @@ describe('powerup catalog', () => {
     expect(powerupKindForTag('powerup.extraLife')).toBe('extraLife');
     expect(powerupKindForTag('powerup.magnet')).toBe('magnet');
     expect(powerupKindForTag('powerup.doubleCoin')).toBe('doubleCoin');
+    expect(powerupKindForTag('powerup.slowMo')).toBe('slowMo');
     expect(powerupKindForTag('obstacle.tree')).toBeNull();
     expect(powerupKindForTag('bird.coin')).toBeNull();
   });
