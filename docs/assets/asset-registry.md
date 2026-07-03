@@ -29,11 +29,11 @@ usada no manifesto de assets do render.
 | id | descrição | status | spec |
 |----|-----------|--------|------|
 | `bird.coin` | pássaro-moeda (comida) | spec | `specs/bird.coin.md` |
-| `powerup.shield` | escudo | placeholder | — |
-| `powerup.extralife` | vida extra | placeholder | — |
-| `powerup.slowmo` | câmera lenta | placeholder | — |
-| `powerup.magnet` | ímã | placeholder | — |
-| `powerup.double` | moeda dobrada | placeholder | — |
+| `powerup.shield` | escudo (invulnerabilidade temporária) | spec | `specs/powerup.shield.md` |
+| `powerup.extraLife` | vida extra (carga que revive) | spec | `specs/powerup.extraLife.md` |
+| `powerup.magnet` | ímã (atrai coletáveis) | spec | `specs/powerup.magnet.md` |
+| `powerup.doubleCoin` | moeda dobrada (comida em dobro) | spec | `specs/powerup.doubleCoin.md` |
+| `powerup.slowmo` | câmera lenta (adiado — item 3.2) | placeholder | — |
 
 ## Fundos / parallax
 | id | descrição | status | spec |

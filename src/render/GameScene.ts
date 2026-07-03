@@ -191,6 +191,7 @@ export class GameScene extends Phaser.Scene {
     g.clear();
     this.drawVisible(g, world.obstacles, scrollX);
     this.drawVisible(g, world.collectibles, scrollX);
+    this.drawVisible(g, world.powerups, scrollX);
     this.drawPrimitive(g, DINO_TYPE_ID, world.pterodactyl.hitbox, loop.renderX, loop.renderY);
 
     const fps = this.hudTicker.tick(deltaMs / 1000);

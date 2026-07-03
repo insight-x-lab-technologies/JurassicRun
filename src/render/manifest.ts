@@ -21,6 +21,10 @@ export const ASSET_MANIFEST: Readonly<Record<string, Renderable>> = {
   'obstacle.boulder': { kind: 'primitive', color: 0x808896 },
   'obstacle.stalactite': { kind: 'primitive', color: 0x9aa3b2 },
   'bird.coin': { kind: 'primitive', color: 0xffd54a },
+  'powerup.shield': { kind: 'primitive', color: 0x4ac0ff },
+  'powerup.extraLife': { kind: 'primitive', color: 0xff5a7a },
+  'powerup.magnet': { kind: 'primitive', color: 0xc061ff },
+  'powerup.doubleCoin': { kind: 'primitive', color: 0xffe14a },
 };
 
 /** Visual de um tipo lógico; fallback primitivo para ids desconhecidos. */
