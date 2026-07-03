@@ -102,7 +102,7 @@ export function step(world: WorldState, input: InputFrame): void {
     const dinoHalfH = ptero.hitbox.kind === 'aabb' ? ptero.hitbox.halfH : 0;
     const dinoLeft = pos.x - dinoHalfW;
     const obstacles = world.obstacles;
-    const shielded = isEffectActive(world.effects, 'shield'); // 1×/step, não por obstáculo
+    let shielded = isEffectActive(world.effects, 'shield'); // 1×/step, não por obstáculo
     for (let i = 0; i < obstacles.length; i++) {
       const o = obstacles[i]!;
       const oPos = o.transform.position;
@@ -110,6 +110,9 @@ export function step(world: WorldState, input: InputFrame): void {
         if (!shielded) {
           killOrRevive(world);
           if (!world.alive) break;
+          // vida-extra reviveu: o escudo-de-graça agora protege os demais obstáculos deste step
+          // (evita consumir >1 carga num único step com obstáculos sobrepostos).
+          shielded = true;
         }
         // com escudo/vida-extra: sobrevive e ignora esta colisão
       }
@@ -126,7 +129,7 @@ export function step(world: WorldState, input: InputFrame): void {
     }
   }
 
-  if (isEffectActive(world.effects, 'magnet')) applyMagnet(world);
+  if (world.alive && isEffectActive(world.effects, 'magnet')) applyMagnet(world);
 
   if (world.alive) {
     const collectibles = world.collectibles;

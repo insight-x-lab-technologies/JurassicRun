@@ -47,6 +47,18 @@ describe('shield', () => {
 });
 
 describe('extra life', () => {
+  it('consumes at most one charge per step even with overlapping obstacles', () => {
+    const w: WorldState = createWorld(CFG);
+    w.extraLives = 1;
+    const px = w.pterodactyl.transform.position.x;
+    // Dois obstáculos sobrepondo o dino no MESMO step. O revive concede escudo-de-graça que
+    // deve proteger o 2º obstáculo ⇒ só 1 carga consumida (não morre por falta da 2ª).
+    w.obstacles.push(obstacleAt(px, 300), obstacleAt(px, 300));
+    step(w, { flap: false });
+    expect(w.alive).toBe(true);
+    expect(w.extraLives).toBe(0);
+  });
+
   it('killOrRevive consumes a charge, keeps alive, and grants a grace shield', () => {
     const w: WorldState = createWorld(CFG);
     w.extraLives = 1;
