@@ -538,12 +538,13 @@ Em `tests/core/replay/hash-completeness.test.ts`, adicione a `EXPECTED_WORLD_KEY
 Run: `npx vitest run tests/core/replay tests/determinism/replay.determinism.test.ts`
 Expected: o teste de completude PASSA; o golden master FALHA (hashes mudaram por causa dos novos campos/power-ups gerados). Isso é esperado.
 
-Regeneração dos goldens (só após confirmar que a mudança é determinística — os asserts de fps-independência e de seeds-distintas no mesmo arquivo continuam válidos e independem dos hex pinos):
-1. Crie um script scratch `scratchpad/dump-goldens.mjs` que importa `simulate`, `buildTimeline`, `hashState` e imprime `hashState` para cada `(seed, timeline)` pinado no teste (copie os cenários exatos do teste).
-2. Rode com `npx tsx scratchpad/dump-goldens.mjs` (ou `node` via vite-node) e cole os hashes novos nos `golden` do teste.
-3. Rode o teste de novo até verde. Apague o script scratch.
+O `tests/determinism/replay.determinism.test.ts` tem 4 cenários com `golden` hex fixos (`SCENARIOS`, mais os `it` de "seeds diferentes" / "difficulty on vs off" que NÃO usam hex pino — continuam válidos). Todos os 4 pinos mudam (hashState agora codifica `powerups`/`effects`/`extraLives`/presença de `powerupSpawner`, mesmo vazios, e seeds passam a gerar power-ups).
 
-Se `tsx` não estiver disponível, alternativa: mude temporariamente o `golden` esperado para `''`, rode o teste, leia o "expected X to be ''" que revela o hash atual, cole o valor e reverta.
+Regeneração (só após confirmar que a mudança é determinística — os `it` não-golden do arquivo garantem a corretude independentemente do hex):
+1. No loop `for (const s of SCENARIOS)` do teste, adicione TEMPORARIAMENTE `console.log(s.name, hash)` antes do `expect`.
+2. Rode `npx vitest run tests/determinism/replay.determinism.test.ts` e copie os 4 hashes impressos.
+3. Cole cada hash no `golden` do cenário correspondente; remova o `console.log`.
+4. Rode de novo até verde.
 
 - [ ] **Step 10: Fix any full-state `toEqual` in existing tests**
 
@@ -925,16 +926,15 @@ describe('power-ups determinism', () => {
     expect(a).not.toBe(b);
   });
 
-  it('is fps-independent via simulate (batched steps produce the same hash)', () => {
-    // simulate roda 1 step por frame; comparar com uma corrida manual idêntica.
-    const timeline = buildTimeline(800, 'everyN18'); // use o pattern existente equivalente
-    const viaSimulate = hashState(simulate(CONFIG, timeline));
+  it('simulate e uma corrida manual idêntica produzem o mesmo hash', () => {
+    // buildTimeline(length, pattern) recebe uma FUNÇÃO (i)=>boolean (ver src/core/replay/timeline.ts).
+    const viaSimulate = hashState(simulate(CONFIG, buildTimeline(800, (i) => i % 18 === 0)));
     const viaManual = runFps(CONFIG, 800, 18);
     expect(viaSimulate).toBe(viaManual);
   });
 });
 ```
-Ajuste o `pattern` de `buildTimeline` para um que exista em `src/core/replay/timeline.ts` e que bata com `i % 18 === 0` (leia `buildTimeline`; se não houver equivalente exato, construa a `InputTimeline` manualmente com o mesmo padrão em vez de `buildTimeline`, para o último `it`).
+Nota: `buildTimeline(length: number, pattern: (i: number) => boolean)` — o 2º arg é uma função, não string.
 
 - [ ] **Step 2: Run it**
 
