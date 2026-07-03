@@ -26,15 +26,19 @@ describe('power-ups determinism', () => {
     expect(a).toBe(b);
   });
 
-  it('power-ups are actually exercised (pickups happen)', () => {
+  it('power-ups are actually generated (spawn happens)', () => {
     // Sanidade: numa corrida longa, ao menos um power-up é gerado (senão o teste é vazio).
+    // Isto NÃO prova que o pickup funciona — só que o spawner materializa entidades
+    // `powerup.*` em `world.powerups`. A cobertura end-to-end do caminho de pickup via
+    // `step()` (colisão ⇒ remoção + efeito ativado) vive em
+    // `tests/core/sim/powerup-effects.test.ts`.
     const w = createWorld(CONFIG);
-    let sawPowerup = false;
+    let sawSpawn = false;
     for (let i = 0; i < 1200; i++) {
       step(w, { flap: i % 18 === 0 });
-      if (w.powerups.length > 0 || w.effects.length > 0 || w.extraLives > 0) sawPowerup = true;
+      if (w.powerups.length > 0) sawSpawn = true;
     }
-    expect(sawPowerup).toBe(true);
+    expect(sawSpawn).toBe(true);
   });
 
   it('distinct seeds ⇒ distinct power-up streams (different final hash)', () => {

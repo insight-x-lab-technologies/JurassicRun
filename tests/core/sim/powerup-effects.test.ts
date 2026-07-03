@@ -25,6 +25,16 @@ function coinAt(x: number, y: number): Entity {
     hitbox: { kind: 'circle', radius: 8 },
   };
 }
+function powerupAt(tag: string, x: number, y: number): Entity {
+  return {
+    id: 3,
+    type: 'collectible',
+    tags: [tag],
+    transform: { position: { x, y } },
+    kinematics: { velocity: { x: 0, y: 0 } },
+    hitbox: { kind: 'circle', radius: 8 },
+  };
+}
 
 describe('shield', () => {
   it('ignores an otherwise-fatal obstacle overlap while active', () => {
@@ -93,6 +103,30 @@ describe('double coin', () => {
     w.collectibles.push(coinAt(w.pterodactyl.transform.position.x, 300));
     step(w, { flap: false });
     expect(w.food).toBe(3); // 1 + 2
+  });
+});
+
+describe('pickup via step (world.powerups, end-to-end)', () => {
+  it('shield: overlapping world.powerups entity is collected and activates the effect', () => {
+    const w: WorldState = createWorld(CFG);
+    const px = w.pterodactyl.transform.position.x;
+    const py = w.pterodactyl.transform.position.y;
+    w.powerups.push(powerupAt('powerup.shield', px, py));
+    step(w, { flap: false });
+    expect(w.alive).toBe(true);
+    expect(w.powerups.length).toBe(0); // coletado (removido de world.powerups pelo step)
+    expect(isEffectActive(w.effects, 'shield')).toBe(true);
+  });
+
+  it('extra life: overlapping world.powerups entity is collected and grants a charge', () => {
+    const w: WorldState = createWorld(CFG);
+    const px = w.pterodactyl.transform.position.x;
+    const py = w.pterodactyl.transform.position.y;
+    w.powerups.push(powerupAt('powerup.extraLife', px, py));
+    step(w, { flap: false });
+    expect(w.alive).toBe(true);
+    expect(w.powerups.length).toBe(0); // coletado
+    expect(w.extraLives).toBe(1);
   });
 });
 
