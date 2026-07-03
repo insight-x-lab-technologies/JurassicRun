@@ -70,9 +70,9 @@ de tuning (como os demais power-ups do 3.1).
 4. **`powerup/apply.ts`** — `durationFor` passa a incluir `'slowMo'` (retorna
    `SLOW_MO_DURATION_STEPS`); `pickupPowerup` já roteia qualquer kind temporário pelo ramo
    `else` (`activateEffect`), então nada mais muda ali.
-5. **`replay/hashState`** — se a codificação de `ActiveEffect.kind` usa um switch com
-   `default: never` (guarda de exaustividade), tratar `'slowMo'` (o `tsc` avisa). Se codifica
-   por caracteres da string, nada a fazer além de re-pinar goldens.
+5. **`replay/hash.ts`** — **nenhuma mudança**: `ActiveEffect.kind` é absorvido como string
+   (`d.string(eff.kind)`, `hash.ts:147`), não por switch de exaustividade. O novo kind é
+   hasheado pelos bytes da string automaticamente; basta re-pinar os goldens (item 6).
 6. **Golden master** (`tests/determinism/replay.determinism.test.ts`) — os 3 cenários **com
    seed** (`GOLD1`, `GOLD1 difficulty:false`, `GOLD2`) rodam o `powerupSpawner`; a 5ª entrada
    no catálogo muda a distribuição do `pick` ⇒ **re-pinar** esses 3 hashes. O cenário sem
