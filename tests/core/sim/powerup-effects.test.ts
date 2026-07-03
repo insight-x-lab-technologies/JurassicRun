@@ -62,6 +62,24 @@ describe('extra life', () => {
     expect(w.alive).toBe(true);
     expect(w.extraLives).toBe(0);
   });
+
+  it('a stored extra life saves the dino from touching the ground, via step (not a direct killOrRevive call)', () => {
+    // Dino nasce perto do topo e cai (gravidade real, sem flap) até tocar o chão.
+    const w: WorldState = createWorld({ ...CFG, gravity: 1200, startY: 10 });
+    w.extraLives = 1;
+    let touchedGround = false;
+    for (let i = 0; i < 200 && w.alive; i++) {
+      step(w, { flap: false });
+      if (w.extraLives === 0) {
+        touchedGround = true;
+        break;
+      }
+    }
+    expect(touchedGround).toBe(true); // a carga foi de fato consumida pelo chão, não ficou intocada
+    expect(w.alive).toBe(true);
+    expect(w.extraLives).toBe(0);
+    expect(w.pterodactyl.transform.position.y).toBe(w.worldHeight / 2);
+  });
 });
 
 describe('double coin', () => {
