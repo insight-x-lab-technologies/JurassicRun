@@ -6,11 +6,12 @@ tudo determinístico.
 ## Itens
 
 ### 3.1 Sistema de power-ups (core + render)
-- [ ] Framework de efeitos temporários com duração em steps.
-- [ ] Power-ups: escudo, vida extra, câmera lenta (slow-mo), ímã (atrai pássaros),
-      moeda dobrada, e ganchos para mais.
-- [ ] Geração determinística keyed por distância.
-- [ ] Testes de cada efeito (determinístico).
+- [x] Framework de efeitos temporários com duração em steps.
+- [x] Power-ups: escudo, vida extra, ímã (atrai pássaros), moeda dobrada, e ganchos
+      para mais. **Slow-mo (câmera lenta) adiado ao item 3.2** (seu modelo de percepção de
+      tempo é o objeto do 3.2; o framework já deixa o gancho pronto).
+- [x] Geração determinística keyed por distância.
+- [x] Testes de cada efeito (determinístico).
 
 ### 3.2 Câmera lenta sem quebrar determinismo
 - [ ] Slow-mo afeta a *percepção* (render/escala de tempo visual) sem violar passo fixo da sim;
