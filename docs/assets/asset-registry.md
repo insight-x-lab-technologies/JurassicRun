@@ -33,7 +33,7 @@ usada no manifesto de assets do render.
 | `powerup.extraLife` | vida extra (carga que revive) | spec | `specs/powerup.extraLife.md` |
 | `powerup.magnet` | ímã (atrai coletáveis) | spec | `specs/powerup.magnet.md` |
 | `powerup.doubleCoin` | moeda dobrada (comida em dobro) | spec | `specs/powerup.doubleCoin.md` |
-| `powerup.slowmo` | câmera lenta (adiado — item 3.2) | placeholder | — |
+| `powerup.slowMo` | câmera lenta (efeito temporário) | spec | `specs/powerup.slowMo.md` |
 
 ## Fundos / parallax
 | id | descrição | status | spec |
