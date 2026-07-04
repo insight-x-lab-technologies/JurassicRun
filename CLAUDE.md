@@ -340,7 +340,7 @@ início ao Game Over): mobile emulado 390×844 = **60fps sustentado** (p50 16,7m
 real + batching de atlas (Fase 8); culling vertical (desnecessário); medição sob throttle de CPU e
 em device físico (Fase 7 — CDP não exposto no ambiente headless).
 
-**Fase 3 (Power-ups & clima) — EM ANDAMENTO.** Item 3.1 concluído.
+**Fase 3 (Power-ups & clima) — EM ANDAMENTO.** Itens 3.1 e 3.2 concluídos.
 
 3.1 (sistema de power-ups): módulo-folha puro `src/core/powerup/` (framework de efeitos
 temporários com duração em STEPS + catálogo). `ActiveEffect {kind, remaining}` em
@@ -366,5 +366,31 @@ teste de regressão). **Adiados:** slow-mo (3.2); indicadores visuais de efeito 
 power-up + rótulos i18n; tuning de durações/raio/frequência (placeholders); `DEFAULT_POWERUP_CONFIG.
 worldHeight:0` sobrescrito em runtime; `pickupPowerup`/`collect` refazem `indexOf` (padrão de 1.5/1.6).
 
-Próximo: **Fase 3, item 3.2 (câmera lenta sem quebrar determinismo)** — ver
+3.2 (câmera lenta): slow-mo coletável (`powerup.slowMo`, 5ª entrada do `POWERUP_CATALOG`).
+**Modelo: escala de tempo na camada de render — o "lento" vive FORA do core.** `slowMo` é um
+efeito temporário determinístico em `WorldState.effects` (ativado no pickup dentro de `step()`,
+ticado 1×/step por `tickEffects`, no golden hash via `d.string(eff.kind)`); a **lentidão** é
+aplicada só na única garganta tempo-real→steps: `FixedStepLoop.advance` (render) escala o `dt`
+real por `SLOW_MO_TIME_SCALE=0.4` quando `slowMo` está ativo (`isEffectActive`), ANTES de somar
+ao acumulador de passo fixo (clamp `MAX_FRAME_TIME` fica sobre o `dt` real). Efeito: menos steps
+de sim por segundo real ⇒ mundo/parallax/interpolação em câmera lenta, com o `step()` sempre
+recebendo `FIXED_DT` fixo. O sim fica **byte-idêntico** clocado devagar ou não — é só mais uma
+variação de ritmo, exatamente a fps-independência que a bateria já prova; core tocado só no
+registro determinístico (união `PowerupKind`+= `slowMo`, entrada de catálogo/`KIND_BY_TAG`,
+`SLOW_MO_DURATION_STEPS=180`, `durationFor`). Como o mundo avança a MESMA distância por step,
+distância/dificuldade/score/spawns ficam idênticos com ou sem slow-mo (modelo alternativo de
+escalar dentro de `step()` foi rejeitado por comprimir progressão). Render: cor mint `0x66ffcc`
+no manifesto + asset-spec `powerup.slowMo` + registro (REGRA 5). Sem strings i18n (indicador
+visual dedicado adiado, como no 3.1). Goldens re-pinados: 2 dos 3 seeded (GOLD1 com/sem
+difficulty mudaram magnet→doubleCoin; GOLD2 caiu no mesmo índice ⇒ inalterado — verificado pelo
+determinism-guardian reconstruindo o catálogo antigo). **Core determinístico intocado no
+contrato** (determinism-guardian "CONTRATO INTATO"; review final "READY TO MERGE"). Suíte verde
+(`check` limpo, 303 testes, determinismo 61; execução SDD por subagentes: 3 tasks + review por
+task + review final + determinism-guardian + 2 Minors do review final aplicados — teste de
+determinismo end-to-end do slow-mo + correção de nota de goldens no spec). **Adiados:** tuning de
+`SLOW_MO_DURATION_STEPS`/`SLOW_MO_TIME_SCALE` (placeholders); indicador visual de efeito ativo +
+HUD de power-up + rótulos i18n (Fase 4/8); cosméticos de slow-mo (vinheta/tint/motion-blur,
+Fase 8).
+
+Próximo: **Fase 3, item 3.3 (tempo do dia — cosmético)** — ver
 `docs/roadmap/PHASE-03-powerups-and-weather.md` e `docs/roadmap/ROADMAP.md`.

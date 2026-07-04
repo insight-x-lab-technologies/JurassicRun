@@ -9,6 +9,7 @@ export const POWERUP_CATALOG: readonly SpawnType[] = [
   { id: 'powerup.extraLife', anchor: 'floating', makeHitbox: (rng) => circle(rng.range(7, 9)) },
   { id: 'powerup.magnet', anchor: 'floating', makeHitbox: (rng) => circle(rng.range(7, 9)) },
   { id: 'powerup.doubleCoin', anchor: 'floating', makeHitbox: (rng) => circle(rng.range(7, 9)) },
+  { id: 'powerup.slowMo', anchor: 'floating', makeHitbox: (rng) => circle(rng.range(7, 9)) },
 ];
 
 /** Tag (id do tipo) → kind do power-up. Tabela explícita (não parsing). */
@@ -17,6 +18,7 @@ const KIND_BY_TAG: Readonly<Record<string, PowerupKind>> = {
   'powerup.extraLife': 'extraLife',
   'powerup.magnet': 'magnet',
   'powerup.doubleCoin': 'doubleCoin',
+  'powerup.slowMo': 'slowMo',
 };
 
 export function powerupKindForTag(tag: string): PowerupKind | null {

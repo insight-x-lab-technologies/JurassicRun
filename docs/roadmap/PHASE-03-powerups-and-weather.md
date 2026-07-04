@@ -14,7 +14,7 @@ tudo determinístico.
 - [x] Testes de cada efeito (determinístico).
 
 ### 3.2 Câmera lenta sem quebrar determinismo
-- [ ] Slow-mo afeta a *percepção* (render/escala de tempo visual) sem violar passo fixo da sim;
+- [x] Slow-mo afeta a *percepção* (render/escala de tempo visual) sem violar passo fixo da sim;
       definir claramente o modelo (ex.: a sim conta steps "lentos" de forma determinística).
 
 ### 3.3 Tempo do dia (cosmético)

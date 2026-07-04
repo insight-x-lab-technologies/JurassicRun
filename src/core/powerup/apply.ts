@@ -9,10 +9,11 @@ import {
   MAGNET_RADIUS,
   MAGNET_PULL_SPEED,
   EXTRA_LIFE_GRACE_STEPS,
+  SLOW_MO_DURATION_STEPS,
 } from './constants';
 
 /** Duração (steps) de cada power-up temporário. `extraLife` não é temporário. */
-function durationFor(kind: 'shield' | 'magnet' | 'doubleCoin'): number {
+function durationFor(kind: 'shield' | 'magnet' | 'doubleCoin' | 'slowMo'): number {
   switch (kind) {
     case 'shield':
       return SHIELD_DURATION_STEPS;
@@ -20,6 +21,8 @@ function durationFor(kind: 'shield' | 'magnet' | 'doubleCoin'): number {
       return MAGNET_DURATION_STEPS;
     case 'doubleCoin':
       return DOUBLE_COIN_DURATION_STEPS;
+    case 'slowMo':
+      return SLOW_MO_DURATION_STEPS;
   }
 }
 

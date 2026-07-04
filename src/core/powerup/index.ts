@@ -10,4 +10,5 @@ export {
   MAGNET_RADIUS,
   MAGNET_PULL_SPEED,
   DOUBLE_COIN_FOOD_GAIN,
+  SLOW_MO_DURATION_STEPS,
 } from './constants';
