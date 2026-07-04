@@ -3,6 +3,7 @@ import { HomeScreen } from './screens/HomeScreen';
 import { PlayScreen } from './screens/PlayScreen';
 import { PlaceholderScreen } from './screens/PlaceholderScreen';
 import { OnboardingScreen } from './screens/OnboardingScreen';
+import { ProfileScreen } from './screens/ProfileScreen';
 import { profileService } from '@services/profile';
 import type { VNode } from 'preact';
 
@@ -13,7 +14,7 @@ function screenFor(screen: Screen): VNode {
     case 'play':
       return <PlayScreen />;
     case 'profile':
-      return <PlaceholderScreen titleKey="screen.profile" />;
+      return <ProfileScreen />;
     case 'nest':
       return <PlaceholderScreen titleKey="screen.nest" />;
     case 'shop':
