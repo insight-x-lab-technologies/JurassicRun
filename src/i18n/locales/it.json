@@ -23,6 +23,25 @@
     "restart": "Ricomincia",
     "quit": "Esci"
   },
+  "nav": {
+    "play": "Gioca",
+    "back": "Indietro",
+    "profile": "Profilo",
+    "nest": "Nido",
+    "shop": "Negozio",
+    "settings": "Impostazioni",
+    "leaderboard": "Classifica",
+    "expansions": "Espansioni"
+  },
+  "screen": {
+    "comingSoon": "Prossimamente",
+    "profile": "Profilo",
+    "nest": "Nido",
+    "shop": "Negozio",
+    "settings": "Impostazioni",
+    "leaderboard": "Classifica",
+    "expansions": "Espansioni"
+  },
   "weather": {
     "clear": "Sereno",
     "rain": "Pioggia",

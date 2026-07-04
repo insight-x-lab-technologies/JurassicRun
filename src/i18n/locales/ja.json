@@ -23,6 +23,25 @@
     "restart": "リスタート",
     "quit": "やめる"
   },
+  "nav": {
+    "play": "プレイ",
+    "back": "戻る",
+    "profile": "プロフィール",
+    "nest": "巣",
+    "shop": "ショップ",
+    "settings": "設定",
+    "leaderboard": "ランキング",
+    "expansions": "拡張"
+  },
+  "screen": {
+    "comingSoon": "近日公開",
+    "profile": "プロフィール",
+    "nest": "巣",
+    "shop": "ショップ",
+    "settings": "設定",
+    "leaderboard": "ランキング",
+    "expansions": "拡張"
+  },
   "weather": {
     "clear": "晴れ",
     "rain": "雨",

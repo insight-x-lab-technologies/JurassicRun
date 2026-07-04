@@ -23,6 +23,25 @@
     "restart": "Restart",
     "quit": "Quit"
   },
+  "nav": {
+    "play": "Play",
+    "back": "Back",
+    "profile": "Profile",
+    "nest": "Nest",
+    "shop": "Shop",
+    "settings": "Settings",
+    "leaderboard": "Leaderboard",
+    "expansions": "Expansions"
+  },
+  "screen": {
+    "comingSoon": "Coming soon",
+    "profile": "Profile",
+    "nest": "Nest",
+    "shop": "Shop",
+    "settings": "Settings",
+    "leaderboard": "Leaderboard",
+    "expansions": "Expansions"
+  },
   "weather": {
     "clear": "Clear",
     "rain": "Rain",
