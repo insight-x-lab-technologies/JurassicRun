@@ -1,0 +1,33 @@
+:root {
+  /* Cores (neutras; packs cosméticos da Fase 8 sobrescrevem via override) */
+  --color-bg: #0e1116;
+  --color-surface: #1a1f2b;
+  --color-surface-2: #232a38;
+  --color-primary: #4ea1ff;
+  --color-on-primary: #06121f;
+  --color-text: #eef2f7;
+  --color-text-muted: #9aa6b6;
+  --color-accent: #ffcf5c;
+  --color-danger: #ff6b6b;
+
+  /* Espaçamento */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  /* Tipografia fluida (escala com a viewport) */
+  --font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-size-sm: clamp(0.8rem, 0.75rem + 0.3vw, 0.95rem);
+  --font-size-md: clamp(1rem, 0.9rem + 0.5vw, 1.2rem);
+  --font-size-lg: clamp(1.4rem, 1.1rem + 1.2vw, 2rem);
+  --font-size-xl: clamp(2rem, 1.4rem + 2.5vw, 3.2rem);
+
+  /* Superfícies */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-1: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
