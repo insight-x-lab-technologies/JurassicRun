@@ -115,7 +115,7 @@ de tuning (como os demais power-ups do 3.1).
   `advance(dt)` roda **menos** steps que com ele inativo para o mesmo `dt` (ex.: `scale=0.4`,
   um frame de `FIXED_DT` ⇒ 0 steps; ~2,5 frames ⇒ 1 step), e o efeito volta ao ritmo normal
   quando expira. Prova a lentidão sem tocar o core.
-- **Golden:** re-pinar os 3 hashes seeded e confirmar a suíte verde.
+- **Golden:** re-pinar os hashes seeded deslocados (2 dos 3 — ver item 6) e confirmar a suíte verde.
 
 ## Definição de pronto
 
