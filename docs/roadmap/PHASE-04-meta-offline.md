@@ -9,9 +9,9 @@ ninho, loja in-game, expansões, troféus, configurações, 10 idiomas e áudio.
 - [x] Router de telas + design tokens responsivos.
 
 ### 4.2 Perfis de jogador (local)
-- [ ] Primeiro acesso pede nome.
-- [ ] Criar/trocar jogador ativo. (ID global fica na Fase 6.)
-- [ ] Tela de Perfil (acessível pelo avatar).
+- [x] Primeiro acesso pede nome.
+- [x] Criar/trocar jogador ativo. (ID global fica na Fase 6.)
+- [x] Tela de Perfil (acessível pelo avatar — wiring da barra de topo em 4.3).
 
 ### 4.3 Home
 - [ ] Topo: nome ativo, avatar, total de moedas, nº de troféus, nível máx Endless.

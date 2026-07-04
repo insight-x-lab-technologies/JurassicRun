@@ -447,8 +447,8 @@ contra `segmentMin==max==0` (backlog de hardening).
 
 **Fase 3 concluída** (todos os 4 itens).
 
-**Fase 4 (Meta offline — perfis, ninho, loja, i18n, áudio, UI) — EM ANDAMENTO.** Item 4.1
-concluído.
+**Fase 4 (Meta offline — perfis, ninho, loja, i18n, áudio, UI) — EM ANDAMENTO.** Itens 4.1
+e 4.2 concluídos.
 
 4.1 (app shell e navegação): casca Preact que hospeda **telas** navegáveis, com o jogo Phaser
 existente vivendo como a tela "Play". `main.ts`→`main.tsx` agora só faz `i18n.init()` +
@@ -478,5 +478,38 @@ horizontal. **Adiados:** menu Home real (4.3); telas reais 4.2/4.4–4.8; troca 
 animadas e temas de pack (Fase 8); `PlaceholderScreen.titleKey` tipado `string` (poderia ser
 union das chaves i18n — cosmético, some quando as telas reais chegam).
 
-Próximo: **4.2 (perfis de jogador — local)** — ver `docs/roadmap/PHASE-04-meta-offline.md` e
-`docs/roadmap/ROADMAP.md`.
+4.2 (perfis de jogador — local): identidade local do jogador, padrão puro×casca em
+`src/services/profile/`. `store.ts` PURO (modelo `Profile {id,name,createdAt}` + `ProfileState`,
+`validateName`/`normalizeName` (trim+colapso, não-vazio, `NAME_MAX=20`), operações imutáveis
+`createProfile`/`setActive`/`renameProfile`/`activeProfile`, e helper visual `avatarFor(profile)→
+{initial, hue}` com hue determinístico do `id` — sem IO/aleatoriedade). `storage.ts` (casca IO
+injetável): interface `ProfileStorage {load,save}` com `memoryProfileStorage` (testes+fallback) e
+`localStorageProfileStorage` (chave versionada `jurassicrun.profiles.v1`, payload `{version:1,...}`,
+`parseState` robusto ⇒ qualquer JSON/forma inválida vira `emptyState()`; se há perfis mas `activeId`
+não resolve, cai no 1º perfil em vez de forçar re-onboarding; `save` best-effort engolindo erro de
+storage indisponível). `index.ts` (`ProfileService` reativo, singleton como i18n/router): sinais
+`ReadonlySignal` `profiles`/`activeProfile` via `@preact/signals` `computed`; `init(storage?)`
+(síncrono, default localStorage), `create`/`switchTo`/`renameActive`/`validateName`; **id via
+`crypto.randomUUID()` e tempo via `Date.now()` vivem SÓ na casca** (permitido fora de `src/core/`,
+como `seedSource`), cada mutação passa por `commit(state)`=set-sinal+persist. UI: `main.tsx` chama
+`profileService.init()` no bootstrap; **gate de primeiro acesso** no `App` (`activeProfile===null`
+⇒ `OnboardingScreen`, fora da pilha do router); `OnboardingScreen` (form controlado, cria perfil);
+`ProfileScreen` na rota `profile` (avatar+ativo, renomear com resync via `useEffect([active?.id])`,
+lista de troca com selo Active, criar, voltar). Chaves i18n `onboarding.*`/`profile.*` nos 10 locales
+(REGRA 4). **Core intocado** ⇒ determinismo 64 intacto. Suíte verde (`check` limpo, 369 testes;
+execução SDD por subagentes: 6 tasks + review por task + 1 fix de review de task (bug do campo
+renomear stale ao trocar de perfil) + review final "READY TO MERGE" + 1 hardening pós-review do
+load). Verificação visual (Playwright): onboarding→Home→persiste no reload→Perfil criar/trocar com
+Rename resincronizando ao vivo. **Gotcha (herdado do 4.1, reconfirmado):** `@preact/signals` faz
+monkey-patch GLOBAL de `shouldComponentUpdate` ⇒ em teste de componente happy-dom, após um evento
+DOM que dispara `useState`, um `render()` manual síncrono pode não flushar (usar `await
+Promise.resolve()`; `useEffect` precisa de macrotask real, `setTimeout`); e submit de form no mesmo
+tick lê estado stale ⇒ ler o input vivo via `useRef` no submit (mantendo o input controlado no
+display). **Adiados:** avatar-pterodáctilo real (4.4 Ninho); stats agregados moedas/troféus/nível
+(4.5/4.7, montados no topo da Home em 4.3); excluir perfil; wiring do avatar-como-botão na barra de
+topo (4.3); ID global/sync (Fase 6). Minors de backlog: `switchTo(id inexistente)` faz save
+redundante; `version` do storage escrito mas não lido (migração usaria `.v2`); `avatarFor` `charAt(0)`
+pode partir par surrogate (cosmético); nota de convenção do padrão form controlled+ref e do gotcha
+de teste signals.
+
+Próximo: **4.3 (Home)** — ver `docs/roadmap/PHASE-04-meta-offline.md` e `docs/roadmap/ROADMAP.md`.
