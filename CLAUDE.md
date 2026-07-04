@@ -340,7 +340,7 @@ início ao Game Over): mobile emulado 390×844 = **60fps sustentado** (p50 16,7m
 real + batching de atlas (Fase 8); culling vertical (desnecessário); medição sob throttle de CPU e
 em device físico (Fase 7 — CDP não exposto no ambiente headless).
 
-**Fase 3 (Power-ups & clima) — EM ANDAMENTO.** Itens 3.1, 3.2 e 3.3 concluídos.
+**Fase 3 (Power-ups & clima) — CONCLUÍDA.** Itens 3.1, 3.2, 3.3 e 3.4 concluídos.
 
 3.1 (sistema de power-ups): módulo-folha puro `src/core/powerup/` (framework de efeitos
 temporários com duração em STEPS + catálogo). `ActiveEffect {kind, remaining}` em
@@ -416,5 +416,34 @@ tuning das paletas (placeholders, Fase 8); ciclo dinâmico dia→noite dentro da
 HUD de tempo do dia; arte real de céu (gradientes/estrelas/lua-sol, Fase 8); dusk não caiu no RNG
 dos reloads mas compartilha o mesmo code path (coberto por teste unitário).
 
-Próximo: **Fase 3, item 3.4 (clima — afeta gameplay)** — ver
-`docs/roadmap/PHASE-03-powerups-and-weather.md` e `docs/roadmap/ROADMAP.md`.
+3.4 (clima — afeta gameplay): condições climáticas determinísticas que alteram a física da
+simulação. **Modelo: eixo vertical apenas** ⇒ clima toca só a integração vertical (`gravityScale`
++ `windY`), mantendo scroll/`distance`/dificuldade/economia/spawns byte-idênticos (só a trajetória
+vertical do dino muda; food/near-miss/score podem divergir porque a trajetória decide o que o dino
+toca — gameplay pretendido, o eixo horizontal é intacto). Módulo-folha PURO `src/core/weather/`:
+`WeatherKind` (`clear|rain|wind|storm|snow`), catálogo `WEATHER_PHYSICS` congelado + `weatherPhysics(kind)`
+(lookup alocação-zero; `clear={1,0}` ⇒ sem regressão) e `WeatherGenerator` keyed por distância num
+5º stream RNG dedicado `createRng(seed).fork('weather')` (independente de obstáculos/coletáveis/
+power-ups ⇒ suas sequências ficam byte-idênticas). O gerador sorteia segmentos (pick + comprimento
+por RNG) com warmup inicial `clear`; `advanceTo(distance)` avança o cursor por fronteira cruzada
+⇒ nº de saques = f(distância), fps-independente. `WorldState.{weather, weatherGenerator}`;
+`WorldConfig.weather?:boolean` (default true; espelha `difficulty?`; sem seed OU `weather:false` ⇒
+gerador null ⇒ física baseline). `step` resolve o clima no INÍCIO (de `world.distance` corrente) e
+aplica `vel.y += (gravity·gravityScale + windY)·FIXED_DT`; `cloneWorld` copia `weather` +
+`weatherGenerator.clone()`. Registro determinístico: `hashState` absorve `weather` (string) +
+presença do gerador; completeness 24→**26 chaves**; **4 goldens de replay re-pinados** (formato do
+hash cresceu + trajetória vertical dos seeded mudou; relacionais `GOLD1≠GOLD2`/`difficulty on≠off`
+passaram sem edição ⇒ prova de não-vazamento). Render: indicador de clima no HUD (chave `hud.weather`
++ nomes `weather.{clear,rain,wind,storm,snow}` nos 10 locales, REGRA 4; tradução do nome na
+`GameScene`, `hud.ts` só passthrough). Core determinístico intocado no contrato
+(determinism-guardian **"CONTRATO INTACTO"**; review final **"READY TO MERGE"**). Suíte verde
+(`check` limpo, 326 testes, determinismo 64; execução SDD por subagentes: 5 tasks + review por task
++ determinism-guardian + review final; Task 5 finalizada pelo controlador após o implementador
+esbarrar em limite de sessão). **Adiados:** VFX real de clima (partículas de chuva/neve,
+escurecimento de tempestade, tint dedicado — Fase 8); vento horizontal (rejeitado por acoplar clima↔
+distância); rajadas contínuas suaves (começou piecewise-constant); distribuição ponderada de climas
+e tuning de física/segmentos (placeholders, Fase 8); assert unitário de `storm.windY>0` e guarda
+contra `segmentMin==max==0` (backlog de hardening).
+
+**Fase 3 concluída** (todos os 4 itens). Próximo: **Fase 4 (Meta offline — perfis, ninho, loja,
+i18n completa, áudio, UI)** — ver `docs/roadmap/PHASE-04-meta-offline.md` e `docs/roadmap/ROADMAP.md`.
