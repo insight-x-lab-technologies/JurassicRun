@@ -216,6 +216,7 @@ export class GameScene extends Phaser.Scene {
       level: world.level,
       speed: world.scrollSpeed,
       seed: this.match.seedLabel,
+      weather: world.weather,
     });
     this.hudText.setText([
       i18n.t('hud.distance', { value: v.distance }),
@@ -224,6 +225,7 @@ export class GameScene extends Phaser.Scene {
       i18n.t('hud.level', { value: v.level }),
       i18n.t('hud.speed', { value: v.speed }),
       i18n.t('hud.seed', { value: v.seed }),
+      i18n.t('hud.weather', { value: i18n.t('weather.' + v.weather) }),
     ]);
   }
 

@@ -9,7 +9,8 @@
     "fps": "FPS: {{value}}",
     "level": "Lv {{value}}",
     "speed": "速度: {{value}}",
-    "seed": "シード: {{value}}"
+    "seed": "シード: {{value}}",
+    "weather": "天気: {{value}}"
   },
   "match": {
     "tapToStart": "タップして開始"
@@ -21,5 +22,12 @@
     "nearMisses": "ニアミス: {{value}}",
     "restart": "リスタート",
     "quit": "やめる"
+  },
+  "weather": {
+    "clear": "晴れ",
+    "rain": "雨",
+    "wind": "風",
+    "storm": "嵐",
+    "snow": "雪"
   }
 }

@@ -9,7 +9,8 @@
     "fps": "FPS: {{value}}",
     "level": "स्तर {{value}}",
     "speed": "गति: {{value}}",
-    "seed": "सीड: {{value}}"
+    "seed": "सीड: {{value}}",
+    "weather": "मौसम: {{value}}"
   },
   "match": {
     "tapToStart": "शुरू करने के लिए टैप करें"
@@ -21,5 +22,12 @@
     "nearMisses": "करीबी टक्कर: {{value}}",
     "restart": "फिर से शुरू करें",
     "quit": "बाहर निकलें"
+  },
+  "weather": {
+    "clear": "साफ़",
+    "rain": "बारिश",
+    "wind": "हवा",
+    "storm": "तूफ़ान",
+    "snow": "बर्फ़"
   }
 }

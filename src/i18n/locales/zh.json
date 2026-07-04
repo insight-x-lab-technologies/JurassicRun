@@ -9,7 +9,8 @@
     "fps": "FPS: {{value}}",
     "level": "等级 {{value}}",
     "speed": "速度: {{value}}",
-    "seed": "种子: {{value}}"
+    "seed": "种子: {{value}}",
+    "weather": "天气：{{value}}"
   },
   "match": {
     "tapToStart": "点击开始"
@@ -21,5 +22,12 @@
     "nearMisses": "险些相撞：{{value}}",
     "restart": "重新开始",
     "quit": "退出"
+  },
+  "weather": {
+    "clear": "晴朗",
+    "rain": "雨",
+    "wind": "风",
+    "storm": "暴风",
+    "snow": "雪"
   }
 }

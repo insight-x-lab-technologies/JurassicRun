@@ -9,7 +9,8 @@
     "fps": "FPS: {{value}}",
     "level": "Stufe {{value}}",
     "speed": "Tempo: {{value}}",
-    "seed": "Seed: {{value}}"
+    "seed": "Seed: {{value}}",
+    "weather": "Wetter: {{value}}"
   },
   "match": {
     "tapToStart": "Zum Starten tippen"
@@ -21,5 +22,12 @@
     "nearMisses": "Beinahe-Kollisionen: {{value}}",
     "restart": "Neu starten",
     "quit": "Beenden"
+  },
+  "weather": {
+    "clear": "Klar",
+    "rain": "Regen",
+    "wind": "Wind",
+    "storm": "Sturm",
+    "snow": "Schnee"
   }
 }
