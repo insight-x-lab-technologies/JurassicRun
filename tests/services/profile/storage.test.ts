@@ -55,4 +55,19 @@ describe('localStorageProfileStorage', () => {
     );
     expect(localStorageProfileStorage().load()).toEqual(emptyState());
   });
+
+  it('perfis presentes mas activeId inválido ⇒ cai no primeiro perfil (não força re-onboarding)', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        version: 1,
+        profiles: [
+          { id: 'id-1', name: 'Rex', createdAt: 1000 },
+          { id: 'id-2', name: 'Ptero', createdAt: 2000 },
+        ],
+        activeId: 'sumiu',
+      }),
+    );
+    expect(localStorageProfileStorage().load().activeId).toBe('id-1');
+  });
 });

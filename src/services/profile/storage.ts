@@ -33,10 +33,12 @@ function parseState(raw: string): ProfileState {
   const d = data as Record<string, unknown>;
   if (!Array.isArray(d.profiles) || !d.profiles.every(isProfile)) return emptyState();
   const profiles = d.profiles as Profile[];
+  // Se o activeId persistido não resolve mas há perfis, cai no primeiro em vez
+  // de null — evita forçar re-onboarding (com perfis existentes) sob storage corrompido.
   const activeId =
     typeof d.activeId === 'string' && profiles.some((p) => p.id === d.activeId)
       ? d.activeId
-      : null;
+      : (profiles[0]?.id ?? null);
   return { profiles, activeId };
 }
 
