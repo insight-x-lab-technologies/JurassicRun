@@ -23,6 +23,25 @@
     "restart": "다시 시작",
     "quit": "나가기"
   },
+  "nav": {
+    "play": "플레이",
+    "back": "뒤로",
+    "profile": "프로필",
+    "nest": "둥지",
+    "shop": "상점",
+    "settings": "설정",
+    "leaderboard": "리더보드",
+    "expansions": "확장"
+  },
+  "screen": {
+    "comingSoon": "곧 출시",
+    "profile": "프로필",
+    "nest": "둥지",
+    "shop": "상점",
+    "settings": "설정",
+    "leaderboard": "리더보드",
+    "expansions": "확장"
+  },
   "weather": {
     "clear": "맑음",
     "rain": "비",

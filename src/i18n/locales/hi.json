@@ -23,6 +23,25 @@
     "restart": "फिर से शुरू करें",
     "quit": "बाहर निकलें"
   },
+  "nav": {
+    "play": "खेलें",
+    "back": "वापस",
+    "profile": "प्रोफ़ाइल",
+    "nest": "घोंसला",
+    "shop": "दुकान",
+    "settings": "सेटिंग्स",
+    "leaderboard": "लीडरबोर्ड",
+    "expansions": "विस्तार"
+  },
+  "screen": {
+    "comingSoon": "जल्द आ रहा है",
+    "profile": "प्रोफ़ाइल",
+    "nest": "घोंसला",
+    "shop": "दुकान",
+    "settings": "सेटिंग्स",
+    "leaderboard": "लीडरबोर्ड",
+    "expansions": "विस्तार"
+  },
   "weather": {
     "clear": "साफ़",
     "rain": "बारिश",

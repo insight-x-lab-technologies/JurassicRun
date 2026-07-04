@@ -23,6 +23,25 @@
     "restart": "重新开始",
     "quit": "退出"
   },
+  "nav": {
+    "play": "开始",
+    "back": "返回",
+    "profile": "个人资料",
+    "nest": "巢穴",
+    "shop": "商店",
+    "settings": "设置",
+    "leaderboard": "排行榜",
+    "expansions": "扩展"
+  },
+  "screen": {
+    "comingSoon": "敬请期待",
+    "profile": "个人资料",
+    "nest": "巢穴",
+    "shop": "商店",
+    "settings": "设置",
+    "leaderboard": "排行榜",
+    "expansions": "扩展"
+  },
   "weather": {
     "clear": "晴朗",
     "rain": "雨",

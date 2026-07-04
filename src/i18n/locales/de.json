@@ -23,6 +23,25 @@
     "restart": "Neu starten",
     "quit": "Beenden"
   },
+  "nav": {
+    "play": "Spielen",
+    "back": "Zurück",
+    "profile": "Profil",
+    "nest": "Nest",
+    "shop": "Shop",
+    "settings": "Einstellungen",
+    "leaderboard": "Bestenliste",
+    "expansions": "Erweiterungen"
+  },
+  "screen": {
+    "comingSoon": "Demnächst",
+    "profile": "Profil",
+    "nest": "Nest",
+    "shop": "Shop",
+    "settings": "Einstellungen",
+    "leaderboard": "Bestenliste",
+    "expansions": "Erweiterungen"
+  },
   "weather": {
     "clear": "Klar",
     "rain": "Regen",

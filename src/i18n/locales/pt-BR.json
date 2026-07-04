@@ -23,6 +23,25 @@
     "restart": "Reiniciar",
     "quit": "Sair"
   },
+  "nav": {
+    "play": "Jogar",
+    "back": "Voltar",
+    "profile": "Perfil",
+    "nest": "Ninho",
+    "shop": "Loja",
+    "settings": "Configurações",
+    "leaderboard": "Placar",
+    "expansions": "Expansões"
+  },
+  "screen": {
+    "comingSoon": "Em breve",
+    "profile": "Perfil",
+    "nest": "Ninho",
+    "shop": "Loja",
+    "settings": "Configurações",
+    "leaderboard": "Placar",
+    "expansions": "Expansões"
+  },
   "weather": {
     "clear": "Limpo",
     "rain": "Chuva",
