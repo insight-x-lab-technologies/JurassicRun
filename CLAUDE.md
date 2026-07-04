@@ -340,7 +340,7 @@ início ao Game Over): mobile emulado 390×844 = **60fps sustentado** (p50 16,7m
 real + batching de atlas (Fase 8); culling vertical (desnecessário); medição sob throttle de CPU e
 em device físico (Fase 7 — CDP não exposto no ambiente headless).
 
-**Fase 3 (Power-ups & clima) — EM ANDAMENTO.** Itens 3.1 e 3.2 concluídos.
+**Fase 3 (Power-ups & clima) — EM ANDAMENTO.** Itens 3.1, 3.2 e 3.3 concluídos.
 
 3.1 (sistema de power-ups): módulo-folha puro `src/core/powerup/` (framework de efeitos
 temporários com duração em STEPS + catálogo). `ActiveEffect {kind, remaining}` em
@@ -392,5 +392,29 @@ determinismo end-to-end do slow-mo + correção de nota de goldens no spec). **A
 HUD de power-up + rótulos i18n (Fase 4/8); cosméticos de slow-mo (vinheta/tint/motion-blur,
 Fase 8).
 
-Próximo: **Fase 3, item 3.3 (tempo do dia — cosmético)** — ver
+3.3 (tempo do dia — cosmético): paletas de fundo manhã/tarde/entardecer/noite, **só na camada de
+render** ⇒ core intocado, determinismo inalterado (61). O tempo do dia é **função determinística
+da seed da partida**: módulo PURO `src/render/daynight.ts` com `TimeOfDay`
+(`morning|afternoon|dusk|night`), catálogo `DAY_NIGHT_PALETTES` (`{sky, ground, ceiling,
+parallaxTint}`) e `timeOfDayForSeed(seed) = TIME_OF_DAY_ORDER[hashSeed(seed) % 4]` (usa o `hashSeed`
+xmur3 **portável** de `@core/rng` — render pode importar do core; sem `Date`/`Math.random`).
+Consequência: Endless (token aleatório) varia a paleta de partida em partida "de graça"; Diário/
+Semanal (Fase 5) fica reproduzível para todos. `afternoon` herda o look atual (sky=SKY_COLOR ⇒ sem
+regressão). Casca fina na `GameScene`: `applyDayNight(seed)` seta `cameras.main.setBackgroundColor`,
+redesenha as faixas chão/teto (a `Graphics` anônima virou `this.bandsGfx`) e aplica
+`tile.setTint(parallaxTint)` nas TileSprites — chamado no `create()` e no `update()` **só quando a
+seed muda** (restart), guardado por `appliedDayNightSeed` ⇒ zero-alloc no hot path (REGRA 3). Cores
+de chão/teto migraram para as paletas (`daynight` é o dono único); `GROUND_COLOR`/`CEILING_COLOR`
+removidos de `constants.ts` (SKY_COLOR fica como fallback do `backgroundColor` em `game.ts`). Sem
+strings i18n (cosmético, como 3.1/3.2). Nota de tempo do dia adicionada aos 3 asset-specs
+`bg.layer.*` (REGRA 2/5). Suíte verde (`check` limpo, 308 testes, determinismo 61 **inalterado**;
+execução SDD por subagentes: 2 tasks + review por task + review final "READY TO MERGE" + 1 Minor do
+review aplicado). Verificação visual (Playwright, 6 reloads + amostragem de pixel): fases distintas
+com sky **pixel-exato** ao catálogo (`morning #ffdcb0`, `afternoon #9ad4e6`=SKY_COLOR, `night
+#1a2340`) e prova end-to-end de que o browser renderiza a fase que a seed determina. **Adiados:**
+tuning das paletas (placeholders, Fase 8); ciclo dinâmico dia→noite dentro da partida; indicador/
+HUD de tempo do dia; arte real de céu (gradientes/estrelas/lua-sol, Fase 8); dusk não caiu no RNG
+dos reloads mas compartilha o mesmo code path (coberto por teste unitário).
+
+Próximo: **Fase 3, item 3.4 (clima — afeta gameplay)** — ver
 `docs/roadmap/PHASE-03-powerups-and-weather.md` e `docs/roadmap/ROADMAP.md`.
