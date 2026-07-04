@@ -42,6 +42,24 @@
     "leaderboard": "Classement",
     "expansions": "Extensions"
   },
+  "onboarding": {
+    "title": "Bienvenue",
+    "prompt": "Comment devons-nous t'appeler ?",
+    "placeholder": "Ton nom",
+    "start": "Commencer",
+    "error": {
+      "empty": "Veuillez saisir un nom.",
+      "tooLong": "Nom trop long (max 20)."
+    }
+  },
+  "profile": {
+    "rename": "Renommer",
+    "save": "Enregistrer",
+    "players": "Joueurs",
+    "active": "Actif",
+    "newPlayer": "Nouveau joueur",
+    "create": "Créer"
+  },
   "weather": {
     "clear": "Dégagé",
     "rain": "Pluie",

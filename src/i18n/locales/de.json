@@ -42,6 +42,24 @@
     "leaderboard": "Bestenliste",
     "expansions": "Erweiterungen"
   },
+  "onboarding": {
+    "title": "Willkommen",
+    "prompt": "Wie sollen wir dich nennen?",
+    "placeholder": "Dein Name",
+    "start": "Los",
+    "error": {
+      "empty": "Bitte gib einen Namen ein.",
+      "tooLong": "Name zu lang (max. 20)."
+    }
+  },
+  "profile": {
+    "rename": "Umbenennen",
+    "save": "Speichern",
+    "players": "Spieler",
+    "active": "Aktiv",
+    "newPlayer": "Neuer Spieler",
+    "create": "Erstellen"
+  },
   "weather": {
     "clear": "Klar",
     "rain": "Regen",

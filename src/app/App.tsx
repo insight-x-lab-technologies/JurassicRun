@@ -2,6 +2,9 @@ import { route, type Screen } from './router';
 import { HomeScreen } from './screens/HomeScreen';
 import { PlayScreen } from './screens/PlayScreen';
 import { PlaceholderScreen } from './screens/PlaceholderScreen';
+import { OnboardingScreen } from './screens/OnboardingScreen';
+import { ProfileScreen } from './screens/ProfileScreen';
+import { profileService } from '@services/profile';
 import type { VNode } from 'preact';
 
 function screenFor(screen: Screen): VNode {
@@ -11,7 +14,7 @@ function screenFor(screen: Screen): VNode {
     case 'play':
       return <PlayScreen />;
     case 'profile':
-      return <PlaceholderScreen titleKey="screen.profile" />;
+      return <ProfileScreen />;
     case 'nest':
       return <PlaceholderScreen titleKey="screen.nest" />;
     case 'shop':
@@ -30,5 +33,8 @@ function screenFor(screen: Screen): VNode {
 }
 
 export function App(): VNode {
+  if (profileService.activeProfile.value === null) {
+    return <OnboardingScreen />;
+  }
   return screenFor(route.value);
 }

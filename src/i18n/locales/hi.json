@@ -42,6 +42,24 @@
     "leaderboard": "लीडरबोर्ड",
     "expansions": "विस्तार"
   },
+  "onboarding": {
+    "title": "स्वागत है",
+    "prompt": "हम आपको क्या कहें?",
+    "placeholder": "आपका नाम",
+    "start": "शुरू करें",
+    "error": {
+      "empty": "कृपया एक नाम दर्ज करें।",
+      "tooLong": "नाम बहुत लंबा है (अधिकतम 20)."
+    }
+  },
+  "profile": {
+    "rename": "नाम बदलें",
+    "save": "सहेजें",
+    "players": "खिलाड़ी",
+    "active": "सक्रिय",
+    "newPlayer": "नया खिलाड़ी",
+    "create": "बनाएँ"
+  },
   "weather": {
     "clear": "साफ़",
     "rain": "बारिश",

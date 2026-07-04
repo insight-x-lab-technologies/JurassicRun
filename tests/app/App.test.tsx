@@ -4,6 +4,9 @@ import { render } from 'preact';
 import { App } from '@app/App';
 import { resetToHome, navigate } from '@app/router';
 import { i18n } from '@services/i18n';
+import { profileService } from '@services/profile';
+import { memoryProfileStorage } from '@services/profile/storage';
+import { emptyState } from '@services/profile/store';
 
 describe('App shell', () => {
   let container: HTMLDivElement;
@@ -11,6 +14,8 @@ describe('App shell', () => {
   beforeEach(async () => {
     await i18n.init();
     resetToHome();
+    profileService.init(memoryProfileStorage(emptyState()));
+    profileService.create('Tester');
     container = document.createElement('div');
     document.body.appendChild(container);
   });
