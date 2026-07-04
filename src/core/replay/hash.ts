@@ -135,6 +135,7 @@ export function hashState(world: WorldState): string {
   d.number(world.gravity);
   d.number(world.flapSpeed);
   d.number(world.worldHeight);
+  d.string(world.weather);
   encodePterodactyl(d, world.pterodactyl);
   d.word(world.obstacles.length);
   for (const e of world.obstacles) encodeEntity(d, e);
@@ -151,5 +152,6 @@ export function hashState(world: WorldState): string {
   d.bool(world.spawner !== null);
   d.bool(world.collectibleSpawner !== null);
   d.bool(world.powerupSpawner !== null);
+  d.bool(world.weatherGenerator !== null);
   return d.hex();
 }

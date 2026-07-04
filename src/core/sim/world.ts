@@ -6,6 +6,7 @@ import { SpawnGenerator, DEFAULT_SPAWN_CONFIG, DEFAULT_COLLECTIBLE_CONFIG, COLLE
 import type { SpawnConfig } from '@core/spawn';
 import { difficultyAt } from '@core/difficulty';
 import { POWERUP_CATALOG, DEFAULT_POWERUP_CONFIG, cloneEffects } from '@core/powerup';
+import { WeatherGenerator } from '@core/weather';
 
 /** Referência de função ESTÁVEL (não realocar por createWorld) p/ igualdade estrutural
  * (toEqual) em testes de determinismo/replay. Mesmo motivo do `noScale` do spawn. */
@@ -31,6 +32,10 @@ function buildPowerupSpawner(seed: string, worldHeight: number, override?: Parti
   return new SpawnGenerator(createRng(seed).fork('powerups'), config, POWERUP_CATALOG, 'collectible');
 }
 
+function buildWeatherGenerator(seed: string): WeatherGenerator {
+  return new WeatherGenerator(createRng(seed).fork('weather'));
+}
+
 /** Constrói o mundo inicial a partir de uma config parcial (ausências usam os defaults). */
 export function createWorld(config: WorldConfig = {}): WorldState {
   const c = { ...DEFAULT_WORLD_CONFIG, ...config };
@@ -41,6 +46,9 @@ export function createWorld(config: WorldConfig = {}): WorldState {
     config.seed === undefined ? null : buildCollectibleSpawner(config.seed, c.worldHeight, config.collectibleSpawn);
   const powerupSpawner =
     config.seed === undefined ? null : buildPowerupSpawner(config.seed, c.worldHeight, config.powerupSpawn);
+  const weatherEnabled = config.weather ?? true;
+  const weatherGenerator =
+    config.seed === undefined || !weatherEnabled ? null : buildWeatherGenerator(config.seed);
   return {
     tick: 0,
     distance: 0,
@@ -70,6 +78,8 @@ export function createWorld(config: WorldConfig = {}): WorldState {
     powerupSpawner,
     effects: [],
     extraLives: 0,
+    weather: 'clear',
+    weatherGenerator,
   };
 }
 
@@ -115,5 +125,7 @@ export function cloneWorld(w: WorldState): WorldState {
     powerupSpawner: w.powerupSpawner ? w.powerupSpawner.clone() : null,
     effects: cloneEffects(w.effects),
     extraLives: w.extraLives,
+    weather: w.weather,
+    weatherGenerator: w.weatherGenerator ? w.weatherGenerator.clone() : null,
   };
 }

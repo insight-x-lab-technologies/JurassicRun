@@ -1,5 +1,6 @@
 import type { SpawnGenerator, SpawnConfig } from '@core/spawn';
 import type { ActiveEffect } from '@core/powerup';
+import type { WeatherKind, WeatherGenerator } from '@core/weather';
 
 /** Vetor 2D (dados puros). */
 export interface Vec2 {
@@ -63,6 +64,8 @@ export interface WorldConfig {
   powerupSpawn?: Partial<SpawnConfig>;
   /** Liga a curva de dificuldade (velocidade/gaps crescentes). Default true. */
   difficulty?: boolean;
+  /** Liga o clima determinístico (afeta a física vertical). Default true. */
+  weather?: boolean;
 }
 
 /**
@@ -110,4 +113,8 @@ export interface WorldState {
   effects: ActiveEffect[];
   /** Cargas de vida extra acumuladas (não é efeito temporário). */
   extraLives: number;
+  /** Clima ativo corrente (afeta a física vertical). Default 'clear'. */
+  weather: WeatherKind;
+  /** Sequenciador de clima keyed por distância (null sem seed/clima). */
+  weatherGenerator: WeatherGenerator | null;
 }
