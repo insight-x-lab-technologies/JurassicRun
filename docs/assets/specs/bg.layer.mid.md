@@ -31,3 +31,9 @@
 - [ ] Fundo transparente acima da silhueta.
 - [ ] Empacotado no atlas `backgrounds`; 60fps preservado.
 - [ ] Entrada no `asset-registry.md` atualizada para `art`.
+
+## Tempo do dia (3.3)
+
+Esta camada é tingida por horário (`parallaxTint` das paletas em `src/render/daynight.ts`:
+manhã/tarde/entardecer/noite). A arte real (Fase 8) deve funcionar como silhueta neutra que
+aceita tint multiplicativo; evite cores saturadas embutidas que briguem com o tint.
