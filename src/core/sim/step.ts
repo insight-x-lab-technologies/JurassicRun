@@ -5,6 +5,7 @@ import { overlaps } from '@core/collision';
 import { difficultyAt } from '@core/difficulty';
 import { scoreDelta } from '@core/economy';
 import { pickupPowerup, tickEffects, isEffectActive, applyMagnet, killOrRevive } from '@core/powerup';
+import { weatherPhysics } from '@core/weather';
 import type { InputFrame, WorldState } from './types';
 
 /**
@@ -16,6 +17,14 @@ export function step(world: WorldState, input: InputFrame): void {
 
   world.tick += 1;
 
+  // Clima: resolve o clima da distância corrente (início do step) e aplica à física vertical
+  // deste step. weatherPhysics('clear') = {1,0} ⇒ sem gerador, física baseline (sem regressão).
+  if (world.weatherGenerator) {
+    world.weatherGenerator.advanceTo(world.distance);
+    world.weather = world.weatherGenerator.current;
+  }
+  const weather = weatherPhysics(world.weather);
+
   const ptero = world.pterodactyl;
   const vel = ptero.kinematics.velocity;
   const pos = ptero.transform.position;
@@ -26,8 +35,8 @@ export function step(world: WorldState, input: InputFrame): void {
   }
   world.lastFlap = input.flap;
 
-  // Integração vertical (Euler semi-implícito).
-  vel.y += world.gravity * FIXED_DT;
+  // Integração vertical (Euler semi-implícito). Clima modula gravidade/vento (item 3.4).
+  vel.y += (world.gravity * weather.gravityScale + weather.windY) * FIXED_DT;
   pos.y += vel.y * FIXED_DT;
 
   // Scroll horizontal (usa scrollSpeed efetiva do step anterior; ver dificuldade abaixo).

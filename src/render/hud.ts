@@ -34,6 +34,8 @@ export interface HudRaw {
   level: number;
   speed: number;
   seed: string;
+  /** Clima ativo corrente (`WorldState.weather`). Passthrough — o nome traduzido é montado fora daqui. */
+  weather: string;
 }
 
 /** Valores formatados (strings). Rótulos/unidades vivem nas chaves i18n `hud.*`. */
@@ -44,9 +46,11 @@ export interface HudView {
   level: string;
   speed: string;
   seed: string;
+  /** Passthrough do kind (ex.: `"storm"`) — a tradução do nome fica a cargo do chamador. */
+  weather: string;
 }
 
-/** Formatação canônica: floor de contagens, round de fps/velocidade, seed literal. */
+/** Formatação canônica: floor de contagens, round de fps/velocidade, seed/clima literais. */
 export function formatHudValues(raw: HudRaw): HudView {
   return {
     distance: String(Math.floor(raw.distance)),
@@ -55,5 +59,6 @@ export function formatHudValues(raw: HudRaw): HudView {
     level: String(Math.floor(raw.level)),
     speed: String(Math.round(raw.speed)),
     seed: raw.seed,
+    weather: raw.weather,
   };
 }

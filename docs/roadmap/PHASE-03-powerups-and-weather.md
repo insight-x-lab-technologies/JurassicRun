@@ -23,10 +23,15 @@ tudo determinístico.
       só camada de render — `src/render/daynight.ts` + casca na `GameScene`. Core intocado.)
 
 ### 3.4 Clima (afeta gameplay)
-- [ ] Chuva leve, tempestade, vento, neve — alteram física (ex.: vento muda empuxo) de forma
+- [x] Chuva leve, tempestade, vento, neve — alteram física (ex.: vento muda empuxo) de forma
       **determinística** (derivada do estado/Rng semeado).
-- [ ] `WeatherGenerator` keyed por distância.
-- [ ] Testes: mesma seed ⇒ mesma sequência de clima e mesmo efeito.
+- [x] `WeatherGenerator` keyed por distância.
+- [x] Testes: mesma seed ⇒ mesma sequência de clima e mesmo efeito.
+      (Implementado só no eixo vertical — `gravityScale`/`windY` por clima — mantendo scroll/
+      distância/dificuldade/economia/spawns byte-idênticos. Módulo puro `src/core/weather/` +
+      `WeatherGenerator` (stream `fork('weather')`); física aplicada 1×/step; `hashState`/
+      completeness (26 chaves) + goldens re-pinados; determinismo e2e verde; indicador de clima
+      no HUD (i18n 10 locales). VFX real de clima adiado à Fase 8.)
 
 ## Definição de pronto
 - Power-ups e clima funcionam em jogo, com testes de determinismo verdes.

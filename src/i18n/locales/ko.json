@@ -9,7 +9,8 @@
     "fps": "FPS: {{value}}",
     "level": "Lv {{value}}",
     "speed": "속도: {{value}}",
-    "seed": "시드: {{value}}"
+    "seed": "시드: {{value}}",
+    "weather": "날씨: {{value}}"
   },
   "match": {
     "tapToStart": "탭하여 시작"
@@ -21,5 +22,12 @@
     "nearMisses": "아슬아슬: {{value}}",
     "restart": "다시 시작",
     "quit": "나가기"
+  },
+  "weather": {
+    "clear": "맑음",
+    "rain": "비",
+    "wind": "바람",
+    "storm": "폭풍",
+    "snow": "눈"
   }
 }

@@ -9,7 +9,8 @@
     "fps": "FPS: {{value}}",
     "level": "Niv {{value}}",
     "speed": "Vit: {{value}}",
-    "seed": "Graine: {{value}}"
+    "seed": "Graine: {{value}}",
+    "weather": "Météo : {{value}}"
   },
   "match": {
     "tapToStart": "Touchez pour commencer"
@@ -21,5 +22,12 @@
     "nearMisses": "Quasi-collisions : {{value}}",
     "restart": "Recommencer",
     "quit": "Quitter"
+  },
+  "weather": {
+    "clear": "Dégagé",
+    "rain": "Pluie",
+    "wind": "Vent",
+    "storm": "Orage",
+    "snow": "Neige"
   }
 }

@@ -26,7 +26,7 @@ const CONFIG: WorldConfig = {
   seed: 'endless:KEYS',
 };
 
-/** Conjunto exato de chaves que hashState conhece em WorldState (24 campos). */
+/** Conjunto exato de chaves que hashState conhece em WorldState (26 campos). */
 const EXPECTED_WORLD_KEYS = [
   'alive',
   'baseScrollSpeed',
@@ -51,6 +51,8 @@ const EXPECTED_WORLD_KEYS = [
   'scrollSpeed',
   'spawner',
   'tick',
+  'weather',
+  'weatherGenerator',
   'worldHeight',
 ];
 

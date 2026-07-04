@@ -44,6 +44,7 @@ describe('formatHudValues', () => {
       level: 3,
       speed: 62.4,
       seed: 'endless:DEMO',
+      weather: 'clear',
     });
     expect(view).toEqual({
       distance: '123',
@@ -52,11 +53,20 @@ describe('formatHudValues', () => {
       level: '3',
       speed: '62',
       seed: 'endless:DEMO',
+      weather: 'clear',
     });
   });
 
   it('arredonda .5 para cima (Math.round) e formata zeros', () => {
-    const view = formatHudValues({ distance: 0, food: 0, fps: 59.5, level: 1, speed: 0.5, seed: '' });
+    const view = formatHudValues({
+      distance: 0,
+      food: 0,
+      fps: 59.5,
+      level: 1,
+      speed: 0.5,
+      seed: '',
+      weather: 'clear',
+    });
     expect(view).toEqual({
       distance: '0',
       food: '0',
@@ -64,6 +74,20 @@ describe('formatHudValues', () => {
       level: '1',
       speed: '1',
       seed: '',
+      weather: 'clear',
     });
+  });
+
+  it('passa o clima adiante como string (rótulo/nome vêm da i18n)', () => {
+    const view = formatHudValues({
+      distance: 0,
+      food: 0,
+      fps: 0,
+      level: 1,
+      speed: 0,
+      seed: 's',
+      weather: 'storm',
+    });
+    expect(view.weather).toBe('storm');
   });
 });

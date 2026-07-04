@@ -9,7 +9,8 @@
     "fps": "FPS: {{value}}",
     "level": "Niv {{value}}",
     "speed": "Vel: {{value}}",
-    "seed": "Semilla: {{value}}"
+    "seed": "Semilla: {{value}}",
+    "weather": "Clima: {{value}}"
   },
   "match": {
     "tapToStart": "Toca para empezar"
@@ -21,5 +22,12 @@
     "nearMisses": "Casi choques: {{value}}",
     "restart": "Reiniciar",
     "quit": "Salir"
+  },
+  "weather": {
+    "clear": "Despejado",
+    "rain": "Lluvia",
+    "wind": "Viento",
+    "storm": "Tormenta",
+    "snow": "Nieve"
   }
 }
