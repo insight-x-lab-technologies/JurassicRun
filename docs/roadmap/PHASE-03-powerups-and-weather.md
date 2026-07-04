@@ -18,7 +18,9 @@ tudo determinístico.
       definir claramente o modelo (ex.: a sim conta steps "lentos" de forma determinística).
 
 ### 3.3 Tempo do dia (cosmético)
-- [ ] Manhã/tarde/noite: paletas/iluminação de fundo. **Não** afeta a simulação.
+- [x] Manhã/tarde/noite: paletas/iluminação de fundo. **Não** afeta a simulação.
+      (Implementado com 4 fases: manhã/tarde/entardecer/noite, derivadas da seed via `hashSeed`;
+      só camada de render — `src/render/daynight.ts` + casca na `GameScene`. Core intocado.)
 
 ### 3.4 Clima (afeta gameplay)
 - [ ] Chuva leve, tempestade, vento, neve — alteram física (ex.: vento muda empuxo) de forma

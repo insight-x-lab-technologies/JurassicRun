@@ -7,6 +7,7 @@ import type { PauseController } from './input';
 import { PARALLAX_LAYERS, parallaxTileOffset } from './parallax';
 import type { ParallaxLayer } from './parallax';
 import { isHorizontallyVisible } from './culling';
+import { paletteFor, timeOfDayForSeed } from './daynight';
 import { i18n } from '@services/i18n';
 import { HudTicker, formatHudValues } from './hud';
 import { formatGameOverStats } from './gameover';
@@ -15,8 +16,6 @@ import {
   VIEW_HEIGHT,
   DINO_SCREEN_X,
   CULL_MARGIN,
-  GROUND_COLOR,
-  CEILING_COLOR,
   GROUND_THICKNESS,
   PAUSE_OVERLAY_COLOR,
   PAUSE_OVERLAY_ALPHA,
@@ -54,6 +53,8 @@ export class GameScene extends Phaser.Scene {
   private gameOverStats!: Phaser.GameObjects.Text;
   private gameOverRestart!: Phaser.GameObjects.Text;
   private gameOverQuit!: Phaser.GameObjects.Text;
+  private bandsGfx!: Phaser.GameObjects.Graphics;
+  private appliedDayNightSeed: string | null = null;
   private wasDead = false;
   private dinoBoundsHitbox: Hitbox | null = null;
   private dinoBounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
@@ -77,12 +78,12 @@ export class GameScene extends Phaser.Scene {
       return tile;
     });
 
-    // Cenário fixo (scrollFactor 0): faixas de teto e chão.
-    const bg = this.add.graphics().setScrollFactor(0);
-    bg.fillStyle(CEILING_COLOR, 1);
-    bg.fillRect(0, 0, VIEW_WIDTH, GROUND_THICKNESS);
-    bg.fillStyle(GROUND_COLOR, 1);
-    bg.fillRect(0, VIEW_HEIGHT - GROUND_THICKNESS, VIEW_WIDTH, GROUND_THICKNESS);
+    // Cenário fixo (scrollFactor 0): faixas de teto e chão. Cores vêm da paleta de tempo do dia
+    // (3.3), aplicada aqui e no restart via applyDayNight — desenho só na transição (REGRA 3).
+    this.bandsGfx = this.add.graphics().setScrollFactor(0);
+
+    // Tempo do dia (3.3): paleta derivada da seed da partida. Céu + faixas + tint de parallax.
+    this.applyDayNight(this.match.seedLabel);
 
     // Graphics do mundo (scrollFactor 1 ⇒ acompanha a câmera).
     this.gfx = this.add.graphics();
@@ -169,6 +170,13 @@ export class GameScene extends Phaser.Scene {
     const paused = this.pause.paused;
     this.pauseOverlay.setVisible(paused);
     this.syncGameOver();
+
+    // Restart traz nova seed ⇒ possivelmente nova fase do dia. Compara-e-aplica só na troca
+    // (string compare por frame não aloca; o redesenho só ocorre na transição — REGRA 3).
+    if (this.match.seedLabel !== this.appliedDayNightSeed) {
+      this.applyDayNight(this.match.seedLabel);
+    }
+
     if (paused) return; // congela a sim; o último frame desenhado permanece sob o overlay
 
     const match = this.match;
@@ -255,6 +263,22 @@ export class GameScene extends Phaser.Scene {
       }
       this.drawEntity(g, e);
     }
+  }
+
+  /** Aplica a paleta de tempo do dia (3.3): céu, faixas chão/teto e tint das camadas de parallax.
+   *  Só chamado na criação e quando a seed da partida muda (restart) — nunca por frame (REGRA 3). */
+  private applyDayNight(seed: string): void {
+    const p = paletteFor(timeOfDayForSeed(seed));
+    // sky < 0x1000000 ⇒ Phaser trata como RGB opaco (alpha 255). Cobre o backgroundColor do jogo.
+    this.cameras.main.setBackgroundColor(p.sky);
+    const g = this.bandsGfx;
+    g.clear();
+    g.fillStyle(p.ceiling, 1);
+    g.fillRect(0, 0, VIEW_WIDTH, GROUND_THICKNESS);
+    g.fillStyle(p.ground, 1);
+    g.fillRect(0, VIEW_HEIGHT - GROUND_THICKNESS, VIEW_WIDTH, GROUND_THICKNESS);
+    for (const tile of this.parallaxTiles) tile.setTint(p.parallaxTint);
+    this.appliedDayNightSeed = seed;
   }
 
   /** Gera (1×) a textura de tile de uma camada: linha de triângulos como silhueta. Chave = id. */

@@ -16,10 +16,9 @@ export const MAX_FRAME_TIME = 0.25;
  * fica byte-idêntico, só clocado devagar (mesma fps-independência já provada). Placeholder. */
 export const SLOW_MO_TIME_SCALE = 0.4;
 
-// Cores de cenário fixo (céu de fundo, faixas de teto/chão). Parallax multicamadas: parallax.ts.
+// Cor de fundo inicial do jogo (fallback antes da cena aplicar a paleta de tempo do dia — 3.3).
+// As cores das faixas de chão/teto agora vivem nas paletas de daynight.ts (o dono único delas).
 export const SKY_COLOR = 0x9ad4e6;
-export const GROUND_COLOR = 0x4a7a3a;
-export const CEILING_COLOR = 0x3a2f4a;
 export const GROUND_THICKNESS = 6;
 
 /** event.code das teclas. Flap e pausa são DISJUNTAS (pausar nunca conta como flap). */
