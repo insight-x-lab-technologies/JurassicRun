@@ -1,4 +1,4 @@
-import { useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import type { VNode } from 'preact';
 import { back } from '../router';
 import { i18n } from '@services/i18n';
@@ -21,6 +21,13 @@ export function ProfileScreen(): VNode {
   const renameInputRef = useRef<HTMLInputElement>(null);
   const createInputRef = useRef<HTMLInputElement>(null);
 
+  // Resincroniza o campo de renomear quando o perfil ativo muda (troca via
+  // botão da lista não remonta o componente). Só dispara quando a identidade
+  // do ativo muda, então não briga com a digitação do usuário.
+  useEffect(() => {
+    setRenameValue(active?.name ?? '');
+  }, [active?.id]);
+
   function submitRename(e: Event): void {
     e.preventDefault();
     // Lê o valor atual do DOM (não o closure): o input pode ter sido atualizado
@@ -34,6 +41,9 @@ export function ProfileScreen(): VNode {
     const raw = createInputRef.current?.value ?? createValue;
     if (profileService.create(raw)) {
       setCreateValue('');
+      // Limpa o DOM imediatamente também (não só o estado controlado): sem isso,
+      // testes/observadores que leem o valor do input no mesmo tick do submit
+      // ainda veriam o texto antigo até o próximo re-render.
       if (createInputRef.current !== null) createInputRef.current.value = '';
     }
   }
@@ -49,6 +59,7 @@ export function ProfileScreen(): VNode {
         </div>
       )}
 
+      <h2>{i18n.t('profile.rename')}</h2>
       <form class="form" data-testid="rename-form" onSubmit={submitRename}>
         <input
           ref={renameInputRef}

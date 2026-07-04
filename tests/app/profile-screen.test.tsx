@@ -56,6 +56,23 @@ describe('ProfileScreen', () => {
     expect(profileService.activeProfile.value!.name).toBe('Rex');
   });
 
+  it('trocar de perfil resincroniza o campo de renomear (não fica com o nome antigo)', async () => {
+    profileService.create('Ptero'); // Ptero vira ativo
+    render(<ProfileScreen />, container);
+    // botão de troca do perfil 'Rex' (o não-ativo)
+    const rexBtn = Array.from(container.querySelectorAll('button')).find(
+      (b) => b.textContent?.includes('Rex') && b.hasAttribute('data-switch'),
+    )!;
+    rexBtn.dispatchEvent(new Event('click', { bubbles: true }));
+    await Promise.resolve();
+    render(<ProfileScreen />, container);
+    // useEffect roda depois do "paint" (preact agenda via rAF/setTimeout, não microtask):
+    // um Promise.resolve() não basta para flushar o efeito de resync.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    const renameInput = container.querySelector<HTMLInputElement>('[data-testid="rename-input"]')!;
+    expect(renameInput.value).toBe('Rex');
+  });
+
   it('renomear atualiza o nome do ativo', async () => {
     render(<ProfileScreen />, container);
     const renameInput = container.querySelector<HTMLInputElement>('[data-testid="rename-input"]')!;
