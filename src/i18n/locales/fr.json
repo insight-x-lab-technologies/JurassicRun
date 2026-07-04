@@ -27,20 +27,36 @@
     "play": "Jouer",
     "back": "Retour",
     "profile": "Profil",
+    "daily": "Défi Quotidien",
+    "weekly": "Défi Hebdomadaire",
+    "nest": "Nid",
+    "shop": "Boutique",
+    "settings": "Paramètres",
+    "leaderboard": "Classement",
+    "expansions": "Extensions",
+    "share": "Partager",
+    "donate": "Faire un don"
+  },
+  "screen": {
+    "comingSoon": "Bientôt disponible",
+    "profile": "Profil",
+    "daily": "Défi Quotidien",
+    "weekly": "Défi Hebdomadaire",
     "nest": "Nid",
     "shop": "Boutique",
     "settings": "Paramètres",
     "leaderboard": "Classement",
     "expansions": "Extensions"
   },
-  "screen": {
-    "comingSoon": "Bientôt disponible",
-    "profile": "Profil",
-    "nest": "Nid",
-    "shop": "Boutique",
-    "settings": "Paramètres",
-    "leaderboard": "Classement",
-    "expansions": "Extensions"
+  "home": {
+    "newGame": "Nouvelle Partie",
+    "coins": "Pièces",
+    "trophies": "Trophées",
+    "level": "Niv max"
+  },
+  "share": {
+    "title": "JurassicRun",
+    "text": "Jouez à JurassicRun — un jeu de plateforme avec un ptérodactyle !"
   },
   "onboarding": {
     "title": "Bienvenue",

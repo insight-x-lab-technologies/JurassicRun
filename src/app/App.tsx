@@ -15,6 +15,10 @@ function screenFor(screen: Screen): VNode {
       return <PlayScreen />;
     case 'profile':
       return <ProfileScreen />;
+    case 'daily':
+      return <PlaceholderScreen titleKey="screen.daily" />;
+    case 'weekly':
+      return <PlaceholderScreen titleKey="screen.weekly" />;
     case 'nest':
       return <PlaceholderScreen titleKey="screen.nest" />;
     case 'shop':

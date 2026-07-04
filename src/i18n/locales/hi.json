@@ -27,20 +27,36 @@
     "play": "खेलें",
     "back": "वापस",
     "profile": "प्रोफ़ाइल",
+    "daily": "दैनिक चुनौती",
+    "weekly": "साप्ताहिक चुनौती",
+    "nest": "घोंसला",
+    "shop": "दुकान",
+    "settings": "सेटिंग्स",
+    "leaderboard": "लीडरबोर्ड",
+    "expansions": "विस्तार",
+    "share": "साझा करें",
+    "donate": "दान करें"
+  },
+  "screen": {
+    "comingSoon": "जल्द आ रहा है",
+    "profile": "प्रोफ़ाइल",
+    "daily": "दैनिक चुनौती",
+    "weekly": "साप्ताहिक चुनौती",
     "nest": "घोंसला",
     "shop": "दुकान",
     "settings": "सेटिंग्स",
     "leaderboard": "लीडरबोर्ड",
     "expansions": "विस्तार"
   },
-  "screen": {
-    "comingSoon": "जल्द आ रहा है",
-    "profile": "प्रोफ़ाइल",
-    "nest": "घोंसला",
-    "shop": "दुकान",
-    "settings": "सेटिंग्स",
-    "leaderboard": "लीडरबोर्ड",
-    "expansions": "विस्तार"
+  "home": {
+    "newGame": "नया खेल",
+    "coins": "सिक्के",
+    "trophies": "ट्रॉफ़ियाँ",
+    "level": "अधिकतम स्तर"
+  },
+  "share": {
+    "title": "JurassicRun",
+    "text": "JurassicRun खेलें — एक टेरोडैक्टाइल साइड-स्क्रोलर!"
   },
   "onboarding": {
     "title": "स्वागत है",

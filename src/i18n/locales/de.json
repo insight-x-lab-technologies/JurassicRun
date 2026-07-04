@@ -27,20 +27,36 @@
     "play": "Spielen",
     "back": "Zurück",
     "profile": "Profil",
+    "daily": "Tägliche Herausforderung",
+    "weekly": "Wöchentliche Herausforderung",
+    "nest": "Nest",
+    "shop": "Shop",
+    "settings": "Einstellungen",
+    "leaderboard": "Bestenliste",
+    "expansions": "Erweiterungen",
+    "share": "Teilen",
+    "donate": "Spenden"
+  },
+  "screen": {
+    "comingSoon": "Demnächst",
+    "profile": "Profil",
+    "daily": "Tägliche Herausforderung",
+    "weekly": "Wöchentliche Herausforderung",
     "nest": "Nest",
     "shop": "Shop",
     "settings": "Einstellungen",
     "leaderboard": "Bestenliste",
     "expansions": "Erweiterungen"
   },
-  "screen": {
-    "comingSoon": "Demnächst",
-    "profile": "Profil",
-    "nest": "Nest",
-    "shop": "Shop",
-    "settings": "Einstellungen",
-    "leaderboard": "Bestenliste",
-    "expansions": "Erweiterungen"
+  "home": {
+    "newGame": "Neues Spiel",
+    "coins": "Münzen",
+    "trophies": "Trophäen",
+    "level": "Max. Stufe"
+  },
+  "share": {
+    "title": "JurassicRun",
+    "text": "Spiele JurassicRun — ein Side-Scroller mit einem Flugsaurier!"
   },
   "onboarding": {
     "title": "Willkommen",
