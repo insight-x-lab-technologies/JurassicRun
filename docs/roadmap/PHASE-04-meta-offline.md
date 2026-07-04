@@ -6,7 +6,7 @@ ninho, loja in-game, expansões, troféus, configurações, 10 idiomas e áudio.
 ## Itens
 
 ### 4.1 App shell e navegação (Preact)
-- [ ] Router de telas + design tokens responsivos.
+- [x] Router de telas + design tokens responsivos.
 
 ### 4.2 Perfis de jogador (local)
 - [ ] Primeiro acesso pede nome.
