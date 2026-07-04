@@ -42,6 +42,24 @@
     "leaderboard": "Classifica",
     "expansions": "Espansioni"
   },
+  "onboarding": {
+    "title": "Benvenuto",
+    "prompt": "Come ti chiamiamo?",
+    "placeholder": "Il tuo nome",
+    "start": "Inizia",
+    "error": {
+      "empty": "Inserisci un nome.",
+      "tooLong": "Nome troppo lungo (max 20)."
+    }
+  },
+  "profile": {
+    "rename": "Rinomina",
+    "save": "Salva",
+    "players": "Giocatori",
+    "active": "Attivo",
+    "newPlayer": "Nuovo giocatore",
+    "create": "Crea"
+  },
   "weather": {
     "clear": "Sereno",
     "rain": "Pioggia",

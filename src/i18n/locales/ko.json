@@ -42,6 +42,24 @@
     "leaderboard": "리더보드",
     "expansions": "확장"
   },
+  "onboarding": {
+    "title": "환영합니다",
+    "prompt": "어떻게 불러드릴까요?",
+    "placeholder": "이름",
+    "start": "시작",
+    "error": {
+      "empty": "이름을 입력하세요.",
+      "tooLong": "이름이 너무 깁니다 (최대 20자)."
+    }
+  },
+  "profile": {
+    "rename": "이름 변경",
+    "save": "저장",
+    "players": "플레이어",
+    "active": "사용 중",
+    "newPlayer": "새 플레이어",
+    "create": "만들기"
+  },
   "weather": {
     "clear": "맑음",
     "rain": "비",

@@ -42,6 +42,24 @@
     "leaderboard": "ランキング",
     "expansions": "拡張"
   },
+  "onboarding": {
+    "title": "ようこそ",
+    "prompt": "お名前を教えてください",
+    "placeholder": "名前",
+    "start": "はじめる",
+    "error": {
+      "empty": "名前を入力してください。",
+      "tooLong": "名前が長すぎます（最大20文字）。"
+    }
+  },
+  "profile": {
+    "rename": "名前を変更",
+    "save": "保存",
+    "players": "プレイヤー",
+    "active": "使用中",
+    "newPlayer": "新しいプレイヤー",
+    "create": "作成"
+  },
   "weather": {
     "clear": "晴れ",
     "rain": "雨",

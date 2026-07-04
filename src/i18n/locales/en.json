@@ -42,6 +42,24 @@
     "leaderboard": "Leaderboard",
     "expansions": "Expansions"
   },
+  "onboarding": {
+    "title": "Welcome",
+    "prompt": "What should we call you?",
+    "placeholder": "Your name",
+    "start": "Start",
+    "error": {
+      "empty": "Please enter a name.",
+      "tooLong": "Name is too long (max 20)."
+    }
+  },
+  "profile": {
+    "rename": "Rename",
+    "save": "Save",
+    "players": "Players",
+    "active": "Active",
+    "newPlayer": "New player",
+    "create": "Create"
+  },
   "weather": {
     "clear": "Clear",
     "rain": "Rain",

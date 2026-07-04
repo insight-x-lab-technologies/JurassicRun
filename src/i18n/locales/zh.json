@@ -42,6 +42,24 @@
     "leaderboard": "排行榜",
     "expansions": "扩展"
   },
+  "onboarding": {
+    "title": "欢迎",
+    "prompt": "怎么称呼你？",
+    "placeholder": "你的名字",
+    "start": "开始",
+    "error": {
+      "empty": "请输入名字。",
+      "tooLong": "名字太长（最多20个字符）。"
+    }
+  },
+  "profile": {
+    "rename": "重命名",
+    "save": "保存",
+    "players": "玩家",
+    "active": "使用中",
+    "newPlayer": "新玩家",
+    "create": "创建"
+  },
   "weather": {
     "clear": "晴朗",
     "rain": "雨",

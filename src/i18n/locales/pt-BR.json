@@ -42,6 +42,24 @@
     "leaderboard": "Placar",
     "expansions": "Expansões"
   },
+  "onboarding": {
+    "title": "Bem-vindo",
+    "prompt": "Como podemos te chamar?",
+    "placeholder": "Seu nome",
+    "start": "Começar",
+    "error": {
+      "empty": "Digite um nome.",
+      "tooLong": "Nome longo demais (máx. 20)."
+    }
+  },
+  "profile": {
+    "rename": "Renomear",
+    "save": "Salvar",
+    "players": "Jogadores",
+    "active": "Ativo",
+    "newPlayer": "Novo jogador",
+    "create": "Criar"
+  },
   "weather": {
     "clear": "Limpo",
     "rain": "Chuva",
