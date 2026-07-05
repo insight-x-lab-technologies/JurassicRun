@@ -32,7 +32,9 @@ class NestService {
   buy(id: string): PurchaseResult {
     const { state, result, spent } = purchase(this._state.value, id, walletService.balance.value);
     if (result === 'ok') {
-      if (!walletService.spend(spent)) return 'insufficient'; // guarda extra contra corrida
+      // spent>0: guarda extra contra corrida. spent===0 (dino grátis) não passa por spend
+      // (spend(0) devolve false), então concede direto — mantém o roster extensível.
+      if (spent > 0 && !walletService.spend(spent)) return 'insufficient';
       this.commit(state);
     }
     return result;
