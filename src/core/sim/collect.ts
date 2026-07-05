@@ -1,5 +1,6 @@
 import type { Entity, WorldState } from './types';
 import { isEffectActive, DOUBLE_COIN_FOOD_GAIN } from '@core/powerup';
+import { traitModifiers } from '@core/dino';
 
 /**
  * Coleta um pássaro-moeda: incrementa `food` e remove o coletável do mundo. Busca por
@@ -12,6 +13,7 @@ export function collect(world: WorldState, entity: Entity): boolean {
   const i = world.collectibles.indexOf(entity);
   if (i < 0) return false;
   world.collectibles.splice(i, 1);
-  world.food += isEffectActive(world.effects, 'doubleCoin') ? DOUBLE_COIN_FOOD_GAIN : 1;
+  const base = isEffectActive(world.effects, 'doubleCoin') ? DOUBLE_COIN_FOOD_GAIN : 1;
+  world.food += base * traitModifiers(world.trait).foodMultiplier;
   return true;
 }

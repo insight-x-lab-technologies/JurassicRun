@@ -82,5 +82,34 @@
     "wind": "हवा",
     "storm": "तूफ़ान",
     "snow": "बर्फ़"
+  },
+  "nest": {
+    "title": "घोंसला",
+    "active": "सक्रिय",
+    "select": "चुनें",
+    "buy": "खरीदें",
+    "owned": "आपके पास है",
+    "price": "{{value}} सिक्के",
+    "back": "वापस"
+  },
+  "dino": {
+    "starter": { "name": "स्काउट" },
+    "lodestone": { "name": "लोडस्टोन" },
+    "goldbeak": { "name": "गोल्डबीक" },
+    "midas": { "name": "मिडास" },
+    "nine-lives": { "name": "नाइन लाइव्स" },
+    "aegis": { "name": "एजिस" },
+    "prospector": { "name": "प्रॉस्पेक्टर" },
+    "harvester": { "name": "हार्वेस्टर" },
+    "guardian": { "name": "गार्डियन" },
+    "phoenix": { "name": "फीनिक्स" }
+  },
+  "trait": {
+    "none": { "desc": "कोई विशेष गुण नहीं।" },
+    "magnet": { "desc": "स्थायी सिक्का चुंबक।" },
+    "doubleFood": { "desc": "भोजन का मूल्य दोगुना।" },
+    "tripleFood": { "desc": "भोजन का मूल्य तिगुना।" },
+    "startLife": { "desc": "एक अतिरिक्त जीवन के साथ शुरुआत।" },
+    "headStart": { "desc": "एक सुरक्षा ढाल के साथ शुरुआत।" }
   }
 }

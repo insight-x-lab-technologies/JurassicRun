@@ -9,12 +9,17 @@ usada no manifesto de assets do render.
 ## Personagens (pterodáctilos)
 | id | descrição | status | spec |
 |----|-----------|--------|------|
-| `dino.default` | pterodáctilo inicial | placeholder | `specs/dino.default.md` (exemplo) |
-| `dino.shielded` | nasce com escudo | placeholder | — |
-| `dino.magnet` | ímã permanente | placeholder | — |
-| `dino.double` | moedas 2x | placeholder | — |
-| `dino.triple` | moedas 3x | placeholder | — |
-| ... (até ~10) | | | |
+| `dino.default` | pterodáctilo inicial (render em jogo) | placeholder | `specs/dino.default.md` (exemplo) |
+| `dino.starter` | roster do Ninho (4.4): sem traço | spec | `specs/dino.starter.md` |
+| `dino.lodestone` | roster do Ninho (4.4): traço `magnet` | spec | `specs/dino.lodestone.md` |
+| `dino.goldbeak` | roster do Ninho (4.4): traço `doubleFood` | spec | `specs/dino.goldbeak.md` |
+| `dino.midas` | roster do Ninho (4.4): traço `tripleFood` | spec | `specs/dino.midas.md` |
+| `dino.nine-lives` | roster do Ninho (4.4): traço `startLife` | spec | `specs/dino.nine-lives.md` |
+| `dino.aegis` | roster do Ninho (4.4): traço `headStart` | spec | `specs/dino.aegis.md` |
+| `dino.prospector` | roster do Ninho (4.4): traço `magnet` | spec | `specs/dino.prospector.md` |
+| `dino.harvester` | roster do Ninho (4.4): traço `doubleFood` | spec | `specs/dino.harvester.md` |
+| `dino.phoenix` | roster do Ninho (4.4): traço `startLife` | spec | `specs/dino.phoenix.md` |
+| `dino.guardian` | roster do Ninho (4.4): traço `headStart` | spec | `specs/dino.guardian.md` |
 
 ## Obstáculos (formatos variados)
 | id | descrição | status | spec |

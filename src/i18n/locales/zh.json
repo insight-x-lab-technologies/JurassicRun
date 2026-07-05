@@ -82,5 +82,34 @@
     "wind": "风",
     "storm": "暴风",
     "snow": "雪"
+  },
+  "nest": {
+    "title": "巢穴",
+    "active": "使用中",
+    "select": "选择",
+    "buy": "购买",
+    "owned": "已拥有",
+    "price": "{{value}} 金币",
+    "back": "返回"
+  },
+  "dino": {
+    "starter": { "name": "侦察兵" },
+    "lodestone": { "name": "磁石龙" },
+    "goldbeak": { "name": "金喙龙" },
+    "midas": { "name": "迈达斯" },
+    "nine-lives": { "name": "九命" },
+    "aegis": { "name": "神盾" },
+    "prospector": { "name": "淘金者" },
+    "harvester": { "name": "收割者" },
+    "guardian": { "name": "守护者" },
+    "phoenix": { "name": "凤凰" }
+  },
+  "trait": {
+    "none": { "desc": "无特殊特性。" },
+    "magnet": { "desc": "永久金币磁铁。" },
+    "doubleFood": { "desc": "食物价值翻倍。" },
+    "tripleFood": { "desc": "食物价值三倍。" },
+    "startLife": { "desc": "开局附带一条额外生命。" },
+    "headStart": { "desc": "开局附带护盾。" }
   }
 }

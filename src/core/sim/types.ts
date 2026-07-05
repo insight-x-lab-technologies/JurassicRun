@@ -1,6 +1,7 @@
 import type { SpawnGenerator, SpawnConfig } from '@core/spawn';
 import type { ActiveEffect } from '@core/powerup';
 import type { WeatherKind, WeatherGenerator } from '@core/weather';
+import type { DinoTrait } from '@core/dino';
 
 /** Vetor 2D (dados puros). */
 export interface Vec2 {
@@ -66,6 +67,8 @@ export interface WorldConfig {
   difficulty?: boolean;
   /** Liga o clima determinístico (afeta a física vertical). Default true. */
   weather?: boolean;
+  /** Traço do dino ativo (de fora do core, via startGame). Default 'none'. */
+  trait?: DinoTrait;
 }
 
 /**
@@ -117,4 +120,6 @@ export interface WorldState {
   weather: WeatherKind;
   /** Sequenciador de clima keyed por distância (null sem seed/clima). */
   weatherGenerator: WeatherGenerator | null;
+  /** Traço do dino ativo desta partida (parte do estado inicial ⇒ determinístico). */
+  trait: DinoTrait;
 }

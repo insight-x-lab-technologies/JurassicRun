@@ -82,5 +82,34 @@
     "wind": "風",
     "storm": "嵐",
     "snow": "雪"
+  },
+  "nest": {
+    "title": "巣",
+    "active": "使用中",
+    "select": "選択",
+    "buy": "購入",
+    "owned": "所持済み",
+    "price": "{{value}} コイン",
+    "back": "戻る"
+  },
+  "dino": {
+    "starter": { "name": "スカウト" },
+    "lodestone": { "name": "ロードストーン" },
+    "goldbeak": { "name": "ゴールドビーク" },
+    "midas": { "name": "ミダス" },
+    "nine-lives": { "name": "ナインライブズ" },
+    "aegis": { "name": "イージス" },
+    "prospector": { "name": "プロスペクター" },
+    "harvester": { "name": "ハーベスター" },
+    "guardian": { "name": "ガーディアン" },
+    "phoenix": { "name": "フェニックス" }
+  },
+  "trait": {
+    "none": { "desc": "特別な特性なし。" },
+    "magnet": { "desc": "常時コインマグネット。" },
+    "doubleFood": { "desc": "エサの価値が2倍。" },
+    "tripleFood": { "desc": "エサの価値が3倍。" },
+    "startLife": { "desc": "追加ライフを持って開始。" },
+    "headStart": { "desc": "防御シールドを持って開始。" }
   }
 }

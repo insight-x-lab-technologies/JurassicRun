@@ -20,9 +20,11 @@ ninho, loja in-game, expansões, troféus, configurações, 10 idiomas e áudio.
       Ninho, Loja, Expansões, Doação (stub → 4.6/ADR-0004), Compartilhar (Web Share + clipboard).
 
 ### 4.4 Ninho / Hangar
-- [ ] ~10 pterodáctilos com traços (escudo nato, ímã permanente, moeda 2x/3x, etc.).
-- [ ] Comprar com comida (moeda); selecionar ativo. Traços entram na simulação de forma
-      determinística (parte do estado inicial da partida).
+- [x] ~10 pterodáctilos com traços (escudo nato, ímã permanente, moeda 2x/3x, etc.).
+- [x] Comprar com comida (moeda); selecionar ativo. Traços entram na simulação de forma
+      determinística (parte do estado inicial da partida). (Compra passa por um seam de carteira
+      `getCoinBalance`/`spendCoins` com saldo 0 por ora ⇒ só o starter grátis; a carteira real
+      liga no 4.5. Seleção + traço-na-simulação totalmente funcionais.)
 
 ### 4.5 Economia persistente + Loja (in-game)
 - [ ] Carteira de moedas persistida; comprar dinos/itens com moeda.

@@ -153,5 +153,6 @@ export function hashState(world: WorldState): string {
   d.bool(world.collectibleSpawner !== null);
   d.bool(world.powerupSpawner !== null);
   d.bool(world.weatherGenerator !== null);
+  d.string(world.trait);
   return d.hex();
 }

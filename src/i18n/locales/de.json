@@ -82,5 +82,34 @@
     "wind": "Wind",
     "storm": "Sturm",
     "snow": "Schnee"
+  },
+  "nest": {
+    "title": "Nest",
+    "active": "Aktiv",
+    "select": "Auswählen",
+    "buy": "Kaufen",
+    "owned": "Im Besitz",
+    "price": "{{value}} Münzen",
+    "back": "Zurück"
+  },
+  "dino": {
+    "starter": { "name": "Späher" },
+    "lodestone": { "name": "Magnetstein" },
+    "goldbeak": { "name": "Goldschnabel" },
+    "midas": { "name": "Midas" },
+    "nine-lives": { "name": "Neun Leben" },
+    "aegis": { "name": "Ägide" },
+    "prospector": { "name": "Schürfer" },
+    "harvester": { "name": "Erntehelfer" },
+    "guardian": { "name": "Wächter" },
+    "phoenix": { "name": "Phönix" }
+  },
+  "trait": {
+    "none": { "desc": "Keine besondere Fähigkeit." },
+    "magnet": { "desc": "Dauerhafter Münzmagnet." },
+    "doubleFood": { "desc": "Futter zählt doppelt." },
+    "tripleFood": { "desc": "Futter zählt dreifach." },
+    "startLife": { "desc": "Startet mit einem Extraleben." },
+    "headStart": { "desc": "Startet mit einem Schutzschild." }
   }
 }
