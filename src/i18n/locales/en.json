@@ -82,5 +82,34 @@
     "wind": "Wind",
     "storm": "Storm",
     "snow": "Snow"
+  },
+  "nest": {
+    "title": "Nest",
+    "active": "Active",
+    "select": "Select",
+    "buy": "Buy",
+    "owned": "Owned",
+    "price": "{{value}} coins",
+    "back": "Back"
+  },
+  "dino": {
+    "starter": { "name": "Scout" },
+    "lodestone": { "name": "Lodestone" },
+    "goldbeak": { "name": "Goldbeak" },
+    "midas": { "name": "Midas" },
+    "nine-lives": { "name": "Nine Lives" },
+    "aegis": { "name": "Aegis" },
+    "prospector": { "name": "Prospector" },
+    "harvester": { "name": "Harvester" },
+    "guardian": { "name": "Guardian" },
+    "phoenix": { "name": "Phoenix" }
+  },
+  "trait": {
+    "none": { "desc": "No special trait." },
+    "magnet": { "desc": "Permanent coin magnet." },
+    "doubleFood": { "desc": "Food is worth double." },
+    "tripleFood": { "desc": "Food is worth triple." },
+    "startLife": { "desc": "Start with an extra life." },
+    "headStart": { "desc": "Start with a protective shield." }
   }
 }

@@ -82,5 +82,34 @@
     "wind": "Viento",
     "storm": "Tormenta",
     "snow": "Nieve"
+  },
+  "nest": {
+    "title": "Nido",
+    "active": "Activo",
+    "select": "Seleccionar",
+    "buy": "Comprar",
+    "owned": "Adquirido",
+    "price": "{{value}} monedas",
+    "back": "Atrás"
+  },
+  "dino": {
+    "starter": { "name": "Explorador" },
+    "lodestone": { "name": "Magnetita" },
+    "goldbeak": { "name": "Picodorado" },
+    "midas": { "name": "Midas" },
+    "nine-lives": { "name": "Nueve Vidas" },
+    "aegis": { "name": "Égida" },
+    "prospector": { "name": "Buscador" },
+    "harvester": { "name": "Cosechador" },
+    "guardian": { "name": "Guardián" },
+    "phoenix": { "name": "Fénix" }
+  },
+  "trait": {
+    "none": { "desc": "Sin rasgo especial." },
+    "magnet": { "desc": "Imán de monedas permanente." },
+    "doubleFood": { "desc": "La comida vale el doble." },
+    "tripleFood": { "desc": "La comida vale el triple." },
+    "startLife": { "desc": "Empieza con una vida extra." },
+    "headStart": { "desc": "Empieza con un escudo protector." }
   }
 }

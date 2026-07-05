@@ -82,5 +82,34 @@
     "wind": "Vent",
     "storm": "Orage",
     "snow": "Neige"
+  },
+  "nest": {
+    "title": "Nid",
+    "active": "Actif",
+    "select": "Sélectionner",
+    "buy": "Acheter",
+    "owned": "Possédé",
+    "price": "{{value}} pièces",
+    "back": "Retour"
+  },
+  "dino": {
+    "starter": { "name": "Éclaireur" },
+    "lodestone": { "name": "Aimantite" },
+    "goldbeak": { "name": "Bec-d'or" },
+    "midas": { "name": "Midas" },
+    "nine-lives": { "name": "Neuf Vies" },
+    "aegis": { "name": "Égide" },
+    "prospector": { "name": "Prospecteur" },
+    "harvester": { "name": "Moissonneur" },
+    "guardian": { "name": "Gardien" },
+    "phoenix": { "name": "Phénix" }
+  },
+  "trait": {
+    "none": { "desc": "Aucun trait spécial." },
+    "magnet": { "desc": "Aimant à pièces permanent." },
+    "doubleFood": { "desc": "La nourriture vaut le double." },
+    "tripleFood": { "desc": "La nourriture vaut le triple." },
+    "startLife": { "desc": "Commence avec une vie supplémentaire." },
+    "headStart": { "desc": "Commence avec un bouclier protecteur." }
   }
 }
