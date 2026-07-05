@@ -6,6 +6,7 @@ import { difficultyAt } from '@core/difficulty';
 import { scoreDelta } from '@core/economy';
 import { pickupPowerup, tickEffects, isEffectActive, applyMagnet, killOrRevive } from '@core/powerup';
 import { weatherPhysics } from '@core/weather';
+import { traitModifiers } from '@core/dino';
 import type { InputFrame, WorldState } from './types';
 
 /**
@@ -16,6 +17,8 @@ export function step(world: WorldState, input: InputFrame): void {
   if (!world.alive) return; // estado congelado após a morte
 
   world.tick += 1;
+
+  const traitMods = traitModifiers(world.trait);
 
   // Clima: resolve o clima da distância corrente (início do step) e aplica à física vertical
   // deste step. weatherPhysics('clear') = {1,0} ⇒ sem gerador, física baseline (sem regressão).
@@ -138,7 +141,7 @@ export function step(world: WorldState, input: InputFrame): void {
     }
   }
 
-  if (world.alive && isEffectActive(world.effects, 'magnet')) applyMagnet(world);
+  if (world.alive && (traitMods.magnetAlways || isEffectActive(world.effects, 'magnet'))) applyMagnet(world);
 
   if (world.alive) {
     const collectibles = world.collectibles;

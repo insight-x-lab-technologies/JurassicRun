@@ -5,8 +5,9 @@ import { createRng } from '@core/rng';
 import { SpawnGenerator, DEFAULT_SPAWN_CONFIG, DEFAULT_COLLECTIBLE_CONFIG, COLLECTIBLE_CATALOG } from '@core/spawn';
 import type { SpawnConfig } from '@core/spawn';
 import { difficultyAt } from '@core/difficulty';
-import { POWERUP_CATALOG, DEFAULT_POWERUP_CONFIG, cloneEffects } from '@core/powerup';
+import { POWERUP_CATALOG, DEFAULT_POWERUP_CONFIG, cloneEffects, activateEffect } from '@core/powerup';
 import { WeatherGenerator } from '@core/weather';
+import { traitModifiers } from '@core/dino';
 
 /** Referência de função ESTÁVEL (não realocar por createWorld) p/ igualdade estrutural
  * (toEqual) em testes de determinismo/replay. Mesmo motivo do `noScale` do spawn. */
@@ -49,6 +50,10 @@ export function createWorld(config: WorldConfig = {}): WorldState {
   const weatherEnabled = config.weather ?? true;
   const weatherGenerator =
     config.seed === undefined || !weatherEnabled ? null : buildWeatherGenerator(config.seed);
+  const trait = config.trait ?? 'none';
+  const mods = traitModifiers(trait);
+  const effects: WorldState['effects'] = [];
+  if (mods.startShieldSteps > 0) activateEffect(effects, 'shield', mods.startShieldSteps);
   return {
     tick: 0,
     distance: 0,
@@ -76,10 +81,11 @@ export function createWorld(config: WorldConfig = {}): WorldState {
     collectibleSpawner,
     powerups: [],
     powerupSpawner,
-    effects: [],
-    extraLives: 0,
+    effects,
+    extraLives: mods.startExtraLives,
     weather: 'clear',
     weatherGenerator,
+    trait,
   };
 }
 
@@ -127,5 +133,6 @@ export function cloneWorld(w: WorldState): WorldState {
     extraLives: w.extraLives,
     weather: w.weather,
     weatherGenerator: w.weatherGenerator ? w.weatherGenerator.clone() : null,
+    trait: w.trait,
   };
 }
