@@ -92,6 +92,16 @@
     "price": "{{value}} 金币",
     "back": "返回"
   },
+  "shop": {
+    "title": "商店",
+    "balance": "余额：{{value}} 金币",
+    "coinPacks": "金币礼包",
+    "pack": "{{value}} 金币",
+    "grant": "添加",
+    "honorNote": "诚信系统 — 金币即时到账，无需付款。真实购买功能稍后推出。",
+    "expansionsSoon": "扩展内容即将推出。",
+    "back": "返回"
+  },
   "dino": {
     "starter": { "name": "侦察兵" },
     "lodestone": { "name": "磁石龙" },

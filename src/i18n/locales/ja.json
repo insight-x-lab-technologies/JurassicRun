@@ -92,6 +92,16 @@
     "price": "{{value}} コイン",
     "back": "戻る"
   },
+  "shop": {
+    "title": "ショップ",
+    "balance": "残高: {{value}} コイン",
+    "coinPacks": "コインパック",
+    "pack": "{{value}} コイン",
+    "grant": "追加",
+    "honorNote": "自己申告制 — コインは支払いなしで即座に追加されます。本当の購入は後日実装予定です。",
+    "expansionsSoon": "拡張は近日公開予定です。",
+    "back": "戻る"
+  },
   "dino": {
     "starter": { "name": "スカウト" },
     "lodestone": { "name": "ロードストーン" },

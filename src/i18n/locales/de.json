@@ -92,6 +92,16 @@
     "price": "{{value}} Münzen",
     "back": "Zurück"
   },
+  "shop": {
+    "title": "Shop",
+    "balance": "Guthaben: {{value}} Münzen",
+    "coinPacks": "Münzpakete",
+    "pack": "{{value}} Münzen",
+    "grant": "Hinzufügen",
+    "honorNote": "Ehrensystem — Münzen werden sofort gutgeschrieben, ohne Bezahlung. Echte Käufe folgen später.",
+    "expansionsSoon": "Erweiterungen kommen bald.",
+    "back": "Zurück"
+  },
   "dino": {
     "starter": { "name": "Späher" },
     "lodestone": { "name": "Magnetstein" },

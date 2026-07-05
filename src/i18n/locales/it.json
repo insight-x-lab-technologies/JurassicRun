@@ -92,6 +92,16 @@
     "price": "{{value}} monete",
     "back": "Indietro"
   },
+  "shop": {
+    "title": "Negozio",
+    "balance": "Saldo: {{value}} monete",
+    "coinPacks": "Pacchetti di Monete",
+    "pack": "{{value}} monete",
+    "grant": "Aggiungi",
+    "honorNote": "Sistema basato sulla fiducia — le monete vengono aggiunte all'istante, senza pagamento. Gli acquisti reali arriveranno più avanti.",
+    "expansionsSoon": "Le espansioni arrivano presto.",
+    "back": "Indietro"
+  },
   "dino": {
     "starter": { "name": "Esploratore" },
     "lodestone": { "name": "Magnetite" },
