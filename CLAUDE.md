@@ -540,4 +540,37 @@ subagente** (`reviewer`/opus) quando o limite liberou. **Adiados:** dados reais 
 Doação real (4.6); modos Diário/Semanal + Leaderboard (Fase 5); Ninho/Loja/Expansões/Configurações
 reais (4.4–4.8); toast de feedback do Compartilhar; roteamento por URL/hash (Fase 7).
 
-Próximo: **4.4 (Ninho / Hangar)** — ver `docs/roadmap/PHASE-04-meta-offline.md` e `docs/roadmap/ROADMAP.md`.
+4.4 (Ninho / Hangar): primeiro item da Fase 4 a **tocar `src/core`** (determinístico). Um Ninho
+com 10 pterodáctilos, cada um com um **traço** que altera a simulação como **estado inicial** da
+partida. Módulo-folha puro `src/core/dino/`: `DinoTrait` (`none|magnet|doubleFood|tripleFood|
+startLife|headStart`) + `traitModifiers(trait)` → `{magnetAlways, foodMultiplier, startExtraLives,
+startShieldSteps}` (catálogo `Object.freeze`, lookup alocação-zero por referência congelada; tuning
+placeholder, `HEAD_START_SHIELD_STEPS=180`). Integração: `WorldConfig.trait?`/`WorldState.trait`
+(default `'none'`, copiado por `cloneWorld`); `createWorld` aplica os start-modifiers (`extraLives=
+startExtraLives`; `startShieldSteps>0` ⇒ `activateEffect(shield)`); `step` dispara ímã se
+`magnetAlways || isEffectActive(magnet)`; `collect` = `(doubleCoin? DOUBLE_COIN_FOOD_GAIN:1) *
+foodMultiplier`. Eixo horizontal (scroll/distância/dificuldade/spawns) **byte-idêntico**; só a
+trajetória/coleta muda ⇒ dinos distintos na mesma seed divergem de propósito, mesmo dino é
+reprodutível. Registro determinístico: `hashState` absorve `d.string(world.trait)`; completude
+26→**27 chaves**; **4 goldens de replay re-pinados** (asserções relacionais GOLD1≠GOLD2 / difficulty
+on≠off intactas ⇒ sem vazamento); novo `tests/determinism/dino.determinism.test.ts`
+(reprodutível + traços divergem de `none`). Services `src/services/nest/` (puro×casca, molde de
+`ProfileService`): `roster.ts` (`DINO_ROSTER` de 10 dinos: id/traitKind/preço/nameKey/hue; starter
+grátis trait `none`), `store.ts` (`purchase` imutável `ok|alreadyOwned|insufficient|unknown` + `setActive`
+guard), `storage.ts` (localStorage `jurassicrun.nest.v1`, `parseState`/`sanitize` robusto), `wallet.ts`
+(**seam** `getCoinBalance`→0 / `spendCoins` no-op; carteira real é o 4.5), `index.ts` (`NestService`
+reativo com signals). `NestScreen` (grid de cards: selecionar/comprar/selo Ativo; pago desabilitado
+enquanto saldo 0) + rota `nest` + i18n `nest.*`/`dino.<id>.name`/`trait.<kind>.desc` nos 10 locales
+(REGRA 4). `startGame` passa `nestService.activeTrait()` ao `createWorld`; `app/main.tsx` faz
+`nestService.init()`. Asset-specs dos 10 dinos (REGRA 5) + registro. **Consequência de produto:** o
+Ninho é "browse-only" (só starter ativo, nada comprável) até o 4.5 ligar a carteira — intencional,
+seam documentado. Execução SDD por subagentes (7 tasks: implementador + review por task +
+determinism-guardian **"CONTRATO INTACTO"** + review final opus **"READY TO MERGE"**). Suíte verde
+(`check` limpo, **408 testes**, determinismo **67**). **Adiados (backlog/Minors):** carteira
+persistente + compra funcional (4.5); cosmético do dino ativo dentro da partida (Fase 8); Ninho
+por-perfil (hoje global); tuning de traços/preços (placeholder); chave i18n `nest.owned` morta;
+deep-import de `getCoinBalance` no `NestScreen`; teste unitário direto de `sanitize`/`parseState`;
+`nest.back` duplica `nav.back`; `tripleFood` não exercitado no teste de hash distinto.
+
+Próximo: **4.5 (Economia persistente + Loja in-game)** — ver `docs/roadmap/PHASE-04-meta-offline.md`
+e `docs/roadmap/ROADMAP.md`. É onde a carteira liga o seam do Ninho.
