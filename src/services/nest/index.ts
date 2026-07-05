@@ -9,7 +9,7 @@ import {
 } from './store';
 import { dinoById, STARTER_DINO_ID, type DinoDef } from './roster';
 import { localStorageNestStorage, memoryNestStorage, type NestStorage } from './storage';
-import { getCoinBalance, spendCoins } from './wallet';
+import { walletService } from '@services/wallet';
 
 class NestService {
   private storage: NestStorage = memoryNestStorage();
@@ -30,9 +30,9 @@ class NestService {
   }
 
   buy(id: string): PurchaseResult {
-    const { state, result, spent } = purchase(this._state.value, id, getCoinBalance());
+    const { state, result, spent } = purchase(this._state.value, id, walletService.balance.value);
     if (result === 'ok') {
-      spendCoins(spent);
+      if (!walletService.spend(spent)) return 'insufficient'; // guarda extra contra corrida
       this.commit(state);
     }
     return result;

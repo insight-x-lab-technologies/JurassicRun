@@ -2,7 +2,7 @@ import type { VNode } from 'preact';
 import { back } from '../router';
 import { i18n } from '@services/i18n';
 import { nestService, DINO_ROSTER, isOwned, type DinoDef } from '@services/nest';
-import { getCoinBalance } from '@services/nest/wallet';
+import { walletService } from '@services/wallet';
 
 function DinoCard({
   dino,
@@ -55,7 +55,7 @@ function DinoCard({
 export function NestScreen(): VNode {
   const activeId = nestService.activeDino.value.id;
   const owned = nestService.ownedIds.value;
-  const balance = getCoinBalance();
+  const balance = walletService.balance.value; // reativo: botões "comprar" habilitam ao ganhar moedas
 
   return (
     <div class="screen nest">
