@@ -512,4 +512,32 @@ redundante; `version` do storage escrito mas não lido (migração usaria `.v2`)
 pode partir par surrogate (cosmético); nota de convenção do padrão form controlled+ref e do gotcha
 de teste signals.
 
-Próximo: **4.3 (Home)** — ver `docs/roadmap/PHASE-04-meta-offline.md` e `docs/roadmap/ROADMAP.md`.
+4.3 (Home): a `HomeScreen` provisória do 4.1 virou um **hub** real, padrão puro×casca, só na
+camada de apresentação (core intocado ⇒ determinismo 64 inalterado). Duas zonas: **barra de topo**
+(`.home__topbar`) com a identidade do perfil ativo — botão `data-testid="home-identity"` que navega
+para `profile` (fecha a pendência de 4.2: avatar-como-botão) reusando `avatarFor` — e 3 `StatChip`
+(moedas/troféus/nível máx Endless); e o **menu** (`.home__menu`) com o CTA primário **Novo Jogo**
+(`home.newGame` → `navigate('play')`, Endless) + grid de navegação (daily, weekly, nest, shop,
+expansions, leaderboard, settings) + ações (Compartilhar, Doação). Os stats vêm de um **seam puro**
+`getHomeStats()` (`src/app/home/stats.ts`) que retorna placeholders `{coins:0, trophies:0,
+maxLevel:1}` — ÚNICO ponto a religar quando a carteira (4.5) e os troféus (4.7) existirem (sem
+abstração morta). **Compartilhar** é real e mínimo: `src/app/home/share.ts` com `shareGame(deps)`
+PURO/injetável (fallback `navigator.share` → `clipboard.writeText` → `'unsupported'`, best-effort
+engolindo cancelamento/erro) + casca `defaultShareDeps()` (lê `navigator`/`location`/`i18n`; constrói
+deps condicionalmente por causa de `exactOptionalPropertyTypes`). **Doação** é stub **desabilitado**
+("em breve") — URL Ko-Fi/BMC + `EntitlementsService` chegam no 4.6 (ADR-0004; precedente do "Sair"
+2.6). Rotas novas `daily`/`weekly` adicionadas ao `Screen` e mapeadas a `PlaceholderScreen` (menu
+completo já; modos reais na Fase 5). i18n: chaves `home.*`, `nav.{daily,weekly,share,donate}`,
+`screen.{daily,weekly}`, `share.{title,text}` nos 10 locales (REGRA 4; paridade no teste). A11y:
+`h1.sr-only` com o título do app, `aria-label` nos chips, `aria-hidden` nos glyphs decorativos. CSS
+por design tokens (sem cor hardcoded), mobile-first retrato+paisagem, sem scroll horizontal, toque
+≥44px. Home é DOM estático (fora do loop do jogo) ⇒ sem trabalho por frame. Suíte verde (`check`
+limpo, **379 testes**; determinismo 64 intacto; review final "READY TO MERGE", 4 Minors de a11y — 3
+aplicados, 1 adiado: toast de confirmação do Compartilhar, sem primitivo de toast ainda). **Nota de
+execução:** a execução SDD por subagentes esbarrou em **limite de sessão**; o item foi implementado
+**inline** pelo controlador (TDD, testes reais, commit por task, self-review) com a **review final por
+subagente** (`reviewer`/opus) quando o limite liberou. **Adiados:** dados reais dos stats (4.5/4.7);
+Doação real (4.6); modos Diário/Semanal + Leaderboard (Fase 5); Ninho/Loja/Expansões/Configurações
+reais (4.4–4.8); toast de feedback do Compartilhar; roteamento por URL/hash (Fase 7).
+
+Próximo: **4.4 (Ninho / Hangar)** — ver `docs/roadmap/PHASE-04-meta-offline.md` e `docs/roadmap/ROADMAP.md`.
