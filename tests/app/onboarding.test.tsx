@@ -39,7 +39,7 @@ describe('Onboarding (primeiro acesso)', () => {
     form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     render(<App />, container);
     expect(profileService.activeProfile.value?.name).toBe('Rex');
-    expect(container.textContent).toContain(i18n.t('nav.play'));
+    expect(container.textContent).toContain(i18n.t('home.newGame'));
   });
 
   it('nome vazio mostra erro e não cria perfil', async () => {
