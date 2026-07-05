@@ -110,4 +110,30 @@ describe('MatchController', () => {
     m.restart(); // → ready, world novo
     expect(m.loop.world).toBe(m.world);
   });
+
+  it('onGameOver dispara 1× na morte, com o world morto (food capturado)', () => {
+    const deaths: number[] = [];
+    const m = new MatchController(new NullInputSource(), makeFactory(), {
+      onGameOver: (w) => deaths.push(w.food),
+    });
+    m.notifyFlap();            // ready → playing
+    advanceUntilDead(m);       // roda steps até o mundo morrer ⇒ dead + hook
+    expect(m.phase).toBe('dead');
+    expect(m.world.alive).toBe(false);
+    expect(deaths.length).toBe(1);
+    m.advance(1 / 60);         // já morto: advance é no-op, não redispara
+    expect(deaths.length).toBe(1);
+  });
+
+  it('onGameOver NÃO dispara em ready nem sem morrer', () => {
+    let calls = 0;
+    const m = new MatchController(new NullInputSource(), makeFactory(), {
+      onGameOver: () => { calls++; },
+    });
+    m.advance(1);              // ready: no-op
+    m.notifyFlap();            // playing
+    m.advance(1 / 60);         // 1 step, mundo ainda vivo
+    expect(m.world.alive).toBe(true);
+    expect(calls).toBe(0);
+  });
 });
