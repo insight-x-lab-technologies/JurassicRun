@@ -27,7 +27,7 @@ function Avatar({ profile }: { profile: Profile }): VNode {
 
 function StatChip({ glyph, label, value }: { glyph: string; label: string; value: number }): VNode {
   return (
-    <div class="stat-chip">
+    <div class="stat-chip" aria-label={`${value} ${label}`}>
       <span class="stat-chip__glyph" aria-hidden="true">
         {glyph}
       </span>
@@ -43,6 +43,7 @@ export function HomeScreen(): VNode {
 
   return (
     <div class="home">
+      <h1 class="sr-only">{i18n.t('app.title')}</h1>
       <header class="home__topbar">
         {active !== null && (
           <button
@@ -79,13 +80,13 @@ export function HomeScreen(): VNode {
           <button class="btn btn--ghost" onClick={() => void shareGame(defaultShareDeps())}>
             {i18n.t('nav.share')}
           </button>
+          {/* Stub desabilitado: URL Ko-Fi/BMC + EntitlementsService chegam no 4.6
+              (ADR-0004). Não-interativo até lá (precedente: "Sair" do Game Over, 2.6). */}
           <button
             class="btn btn--ghost"
             data-testid="home-donate"
+            disabled
             title={i18n.t('screen.comingSoon')}
-            onClick={() => {
-              /* stub: URL Ko-Fi/BMC + EntitlementsService chegam no 4.6 (ADR-0004) */
-            }}
           >
             {i18n.t('nav.donate')}
           </button>
