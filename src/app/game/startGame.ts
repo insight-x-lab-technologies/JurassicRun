@@ -4,6 +4,7 @@ import { FlapInputSource, PauseController } from '@render/input';
 import { MatchController } from '@render/match';
 import { randomEndlessSeed } from '@render/seedSource';
 import { bindGameControls } from '@render/controls';
+import { nestService } from '@services/nest';
 
 /**
  * Monta o jogo Phaser no `container` e devolve um `stop()` que o destrói e remove os
@@ -18,7 +19,7 @@ export function startGame(container: HTMLElement): () => void {
     flap,
     () => {
       const seed = randomEndlessSeed();
-      return { world: createWorld({ seed }), seedLabel: seed };
+      return { world: createWorld({ seed, trait: nestService.activeTrait() }), seedLabel: seed };
     },
     { onNewMatch: () => flap.reset() },
   );
