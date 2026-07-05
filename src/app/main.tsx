@@ -4,12 +4,14 @@ import './styles/global.css';
 import { i18n } from '@services/i18n';
 import { profileService } from '@services/profile';
 import { nestService } from '@services/nest';
+import { walletService } from '@services/wallet';
 import { App } from './App';
 
 async function bootstrap(): Promise<void> {
   await i18n.init();
   profileService.init();
   nestService.init();
+  walletService.init();
   document.documentElement.lang = i18n.getLanguage();
   document.title = i18n.t('app.title');
 

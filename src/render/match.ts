@@ -13,6 +13,8 @@ export interface MatchInit {
 export interface MatchHooks {
   /** Disparado ao montar uma nova partida (a app liga em FlapInputSource.reset). */
   onNewMatch?: () => void;
+  /** Disparado 1× na transição playing → dead (a app credita moedas da comida). */
+  onGameOver?: (world: WorldState) => void;
 }
 
 /**
@@ -53,7 +55,10 @@ export class MatchController {
   advance(dtSeconds: number): void {
     if (this._phase !== 'playing') return;
     this._loop.advance(dtSeconds);
-    if (!this._world.alive) this._phase = 'dead';
+    if (!this._world.alive) {
+      this._phase = 'dead';
+      this.hooks.onGameOver?.(this._world);
+    }
   }
 
   /** Borda de pressão de flap vinda da casca. Só inicia a partida em `ready`. */

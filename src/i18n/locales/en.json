@@ -92,6 +92,16 @@
     "price": "{{value}} coins",
     "back": "Back"
   },
+  "shop": {
+    "title": "Shop",
+    "balance": "Balance: {{value}} coins",
+    "coinPacks": "Coin Packs",
+    "pack": "{{value}} coins",
+    "grant": "Add",
+    "honorNote": "Honor system — coins are added instantly, no payment. Real purchases come later.",
+    "expansionsSoon": "Expansions arrive soon.",
+    "back": "Back"
+  },
   "dino": {
     "starter": { "name": "Scout" },
     "lodestone": { "name": "Lodestone" },

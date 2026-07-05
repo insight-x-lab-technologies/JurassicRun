@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { nestService } from '@services/nest';
 import { memoryNestStorage } from '@services/nest/storage';
 import { STARTER_DINO_ID, DINO_ROSTER } from '@services/nest/roster';
+import { walletService } from '@services/wallet';
+import { memoryWalletStorage } from '@services/wallet/storage';
 
 describe('NestService', () => {
   beforeEach(() => {
@@ -32,5 +34,23 @@ describe('NestService', () => {
     nestService.select(paid.id);
     expect(nestService.activeDino.value.id).toBe(paid.id);
     expect(storage.load().activeId).toBe(paid.id);
+  });
+
+  it('buy debits the wallet and grants the dino when affordable', () => {
+    walletService.init(memoryWalletStorage({ coins: 1000 }));
+    nestService.init(memoryNestStorage());
+    const result = nestService.buy('goldbeak'); // price 150
+    expect(result).toBe('ok');
+    expect(walletService.balance.value).toBe(850);
+    expect(nestService.ownedIds.value).toContain('goldbeak');
+  });
+
+  it('buy with insufficient balance neither debits nor grants', () => {
+    walletService.init(memoryWalletStorage({ coins: 10 }));
+    nestService.init(memoryNestStorage());
+    const result = nestService.buy('goldbeak');
+    expect(result).toBe('insufficient');
+    expect(walletService.balance.value).toBe(10);
+    expect(nestService.ownedIds.value).not.toContain('goldbeak');
   });
 });

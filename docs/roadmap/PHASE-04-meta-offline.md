@@ -27,8 +27,11 @@ ninho, loja in-game, expansões, troféus, configurações, 10 idiomas e áudio.
       liga no 4.5. Seleção + traço-na-simulação totalmente funcionais.)
 
 ### 4.5 Economia persistente + Loja (in-game)
-- [ ] Carteira de moedas persistida; comprar dinos/itens com moeda.
-- [ ] Loja: comprar moedas (placeholder honor-system) e expansões.
+- [x] Carteira de moedas persistida; comprar dinos/itens com moeda. (Comida coletada vira
+      moedas 1:1 no Game Over; carteira global `src/services/wallet/` reativa+persistida; o
+      Ninho passou a debitar de verdade — deixou de ser browse-only.)
+- [x] Loja: comprar moedas (placeholder honor-system). **Expansões movidas para o 4.6** (item
+      dedicado com `EntitlementsService`); a Loja mostra "Expansions arrive soon".
 
 ### 4.6 Entitlements + Expansões
 - [ ] `EntitlementsService` (honor-system/Ko-Fi agora; gateway plugável depois — ADR-0004).

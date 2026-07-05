@@ -92,6 +92,16 @@
     "price": "{{value}} pièces",
     "back": "Retour"
   },
+  "shop": {
+    "title": "Boutique",
+    "balance": "Solde : {{value}} pièces",
+    "coinPacks": "Packs de Pièces",
+    "pack": "{{value}} pièces",
+    "grant": "Ajouter",
+    "honorNote": "Système d'honneur — les pièces sont ajoutées instantanément, sans paiement. Les achats réels arriveront plus tard.",
+    "expansionsSoon": "Les extensions arrivent bientôt.",
+    "back": "Retour"
+  },
   "dino": {
     "starter": { "name": "Éclaireur" },
     "lodestone": { "name": "Aimantite" },

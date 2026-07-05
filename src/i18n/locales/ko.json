@@ -92,6 +92,16 @@
     "price": "{{value}} 코인",
     "back": "뒤로"
   },
+  "shop": {
+    "title": "상점",
+    "balance": "잔액: {{value}} 코인",
+    "coinPacks": "코인 팩",
+    "pack": "{{value}} 코인",
+    "grant": "추가",
+    "honorNote": "정직 시스템 — 결제 없이 코인이 즉시 추가됩니다. 실제 구매는 나중에 제공됩니다.",
+    "expansionsSoon": "확장팩이 곧 출시됩니다.",
+    "back": "뒤로"
+  },
   "dino": {
     "starter": { "name": "스카우트" },
     "lodestone": { "name": "로드스톤" },
