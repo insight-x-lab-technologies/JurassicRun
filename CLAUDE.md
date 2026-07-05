@@ -572,5 +572,37 @@ por-perfil (hoje global); tuning de traços/preços (placeholder); chave i18n `n
 deep-import de `getCoinBalance` no `NestScreen`; teste unitário direto de `sanitize`/`parseState`;
 `nest.back` duplica `nav.back`; `tripleFood` não exercitado no teste de hash distinto.
 
-Próximo: **4.5 (Economia persistente + Loja in-game)** — ver `docs/roadmap/PHASE-04-meta-offline.md`
-e `docs/roadmap/ROADMAP.md`. É onde a carteira liga o seam do Ninho.
+4.5 (economia persistente + Loja in-game): a carteira de moedas — antes um *seam* inerte
+(`nest/wallet.ts`, saldo 0) — virou real, no padrão puro×casca, SEM tocar `src/core` (economia é
+meta offline ⇒ determinismo 67 intacto). Novo serviço **global** `src/services/wallet/`: `store.ts`
+puro (`WalletState{coins}`; `coinsForFood` 1:1 placeholder floor≥0; `addCoins`/`spendCoins`
+imutáveis, `sanitizeAmount` clampa negativo/NaN/fração; `spend` nunca deixa saldo negativo e devolve
+`ok`); `storage.ts` (localStorage `jurassicrun.wallet.v1`, `parseState` robusto ⇒ inválido/negativo/
+não-numérico ⇒ `{coins:0}`, save/load best-effort — molde de `nest/storage`); `index.ts`
+(`WalletService` reativo singleton, sinal `balance:ReadonlySignal<number>` computed, `init`/`earn`/
+`spend`, `commit`=set-sinal+persist). **Ganho:** `MatchController` (puro) ganhou hook
+`onGameOver?(world)` disparado **1× na borda `playing→dead`** em `advance()`; a casca `startGame.ts`
+liga `onGameOver:(w)=>walletService.earn(coinsForFood(w.food))` ⇒ a comida da partida é bancada em
+moedas ao morrer (o controller NÃO importa serviços). **Gasto:** `nest/wallet.ts` DELETADO;
+`NestService.buy` usa `walletService.balance.value` (checagem) + `walletService.spend(spent)` (débito
+real, guarda `spent>0` p/ dino grátis futuro conceder sem `spend(0)`) ⇒ Ninho deixou de ser
+browse-only; `NestScreen` lê o saldo reativo (botões "comprar" habilitam ao vivo); `getHomeStats().
+coins` é real (trophies/maxLevel seguem placeholders 4.7/Fase 5). **Loja:** rota `shop` deixou de ser
+placeholder — `src/app/shop/packs.ts` (catálogo `COIN_PACKS` frozen: small/medium/large 100/500/1200,
+placeholders) + `ShopScreen` (saldo, pacotes **honor-system** que creditam na hora via `earn`, notas
+"honor"/"expansões em breve", back). i18n `shop.*` nos 10 locales (REGRA 4, traduções nativas).
+`walletService.init()` no bootstrap do `main.tsx`. **Decisão de produto:** compra/seleção de
+**expansões movida ao 4.6** (item dedicado com `EntitlementsService`/ADR-0004); a Loja só mostra
+"Expansions arrive soon" — evita entitlements prematuro. Carteira é **global** (espelha o Ninho;
+por-perfil adiado à Fase 6). Execução SDD por subagentes (6 tasks: implementador haiku/sonnet +
+review por task + review final opus **"READY TO MERGE"**, 0 Critical/Important). Suíte verde
+(`check` limpo, **427 testes**, determinismo **67 inalterado**). Verificação real ponta-a-ponta
+(Playwright): Loja credita 500 → persiste no reload (Home 500) → Ninho compra goldbeak (−150 ⟺ +1
+dino, 350 restante) com re-gate reativo de affordability. **Adiados/Minors:** integração
+earn-on-death só testada no nível do hook + Loja sem teste de componente (aceitos, casca fina);
+tuning de conversão/preços/pacotes (placeholders, Fase 8); gateway de pagamento real (Fase 8,
+ADR-0004); guarda `spent>0` inalcançável hoje (só starter é grátis e pré-possuído).
+
+Próximo: **4.6 (Entitlements + Expansões)** — `EntitlementsService` (honor-system/Ko-Fi; gateway
+plugável depois, ADR-0004) + tela de Expansões (selecionar ativa) + a compra de expansões que o 4.5
+adiou. Ver `docs/roadmap/PHASE-04-meta-offline.md`.
