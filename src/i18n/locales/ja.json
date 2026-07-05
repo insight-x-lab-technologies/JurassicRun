@@ -27,20 +27,36 @@
     "play": "プレイ",
     "back": "戻る",
     "profile": "プロフィール",
+    "daily": "デイリーチャレンジ",
+    "weekly": "ウィークリーチャレンジ",
+    "nest": "巣",
+    "shop": "ショップ",
+    "settings": "設定",
+    "leaderboard": "ランキング",
+    "expansions": "拡張",
+    "share": "共有",
+    "donate": "寄付"
+  },
+  "screen": {
+    "comingSoon": "近日公開",
+    "profile": "プロフィール",
+    "daily": "デイリーチャレンジ",
+    "weekly": "ウィークリーチャレンジ",
     "nest": "巣",
     "shop": "ショップ",
     "settings": "設定",
     "leaderboard": "ランキング",
     "expansions": "拡張"
   },
-  "screen": {
-    "comingSoon": "近日公開",
-    "profile": "プロフィール",
-    "nest": "巣",
-    "shop": "ショップ",
-    "settings": "設定",
-    "leaderboard": "ランキング",
-    "expansions": "拡張"
+  "home": {
+    "newGame": "新しいゲーム",
+    "coins": "コイン",
+    "trophies": "トロフィー",
+    "level": "最高Lv"
+  },
+  "share": {
+    "title": "JurassicRun",
+    "text": "JurassicRun をプレイしよう — 翼竜の横スクロールゲーム！"
   },
   "onboarding": {
     "title": "ようこそ",

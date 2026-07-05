@@ -27,20 +27,36 @@
     "play": "Jugar",
     "back": "Atrás",
     "profile": "Perfil",
+    "daily": "Reto Diario",
+    "weekly": "Reto Semanal",
+    "nest": "Nido",
+    "shop": "Tienda",
+    "settings": "Ajustes",
+    "leaderboard": "Clasificación",
+    "expansions": "Expansiones",
+    "share": "Compartir",
+    "donate": "Donar"
+  },
+  "screen": {
+    "comingSoon": "Próximamente",
+    "profile": "Perfil",
+    "daily": "Reto Diario",
+    "weekly": "Reto Semanal",
     "nest": "Nido",
     "shop": "Tienda",
     "settings": "Ajustes",
     "leaderboard": "Clasificación",
     "expansions": "Expansiones"
   },
-  "screen": {
-    "comingSoon": "Próximamente",
-    "profile": "Perfil",
-    "nest": "Nido",
-    "shop": "Tienda",
-    "settings": "Ajustes",
-    "leaderboard": "Clasificación",
-    "expansions": "Expansiones"
+  "home": {
+    "newGame": "Nuevo Juego",
+    "coins": "Monedas",
+    "trophies": "Trofeos",
+    "level": "Niv máx"
+  },
+  "share": {
+    "title": "JurassicRun",
+    "text": "¡Juega JurassicRun, un side-scroller de pterodáctilo!"
   },
   "onboarding": {
     "title": "Bienvenido",

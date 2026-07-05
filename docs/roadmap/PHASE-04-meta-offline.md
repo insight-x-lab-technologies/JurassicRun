@@ -14,9 +14,10 @@ ninho, loja in-game, expansões, troféus, configurações, 10 idiomas e áudio.
 - [x] Tela de Perfil (acessível pelo avatar — wiring da barra de topo em 4.3).
 
 ### 4.3 Home
-- [ ] Topo: nome ativo, avatar, total de moedas, nº de troféus, nível máx Endless.
-- [ ] Menu: Novo Jogo (Endless), Desafio Diário, Desafio Semanal, Configurações, Leaderboard,
-      Ninho, Loja, Expansões, Doação (Ko-Fi/BMC), Compartilhar (WhatsApp/IG/TikTok/E-mail/URL).
+- [x] Topo: nome ativo, avatar (→ Perfil), total de moedas, nº de troféus, nível máx Endless.
+      (Stats via seam `getHomeStats` com placeholders 0/0/Lv1 — fontes reais em 4.5/4.7.)
+- [x] Menu: Novo Jogo (Endless), Desafio Diário, Desafio Semanal, Configurações, Leaderboard,
+      Ninho, Loja, Expansões, Doação (stub → 4.6/ADR-0004), Compartilhar (Web Share + clipboard).
 
 ### 4.4 Ninho / Hangar
 - [ ] ~10 pterodáctilos com traços (escudo nato, ímã permanente, moeda 2x/3x, etc.).

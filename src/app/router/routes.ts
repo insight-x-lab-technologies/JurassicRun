@@ -2,6 +2,8 @@ export type Screen =
   | 'home'
   | 'play'
   | 'profile'
+  | 'daily'
+  | 'weekly'
   | 'nest'
   | 'shop'
   | 'settings'

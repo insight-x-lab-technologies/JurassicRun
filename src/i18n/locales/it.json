@@ -27,20 +27,36 @@
     "play": "Gioca",
     "back": "Indietro",
     "profile": "Profilo",
+    "daily": "Sfida Giornaliera",
+    "weekly": "Sfida Settimanale",
+    "nest": "Nido",
+    "shop": "Negozio",
+    "settings": "Impostazioni",
+    "leaderboard": "Classifica",
+    "expansions": "Espansioni",
+    "share": "Condividi",
+    "donate": "Dona"
+  },
+  "screen": {
+    "comingSoon": "Prossimamente",
+    "profile": "Profilo",
+    "daily": "Sfida Giornaliera",
+    "weekly": "Sfida Settimanale",
     "nest": "Nido",
     "shop": "Negozio",
     "settings": "Impostazioni",
     "leaderboard": "Classifica",
     "expansions": "Espansioni"
   },
-  "screen": {
-    "comingSoon": "Prossimamente",
-    "profile": "Profilo",
-    "nest": "Nido",
-    "shop": "Negozio",
-    "settings": "Impostazioni",
-    "leaderboard": "Classifica",
-    "expansions": "Espansioni"
+  "home": {
+    "newGame": "Nuova Partita",
+    "coins": "Monete",
+    "trophies": "Trofei",
+    "level": "Liv max"
+  },
+  "share": {
+    "title": "JurassicRun",
+    "text": "Gioca a JurassicRun — uno scorrevole con uno pterodattilo!"
   },
   "onboarding": {
     "title": "Benvenuto",

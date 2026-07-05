@@ -27,20 +27,36 @@
     "play": "开始",
     "back": "返回",
     "profile": "个人资料",
+    "daily": "每日挑战",
+    "weekly": "每周挑战",
+    "nest": "巢穴",
+    "shop": "商店",
+    "settings": "设置",
+    "leaderboard": "排行榜",
+    "expansions": "扩展",
+    "share": "分享",
+    "donate": "捐赠"
+  },
+  "screen": {
+    "comingSoon": "敬请期待",
+    "profile": "个人资料",
+    "daily": "每日挑战",
+    "weekly": "每周挑战",
     "nest": "巢穴",
     "shop": "商店",
     "settings": "设置",
     "leaderboard": "排行榜",
     "expansions": "扩展"
   },
-  "screen": {
-    "comingSoon": "敬请期待",
-    "profile": "个人资料",
-    "nest": "巢穴",
-    "shop": "商店",
-    "settings": "设置",
-    "leaderboard": "排行榜",
-    "expansions": "扩展"
+  "home": {
+    "newGame": "新游戏",
+    "coins": "金币",
+    "trophies": "奖杯",
+    "level": "最高等级"
+  },
+  "share": {
+    "title": "JurassicRun",
+    "text": "来玩 JurassicRun — 一款翼龙横版游戏！"
   },
   "onboarding": {
     "title": "欢迎",

@@ -27,20 +27,36 @@
     "play": "플레이",
     "back": "뒤로",
     "profile": "프로필",
+    "daily": "일일 도전",
+    "weekly": "주간 도전",
+    "nest": "둥지",
+    "shop": "상점",
+    "settings": "설정",
+    "leaderboard": "리더보드",
+    "expansions": "확장",
+    "share": "공유",
+    "donate": "기부"
+  },
+  "screen": {
+    "comingSoon": "곧 출시",
+    "profile": "프로필",
+    "daily": "일일 도전",
+    "weekly": "주간 도전",
     "nest": "둥지",
     "shop": "상점",
     "settings": "설정",
     "leaderboard": "리더보드",
     "expansions": "확장"
   },
-  "screen": {
-    "comingSoon": "곧 출시",
-    "profile": "프로필",
-    "nest": "둥지",
-    "shop": "상점",
-    "settings": "설정",
-    "leaderboard": "리더보드",
-    "expansions": "확장"
+  "home": {
+    "newGame": "새 게임",
+    "coins": "코인",
+    "trophies": "트로피",
+    "level": "최고 레벨"
+  },
+  "share": {
+    "title": "JurassicRun",
+    "text": "JurassicRun 플레이하기 — 익룡 횡스크롤 게임!"
   },
   "onboarding": {
     "title": "환영합니다",

@@ -25,10 +25,18 @@ describe('App shell', () => {
     container.remove();
   });
 
-  it('renderiza a Home com título e botão Jogar', () => {
+  it('renderiza a Home (perfil ativo + botão Novo Jogo)', () => {
     render(<App />, container);
-    expect(container.textContent).toContain(i18n.t('app.title'));
-    expect(container.textContent).toContain(i18n.t('nav.play'));
+    expect(container.textContent).toContain('Tester');
+    expect(container.textContent).toContain(i18n.t('home.newGame'));
+  });
+
+  it('renderiza daily como placeholder "em breve"', () => {
+    render(<App />, container);
+    navigate('daily');
+    render(<App />, container);
+    expect(container.textContent).toContain(i18n.t('screen.daily'));
+    expect(container.textContent).toContain(i18n.t('screen.comingSoon'));
   });
 
   it('após navegar a um stub, mostra seu título e "em breve"', () => {
