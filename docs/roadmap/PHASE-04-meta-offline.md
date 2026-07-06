@@ -34,8 +34,13 @@ ninho, loja in-game, expansões, troféus, configurações, 10 idiomas e áudio.
       dedicado com `EntitlementsService`); a Loja mostra "Expansions arrive soon".
 
 ### 4.6 Entitlements + Expansões
-- [ ] `EntitlementsService` (honor-system/Ko-Fi agora; gateway plugável depois — ADR-0004).
-- [ ] Tela de Expansões: selecionar expansão ativa (cosmética).
+- [x] `EntitlementsService` (honor-system/Ko-Fi agora; gateway plugável depois — ADR-0004).
+      (`src/services/entitlements/` puro×casca: catalog/provider/store/storage/service reativo.
+      Provider `honorSystemProvider` é o seam de ADR-0004. Botão de Doação do Home ligado a uma
+      URL Ko-Fi placeholder.)
+- [x] Tela de Expansões: selecionar expansão ativa (cosmética). (Catálogo classic/volcano/glacier;
+      desbloqueio honor-system; seam `activeExpansion` p/ o render da Fase 8 — efeito visual real
+      é Fase 8, como os traços do Ninho.)
 
 ### 4.7 Troféus / conquistas
 - [ ] `TrophyService` + catálogo de conquistas. (Top-3 diário → Fase 5/6.)

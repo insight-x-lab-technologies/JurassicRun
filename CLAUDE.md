@@ -448,7 +448,7 @@ contra `segmentMin==max==0` (backlog de hardening).
 **Fase 3 concluída** (todos os 4 itens).
 
 **Fase 4 (Meta offline — perfis, ninho, loja, i18n, áudio, UI) — EM ANDAMENTO.** Itens 4.1
-e 4.2 concluídos.
+a 4.6 concluídos.
 
 4.1 (app shell e navegação): casca Preact que hospeda **telas** navegáveis, com o jogo Phaser
 existente vivendo como a tela "Play". `main.ts`→`main.tsx` agora só faz `i18n.init()` +
@@ -603,6 +603,35 @@ earn-on-death só testada no nível do hook + Loja sem teste de componente (acei
 tuning de conversão/preços/pacotes (placeholders, Fase 8); gateway de pagamento real (Fase 8,
 ADR-0004); guarda `spent>0` inalcançável hoje (só starter é grátis e pré-possuído).
 
-Próximo: **4.6 (Entitlements + Expansões)** — `EntitlementsService` (honor-system/Ko-Fi; gateway
-plugável depois, ADR-0004) + tela de Expansões (selecionar ativa) + a compra de expansões que o 4.5
-adiou. Ver `docs/roadmap/PHASE-04-meta-offline.md`.
+4.6 (Entitlements + Expansões): fechou as pendências que 4.3/4.5 empurraram — SEM tocar `src/core`
+(entitlements/expansões são meta offline cosmética ⇒ determinismo 67 intacto). Novo serviço **global**
+`src/services/entitlements/` (puro×casca, molde de `wallet`/`nest`): `catalog.ts` (`ExpansionDef`
++ `EXPANSION_CATALOG` = `classic` free + `volcano`/`glacier` premium placeholders + `expansionById`,
+`DEFAULT_EXPANSION_ID='classic'`); `provider.ts` (`EntitlementProvider {requestUnlock(id):
+'granted'|'declined'}` + `honorSystemProvider` que concede na hora — **o seam de ADR-0004** p/ um
+gateway real assíncrono na Fase 8, sem tocar consumidores); `store.ts` puro (`EntitlementsState
+{unlocked,activeId}`, `unlock`/`setActive` imutáveis, no-op devolve o MESMO objeto, `unlock` valida
+catálogo `unknown`/idempotente `alreadyUnlocked`, **não** ativa); `storage.ts` (localStorage
+`jurassicrun.entitlements.v1`, `parseState`/`sanitize` robusto: filtra ids, garante `DEFAULT`,
+resolve `activeId`); `index.ts` (`EntitlementsService` reativo singleton: signals `unlockedIds`/
+`activeExpansion` — **`activeExpansion` é o seam do render da Fase 8** —, `unlock` só grava se o
+provider concede, `select` no-op preservado; `init` no bootstrap após `walletService`). Tela
+`ExpansionsScreen` (rota `expansions` deixa de ser placeholder; grid de cards com 3 estados: ativa→
+selo, desbloqueada→Select, premium bloqueada→Unlock honor-system; i18n only; CSS `.expansions`/
+`.expansion-card` sem colisão com `.nest`). **Doação** deixou de ser stub: `src/app/home/donate.ts`
+(`DONATE_URL` **placeholder** `https://ko-fi.com/jurassicrun` — trocar pelo handle real antes do
+deploy/Fase 7; `openDonation` best-effort injetável; `defaultDonateDeps` `window.open(_blank,
+noopener)`) ligado ao botão do Home (sem `disabled`). i18n `expansions.*` + `expansion.{classic,
+volcano,glacier}.{name,desc}` nos 10 locales (REGRA 4, traduções nativas). **Decisões de produto:**
+expansões desbloqueiam por honor-system (não por moedas — moedas compram dinos); efeito visual da
+expansão ativa é Fase 8 (aqui só o sistema+seam, como o Ninho fez com traços); entitlements **globais**
+(por-perfil → Fase 6). Execução SDD por subagentes (7 tasks impl + review por task + review final opus
+**"READY TO MERGE"**, 0 Critical/Important; 3 Minors backlog: `unlock` funde declined/unknown num só
+retorno, `alreadyUnlocked` sem teste no service, `DONATE_URL` placeholder). Suíte verde (`check` limpo,
+**455 testes**, determinismo **67 inalterado**). **Adiados:** URL de doação real; arte/atlas das
+expansões + aplicação visual da expansão ativa (Fase 8); gateway de pagamento real via provider
+(Fase 8, ADR-0004); distinguir `declined`×`unknown` na UI quando o gateway async chegar; entitlements
+por-perfil (Fase 6).
+
+Próximo: **4.7 (Troféus / conquistas)** — `TrophyService` + catálogo de conquistas (top-3 diário →
+Fase 5/6); religa o placeholder `trophies` do `getHomeStats`. Ver `docs/roadmap/PHASE-04-meta-offline.md`.
