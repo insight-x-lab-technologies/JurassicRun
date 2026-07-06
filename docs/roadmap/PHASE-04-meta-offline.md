@@ -52,7 +52,13 @@ ninho, loja in-game, expansões, troféus, configurações, 10 idiomas e áudio.
       7 (placeholders, tuning Fase 8). Troféus globais → por-perfil na Fase 6.)
 
 ### 4.8 Configurações
-- [ ] Volume, música menu on/off, música gameplay on/off, idioma.
+- [x] Volume, música menu on/off, música gameplay on/off, idioma. (Serviço reativo
+      `src/services/settings/` puro×casca — store/storage `jurassicrun.settings.v1`/service com
+      signals — + `SettingsScreen`. Idioma tem efeito real imediato: troca AO VIVO via `App`
+      assinar o sinal de idioma (fecha a seam de 4.1) + persiste; `settingsService.init()` aplica
+      o idioma persistido no bootstrap. Volume e as 2 músicas são **seams persistidos** que o 4.10
+      (Áudio) consumirá — nenhum áudio toca ainda, por design. `settings.*` nos 10 locales +
+      `LANGUAGE_NATIVE_NAMES`.)
 
 ### 4.9 i18n completo (10 idiomas)
 - [ ] Cobertura de todas as strings em en, es, pt-BR, fr, it, de, ja, zh, hi.
