@@ -4,6 +4,7 @@ import { i18n } from '@services/i18n';
 import { profileService, avatarFor, type Profile } from '@services/profile';
 import { getHomeStats } from '../home/stats';
 import { shareGame, defaultShareDeps } from '../home/share';
+import { openDonation, defaultDonateDeps } from '../home/donate';
 
 // Destinos de navegação do menu, na ordem do roadmap 4.3.
 const MENU: readonly Screen[] = [
@@ -80,13 +81,10 @@ export function HomeScreen(): VNode {
           <button class="btn btn--ghost" onClick={() => void shareGame(defaultShareDeps())}>
             {i18n.t('nav.share')}
           </button>
-          {/* Stub desabilitado: URL Ko-Fi/BMC + EntitlementsService chegam no 4.6
-              (ADR-0004). Não-interativo até lá (precedente: "Sair" do Game Over, 2.6). */}
           <button
             class="btn btn--ghost"
             data-testid="home-donate"
-            disabled
-            title={i18n.t('screen.comingSoon')}
+            onClick={() => openDonation(defaultDonateDeps())}
           >
             {i18n.t('nav.donate')}
           </button>

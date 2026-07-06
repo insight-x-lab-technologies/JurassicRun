@@ -102,6 +102,19 @@
     "expansionsSoon": "Expansions arrive soon.",
     "back": "Back"
   },
+  "expansions": {
+    "title": "Expansions",
+    "active": "Active",
+    "select": "Select",
+    "unlock": "Unlock",
+    "honorNote": "Honor system — unlock instantly, no payment. Please consider supporting the game with a donation.",
+    "back": "Back"
+  },
+  "expansion": {
+    "classic": { "name": "Classic", "desc": "The original look." },
+    "volcano": { "name": "Volcano", "desc": "A fiery volcanic theme." },
+    "glacier": { "name": "Glacier", "desc": "An icy glacier theme." }
+  },
   "dino": {
     "starter": { "name": "Scout" },
     "lodestone": { "name": "Lodestone" },

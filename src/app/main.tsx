@@ -5,6 +5,7 @@ import { i18n } from '@services/i18n';
 import { profileService } from '@services/profile';
 import { nestService } from '@services/nest';
 import { walletService } from '@services/wallet';
+import { entitlementsService } from '@services/entitlements';
 import { App } from './App';
 
 async function bootstrap(): Promise<void> {
@@ -12,6 +13,7 @@ async function bootstrap(): Promise<void> {
   profileService.init();
   nestService.init();
   walletService.init();
+  entitlementsService.init();
   document.documentElement.lang = i18n.getLanguage();
   document.title = i18n.t('app.title');
 

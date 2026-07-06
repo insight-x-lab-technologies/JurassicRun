@@ -102,6 +102,19 @@
     "expansionsSoon": "확장팩이 곧 출시됩니다.",
     "back": "뒤로"
   },
+  "expansions": {
+    "title": "확장",
+    "active": "사용 중",
+    "select": "선택",
+    "unlock": "잠금 해제",
+    "honorNote": "정직 시스템 — 결제 없이 즉시 잠금 해제됩니다. 기부로 게임을 응원해 주시면 감사하겠습니다.",
+    "back": "뒤로"
+  },
+  "expansion": {
+    "classic": { "name": "클래식", "desc": "원래의 모습." },
+    "volcano": { "name": "화산", "desc": "불타는 화산 테마." },
+    "glacier": { "name": "빙하", "desc": "차가운 빙하 테마." }
+  },
   "dino": {
     "starter": { "name": "스카우트" },
     "lodestone": { "name": "로드스톤" },

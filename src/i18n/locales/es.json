@@ -102,6 +102,19 @@
     "expansionsSoon": "Las expansiones llegan pronto.",
     "back": "Atrás"
   },
+  "expansions": {
+    "title": "Expansiones",
+    "active": "Activa",
+    "select": "Seleccionar",
+    "unlock": "Desbloquear",
+    "honorNote": "Sistema de honor — desbloquea al instante, sin pago. Considera apoyar el juego con una donación.",
+    "back": "Atrás"
+  },
+  "expansion": {
+    "classic": { "name": "Clásica", "desc": "El aspecto original." },
+    "volcano": { "name": "Volcán", "desc": "Un tema volcánico ardiente." },
+    "glacier": { "name": "Glaciar", "desc": "Un tema helado de glaciar." }
+  },
   "dino": {
     "starter": { "name": "Explorador" },
     "lodestone": { "name": "Magnetita" },

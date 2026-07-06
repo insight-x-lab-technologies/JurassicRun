@@ -342,3 +342,65 @@ body {
   min-width: 0;
   width: 100%;
 }
+
+/* Expansões (grid de temas) — item 4.6 */
+.expansions {
+  width: 100%;
+  gap: var(--space-4);
+}
+
+.expansions__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 40rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--space-3);
+}
+
+.expansions__note {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+.expansion-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  text-align: center;
+}
+
+.expansion-card__avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+}
+
+.expansion-card__name {
+  font-size: var(--font-size-md);
+  margin: 0;
+}
+
+.expansion-card__desc {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+  flex: 1;
+}
+
+.expansion-card__badge {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.expansion-card .btn {
+  min-width: 0;
+  width: 100%;
+}
