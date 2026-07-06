@@ -102,6 +102,19 @@
     "expansionsSoon": "拡張は近日公開予定です。",
     "back": "戻る"
   },
+  "expansions": {
+    "title": "拡張",
+    "active": "使用中",
+    "select": "選択",
+    "unlock": "解除",
+    "honorNote": "自己申告制 — 支払いなしで即座に解除されます。寄付でゲームを応援していただけると嬉しいです。",
+    "back": "戻る"
+  },
+  "expansion": {
+    "classic": { "name": "クラシック", "desc": "オリジナルの見た目。" },
+    "volcano": { "name": "ボルケーノ", "desc": "燃え盛る火山のテーマ。" },
+    "glacier": { "name": "グレイシャー", "desc": "凍てつく氷河のテーマ。" }
+  },
   "dino": {
     "starter": { "name": "スカウト" },
     "lodestone": { "name": "ロードストーン" },

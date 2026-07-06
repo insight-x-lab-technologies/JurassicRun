@@ -102,6 +102,19 @@
     "expansionsSoon": "扩展内容即将推出。",
     "back": "返回"
   },
+  "expansions": {
+    "title": "扩展",
+    "active": "使用中",
+    "select": "选择",
+    "unlock": "解锁",
+    "honorNote": "诚信系统 — 立即解锁，无需付款。欢迎通过捐赠支持本游戏。",
+    "back": "返回"
+  },
+  "expansion": {
+    "classic": { "name": "经典", "desc": "原始外观。" },
+    "volcano": { "name": "火山", "desc": "炽热的火山主题。" },
+    "glacier": { "name": "冰川", "desc": "冰冷的冰川主题。" }
+  },
   "dino": {
     "starter": { "name": "侦察兵" },
     "lodestone": { "name": "磁石龙" },

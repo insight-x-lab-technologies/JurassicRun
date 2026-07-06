@@ -102,6 +102,19 @@
     "expansionsSoon": "Les extensions arrivent bientôt.",
     "back": "Retour"
   },
+  "expansions": {
+    "title": "Extensions",
+    "active": "Active",
+    "select": "Sélectionner",
+    "unlock": "Débloquer",
+    "honorNote": "Système d'honneur — débloquez instantanément, sans paiement. Merci d'envisager de soutenir le jeu avec un don.",
+    "back": "Retour"
+  },
+  "expansion": {
+    "classic": { "name": "Classique", "desc": "L'apparence originale." },
+    "volcano": { "name": "Volcan", "desc": "Un thème volcanique ardent." },
+    "glacier": { "name": "Glacier", "desc": "Un thème glacial de glacier." }
+  },
   "dino": {
     "starter": { "name": "Éclaireur" },
     "lodestone": { "name": "Aimantite" },

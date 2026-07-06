@@ -102,6 +102,19 @@
     "expansionsSoon": "Erweiterungen kommen bald.",
     "back": "Zurück"
   },
+  "expansions": {
+    "title": "Erweiterungen",
+    "active": "Aktiv",
+    "select": "Auswählen",
+    "unlock": "Freischalten",
+    "honorNote": "Ehrensystem — sofort freischalten, ohne Bezahlung. Bitte erwäge, das Spiel mit einer Spende zu unterstützen.",
+    "back": "Zurück"
+  },
+  "expansion": {
+    "classic": { "name": "Klassisch", "desc": "Der ursprüngliche Look." },
+    "volcano": { "name": "Vulkan", "desc": "Ein feuriges Vulkan-Thema." },
+    "glacier": { "name": "Gletscher", "desc": "Ein eisiges Gletscher-Thema." }
+  },
   "dino": {
     "starter": { "name": "Späher" },
     "lodestone": { "name": "Magnetstein" },
