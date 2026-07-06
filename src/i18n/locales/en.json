@@ -150,5 +150,15 @@
     "tripleFood": { "desc": "Food is worth triple." },
     "startLife": { "desc": "Start with an extra life." },
     "headStart": { "desc": "Start with a protective shield." }
+  },
+  "settings": {
+    "title": "Settings",
+    "volume": "Volume",
+    "menuMusic": "Menu music",
+    "gameplayMusic": "Gameplay music",
+    "language": "Language",
+    "on": "On",
+    "off": "Off",
+    "back": "Back"
   }
 }

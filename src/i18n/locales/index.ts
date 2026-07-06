@@ -38,3 +38,16 @@ export const resources: Record<SupportedLanguage, { translation: Record<string, 
   ko: { translation: ko },
   hi: { translation: hi },
 };
+
+export const LANGUAGE_NATIVE_NAMES: Record<SupportedLanguage, string> = {
+  en: 'English',
+  es: 'Español',
+  'pt-BR': 'Português (BR)',
+  fr: 'Français',
+  it: 'Italiano',
+  de: 'Deutsch',
+  ja: '日本語',
+  zh: '中文',
+  ko: '한국어',
+  hi: 'हिन्दी',
+};

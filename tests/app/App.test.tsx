@@ -41,9 +41,9 @@ describe('App shell', () => {
 
   it('após navegar a um stub, mostra seu título e "em breve"', () => {
     render(<App />, container);
-    navigate('settings');
+    navigate('leaderboard');
     render(<App />, container); // re-render lê route.value corrente (flush determinístico)
-    expect(container.textContent).toContain(i18n.t('screen.settings'));
+    expect(container.textContent).toContain(i18n.t('screen.leaderboard'));
     expect(container.textContent).toContain(i18n.t('screen.comingSoon'));
     expect(container.textContent).not.toContain(i18n.t('nav.play'));
   });

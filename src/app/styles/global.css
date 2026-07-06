@@ -471,3 +471,47 @@ body {
   font-size: var(--font-size-sm);
   margin: 0;
 }
+
+/* Configurações (volume/música/idioma) — item 4.8 */
+.settings__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 44px;
+  padding: var(--space-2) 0;
+  width: 100%;
+  max-width: 24rem;
+}
+.settings__label {
+  flex: 1;
+  color: var(--color-text);
+  font-size: var(--font-size-md);
+  text-align: left;
+}
+.settings__slider {
+  flex: 2;
+  min-width: 120px;
+}
+.settings__value {
+  width: 3ch;
+  text-align: right;
+  color: var(--color-text-muted);
+}
+.settings__toggle {
+  width: 24px;
+  height: 24px;
+}
+.settings__state {
+  width: 6ch;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+.settings__select {
+  flex: 2;
+  min-height: 44px;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--font-size-md);
+}

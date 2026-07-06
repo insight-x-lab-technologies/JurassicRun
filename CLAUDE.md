@@ -661,5 +661,35 @@ partida — ok com limiares placeholder); troféus **globais** (por-perfil → F
 limiares/catálogo (Fase 8); Minors cosméticos (a11y do botão 🏆 no molde `home-identity`,
 `.trophy-card__badge` sem regra própria, `version` de storage não lido).
 
-**Fase 4: 4.1–4.7 concluídos.** Próximo: **4.8 (Configurações)** — volume, música menu on/off,
-música gameplay on/off, idioma. Ver `docs/roadmap/PHASE-04-meta-offline.md`.
+4.8 (Configurações): 5º serviço no molde puro×casca (wallet/nest/entitlements/trophy) SEM tocar
+`src/core` (determinismo 67 intacto). `src/services/settings/`: `store.ts` puro (`SettingsState
+{volume 0..100, menuMusic, gameplayMusic, language}`; `initialSettingsState` 80/on/on/en;
+`sanitizeVolume` clamp[0,100]+round, NaN⇒0/∞⇒100; setters imutáveis, `setLanguage` inválido ⇒ MESMA
+ref); `storage.ts` (localStorage `jurassicrun.settings.v1` payload `version:1`; `parseState` robusto
+com **saneamento POR CAMPO** — um campo corrompido não descarta os válidos); `index.ts`
+(`SettingsService` reativo singleton: sinais computed `volume`/`menuMusic`/`gameplayMusic`/`language`;
+`init` async carrega+aplica idioma via `applyLanguage`=`i18n.changeLanguage`+`document.lang`/`title`;
+setters síncronos comitam+persistem). **Troca de idioma AO VIVO** (fecha a seam de 4.1): `setLanguage`
+chama `changeLanguage` ANTES de comitar o sinal (ordem crítica p/ o re-render ler as strings novas), e
+`App.tsx` assina `settingsService.language.value` no topo ⇒ mudar o sinal re-renderiza a árvore inteira.
+**Volume e as 2 músicas são seams persistidos INERTES** — consumo é o 4.10 (Áudio), que não existe ainda
+(como a carteira foi seam do Ninho antes do 4.5); só o idioma tem efeito real no 4.8. `SettingsScreen`
+na rota `settings` (era placeholder): slider de volume, 2 toggles de música, `<select>` de idioma com
+`LANGUAGE_NATIVE_NAMES` (nomes nativos, não traduzíveis), botão Voltar. `main.tsx` faz `await
+settingsService.init()` no bootstrap (dono único do idioma; removida a fixação manual de
+`document.lang`/`title`). Chaves i18n `settings.{title,volume,menuMusic,gameplayMusic,language,on,off,
+back}` nos 10 locales (REGRA 4). Execução SDD por subagentes: 5 tasks (implementadores haiku 1–4 /
+sonnet 5 + review por task) — **Task 5 caiu por erro de API do subagente ao escrever o relatório MAS já
+commitara; o controlador reconstruiu o relatório e verificou independentemente** (precedente 4.3/4.7).
+Review final opus **"READY TO MERGE"** (0 Critical/Important). Suíte verde (`check` limpo, **492 testes**,
+determinismo **67 inalterado**). Verificação visual (Playwright): 4 controles renderizam; trocar idioma →
+UI vira alemão AO VIVO (Einstellungen/Lautstärke/Sprache…); reload → Home em alemão, `html lang=de`,
+localStorage `{version:1,volume:80,...,language:"de"}` — troca ao vivo + persistência provadas.
+**Adiados/backlog:** consumo dos seams volume/música pelo áudio (4.10); configurações **globais**
+(por-perfil → Fase 6); tuning de defaults (placeholder); Minors — sinal `language` é
+`ReadonlySignal<string>` (não `SupportedLanguage`); `void setLanguage` rejeição teórica não tratada
+(locales bundled); `version` de storage escrito não lido; teste explícito de idioma inválido no service;
+checkbox 24px < 44px de alvo de toque (mitigado pela `<label>` de linha inteira).
+
+**Fase 4: 4.1–4.8 concluídos.** Próximo: **4.9 (i18n completo — 10 idiomas)** — cobertura de TODAS as
+strings visíveis nos 10 locales. Ver `docs/roadmap/PHASE-04-meta-offline.md`.

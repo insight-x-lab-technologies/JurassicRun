@@ -8,7 +8,9 @@ import { NestScreen } from './screens/NestScreen';
 import { ShopScreen } from './screens/ShopScreen';
 import { ExpansionsScreen } from './screens/ExpansionsScreen';
 import { TrophiesScreen } from './screens/TrophiesScreen';
+import { SettingsScreen } from './screens/SettingsScreen';
 import { profileService } from '@services/profile';
+import { settingsService } from '@services/settings';
 import type { VNode } from 'preact';
 
 function screenFor(screen: Screen): VNode {
@@ -28,7 +30,7 @@ function screenFor(screen: Screen): VNode {
     case 'shop':
       return <ShopScreen />;
     case 'settings':
-      return <PlaceholderScreen titleKey="screen.settings" />;
+      return <SettingsScreen />;
     case 'leaderboard':
       return <PlaceholderScreen titleKey="screen.leaderboard" />;
     case 'expansions':
@@ -43,6 +45,8 @@ function screenFor(screen: Screen): VNode {
 }
 
 export function App(): VNode {
+  // Assinar o idioma: qualquer troca re-renderiza a árvore inteira com as strings novas.
+  void settingsService.language.value;
   if (profileService.activeProfile.value === null) {
     return <OnboardingScreen />;
   }

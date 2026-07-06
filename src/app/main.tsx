@@ -7,17 +7,17 @@ import { nestService } from '@services/nest';
 import { walletService } from '@services/wallet';
 import { entitlementsService } from '@services/entitlements';
 import { trophyService } from '@services/trophy';
+import { settingsService } from '@services/settings';
 import { App } from './App';
 
 async function bootstrap(): Promise<void> {
   await i18n.init();
+  await settingsService.init();
   profileService.init();
   nestService.init();
   walletService.init();
   entitlementsService.init();
   trophyService.init();
-  document.documentElement.lang = i18n.getLanguage();
-  document.title = i18n.t('app.title');
 
   const root = document.getElementById('app');
   if (root === null) throw new Error('#app não encontrado');

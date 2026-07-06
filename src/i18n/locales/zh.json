@@ -150,5 +150,6 @@
     "tripleFood": { "desc": "食物价值三倍。" },
     "startLife": { "desc": "开局附带一条额外生命。" },
     "headStart": { "desc": "开局附带护盾。" }
-  }
+  },
+  "settings": { "title": "设置", "volume": "音量", "menuMusic": "菜单音乐", "gameplayMusic": "游戏音乐", "language": "语言", "on": "开", "off": "关", "back": "返回" }
 }
