@@ -6,6 +6,7 @@ import { profileService } from '@services/profile';
 import { nestService } from '@services/nest';
 import { walletService } from '@services/wallet';
 import { entitlementsService } from '@services/entitlements';
+import { trophyService } from '@services/trophy';
 import { App } from './App';
 
 async function bootstrap(): Promise<void> {
@@ -14,6 +15,7 @@ async function bootstrap(): Promise<void> {
   nestService.init();
   walletService.init();
   entitlementsService.init();
+  trophyService.init();
   document.documentElement.lang = i18n.getLanguage();
   document.title = i18n.t('app.title');
 

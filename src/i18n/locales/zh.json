@@ -34,6 +34,7 @@
     "settings": "设置",
     "leaderboard": "排行榜",
     "expansions": "扩展",
+    "trophies": "奖杯",
     "share": "分享",
     "donate": "捐赠"
   },
@@ -46,7 +47,8 @@
     "shop": "商店",
     "settings": "设置",
     "leaderboard": "排行榜",
-    "expansions": "扩展"
+    "expansions": "扩展",
+    "trophies": "奖杯"
   },
   "home": {
     "newGame": "新游戏",

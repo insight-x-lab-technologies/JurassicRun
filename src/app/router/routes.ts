@@ -8,6 +8,7 @@ export type Screen =
   | 'shop'
   | 'settings'
   | 'leaderboard'
-  | 'expansions';
+  | 'expansions'
+  | 'trophies';
 
 export const HOME_SCREEN: Screen = 'home';

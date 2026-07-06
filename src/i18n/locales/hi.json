@@ -34,6 +34,7 @@
     "settings": "सेटिंग्स",
     "leaderboard": "लीडरबोर्ड",
     "expansions": "विस्तार",
+    "trophies": "ट्रॉफ़ियाँ",
     "share": "साझा करें",
     "donate": "दान करें"
   },
@@ -46,7 +47,8 @@
     "shop": "दुकान",
     "settings": "सेटिंग्स",
     "leaderboard": "लीडरबोर्ड",
-    "expansions": "विस्तार"
+    "expansions": "विस्तार",
+    "trophies": "ट्रॉफ़ियाँ"
   },
   "home": {
     "newGame": "नया खेल",

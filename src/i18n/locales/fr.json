@@ -34,6 +34,7 @@
     "settings": "Paramètres",
     "leaderboard": "Classement",
     "expansions": "Extensions",
+    "trophies": "Trophées",
     "share": "Partager",
     "donate": "Faire un don"
   },
@@ -46,7 +47,8 @@
     "shop": "Boutique",
     "settings": "Paramètres",
     "leaderboard": "Classement",
-    "expansions": "Extensions"
+    "expansions": "Extensions",
+    "trophies": "Trophées"
   },
   "home": {
     "newGame": "Nouvelle Partie",

@@ -34,6 +34,7 @@
     "settings": "設定",
     "leaderboard": "ランキング",
     "expansions": "拡張",
+    "trophies": "トロフィー",
     "share": "共有",
     "donate": "寄付"
   },
@@ -46,7 +47,8 @@
     "shop": "ショップ",
     "settings": "設定",
     "leaderboard": "ランキング",
-    "expansions": "拡張"
+    "expansions": "拡張",
+    "trophies": "トロフィー"
   },
   "home": {
     "newGame": "新しいゲーム",

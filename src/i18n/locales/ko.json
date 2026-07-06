@@ -34,6 +34,7 @@
     "settings": "설정",
     "leaderboard": "리더보드",
     "expansions": "확장",
+    "trophies": "트로피",
     "share": "공유",
     "donate": "기부"
   },
@@ -46,7 +47,8 @@
     "shop": "상점",
     "settings": "설정",
     "leaderboard": "리더보드",
-    "expansions": "확장"
+    "expansions": "확장",
+    "trophies": "트로피"
   },
   "home": {
     "newGame": "새 게임",
