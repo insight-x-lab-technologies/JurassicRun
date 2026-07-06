@@ -150,5 +150,6 @@
     "tripleFood": { "desc": "먹이 가치 3배." },
     "startLife": { "desc": "여분의 생명으로 시작." },
     "headStart": { "desc": "보호막을 갖고 시작." }
-  }
+  },
+  "settings": { "title": "설정", "volume": "볼륨", "menuMusic": "메뉴 음악", "gameplayMusic": "게임 음악", "language": "언어", "on": "켜짐", "off": "꺼짐", "back": "뒤로" }
 }

@@ -150,5 +150,6 @@
     "tripleFood": { "desc": "Futter zählt dreifach." },
     "startLife": { "desc": "Startet mit einem Extraleben." },
     "headStart": { "desc": "Startet mit einem Schutzschild." }
-  }
+  },
+  "settings": { "title": "Einstellungen", "volume": "Lautstärke", "menuMusic": "Menümusik", "gameplayMusic": "Spielmusik", "language": "Sprache", "on": "An", "off": "Aus", "back": "Zurück" }
 }

@@ -150,5 +150,6 @@
     "tripleFood": { "desc": "Il cibo vale il triplo." },
     "startLife": { "desc": "Inizia con una vita extra." },
     "headStart": { "desc": "Inizia con uno scudo protettivo." }
-  }
+  },
+  "settings": { "title": "Impostazioni", "volume": "Volume", "menuMusic": "Musica del menu", "gameplayMusic": "Musica di gioco", "language": "Lingua", "on": "Sì", "off": "No", "back": "Indietro" }
 }
