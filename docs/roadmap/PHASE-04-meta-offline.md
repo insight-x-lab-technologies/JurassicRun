@@ -43,7 +43,13 @@ ninho, loja in-game, expansões, troféus, configurações, 10 idiomas e áudio.
       é Fase 8, como os traços do Ninho.)
 
 ### 4.7 Troféus / conquistas
-- [ ] `TrophyService` + catálogo de conquistas. (Top-3 diário → Fase 5/6.)
+- [x] `TrophyService` + catálogo de conquistas. (Top-3 diário → Fase 5/6.)
+      (`src/services/trophy/` puro×casca: catalog/store/storage/service reativo. Conquistas
+      desbloqueadas por predicado puro sobre um agregado vitalício de partidas — cumulativas
+      via `total*`/`gamesPlayed`, partida-única via `best*`. Fiado ao game over via
+      `MatchController.onGameOver` → `recordMatch`; religa o placeholder `trophies` do
+      `getHomeStats`; tela de Troféus na rota `trophies` (chip 🏆 da Home navega). Catálogo de
+      7 (placeholders, tuning Fase 8). Troféus globais → por-perfil na Fase 6.)
 
 ### 4.8 Configurações
 - [ ] Volume, música menu on/off, música gameplay on/off, idioma.

@@ -633,5 +633,33 @@ expansões + aplicação visual da expansão ativa (Fase 8); gateway de pagament
 (Fase 8, ADR-0004); distinguir `declined`×`unknown` na UI quando o gateway async chegar; entitlements
 por-perfil (Fase 6).
 
-Próximo: **4.7 (Troféus / conquistas)** — `TrophyService` + catálogo de conquistas (top-3 diário →
-Fase 5/6); religa o placeholder `trophies` do `getHomeStats`. Ver `docs/roadmap/PHASE-04-meta-offline.md`.
+4.7 (Troféus / conquistas): 4º serviço no molde puro×casca (wallet/nest/entitlements) SEM tocar
+`src/core` (determinismo 67 intacto). `src/services/trophy/`: `store.ts` puro — `TrophyStats`
+(agregado vitalício: `gamesPlayed`, `totalFood`, `totalDistance`, `bestDistance`, `bestNearMisses`,
+`bestScore`; inteiros≥0 via `sanitizeStat`) + `MatchSummary` (resultado de UMA partida, desacoplado
+de `WorldState`) + `foldMatch` (incrementa cumulativos, `max` dos best) + `evaluate` (desbloqueia
+toda conquista satisfeita e ainda-não-desbloqueada; devolve o MESMO objeto quando nada muda) +
+`recordMatch` (fold+evaluate); `catalog.ts` — `TrophyDef {id,nameKey,descKey,condition:(s)=>boolean}`
+(**predicado puro** unifica cumulativo × partida-única) + `TROPHY_CATALOG` frozen de 7 (firstFlight/
+centurion/forager/daredevil/marathoner/highRoller/persistent; limiares placeholder, tuning Fase 8);
+`storage.ts` (localStorage `jurassicrun.trophies.v1`, `parseState` robusto: JSON inválido⇒inicial,
+`unlocked` filtra ids do catálogo, `stats` saneado); `index.ts` (`TrophyService` reativo singleton,
+sinais `unlockedIds`/`unlockedCount`, `recordMatch` SEMPRE persiste pois `gamesPlayed++`, retorna
+`newlyUnlocked` — seam de toast futuro). **Gatilho:** reusa `MatchController.onGameOver` (já existente,
+4.5) — `startGame` faz `walletService.earn` E `trophyService.recordMatch({distance,food,nearMisses,
+score})` (controller não importa serviços). **Seam religado:** `getHomeStats().trophies` =
+`unlockedCount.value` (reativo; `maxLevel` segue placeholder Fase 5). Chip 🏆 da Home vira botão →
+rota **`trophies`** com **TrophiesScreen** (grid de cards locked/unlocked, molde de Expansions/Nest).
+i18n `trophy.<id>.{name,desc}` + `trophies.{title,locked,empty}` + `nav/screen.trophies` nos 10
+locales (REGRA 4, traduções nativas). Sem asset-spec (ícones = emoji 🏆/🔒). Execução SDD por
+subagentes: 5 tasks (Task 5 finalizada INLINE pelo controlador — subagente esbarrou em limite de
+sessão, como no 4.3) + review por task + review final opus **"READY TO MERGE"** (0 Critical/Important).
+Suíte verde (`check` limpo, **474 testes**, determinismo **67 inalterado**). **Adiados/backlog:**
+`evaluate` não roda no `init` (conquista nova cujo limiar já é satisfeito só destrava na próxima
+partida — ok com limiares placeholder); troféus **globais** (por-perfil → Fase 6); toast de
+"conquista desbloqueada" (seam `newlyUnlocked` pronto); `maxLevel` da Home (Fase 5); tuning de
+limiares/catálogo (Fase 8); Minors cosméticos (a11y do botão 🏆 no molde `home-identity`,
+`.trophy-card__badge` sem regra própria, `version` de storage não lido).
+
+**Fase 4: 4.1–4.7 concluídos.** Próximo: **4.8 (Configurações)** — volume, música menu on/off,
+música gameplay on/off, idioma. Ver `docs/roadmap/PHASE-04-meta-offline.md`.
