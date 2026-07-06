@@ -6,6 +6,7 @@ import { OnboardingScreen } from './screens/OnboardingScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { NestScreen } from './screens/NestScreen';
 import { ShopScreen } from './screens/ShopScreen';
+import { ExpansionsScreen } from './screens/ExpansionsScreen';
 import { profileService } from '@services/profile';
 import type { VNode } from 'preact';
 
@@ -30,7 +31,7 @@ function screenFor(screen: Screen): VNode {
     case 'leaderboard':
       return <PlaceholderScreen titleKey="screen.leaderboard" />;
     case 'expansions':
-      return <PlaceholderScreen titleKey="screen.expansions" />;
+      return <ExpansionsScreen />;
     default: {
       const _never: never = screen;
       return _never;
