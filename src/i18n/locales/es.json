@@ -34,6 +34,7 @@
     "settings": "Ajustes",
     "leaderboard": "Clasificación",
     "expansions": "Expansiones",
+    "trophies": "Trofeos",
     "share": "Compartir",
     "donate": "Donar"
   },
@@ -46,7 +47,8 @@
     "shop": "Tienda",
     "settings": "Ajustes",
     "leaderboard": "Clasificación",
-    "expansions": "Expansiones"
+    "expansions": "Expansiones",
+    "trophies": "Trofeos"
   },
   "home": {
     "newGame": "Nuevo Juego",
@@ -114,6 +116,20 @@
     "classic": { "name": "Clásica", "desc": "El aspecto original." },
     "volcano": { "name": "Volcán", "desc": "Un tema volcánico ardiente." },
     "glacier": { "name": "Glaciar", "desc": "Un tema helado de glaciar." }
+  },
+  "trophies": {
+    "title": "Trofeos",
+    "locked": "Bloqueado",
+    "empty": "¡Juega para ganar tu primer trofeo!"
+  },
+  "trophy": {
+    "firstFlight": { "name": "Primer Vuelo", "desc": "Juega tu primera partida." },
+    "centurion": { "name": "Centurión", "desc": "Alcanza 1000 de distancia en una partida." },
+    "forager": { "name": "Recolector", "desc": "Recolecta 50 de comida en total." },
+    "daredevil": { "name": "Temerario", "desc": "Consigue 10 casi-choques en una partida." },
+    "marathoner": { "name": "Maratonista", "desc": "Recorre 10.000 de distancia total." },
+    "highRoller": { "name": "Gran Apostador", "desc": "Consigue 5000 puntos en una partida." },
+    "persistent": { "name": "Persistente", "desc": "Juega 25 partidas." }
   },
   "dino": {
     "starter": { "name": "Explorador" },

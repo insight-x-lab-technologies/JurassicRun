@@ -59,7 +59,14 @@ export function HomeScreen(): VNode {
         )}
         <div class="home__stats">
           <StatChip glyph="🪙" label={i18n.t('home.coins')} value={stats.coins} />
-          <StatChip glyph="🏆" label={i18n.t('home.trophies')} value={stats.trophies} />
+          <button
+            type="button"
+            class="home__statbtn"
+            data-testid="home-trophies"
+            onClick={() => navigate('trophies')}
+          >
+            <StatChip glyph="🏆" label={i18n.t('home.trophies')} value={stats.trophies} />
+          </button>
           <StatChip glyph="📈" label={i18n.t('home.level')} value={stats.maxLevel} />
         </div>
       </header>

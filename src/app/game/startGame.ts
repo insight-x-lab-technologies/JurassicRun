@@ -6,6 +6,7 @@ import { randomEndlessSeed } from '@render/seedSource';
 import { bindGameControls } from '@render/controls';
 import { nestService } from '@services/nest';
 import { walletService, coinsForFood } from '@services/wallet';
+import { trophyService } from '@services/trophy';
 
 /**
  * Monta o jogo Phaser no `container` e devolve um `stop()` que o destrói e remove os
@@ -24,7 +25,15 @@ export function startGame(container: HTMLElement): () => void {
     },
     {
       onNewMatch: () => flap.reset(),
-      onGameOver: (w) => walletService.earn(coinsForFood(w.food)),
+      onGameOver: (w) => {
+        walletService.earn(coinsForFood(w.food));
+        trophyService.recordMatch({
+          distance: w.distance,
+          food: w.food,
+          nearMisses: w.nearMisses,
+          score: w.score,
+        });
+      },
     },
   );
 

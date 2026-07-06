@@ -34,6 +34,7 @@
     "settings": "Settings",
     "leaderboard": "Leaderboard",
     "expansions": "Expansions",
+    "trophies": "Trophies",
     "share": "Share",
     "donate": "Donate"
   },
@@ -46,7 +47,8 @@
     "shop": "Shop",
     "settings": "Settings",
     "leaderboard": "Leaderboard",
-    "expansions": "Expansions"
+    "expansions": "Expansions",
+    "trophies": "Trophies"
   },
   "home": {
     "newGame": "New Game",
@@ -114,6 +116,20 @@
     "classic": { "name": "Classic", "desc": "The original look." },
     "volcano": { "name": "Volcano", "desc": "A fiery volcanic theme." },
     "glacier": { "name": "Glacier", "desc": "An icy glacier theme." }
+  },
+  "trophies": {
+    "title": "Trophies",
+    "locked": "Locked",
+    "empty": "Play to earn your first trophy!"
+  },
+  "trophy": {
+    "firstFlight": { "name": "First Flight", "desc": "Play your first game." },
+    "centurion": { "name": "Centurion", "desc": "Reach 1000 distance in one run." },
+    "forager": { "name": "Forager", "desc": "Collect 50 food in total." },
+    "daredevil": { "name": "Daredevil", "desc": "Get 10 near-misses in one run." },
+    "marathoner": { "name": "Marathoner", "desc": "Travel 10,000 total distance." },
+    "highRoller": { "name": "High Roller", "desc": "Score 5000 in one run." },
+    "persistent": { "name": "Persistent", "desc": "Play 25 games." }
   },
   "dino": {
     "starter": { "name": "Scout" },

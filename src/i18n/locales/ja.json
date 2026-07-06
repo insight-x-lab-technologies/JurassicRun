@@ -34,6 +34,7 @@
     "settings": "設定",
     "leaderboard": "ランキング",
     "expansions": "拡張",
+    "trophies": "トロフィー",
     "share": "共有",
     "donate": "寄付"
   },
@@ -46,7 +47,8 @@
     "shop": "ショップ",
     "settings": "設定",
     "leaderboard": "ランキング",
-    "expansions": "拡張"
+    "expansions": "拡張",
+    "trophies": "トロフィー"
   },
   "home": {
     "newGame": "新しいゲーム",
@@ -114,6 +116,20 @@
     "classic": { "name": "クラシック", "desc": "オリジナルの見た目。" },
     "volcano": { "name": "ボルケーノ", "desc": "燃え盛る火山のテーマ。" },
     "glacier": { "name": "グレイシャー", "desc": "凍てつく氷河のテーマ。" }
+  },
+  "trophies": {
+    "title": "トロフィー",
+    "locked": "ロック中",
+    "empty": "プレイして最初のトロフィーを獲得しよう！"
+  },
+  "trophy": {
+    "firstFlight": { "name": "初飛行", "desc": "初めてのゲームをプレイする。" },
+    "centurion": { "name": "センチュリオン", "desc": "1回のプレイで距離1000に到達する。" },
+    "forager": { "name": "採集者", "desc": "合計50個のエサを集める。" },
+    "daredevil": { "name": "命知らず", "desc": "1回のプレイで10回のニアミスを達成する。" },
+    "marathoner": { "name": "マラソンランナー", "desc": "合計10,000の距離を移動する。" },
+    "highRoller": { "name": "ハイローラー", "desc": "1回のプレイで5000点を獲得する。" },
+    "persistent": { "name": "粘り強い", "desc": "25回プレイする。" }
   },
   "dino": {
     "starter": { "name": "スカウト" },

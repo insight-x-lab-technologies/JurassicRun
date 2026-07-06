@@ -34,6 +34,7 @@
     "settings": "Einstellungen",
     "leaderboard": "Bestenliste",
     "expansions": "Erweiterungen",
+    "trophies": "Trophäen",
     "share": "Teilen",
     "donate": "Spenden"
   },
@@ -46,7 +47,8 @@
     "shop": "Shop",
     "settings": "Einstellungen",
     "leaderboard": "Bestenliste",
-    "expansions": "Erweiterungen"
+    "expansions": "Erweiterungen",
+    "trophies": "Trophäen"
   },
   "home": {
     "newGame": "Neues Spiel",
@@ -114,6 +116,20 @@
     "classic": { "name": "Klassisch", "desc": "Der ursprüngliche Look." },
     "volcano": { "name": "Vulkan", "desc": "Ein feuriges Vulkan-Thema." },
     "glacier": { "name": "Gletscher", "desc": "Ein eisiges Gletscher-Thema." }
+  },
+  "trophies": {
+    "title": "Trophäen",
+    "locked": "Gesperrt",
+    "empty": "Spiele, um deine erste Trophäe zu gewinnen!"
+  },
+  "trophy": {
+    "firstFlight": { "name": "Erster Flug", "desc": "Spiele dein erstes Spiel." },
+    "centurion": { "name": "Zenturio", "desc": "Erreiche 1000 Distanz in einem Lauf." },
+    "forager": { "name": "Sammler", "desc": "Sammle insgesamt 50 Nahrung." },
+    "daredevil": { "name": "Draufgänger", "desc": "Erziele 10 Beinahe-Zusammenstöße in einem Lauf." },
+    "marathoner": { "name": "Marathonläufer", "desc": "Lege insgesamt 10.000 Distanz zurück." },
+    "highRoller": { "name": "Großer Spieler", "desc": "Erziele 5000 Punkte in einem Lauf." },
+    "persistent": { "name": "Beharrlich", "desc": "Spiele 25 Spiele." }
   },
   "dino": {
     "starter": { "name": "Späher" },
