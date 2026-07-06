@@ -117,6 +117,20 @@
     "volcano": { "name": "화산", "desc": "불타는 화산 테마." },
     "glacier": { "name": "빙하", "desc": "차가운 빙하 테마." }
   },
+  "trophies": {
+    "title": "트로피",
+    "locked": "잠김",
+    "empty": "게임을 플레이해 첫 트로피를 획득하세요!"
+  },
+  "trophy": {
+    "firstFlight": { "name": "첫 비행", "desc": "첫 게임을 플레이하세요." },
+    "centurion": { "name": "백부장", "desc": "한 판에서 거리 1000에 도달하세요." },
+    "forager": { "name": "채집가", "desc": "총 50개의 먹이를 모으세요." },
+    "daredevil": { "name": "무모한 도전자", "desc": "한 판에서 아슬아슬한 회피를 10번 달성하세요." },
+    "marathoner": { "name": "마라토너", "desc": "총 10,000 거리를 이동하세요." },
+    "highRoller": { "name": "큰손", "desc": "한 판에서 5000점을 획득하세요." },
+    "persistent": { "name": "끈기", "desc": "25판을 플레이하세요." }
+  },
   "dino": {
     "starter": { "name": "스카우트" },
     "lodestone": { "name": "로드스톤" },

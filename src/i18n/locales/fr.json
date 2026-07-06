@@ -117,6 +117,20 @@
     "volcano": { "name": "Volcan", "desc": "Un thème volcanique ardent." },
     "glacier": { "name": "Glacier", "desc": "Un thème glacial de glacier." }
   },
+  "trophies": {
+    "title": "Trophées",
+    "locked": "Verrouillé",
+    "empty": "Jouez pour gagner votre premier trophée !"
+  },
+  "trophy": {
+    "firstFlight": { "name": "Premier Vol", "desc": "Jouez votre première partie." },
+    "centurion": { "name": "Centurion", "desc": "Atteignez 1000 de distance en une partie." },
+    "forager": { "name": "Fourrageur", "desc": "Collectez 50 de nourriture au total." },
+    "daredevil": { "name": "Casse-cou", "desc": "Obtenez 10 quasi-collisions en une partie." },
+    "marathoner": { "name": "Marathonien", "desc": "Parcourez 10 000 de distance au total." },
+    "highRoller": { "name": "Gros Joueur", "desc": "Marquez 5000 points en une partie." },
+    "persistent": { "name": "Persévérant", "desc": "Jouez 25 parties." }
+  },
   "dino": {
     "starter": { "name": "Éclaireur" },
     "lodestone": { "name": "Aimantite" },

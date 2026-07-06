@@ -117,6 +117,20 @@
     "volcano": { "name": "火山", "desc": "炽热的火山主题。" },
     "glacier": { "name": "冰川", "desc": "冰冷的冰川主题。" }
   },
+  "trophies": {
+    "title": "奖杯",
+    "locked": "未解锁",
+    "empty": "开始游戏，赢得你的第一个奖杯！"
+  },
+  "trophy": {
+    "firstFlight": { "name": "首次飞行", "desc": "进行你的第一局游戏。" },
+    "centurion": { "name": "百夫长", "desc": "在一局中达到1000距离。" },
+    "forager": { "name": "采集者", "desc": "总共收集50个食物。" },
+    "daredevil": { "name": "冒险家", "desc": "在一局中获得10次擦身而过。" },
+    "marathoner": { "name": "马拉松选手", "desc": "累计行进10,000距离。" },
+    "highRoller": { "name": "豪客", "desc": "在一局中得到5000分。" },
+    "persistent": { "name": "坚持不懈", "desc": "游玩25局。" }
+  },
   "dino": {
     "starter": { "name": "侦察兵" },
     "lodestone": { "name": "磁石龙" },

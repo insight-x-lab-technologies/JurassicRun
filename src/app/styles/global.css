@@ -404,3 +404,70 @@ body {
   min-width: 0;
   width: 100%;
 }
+
+/* Botão da chip 🏆 na Home (reset do chrome do navegador, como .home__identity). */
+.home__statbtn {
+  font: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Tela de Troféus (molde de .expansions/.expansion-card). */
+.trophies {
+  width: 100%;
+  gap: var(--space-4);
+}
+
+.trophies__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 40rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--space-3);
+}
+
+.trophies__empty {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+.trophy-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  opacity: 0.55;
+}
+
+.trophy-card--unlocked {
+  opacity: 1;
+}
+
+.trophy-card__icon {
+  font-size: var(--font-size-xl);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.trophy-card__body {
+  min-width: 0;
+}
+
+.trophy-card__name {
+  font-size: var(--font-size-md);
+  margin: 0;
+}
+
+.trophy-card__desc {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
