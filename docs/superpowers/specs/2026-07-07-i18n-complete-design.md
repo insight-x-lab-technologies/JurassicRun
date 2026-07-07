@@ -75,16 +75,27 @@ Efeito: se a Fase 5 adicionar `screen.leaderboard` e alguém esquecer de traduzi
 mensagem orientando a traduzir ou justificar na allowlist. A allowlist é a evidência viva da
 auditoria.
 
-### Guarda 4 — Scan de strings hardcoded (fonte)
+### Guarda 4 — Scan de strings hardcoded (fonte, por AST)
 Local: novo `tests/i18n/no-hardcoded-strings.test.ts`.
-Varre os fontes de `src/app/**` e `src/render/**` (`.ts`/`.tsx`) procurando os **dois padrões
-concretos** que este código usa para texto visível, e falha se achar literal fora do i18n:
-1. **Nós de texto JSX** — texto humano entre tags (`>Palavra ...<`) que não seja só
-   `{expressão}`/whitespace/entidade.
-2. **Texto Phaser** — `add.text(...)`/`.setText(...)` cujo argumento de conteúdo seja um
-   **literal de string** (aspas), em vez de vir de `t(...)`.
-Escopo estreito ⇒ baixo falso-positivo (ignora `className`, `data-testid`, imports, chaves CSS,
-comentários). Hoje: 0 ocorrências. Se a Fase 5 adicionar `<h1>Daily</h1>` cru, falha.
+Varre os fontes de `src/app/**` e `src/render/**` (`.ts`/`.tsx`) via **AST do TypeScript**
+(`ts.createSourceFile`, `typescript` já é dependência) — não por regex de linha, que seria
+frágil contra o estilo real e **multi-linha** deste código (JSX com texto em linha própria;
+`this.add\n.text(...)` encadeado; `.setText([...].join('\n'))` em array). Falha se achar texto
+visível fora do i18n:
+1. **Nós de texto JSX** (`ts.JsxText`) com conteúdo humano (tem letra/dígito), ignorando
+   espaços, entidades HTML puras (`&nbsp;`) e glifos/emoji decorativos. `{t('chave')}` é
+   `JsxExpression`, não `JsxText` ⇒ não dispara.
+2. **Texto Phaser** — o argumento de **conteúdo** de `add.text(x, y, ⟨conteúdo⟩, {style})`
+   (3º arg) e `.setText(⟨conteúdo⟩)` (1º arg) não pode conter literal de string visível.
+   Literal é permitido quando: está dentro de uma chamada `t(...)`/`i18n.t(...)` (é chave de
+   tradução, incl. concatenação para montar a chave), é vazio (`''` placeholder inicial) ou é
+   só separador/whitespace (`'\n'` do `.join`). Objetos de `style` (`color`, `fontSize`) não
+   são o argumento de conteúdo ⇒ não disparam.
+
+O arquivo fatora os scanners em funções `scanJsxText(file, src)`/`scanPhaserText(file, src)` e
+inclui **fixtures permanentes** que provam, em CI, que os scanners **pegam** os padrões reais
+multi-linha (e ignoram os casos legítimos) — travando a própria correção do guarda, não só a
+ausência de violações hoje. Estado atual: 0 ocorrências nos fontes reais.
 
 ## Arquitetura / isolamento
 
