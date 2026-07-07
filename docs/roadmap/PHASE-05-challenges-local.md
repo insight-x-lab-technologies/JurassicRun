@@ -5,10 +5,12 @@ locais no aparelho.
 
 ## Itens
 
-### 5.1 Modo Desafio
-- [ ] Diário: seed do dia (UTC). Semanal: seed da semana ISO. Uma tentativa rankeável por
-      período (definir regra: melhor tentativa).
-- [ ] HUD mostra a seed do desafio.
+### 5.1 Modo Desafio ✅
+- [x] Diário: seed do dia (UTC). Semanal: seed da semana ISO. Uma tentativa rankeável por
+      período (regra definida: **melhor tentativa**; tentativas ilimitadas — a gravação do
+      recorde por período é 5.2).
+- [x] HUD mostra a seed do desafio (via `seedLabel` → `hud.seed`; prefixo `daily:`/`weekly:`
+      identifica o modo).
 
 ### 5.2 Leaderboards locais
 - [ ] Armazenar recordes locais por modo: Endless, Diário, Semanal.
