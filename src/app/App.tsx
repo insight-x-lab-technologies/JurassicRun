@@ -18,13 +18,13 @@ function screenFor(screen: Screen): VNode {
     case 'home':
       return <HomeScreen />;
     case 'play':
-      return <PlayScreen />;
+      return <PlayScreen mode="endless" />;
     case 'profile':
       return <ProfileScreen />;
     case 'daily':
-      return <PlaceholderScreen titleKey="screen.daily" />;
+      return <PlayScreen mode="daily" />;
     case 'weekly':
-      return <PlaceholderScreen titleKey="screen.weekly" />;
+      return <PlayScreen mode="weekly" />;
     case 'nest':
       return <NestScreen />;
     case 'shop':
