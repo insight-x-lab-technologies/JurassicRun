@@ -1,8 +1,9 @@
 import { useLayoutEffect, useRef } from 'preact/hooks';
 import { back } from '../router';
 import { i18n } from '@services/i18n';
+import type { MatchMode } from '@render/matchFactory';
 
-export function PlayScreen() {
+export function PlayScreen({ mode = 'endless' }: { mode?: MatchMode }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -11,13 +12,13 @@ export function PlayScreen() {
     void import('../game/startGame').then(({ startGame }) => {
       const el = containerRef.current;
       if (cancelled || el === null) return;
-      stop = startGame(el);
+      stop = startGame(el, mode);
     });
     return () => {
       cancelled = true;
       stop?.();
     };
-  }, []);
+  }, [mode]);
 
   return (
     <div class="play-screen">

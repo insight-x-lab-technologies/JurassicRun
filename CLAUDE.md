@@ -749,6 +749,38 @@ mixagem/andamentos/notas (placeholders); Minors — `beatsToSeconds(bpm=0)⇒Inf
 usa; guardado por teste), `WebAudioEngine` sem `destroy()` (singleton app-lifetime), scheduler assume
 `durBeats>0` (garantido por catálogo/teste), listeners de gesto presos a `window` (decisão de design).
 
-**Fase 4 (Meta offline) — CONCLUÍDA** (itens 4.1–4.10). Próximo: **Fase 5 (Desafios & leaderboards
-locais)** — modos Diário/Semanal determinísticos + leaderboard local + top-3. Ver
-`docs/roadmap/PHASE-05-challenges-local.md` e `docs/roadmap/PHASE-04-meta-offline.md`.
+**Fase 4 (Meta offline) — CONCLUÍDA** (itens 4.1–4.10).
+
+**Fase 5 (Desafios & leaderboards locais) — EM ANDAMENTO.** Item 5.1 concluído.
+
+5.1 (Modo Desafio): modos **Desafio Diário** (seed do dia UTC) e **Semanal** (seed da semana
+ISO-8601) jogáveis, reaproveitando o Endless. **Só camada de render/app — `src/core/` intocado**
+⇒ determinismo **67 inalterado** (todas as peças já existiam desde a Fase 1: `dailySeed`,
+`weeklySeed`, `isoWeekOf`, `createWorld({seed,trait})`; sem re-pin de goldens). Três peças no
+padrão puro×casca: (1) `src/render/seedSource.ts` estendido com a conversão **relógio→`CalendarDate`
+UTC** que a Fase 1 deixou p/ a Fase 5 — puras `utcCalendarDateFromMs(ms)` (via getters `getUTC*`,
+determinística), `dailyChallengeSeedForMs(ms)`/`weeklyChallengeSeedForMs(ms)` (compõem as seeds
+canônicas do core) + cascas `dailyChallengeSeed()`/`weeklyChallengeSeed()` (leem `Date.now()`, fora
+do core). (2) `src/render/matchFactory.ts` PURO: `createMatchFactory(mode, deps)→()=>MatchInit`
+(`MatchMode='endless'|'daily'|'weekly'`, `deps` injeta seed sources + `activeTrait` + `createWorld`)
+— **endless** sorteia nova seed por (re)start com o **trait do dino ativo**; **daily/weekly** capturam
+a seed do desafio **1× na criação** (restart replaya a MESMA) e **forçam `trait:'none'`**. (3) Fiação:
+`startGame(container, mode='endless')` monta `deps` reais e passa `mode`; `PlayScreen({mode})` propaga
+(`useLayoutEffect` dep `[mode]`); `App` roteia `daily`→`<PlayScreen mode="daily"/>` e `weekly`→idem
+(deixaram de ser placeholder; Home já navegava p/ essas rotas). **Decisão de produto:** trait fixado
+em `'none'` nos desafios (Endless mantém o ativo) porque 5.4 guardará só **seed + InputTimeline** ⇒ a
+corrida precisa ser justa e reproduzível/verificável só a partir disso (clima/dia-noite/dificuldade já
+derivam da seed; o trait era a única entrada de estado inicial fora da seed). **HUD mostra a seed do
+desafio sem código novo** (já renderiza `seedLabel` desde 2.4; prefixo `daily:`/`weekly:` identifica o
+modo; nenhuma string i18n nova). `onGameOver` (comida→moedas + `trophyService.recordMatch`) inalterado
+p/ todos os modos. **Regra rankeável definida:** tentativas ilimitadas, **melhor tentativa** rankeia —
+a gravação do recorde por período e a tela de leaderboard são 5.2. Execução SDD por subagentes (3 tasks:
+implementadores haiku/sonnet + review por task + review final opus **"READY TO MERGE"**; 2 Minors →
+backlog: smoke de App não asserta o `mode` passado a `startGame`; chaves i18n `screen.daily`/
+`screen.weekly` órfãs, possivelmente reusadas na tela de abertura do desafio em 5.2). Suíte verde
+(`check` limpo, **528 testes**, determinismo **67 inalterado**). **Adiados (Fase 5):** leaderboards
+locais Endless/Diário/Semanal + tela de 3 abas (5.2); troféu top-3 do diário (5.3); guardar
+`seed + InputTimeline` da melhor tentativa (5.4).
+
+**Próximo: 5.2 (Leaderboards locais)** — recordes locais por modo (Endless/Diário/Semanal) + tela
+com 3 abas. Ver `docs/roadmap/PHASE-05-challenges-local.md`.
