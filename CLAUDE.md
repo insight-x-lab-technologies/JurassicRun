@@ -691,5 +691,35 @@ localStorage `{version:1,volume:80,...,language:"de"}` — troca ao vivo + persi
 (locales bundled); `version` de storage escrito não lido; teste explícito de idioma inválido no service;
 checkbox 24px < 44px de alvo de toque (mitigado pela `<label>` de linha inteira).
 
-**Fase 4: 4.1–4.8 concluídos.** Próximo: **4.9 (i18n completo — 10 idiomas)** — cobertura de TODAS as
-strings visíveis nos 10 locales. Ver `docs/roadmap/PHASE-04-meta-offline.md`.
+4.9 (i18n completo — 10 idiomas): item **só de teste** — nenhum arquivo de produção nem `src/core/`
+tocado (determinismo 67 inalterado). Uma **auditoria** provou que a cobertura i18n já estava completa
+e correta, construída incrementalmente em 4.1–4.8: 130 chaves-folha, paridade nos 10 locales, valores
+**nativos** (os 53 valores byte-idênticos ao `en` são todos legítimos — marca `JurassicRun`, nome
+próprio `Midas`, cognatos reais como de `Nest`/`Wind` · fr `Glacier`/`Centurion`/`Active` · pt/fr/it
+`Volume`, e acrônimos/empréstimos `FPS`/`Lv`/`Dist`/`Seed`/`Shop`/`Game Over`), placeholders `{{value}}`
+preservados 130/130, zero strings hardcoded. Como não havia tradução faltando, o deliverable foi
+**congelar a completude em guardas de regressão** (molde "dupla camada" do guard de determinismo):
+`tests/i18n/locales.test.ts` ganhou (1) paridade de placeholders de interpolação, (2) valores
+não-vazios, (3) detecção de **não-traduzido** via `IDENTICAL_TO_EN_ALLOWLIST` auditada (53 pares
+legítimos, agrupados por motivo) + (4) detecção de allowlist **obsoleta**; e o novo
+`tests/i18n/no-hardcoded-strings.test.ts` varre `src/app`/`src/render` **por AST do TypeScript**
+(`ts.createSourceFile`; `typescript` já é dep) contra nós de texto JSX crus (`ts.JsxText` com letra/
+dígito; ignora whitespace/entidades/emoji decorativo) e literais no argumento de **conteúdo** de
+`add.text`(3º arg)/`.setText`(1º arg) fora de `t(...)` (permite `''` placeholder, separador `'\n'`,
+chave em `t()`; objetos de `style` não são conteúdo). O scanner é AST (não regex-por-linha) porque a
+**review apontou (Critical)** que um scanner por linha não pegava os padrões reais e dominantes do
+repo — JSX multi-linha, `.add.text(...)` encadeado, `.setText([...].join())` em array — nem texto com
+dígitos (Important); a reescrita por AST resolve a causa raiz e traz **fixtures permanentes** que
+provam em CI a captura desses padrões e a não-captura dos casos legítimos. Execução: inline (TDD com
+disciplina "testar o teste" — cada guarda comprovadamente pega uma violação injetada e volta a verde
+ao reverter) + **review final por subagente** (`reviewer`/opus): 1ª rodada **NÃO PRONTO** (Critical do
+scanner), fix aplicado, 2ª rodada re-verificou de forma independente reinjetando as 3 violações nos
+arquivos reais ⇒ **"RESOLVIDO — READY TO MERGE"**. Suíte verde (`check` limpo, **503 testes**,
+determinismo **67 inalterado**). **Adiados/backlog:** limitação conhecida do scanner JSX — texto misto
+`>Texto {expr}<` num único nó não é coberto (o app usa `{t()}` puro; a fixture cobre o nó totalmente
+literal, o risco real de regressão); guarda i18n não cobre `alt`/`title`/`placeholder`/`aria-label`
+hardcoded (hoje inexistentes; adicionar se a Fase 5+ introduzir).
+
+**Fase 4: 4.1–4.9 concluídos.** Próximo: **4.10 (Áudio)** — música de menu, música de gameplay e SFX
+de botões, consumindo os seams de volume/música persistidos pelo 4.8. Ver
+`docs/roadmap/PHASE-04-meta-offline.md`.
