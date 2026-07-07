@@ -61,7 +61,15 @@ ninho, loja in-game, expansões, troféus, configurações, 10 idiomas e áudio.
       `LANGUAGE_NATIVE_NAMES`.)
 
 ### 4.9 i18n completo (10 idiomas)
-- [ ] Cobertura de todas as strings em en, es, pt-BR, fr, it, de, ja, zh, hi.
+- [x] Cobertura de todas as strings em en, es, pt-BR, fr, it, de, ja, zh, ko, hi.
+      (Auditoria provou cobertura já completa — construída incrementalmente em 4.1–4.8: 130
+      chaves, paridade nos 10 locales, valores nativos, placeholders `{{value}}` preservados,
+      zero strings hardcoded. Deliverable: **guardas de regressão** que congelam a completude —
+      `tests/i18n/locales.test.ts` [paridade de placeholders, valores não-vazios, detecção de
+      não-traduzido via allowlist auditada de 53 pares legítimos + detecção de allowlist
+      obsoleta] e `tests/i18n/no-hardcoded-strings.test.ts` [scan de fonte em `src/app`/
+      `src/render` contra nós de texto JSX crus e literais Phaser]. Só camada de teste; `src/core/`
+      intocado ⇒ determinismo 67 inalterado. 499 testes.)
 
 ### 4.10 Áudio
 - [ ] Música de menu, música de gameplay, SFX de botões. Respeita configurações.
