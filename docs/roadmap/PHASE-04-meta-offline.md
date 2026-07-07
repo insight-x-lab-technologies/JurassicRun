@@ -72,7 +72,15 @@ ninho, loja in-game, expansões, troféus, configurações, 10 idiomas e áudio.
       intocado ⇒ determinismo 67 inalterado. 499 testes.)
 
 ### 4.10 Áudio
-- [ ] Música de menu, música de gameplay, SFX de botões. Respeita configurações.
+- [x] Música de menu, música de gameplay, SFX de botões. Respeita configurações.
+      (`src/services/audio/` puro×casca: `tracks.ts` [catálogos de faixas menu/gameplay +
+      SFX], `policy.ts` [`resolveAudioTarget` + `volumeToGain` v²], `engine.ts`
+      [`AudioEngine` + `nullAudioEngine` spy + `WebAudioEngine` scheduler look-ahead WebAudio],
+      `index.ts` [`AudioService` reativo: um `effect` liga `route`+3 sinais de settings+unlock →
+      engine idempotente; `bindButtonSfx` = SFX global por delegação `closest('button')` +
+      unlock de autoplay no 1º gesto]. Placeholders **procedurais** (osciladores, zero arquivo/
+      custo); faixas/SFX reais → Fase 8, guiados por `docs/audio/specs/`. Consome os seams
+      `volume`/`menuMusic`/`gameplayMusic` do 4.8. `src/core/` intocado ⇒ determinismo 67.)
 
 ## Definição de pronto
 - Todas as telas navegáveis e funcionais offline; i18n e áudio integrados; economia persiste.
