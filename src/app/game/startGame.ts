@@ -8,6 +8,7 @@ import { bindGameControls } from '@render/controls';
 import { nestService } from '@services/nest';
 import { walletService, coinsForFood } from '@services/wallet';
 import { trophyService } from '@services/trophy';
+import { leaderboardService } from '@services/leaderboard';
 
 /**
  * Monta o jogo Phaser no `container` no `mode` dado (endless por default) e devolve um
@@ -35,6 +36,16 @@ export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): 
         food: w.food,
         nearMisses: w.nearMisses,
         score: w.score,
+      });
+      leaderboardService.recordMatch({
+        mode,
+        seed: match.seedLabel,
+        score: w.score,
+        distance: w.distance,
+        food: w.food,
+        nearMisses: w.nearMisses,
+        level: w.level,
+        achievedAt: Date.now(),
       });
     },
   });
