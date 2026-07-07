@@ -8,6 +8,7 @@ import { walletService } from '@services/wallet';
 import { entitlementsService } from '@services/entitlements';
 import { trophyService } from '@services/trophy';
 import { settingsService } from '@services/settings';
+import { audioService, bindButtonSfx } from '@services/audio';
 import { App } from './App';
 
 async function bootstrap(): Promise<void> {
@@ -22,6 +23,9 @@ async function bootstrap(): Promise<void> {
   const root = document.getElementById('app');
   if (root === null) throw new Error('#app não encontrado');
   render(<App />, root);
+
+  audioService.init();
+  bindButtonSfx(document.body);
 }
 
 void bootstrap();

@@ -447,8 +447,8 @@ contra `segmentMin==max==0` (backlog de hardening).
 
 **Fase 3 concluída** (todos os 4 itens).
 
-**Fase 4 (Meta offline — perfis, ninho, loja, i18n, áudio, UI) — EM ANDAMENTO.** Itens 4.1
-a 4.6 concluídos.
+**Fase 4 (Meta offline — perfis, ninho, loja, i18n, áudio, UI) — CONCLUÍDA.** Itens 4.1
+a 4.10 concluídos.
 
 4.1 (app shell e navegação): casca Preact que hospeda **telas** navegáveis, com o jogo Phaser
 existente vivendo como a tela "Play". `main.ts`→`main.tsx` agora só faz `i18n.init()` +
@@ -720,6 +720,35 @@ determinismo **67 inalterado**). **Adiados/backlog:** limitação conhecida do s
 literal, o risco real de regressão); guarda i18n não cobre `alt`/`title`/`placeholder`/`aria-label`
 hardcoded (hoje inexistentes; adicionar se a Fase 5+ introduzir).
 
-**Fase 4: 4.1–4.9 concluídos.** Próximo: **4.10 (Áudio)** — música de menu, música de gameplay e SFX
-de botões, consumindo os seams de volume/música persistidos pelo 4.8. Ver
-`docs/roadmap/PHASE-04-meta-offline.md`.
+4.10 (Áudio): camada de áudio 100% de apresentação (padrão puro×casca em `src/services/audio/`),
+consumindo os seams `volume`/`menuMusic`/`gameplayMusic` que o 4.8 persistiu inertes; **`src/core/`
+intocado ⇒ determinismo 67 inalterado**. Puros (testados): `tracks.ts` (catálogos congelados —
+faixas `menu`/`gameplay` como sequências de notas + `SFX_CATALOG.click` + `beatsToSeconds`),
+`policy.ts` (`volumeToGain` curva v² + `resolveAudioTarget({route,volume,menuMusic,gameplayMusic,
+unlocked})→{track,musicGain,sfxGain}`; `MUSIC_CEILING 0.35`/`SFX_CEILING 0.6`; `route==='play'`⇒
+gameplay, senão menu; `!unlocked`⇒sem música; `volume 0`⇒silêncio). Casca: `engine.ts` (`AudioEngine`
+interface + `nullAudioEngine` spy testável + `WebAudioEngine` real — scheduler look-ahead com
+`setInterval`, osciladores procedurais, envelopes sem `exponentialRamp(0)`, `ensureCtx` lazy,
+`stopMusic` limpa o timer) e `index.ts` (`AudioService` singleton reativo: **um `effect`** combina
+`route`+3 sinais de settings+`_unlocked`→`resolveAudioTarget`→engine **idempotente** [só `playMusic`
+quando `running!==track`, senão `setMusicGain` ao vivo, `stopMusic` quando `track===null`]; `init()`
+descarta o effect anterior ⇒ reentrante; `unlock()` idempotente resolve autoplay). `bindButtonSfx`
+= **SFX global por delegação** (`closest('button')`) + unlock no 1º gesto (`pointerdown`/`keydown`
+`{once:true}`). Placeholders **procedurais** (zero arquivo/custo); faixas/SFX compostos reais → Fase 8,
+guiados por `docs/audio/specs/`. `main.tsx` fia `audioService.init()`+`bindButtonSfx(document.body)`
+após o `render`. Sem strings i18n novas (REGRA 4); sem trabalho por frame (REGRA 3; áudio só em
+transições). Execução SDD por subagentes (5 tasks: haiku puros / sonnet integração + review por task
++ review final opus **"READY TO MERGE"**, 0 Critical/Important). Suíte verde (`check` limpo, **522
+testes**, determinismo **67 inalterado**). Verificação no browser (Playwright, sonda no `AudioContext`):
+SFX `square` 660Hz no clique, música de menu `sine` (220/261.63/329.63/293.66 = tabela `menu`), música
+de gameplay `triangle` (293.66/329.63/392/440 = tabela `gameplay`) ao entrar em Play, unlock no 1º
+gesto, sem erros de áudio. **Adiados (backlog/Fase 8):** faixas/SFX compostos reais (`.ogg` via
+`decodeAudioData`, o `AudioEngine` é a costura); SFX além de `click` (flap/coleta/colisão/power-up/
+game over — mesmo `playSfx(id)`); toggle dedicado de SFX; áudio por-perfil (Fase 6); tuning de
+mixagem/andamentos/notas (placeholders); Minors — `beatsToSeconds(bpm=0)⇒Infinity` (catálogo nunca
+usa; guardado por teste), `WebAudioEngine` sem `destroy()` (singleton app-lifetime), scheduler assume
+`durBeats>0` (garantido por catálogo/teste), listeners de gesto presos a `window` (decisão de design).
+
+**Fase 4 (Meta offline) — CONCLUÍDA** (itens 4.1–4.10). Próximo: **Fase 5 (Desafios & leaderboards
+locais)** — modos Diário/Semanal determinísticos + leaderboard local + top-3. Ver
+`docs/roadmap/PHASE-05-challenges-local.md` e `docs/roadmap/PHASE-04-meta-offline.md`.
