@@ -151,5 +151,14 @@
     "startLife": { "desc": "开局附带一条额外生命。" },
     "headStart": { "desc": "开局附带护盾。" }
   },
-  "settings": { "title": "设置", "volume": "音量", "menuMusic": "菜单音乐", "gameplayMusic": "游戏音乐", "language": "语言", "on": "开", "off": "关", "back": "返回" }
+  "settings": { "title": "设置", "volume": "音量", "menuMusic": "菜单音乐", "gameplayMusic": "游戏音乐", "language": "语言", "on": "开", "off": "关", "back": "返回" },
+  "leaderboard": {
+    "title": "排行榜",
+    "empty": "还没有记录，快去创造一个吧！",
+    "score": "分数",
+    "distance": "距离",
+    "food": "食物",
+    "nearMisses": "险些相撞",
+    "tab": { "endless": "无尽", "daily": "每日", "weekly": "每周" }
+  }
 }

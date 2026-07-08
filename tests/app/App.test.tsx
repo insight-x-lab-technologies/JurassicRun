@@ -31,12 +31,22 @@ describe('App shell', () => {
     expect(container.textContent).toContain(i18n.t('home.newGame'));
   });
 
-  it('após navegar a um stub, mostra seu título e "em breve"', () => {
+  it('após navegar a outra rota, mostra a tela correspondente', () => {
+    render(<App />, container);
+    navigate('shop');
+    render(<App />, container); // re-render lê route.value corrente (flush determinístico)
+    expect(container.textContent).toContain(i18n.t('shop.title'));
+    expect(container.textContent).not.toContain(i18n.t('nav.play'));
+  });
+
+  it('após navegar à leaderboard, mostra a tela real de classificação (3 abas)', () => {
     render(<App />, container);
     navigate('leaderboard');
     render(<App />, container); // re-render lê route.value corrente (flush determinístico)
-    expect(container.textContent).toContain(i18n.t('screen.leaderboard'));
-    expect(container.textContent).toContain(i18n.t('screen.comingSoon'));
+    expect(container.textContent).toContain(i18n.t('leaderboard.title'));
+    expect(container.querySelector('[data-testid="leaderboard-tab-endless"]')).not.toBeNull();
+    expect(container.querySelector('[data-testid="leaderboard-tab-daily"]')).not.toBeNull();
+    expect(container.querySelector('[data-testid="leaderboard-tab-weekly"]')).not.toBeNull();
     expect(container.textContent).not.toContain(i18n.t('nav.play'));
   });
 });

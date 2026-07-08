@@ -151,5 +151,14 @@
     "startLife": { "desc": "追加ライフを持って開始。" },
     "headStart": { "desc": "防御シールドを持って開始。" }
   },
-  "settings": { "title": "設定", "volume": "音量", "menuMusic": "メニュー音楽", "gameplayMusic": "ゲーム音楽", "language": "言語", "on": "オン", "off": "オフ", "back": "戻る" }
+  "settings": { "title": "設定", "volume": "音量", "menuMusic": "メニュー音楽", "gameplayMusic": "ゲーム音楽", "language": "言語", "on": "オン", "off": "オフ", "back": "戻る" },
+  "leaderboard": {
+    "title": "ランキング",
+    "empty": "まだ記録がありません。プレイして記録を作ろう！",
+    "score": "スコア",
+    "distance": "距離",
+    "food": "エサ",
+    "nearMisses": "ニアミス",
+    "tab": { "endless": "エンドレス", "daily": "デイリー", "weekly": "ウィークリー" }
+  }
 }

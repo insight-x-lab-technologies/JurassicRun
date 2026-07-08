@@ -151,5 +151,14 @@
     "startLife": { "desc": "Inizia con una vita extra." },
     "headStart": { "desc": "Inizia con uno scudo protettivo." }
   },
-  "settings": { "title": "Impostazioni", "volume": "Volume", "menuMusic": "Musica del menu", "gameplayMusic": "Musica di gioco", "language": "Lingua", "on": "Sì", "off": "No", "back": "Indietro" }
+  "settings": { "title": "Impostazioni", "volume": "Volume", "menuMusic": "Musica del menu", "gameplayMusic": "Musica di gioco", "language": "Lingua", "on": "Sì", "off": "No", "back": "Indietro" },
+  "leaderboard": {
+    "title": "Classifica",
+    "empty": "Nessun record ancora — gioca per stabilirne uno!",
+    "score": "Punti",
+    "distance": "Dist",
+    "food": "Cibo",
+    "nearMisses": "Quasi collisioni",
+    "tab": { "endless": "Infinito", "daily": "Giornaliera", "weekly": "Settimanale" }
+  }
 }

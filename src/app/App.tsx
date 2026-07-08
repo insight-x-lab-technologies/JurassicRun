@@ -1,13 +1,13 @@
 import { route, type Screen } from './router';
 import { HomeScreen } from './screens/HomeScreen';
 import { PlayScreen } from './screens/PlayScreen';
-import { PlaceholderScreen } from './screens/PlaceholderScreen';
 import { OnboardingScreen } from './screens/OnboardingScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { NestScreen } from './screens/NestScreen';
 import { ShopScreen } from './screens/ShopScreen';
 import { ExpansionsScreen } from './screens/ExpansionsScreen';
 import { TrophiesScreen } from './screens/TrophiesScreen';
+import { LeaderboardScreen } from './screens/LeaderboardScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
 import { profileService } from '@services/profile';
 import { settingsService } from '@services/settings';
@@ -32,7 +32,7 @@ function screenFor(screen: Screen): VNode {
     case 'settings':
       return <SettingsScreen />;
     case 'leaderboard':
-      return <PlaceholderScreen titleKey="screen.leaderboard" />;
+      return <LeaderboardScreen />;
     case 'expansions':
       return <ExpansionsScreen />;
     case 'trophies':

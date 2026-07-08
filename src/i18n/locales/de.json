@@ -151,5 +151,14 @@
     "startLife": { "desc": "Startet mit einem Extraleben." },
     "headStart": { "desc": "Startet mit einem Schutzschild." }
   },
-  "settings": { "title": "Einstellungen", "volume": "Lautstärke", "menuMusic": "Menümusik", "gameplayMusic": "Spielmusik", "language": "Sprache", "on": "An", "off": "Aus", "back": "Zurück" }
+  "settings": { "title": "Einstellungen", "volume": "Lautstärke", "menuMusic": "Menümusik", "gameplayMusic": "Spielmusik", "language": "Sprache", "on": "An", "off": "Aus", "back": "Zurück" },
+  "leaderboard": {
+    "title": "Bestenliste",
+    "empty": "Noch keine Rekorde — spiele, um einen aufzustellen!",
+    "score": "Punkte",
+    "distance": "Dist",
+    "food": "Futter",
+    "nearMisses": "Beinahe-Kollisionen",
+    "tab": { "endless": "Endlos", "daily": "Täglich", "weekly": "Wöchentlich" }
+  }
 }
