@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createWorld, FIXED_DT } from '@core/sim';
 import type { InputFrame } from '@core/sim';
+import type { InputTimeline } from '@core/replay';
 import { FixedStepLoop } from '@render/loop';
 import { NullInputSource } from '@render/input';
 import { MAX_FRAME_TIME, SLOW_MO_TIME_SCALE } from '@render/constants';
@@ -69,6 +70,34 @@ describe('FixedStepLoop', () => {
     loop.advance(FIXED_DT * 1.5);
     const currX = world.pterodactyl.transform.position.x;
     expect(loop.renderX).toBeLessThanOrEqual(currX);
+  });
+
+  it('loop recém-criado tem timeline gravada vazia', () => {
+    const loop = new FixedStepLoop(tallWorld(), new NullInputSource());
+    expect(loop.recordedTimeline()).toEqual([]);
+  });
+
+  it('grava exatamente um frame por step, igual ao que a fonte forneceu', () => {
+    // fonte scriptada: flap true nos steps de índice par
+    let i = 0;
+    const scripted = { sample(): InputFrame { return { flap: i++ % 2 === 0 }; } };
+    const loop = new FixedStepLoop(tallWorld(), scripted);
+    const steps = loop.advance(FIXED_DT * 4);
+    expect(steps).toBe(4);
+    const timeline: InputTimeline = loop.recordedTimeline();
+    expect(timeline).toEqual([
+      { flap: true },
+      { flap: false },
+      { flap: true },
+      { flap: false },
+    ]);
+  });
+
+  it('não grava frames quando nenhum step completa (fração de dt)', () => {
+    const scripted = { sample(): InputFrame { return { flap: true }; } };
+    const loop = new FixedStepLoop(tallWorld(), scripted);
+    loop.advance(FIXED_DT / 2);
+    expect(loop.recordedTimeline()).toEqual([]);
   });
 });
 

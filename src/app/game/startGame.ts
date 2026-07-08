@@ -9,6 +9,8 @@ import { nestService } from '@services/nest';
 import { walletService, coinsForFood } from '@services/wallet';
 import { trophyService } from '@services/trophy';
 import { leaderboardService } from '@services/leaderboard';
+import { replayService } from '@services/replay';
+import { buildReplayPayload } from './replayPayload';
 
 /**
  * Monta o jogo Phaser no `container` no `mode` dado (endless por default) e devolve um
@@ -47,6 +49,14 @@ export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): 
         { distance: w.distance, food: w.food, nearMisses: w.nearMisses, score: w.score },
         dailyRank !== undefined ? { dailyRank } : undefined,
       );
+      const replay = buildReplayPayload(
+        mode,
+        match.seedLabel,
+        w,
+        match.recordedTimeline(),
+        Date.now(),
+      );
+      if (replay) replayService.record(replay);
     },
   });
 

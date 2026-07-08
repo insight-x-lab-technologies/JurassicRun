@@ -26,8 +26,12 @@ locais no aparelho.
       `leaderboardService.dailyRankForSeed`, injetado no Game Over só no modo `daily`).
       Placeholder até o central da Fase 6.
 
-### 5.4 Integridade
-- [ ] Guardar `seed` + `InputTimeline` da melhor tentativa (prepara verificação online).
+### 5.4 Integridade ✅
+- [x] Guardar `seed` + `InputTimeline` da melhor tentativa (prepara verificação online).
+      `FixedStepLoop` grava a timeline consumida; `src/services/replay/` guarda o melhor replay
+      por desafio (dedup por seed, top-N) com uma âncora `finalHash` = `hashState`; `verifyReplay`
+      re-simula `{seed, trait:'none'}` + timeline e compara o hash (seam da Fase 6). Só daily/weekly;
+      `src/core/` intocado (determinismo 67).
 
 ## Definição de pronto
 - Dá para jogar os desafios determinísticos e ver rankings locais nas três categorias.
