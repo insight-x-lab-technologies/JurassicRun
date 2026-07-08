@@ -25,7 +25,7 @@ export const ONLINE_MODES = ['endless', 'daily', 'weekly'] as const;
 export const VERIFIED_TABLES = ['scores', 'challenge_entries'] as const;
 
 /** Colunas esperadas por tabela — a guarda de contrato casa isto com a migração `.sql`. */
-export const TABLE_COLUMNS: Record<string, readonly string[]> = {
+export const TABLE_COLUMNS: Record<(typeof TABLE_NAMES)[number], readonly string[]> = {
   players: ['id', 'name', 'avatar', 'created_at'],
   scores: [
     'id', 'player_id', 'mode', 'seed', 'score', 'distance',
