@@ -885,4 +885,39 @@ espelha leaderboard; `rank()` muta o argumento via `.sort()` seguro; `achievedAt
 como no leaderboard; `Date.now()` chamado 2× no `onGameOver`; nome de teste "um flap virado"
 desatualizado; falta teste explícito do filtro de `finalHash` vazio).
 
-**Próximo: Fase 6 (Online — Supabase).** Ver `docs/roadmap/PHASE-06-online-supabase.md`.
+**Fase 6 (Online — Supabase) — EM ANDAMENTO.** Item 6.1 concluído.
+
+6.1 (Schema): schema do banco online — **só DDL/infra, `src/core/` intocado** ⇒ determinismo 67
+inalterado (sem re-pin de goldens). Banco Supabase **compartilhado entre projetos**
+(`InsightXLabGamesHub`); isolamento por **schema Postgres dedicado `jurassicrun`** (supera prefixo
+`jr_` — zero colisão de tabelas/tipos/funções/triggers/policies num banco multi-jogo).
+**Identidade** via Supabase Auth **anônimo**: cada dispositivo faz anonymous sign-in ⇒ ganha
+`auth.users.id` = ID global único; `players.id = auth.uid()` habilita **RLS por linha real** (o
+sign-in em si é 6.2). 4 tabelas espelhando os modelos locais das Fases 4–5: `players`
+(id/name≤20/avatar/created_at), `scores` (leaderboard todos os modos: mode/seed/score
+`double precision`/distance/food/near_misses/level/verified), `challenge_entries` (replays
+verificáveis Diário/Semanal: +timeline `jsonb`/final_hash, `unique(player_id,seed)`), `trophies`
+(player_id/trophy_id, PK composta). **RLS** ligada em todas: SELECT público (leaderboards mostram
+nomes/troféus), INSERT/UPDATE/DELETE só do dono (`= auth.uid()`); `scores` imutável (sem policy de
+update/delete ⇒ deny-by-default). **Anti-cheat seam:** flag `verified` (em scores/challenge_entries)
+travada em `false` para o cliente por trigger `lock_verified` (`before insert or update`, reseta
+`verified` quando `auth.role() <> 'service_role'`) — só a Edge Function de verificação (6.4,
+service_role) marca `true` após re-simular `(seed, timeline)` e conferir `final_hash` (a maquinaria
+de re-simulação é o `verifyReplay`/`hashState` de 5.4). Artefatos versionados: migração **idempotente**
+`supabase/migrations/20260708000000_jr_schema.sql` (create/drop-if-exists), módulo puro de constantes
+`src/services/online/schema.ts` (`SUPABASE_SCHEMA`/`TABLES`/`ONLINE_MODES`/`VERIFIED_TABLES`/
+`TABLE_COLUMNS`, tipado estrito p/ guarda de completude), **guarda de contrato** `tests/online/
+schema-contract.test.ts` (casa o texto do `.sql` com as constantes TS — schema/tabelas/colunas/RLS/
+policies select+insert/trigger; sem Postgres no CI, é a defesa contra divergência SQL↔TS), `.env.example`
+(só URL + publishable/anon key, segura no cliente por RLS; `!.env.example` no `.gitignore`, `.env` real
+ignorado) e `supabase/README.md` (como aplicar + passos de dashboard). Execução SDD por subagentes
+(3 tasks coder/haiku + review por task sonnet + review final opus **"READY TO MERGE"**, 0
+Critical/Important). Suíte verde (`check` limpo, **595 testes** [+10], determinismo **67 inalterado**).
+**Pré-requisito do usuário para 6.2+:** aplicar a migração no banco (SQL Editor ou `supabase db push`)
+e, no dashboard, adicionar `jurassicrun` a _Exposed schemas_ + habilitar _Anonymous sign-ins_ (o
+agente não tem senha do Postgres/service_role p/ aplicar). **Adiados/backlog:** `set search_path` na
+função de trigger (hardening, irrelevante a este seam — 6.4); empacotamento compacto da `timeline`
+(hoje `jsonb` de booleanos); dados por-perfil (hoje globais como wallet/trophy). **Próximo: 6.2 (ID
+global de jogador).**
+
+**Próximo: Fase 6 item 6.2 (ID global de jogador).** Ver `docs/roadmap/PHASE-06-online-supabase.md`.
