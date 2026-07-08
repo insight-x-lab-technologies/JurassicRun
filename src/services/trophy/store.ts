@@ -23,6 +23,12 @@ export interface TrophyState {
   readonly unlocked: readonly string[];
 }
 
+/** Contexto de avaliação: agregado vitalício + fatos transientes da partida recém-terminada. */
+export interface TrophyEvalContext {
+  readonly stats: TrophyStats;
+  readonly dailyRank?: number; // rank 1-based no leaderboard diário; ausente fora do Diário
+}
+
 export function emptyStats(): TrophyStats {
   return {
     gamesPlayed: 0, totalFood: 0, totalDistance: 0,
@@ -57,10 +63,12 @@ export function foldMatch(stats: TrophyStats, m: MatchSummary): TrophyStats {
 }
 
 /** Desbloqueia toda conquista satisfeita e ainda-não-desbloqueada. Mesmo objeto se nada muda. */
-export function evaluate(state: TrophyState): { state: TrophyState; newlyUnlocked: readonly string[] } {
+export function evaluate(
+  state: TrophyState, ctx: TrophyEvalContext,
+): { state: TrophyState; newlyUnlocked: readonly string[] } {
   const newlyUnlocked: string[] = [];
   for (const def of TROPHY_CATALOG) {
-    if (!state.unlocked.includes(def.id) && def.condition(state.stats)) {
+    if (!state.unlocked.includes(def.id) && def.condition(ctx)) {
       newlyUnlocked.push(def.id);
     }
   }
@@ -69,6 +77,11 @@ export function evaluate(state: TrophyState): { state: TrophyState; newlyUnlocke
 }
 
 /** Dobra a partida e reavalia. Imutável. */
-export function recordMatch(state: TrophyState, m: MatchSummary): { state: TrophyState; newlyUnlocked: readonly string[] } {
-  return evaluate({ stats: foldMatch(state.stats, m), unlocked: state.unlocked });
+export function recordMatch(
+  state: TrophyState, m: MatchSummary, extra?: { readonly dailyRank?: number },
+): { state: TrophyState; newlyUnlocked: readonly string[] } {
+  const stats = foldMatch(state.stats, m);
+  const ctx: TrophyEvalContext =
+    extra?.dailyRank !== undefined ? { stats, dailyRank: extra.dailyRank } : { stats };
+  return evaluate({ stats, unlocked: state.unlocked }, ctx);
 }
