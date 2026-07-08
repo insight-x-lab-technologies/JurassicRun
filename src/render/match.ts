@@ -1,4 +1,5 @@
 import type { WorldState } from '@core/sim';
+import type { InputTimeline } from '@core/replay';
 import { FixedStepLoop } from './loop';
 import type { InputSource } from './input';
 
@@ -49,6 +50,11 @@ export class MatchController {
   }
   get seedLabel(): string {
     return this._seedLabel;
+  }
+
+  /** Timeline dos inputs consumidos na partida corrente (para gravar o replay no game-over). */
+  recordedTimeline(): InputTimeline {
+    return this._loop.recordedTimeline();
   }
 
   /** Avança a simulação só em `playing`; transiciona para `dead` quando o mundo morre. */

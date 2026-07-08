@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import { MatchController } from '@render/match';
 import type { MatchInit } from '@render/match';
+import type { InputTimeline } from '@core/replay';
 import { createWorld } from '@core/sim';
 import { NullInputSource } from '@render/input';
 
@@ -135,5 +136,23 @@ describe('MatchController', () => {
     m.advance(1 / 60);         // 1 step, mundo ainda vivo
     expect(m.world.alive).toBe(true);
     expect(calls).toBe(0);
+  });
+
+  it('recordedTimeline reflete os steps rodados na partida', () => {
+    const m = new MatchController(new NullInputSource(), makeFactory());
+    m.notifyFlap(); // ready -> playing
+    m.advance((1 / 60) * 3); // 3 steps
+    const tl: InputTimeline = m.recordedTimeline();
+    expect(tl).toHaveLength(3);
+    expect(tl.every((f) => f.flap === false)).toBe(true); // NullInputSource
+  });
+
+  it('restart zera a timeline (loop fresco)', () => {
+    const m = new MatchController(new NullInputSource(), makeFactory());
+    m.notifyFlap();
+    advanceUntilDead(m);
+    expect(m.recordedTimeline().length).toBeGreaterThan(0);
+    m.restart(); // nova partida
+    expect(m.recordedTimeline()).toEqual([]);
   });
 });
