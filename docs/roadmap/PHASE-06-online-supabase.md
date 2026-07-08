@@ -8,10 +8,18 @@ Supabase (free tier) criada pelo usuário.
 
 ## Itens
 
-### 6.1 Schema
-- [ ] Tabelas: `players` (id global único, nome, avatar, criado_em), `scores`
+### 6.1 Schema — CONCLUÍDO
+- [x] Tabelas: `players` (id global único, nome, avatar, criado_em), `scores`
       (player_id, modo, seed, score, distância, criado_em), `challenge_entries`,
       `trophies`. RLS adequada.
+      Entregue: schema Postgres dedicado `jurassicrun` (isolamento no banco compartilhado
+      `InsightXLabGamesHub` — supera prefixo `jr_`); identidade via Supabase Auth anônimo
+      (`players.id = auth.uid()`); RLS por linha (SELECT público, escrita só do dono);
+      flag `verified` travada ao `service_role` via trigger `lock_verified` (seam do
+      anti-cheat 6.4). Migração idempotente `supabase/migrations/20260708000000_jr_schema.sql`
+      + constantes `src/services/online/schema.ts` + guarda de contrato SQL×TS + `.env.example`
+      + `supabase/README.md`. **Pré-req do usuário p/ 6.2+:** aplicar a migração + habilitar
+      `jurassicrun` em _Exposed schemas_ e _Anonymous sign-ins_ no dashboard.
 
 ### 6.2 ID global de jogador
 - [ ] Registrar jogador no servidor e obter ID único mundial; vincular ao perfil local.
