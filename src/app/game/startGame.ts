@@ -31,12 +31,6 @@ export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): 
     onNewMatch: () => flap.reset(),
     onGameOver: (w) => {
       walletService.earn(coinsForFood(w.food));
-      trophyService.recordMatch({
-        distance: w.distance,
-        food: w.food,
-        nearMisses: w.nearMisses,
-        score: w.score,
-      });
       leaderboardService.recordMatch({
         mode,
         seed: match.seedLabel,
@@ -47,6 +41,12 @@ export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): 
         level: w.level,
         achievedAt: Date.now(),
       });
+      const dailyRank =
+        mode === 'daily' ? leaderboardService.dailyRankForSeed(match.seedLabel) : undefined;
+      trophyService.recordMatch(
+        { distance: w.distance, food: w.food, nearMisses: w.nearMisses, score: w.score },
+        dailyRank !== undefined ? { dailyRank } : undefined,
+      );
     },
   });
 

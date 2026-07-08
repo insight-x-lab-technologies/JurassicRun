@@ -129,7 +129,8 @@
     "daredevil": { "name": "Temerario", "desc": "Consigue 10 casi-choques en una partida." },
     "marathoner": { "name": "Maratonista", "desc": "Recorre 10.000 de distancia total." },
     "highRoller": { "name": "Gran Apostador", "desc": "Consigue 5000 puntos en una partida." },
-    "persistent": { "name": "Persistente", "desc": "Juega 25 partidas." }
+    "persistent": { "name": "Persistente", "desc": "Juega 25 partidas." },
+    "dailyPodium": { "name": "Podio Diario", "desc": "Termina entre los 3 primeros en el Reto Diario local." }
   },
   "dino": {
     "starter": { "name": "Explorador" },
