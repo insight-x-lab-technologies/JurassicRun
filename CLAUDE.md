@@ -751,7 +751,7 @@ usa; guardado por teste), `WebAudioEngine` sem `destroy()` (singleton app-lifeti
 
 **Fase 4 (Meta offline) — CONCLUÍDA** (itens 4.1–4.10).
 
-**Fase 5 (Desafios & leaderboards locais) — EM ANDAMENTO.** Item 5.1 concluído.
+**Fase 5 (Desafios & leaderboards locais) — EM ANDAMENTO.** Itens 5.1 e 5.2 concluídos.
 
 5.1 (Modo Desafio): modos **Desafio Diário** (seed do dia UTC) e **Semanal** (seed da semana
 ISO-8601) jogáveis, reaproveitando o Endless. **Só camada de render/app — `src/core/` intocado**
@@ -782,5 +782,38 @@ backlog: smoke de App não asserta o `mode` passado a `startGame`; chaves i18n `
 locais Endless/Diário/Semanal + tela de 3 abas (5.2); troféu top-3 do diário (5.3); guardar
 `seed + InputTimeline` da melhor tentativa (5.4).
 
-**Próximo: 5.2 (Leaderboards locais)** — recordes locais por modo (Endless/Diário/Semanal) + tela
-com 3 abas. Ver `docs/roadmap/PHASE-05-challenges-local.md`.
+5.2 (Leaderboards locais): recordes locais por modo (Endless/Diário/Semanal) + tela de Leaderboard
+com 3 abas. **Só meta/apresentação — `src/core/` intocado** ⇒ determinismo **67 inalterado** (sem
+re-pin de goldens). Novo serviço **global** `src/services/leaderboard/` no molde puro×casca (espelha
+`trophy`/4.7): (1) `store.ts` PURO — `recordMatch(state, LeaderboardResult)` roteia por modo;
+**ranking por `score`** desc (desempate `achievedAt` asc, depois `seed`); **Endless** = toda corrida
+compete (top-`MAX_ENTRIES=10`); **Diário/Semanal** = deduplicado por `seed` (1 recorde por período,
+mantém o maior; tentativa pior devolve a MESMA ref ⇒ realiza "melhor tentativa rankeia" do 5.1);
+`bestEndlessLevel` = máximo vitalício (nunca evictado, só Endless); `sanitizeStat` (piso≥0, molde do
+`trophy`). (2) `storage.ts` — localStorage `jurassicrun.leaderboard.v1` (payload `{version:1,...state}`),
+`parseState` robusto (JSON inválido/forma errada ⇒ inicial; entradas malformadas filtradas, `seed`
+não-vazia). (3) `index.ts` — `LeaderboardService` reativo singleton (sinais computed `endless`/`daily`/
+`weekly`/`bestEndlessLevel`; `recordMatch` persiste **só se a ref mudar** ⇒ no-op periódico não salva).
+**O `score` (composto de 1.8) finalmente é EXIBIDO** — nunca aparecia no HUD/Game Over; é a métrica de
+rank. Fiação (casca): `startGame.onGameOver` (já credita moeda+troféu) agora também
+`leaderboardService.recordMatch({mode, seed: match.seedLabel, score/distance/food/nearMisses/level,
+achievedAt: Date.now()})`; `main.tsx` faz `leaderboardService.init()`; **`getHomeStats().maxLevel`
+religado** de placeholder `1` → `bestEndlessLevel.value` (fecha o seam que 4.3 marcou p/ a Fase 5).
+UI: `LeaderboardScreen` (rota `leaderboard`, deixa de ser placeholder — **`PlaceholderScreen` ficou sem
+consumidores**) com 3 abas (`role=tablist`, `useState`), lista rankeada com medalhas 🥇🥈🥉 + `aria-label`
+Score + detalhe distância/comida/near-misses + seed do período, estado vazio, Voltar; CSS por design
+tokens (abas ≥44px). Chaves i18n `leaderboard.*` (9 folhas) nos 10 locales (REGRA 4; paridade + scanner
+AST verdes; add-locale skill indisponível ⇒ traduções à mão, allowlist justificada). Execução SDD por
+subagentes (5 tasks: store/storage/service haiku, fiação/UI sonnet + review por task + review final opus
+**"READY TO MERGE"**, 0 Critical/Important; 1 fix pós-review-final: chaves `leaderboard.score`/`nearMisses`
+estavam mortas ⇒ agora renderizadas). Suíte verde (`check` limpo, **548 testes**, determinismo **67
+inalterado**). Verificação end-to-end (Playwright, bundle real + localStorage semeado): Home "Best Lv: 7"
+lê `bestEndlessLevel`; aba Endless 🥇90/🥈40 ranqueado; Diário mostra recorde do período; Semanal estado
+vazio; troca de abas OK; chave de storage confere. **Adiados/backlog:** troféu top-3 do diário (5.3);
+guardar `seed + InputTimeline` da melhor tentativa (5.4); leaderboards **por-perfil** (hoje globais como
+wallet/trophy/nest → Fase 6); housekeeping de dead code — `PlaceholderScreen.tsx` órfão + chaves i18n
+órfãs `screen.{daily,weekly,leaderboard,comingSoon}`; Endless persiste mesmo sem melhorar top-10/level
+(write redundante); ARIA `aria-controls`/`tabpanel`; tuning de `MAX_ENTRIES`/formatação de data (Fase 8).
+
+**Próximo: 5.3 (Troféus de desafio — local)** — top-3 local do desafio diário ganha troféu (placeholder
+até o central da Fase 6). Ver `docs/roadmap/PHASE-05-challenges-local.md`.
