@@ -8,6 +8,7 @@ import { walletService } from '@services/wallet';
 import { entitlementsService } from '@services/entitlements';
 import { trophyService } from '@services/trophy';
 import { leaderboardService } from '@services/leaderboard';
+import { replayService } from '@services/replay';
 import { settingsService } from '@services/settings';
 import { audioService, bindButtonSfx } from '@services/audio';
 import { App } from './App';
@@ -21,6 +22,7 @@ async function bootstrap(): Promise<void> {
   entitlementsService.init();
   trophyService.init();
   leaderboardService.init();
+  replayService.init();
 
   const root = document.getElementById('app');
   if (root === null) throw new Error('#app não encontrado');
