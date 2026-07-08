@@ -17,9 +17,9 @@ function EntryRow({ entry, index }: { entry: LeaderboardEntry; index: number }):
       <span class="leaderboard__rank" aria-hidden={index < 3 ? 'true' : undefined}>
         {rankGlyph(index)}
       </span>
-      <span class="leaderboard__score">{entry.score}</span>
+      <span class="leaderboard__score" aria-label={i18n.t('leaderboard.score')}>{entry.score}</span>
       <span class="leaderboard__detail">
-        {i18n.t('leaderboard.distance')}: {entry.distance} · {i18n.t('leaderboard.food')}: {entry.food}
+        {i18n.t('leaderboard.distance')}: {entry.distance} · {i18n.t('leaderboard.food')}: {entry.food} · {i18n.t('leaderboard.nearMisses')}: {entry.nearMisses}
       </span>
       <span class="leaderboard__seed">{entry.seed}</span>
     </li>
