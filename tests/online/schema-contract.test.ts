@@ -33,7 +33,7 @@ describe('migração casa com as constantes do schema', () => {
     for (const t of TABLE_NAMES) {
       const start = SQL.indexOf(`${SUPABASE_SCHEMA}.${t} (`);
       const body = SQL.slice(start, SQL.indexOf(');', start));
-      for (const col of TABLE_COLUMNS[t] ?? []) {
+      for (const col of TABLE_COLUMNS[t]) {
         expect(body, `${t}.${col}`).toMatch(new RegExp(`\\b${col}\\b`));
       }
     }
