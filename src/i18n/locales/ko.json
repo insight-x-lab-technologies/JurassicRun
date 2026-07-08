@@ -129,7 +129,8 @@
     "daredevil": { "name": "무모한 도전자", "desc": "한 판에서 아슬아슬한 회피를 10번 달성하세요." },
     "marathoner": { "name": "마라토너", "desc": "총 10,000 거리를 이동하세요." },
     "highRoller": { "name": "큰손", "desc": "한 판에서 5000점을 획득하세요." },
-    "persistent": { "name": "끈기", "desc": "25판을 플레이하세요." }
+    "persistent": { "name": "끈기", "desc": "25판을 플레이하세요." },
+    "dailyPodium": { "name": "일일 시상대", "desc": "로컬 일일 도전에서 3위 안에 들기." }
   },
   "dino": {
     "starter": { "name": "스카우트" },

@@ -3,6 +3,7 @@ import {
   initialLeaderboardState,
   recordMatch,
   sanitizeStat,
+  rankOf,
   MAX_ENTRIES,
   type LeaderboardResult,
   type LeaderboardState,
@@ -81,5 +82,23 @@ describe('recordMatch — daily/weekly dedup by seed', () => {
     expect(s.endless).toHaveLength(0);
     expect(s.weekly).toHaveLength(0);
     expect(s.daily).toHaveLength(1);
+  });
+});
+
+describe('rankOf', () => {
+  it('retorna a posição 1-based na lista diária ranqueada por score', () => {
+    let s = initialLeaderboardState();
+    s = recordMatch(s, result({ mode: 'daily', seed: 'daily:2026-07-05', score: 10 }));
+    s = recordMatch(s, result({ mode: 'daily', seed: 'daily:2026-07-06', score: 30 }));
+    s = recordMatch(s, result({ mode: 'daily', seed: 'daily:2026-07-07', score: 20 }));
+    // ranqueado: 07-06 (30) > 07-07 (20) > 07-05 (10)
+    expect(rankOf(s.daily, 'daily:2026-07-06')).toBe(1);
+    expect(rankOf(s.daily, 'daily:2026-07-07')).toBe(2);
+    expect(rankOf(s.daily, 'daily:2026-07-05')).toBe(3);
+  });
+
+  it('retorna undefined para seed ausente', () => {
+    const s = initialLeaderboardState();
+    expect(rankOf(s.daily, 'daily:nope')).toBeUndefined();
   });
 });

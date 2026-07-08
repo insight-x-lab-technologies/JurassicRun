@@ -20,8 +20,11 @@ locais no aparelho.
       período, detalhe distância/comida/near-misses). Religa o seam `maxLevel` da Home =
       `bestEndlessLevel`.
 
-### 5.3 Troféus de desafio (local)
-- [ ] Top-3 local do desafio diário ganham troféu (placeholder até o central da Fase 6).
+### 5.3 Troféus de desafio (local) ✅
+- [x] Top-3 local do desafio diário ganham troféu (`dailyPodium`; predicado do troféu passa a
+      `(ctx)=>boolean` com `ctx={stats, dailyRank?}`; `dailyRank` vem de
+      `leaderboardService.dailyRankForSeed`, injetado no Game Over só no modo `daily`).
+      Placeholder até o central da Fase 6.
 
 ### 5.4 Integridade
 - [ ] Guardar `seed` + `InputTimeline` da melhor tentativa (prepara verificação online).

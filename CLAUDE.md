@@ -815,5 +815,38 @@ wallet/trophy/nest → Fase 6); housekeeping de dead code — `PlaceholderScreen
 órfãs `screen.{daily,weekly,leaderboard,comingSoon}`; Endless persiste mesmo sem melhorar top-10/level
 (write redundante); ARIA `aria-controls`/`tabpanel`; tuning de `MAX_ENTRIES`/formatação de data (Fase 8).
 
-**Próximo: 5.3 (Troféus de desafio — local)** — top-3 local do desafio diário ganha troféu (placeholder
-até o central da Fase 6). Ver `docs/roadmap/PHASE-05-challenges-local.md`.
+5.3 (Troféus de desafio — local): o troféu `dailyPodium` desbloqueia quando a corrida de Desafio
+Diário fica no **top-3 do leaderboard diário local** — placeholder do top-3 **central** da Fase 6.
+**Só meta/apresentação — `src/core/` intocado** ⇒ determinismo **67 inalterado** (sem re-pin de
+goldens). Estende o sistema de troféus (4.7): o predicado puro do troféu passa de
+`(stats)=>boolean` para `(ctx)=>boolean` com `TrophyEvalContext {stats, dailyRank?}` — **a mesma
+jogada de unificação que o 4.7 fez** (cumulativo × partida-única), agora incluindo um fato
+**derivado da partida** além do agregado vitalício. `dailyRank` é **transiente**: não é dobrado em
+`TrophyStats` nem persistido (`storage.ts` só grava `stats`+`unlocked`) ⇒ `dailyPodium` só destrava
+no **momento** de um Game Over de Diário qualificado (coerente com "evaluate não roda no init"), mas
+uma vez ganho permanece. Novo troféu `{ id:'dailyPodium', condition:(c)=>c.dailyRank!==undefined &&
+c.dailyRank<=PODIUM_RANK }` com `PODIUM_RANK=3`; `evaluate(state,ctx)` e `recordMatch(state,m,extra?)`
+recebem o contexto (o `extra`/contexto é montado **condicionalmente** por `exactOptionalPropertyTypes`,
+nunca `{dailyRank:undefined}`); os 7 troféus antigos migram 1:1 para `c.stats.*` (comportamento
+idêntico). **Leaderboard (5.2)** ganha `rankOf(list, seed)` (posição 1-based na lista já ranqueada;
+`undefined` se ausente ou fora do top-`MAX_ENTRIES=10`) + `LeaderboardService.dailyRankForSeed(seed)`.
+**Fiação** (`startGame.onGameOver`): reordenado para gravar o leaderboard **antes**, calcular
+`dailyRank` **só** no modo `daily` (senão `undefined` ⇒ endless/semanal nunca ganham pódio: dupla
+proteção — guarda de modo + `dailyRankForSeed` só consulta a lista `daily`) e injetar em
+`trophyService.recordMatch(summary, {dailyRank})`. `TrophiesScreen` renderiza o novo troféu de graça
+(catálogo genérico); só precisou das chaves i18n `trophy.dailyPodium.{name,desc}` nos 10 locales
+(REGRA 4, traduções nativas, paridade + scanner AST verdes, 0 allowlist nova). **Semântica do "top-3
+local":** diário é dedup por seed = 1 recorde por dia ⇒ top-3 = a corrida de hoje entre os 3 melhores
+dias já pontuados; leniente nos 1ºs dias (1º Diário ⇒ rank 1 ⇒ destrava na hora), **placeholder
+intencional** que a Fase 6 endurece para top-3 global. Execução SDD por subagentes (3 tasks:
+leaderboard rankOf haiku, contexto+catálogo sonnet, i18n+fiação sonnet + review por task + review
+final opus **"READY TO MERGE"**, 0 Critical/Important). Suíte verde (`check` limpo, **554 testes**,
+determinismo **67 inalterado**). **Desvio de plano legítimo (Task 2):** a asserção de idempotência
+`toBe(first.state)` era inatingível (`recordMatch` sempre incrementa `gamesPlayed` ⇒ nova ref) →
+trocada por `.unlocked.toEqual` (ainda prova o desbloqueio idempotente; `unlocked` mantém a ref no
+early-return de `evaluate`). **Adiados/backlog:** teste de unidade da orquestração `onGameOver`
+afirmando que só `daily` injeta `dailyRank` (casca fina, coberto indiretamente); pódio semanal
+análogo (fora de escopo); tuning de `PODIUM_RANK` e endurecimento p/ top-3 global (Fase 6).
+
+**Próximo: 5.4 (Integridade)** — guardar `seed` + `InputTimeline` da melhor tentativa (prepara
+verificação online). Ver `docs/roadmap/PHASE-05-challenges-local.md`.

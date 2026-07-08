@@ -20,8 +20,8 @@ export class TrophyService {
   }
 
   /** Registra o resultado de uma partida; persiste se algo mudou. Retorna os ids recém-desbloqueados. */
-  recordMatch(m: MatchSummary): readonly string[] {
-    const { state, newlyUnlocked } = recordMatchState(this._state.value, m);
+  recordMatch(m: MatchSummary, extra?: { readonly dailyRank?: number }): readonly string[] {
+    const { state, newlyUnlocked } = recordMatchState(this._state.value, m, extra);
     this.commit(state); // stats sempre mudam (gamesPlayed++) ⇒ sempre persiste
     return newlyUnlocked;
   }
