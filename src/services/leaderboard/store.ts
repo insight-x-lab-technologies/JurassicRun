@@ -95,3 +95,9 @@ export function recordMatch(state: LeaderboardState, r: LeaderboardResult): Lead
   if (nextList === state[key]) return state; // no-op periódico ⇒ mesma ref
   return { ...state, [key]: nextList };
 }
+
+/** Posição 1-based da entrada com essa seed na lista (já ranqueada); undefined se ausente. */
+export function rankOf(list: readonly LeaderboardEntry[], seed: string): number | undefined {
+  const idx = list.findIndex((e) => e.seed === seed);
+  return idx === -1 ? undefined : idx + 1;
+}

@@ -2,6 +2,7 @@ import { signal, computed, type ReadonlySignal } from '@preact/signals';
 import {
   initialLeaderboardState,
   recordMatch as recordMatchState,
+  rankOf,
   type LeaderboardEntry,
   type LeaderboardResult,
   type LeaderboardState,
@@ -32,6 +33,11 @@ export class LeaderboardService {
     if (next === this._state.value) return; // no-op ⇒ nada a fazer
     this._state.value = next;
     this.storage.save(next);
+  }
+
+  /** Rank 1-based do recorde diário dessa seed; undefined se não houver. */
+  dailyRankForSeed(seed: string): number | undefined {
+    return rankOf(this._state.value.daily, seed);
   }
 }
 

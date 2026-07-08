@@ -47,4 +47,16 @@ describe('LeaderboardService', () => {
     svc.recordMatch(result({ mode: 'weekly', seed: 'w', score: 20 })); // worse ⇒ no-op
     expect(saves).toBe(1);
   });
+
+  describe('dailyRankForSeed', () => {
+    it('reflete o rank da seed diária após recordMatch; undefined se ausente', () => {
+      const svc = new LeaderboardService();
+      svc.init(memoryLeaderboardStorage());
+      svc.recordMatch({ mode: 'daily', seed: 'daily:A', score: 10, distance: 0, food: 0, nearMisses: 0, level: 1, achievedAt: 1 });
+      svc.recordMatch({ mode: 'daily', seed: 'daily:B', score: 50, distance: 0, food: 0, nearMisses: 0, level: 1, achievedAt: 2 });
+      expect(svc.dailyRankForSeed('daily:B')).toBe(1);
+      expect(svc.dailyRankForSeed('daily:A')).toBe(2);
+      expect(svc.dailyRankForSeed('daily:missing')).toBeUndefined();
+    });
+  });
 });
