@@ -151,5 +151,14 @@
     "startLife": { "desc": "एक अतिरिक्त जीवन के साथ शुरुआत।" },
     "headStart": { "desc": "एक सुरक्षा ढाल के साथ शुरुआत।" }
   },
-  "settings": { "title": "सेटिंग्स", "volume": "वॉल्यूम", "menuMusic": "मेन्यू संगीत", "gameplayMusic": "गेमप्ले संगीत", "language": "भाषा", "on": "चालू", "off": "बंद", "back": "वापस" }
+  "settings": { "title": "सेटिंग्स", "volume": "वॉल्यूम", "menuMusic": "मेन्यू संगीत", "gameplayMusic": "गेमप्ले संगीत", "language": "भाषा", "on": "चालू", "off": "बंद", "back": "वापस" },
+  "leaderboard": {
+    "title": "लीडरबोर्ड",
+    "empty": "अभी तक कोई रिकॉर्ड नहीं है — खेलकर पहला रिकॉर्ड बनाएँ!",
+    "score": "स्कोर",
+    "distance": "दूरी",
+    "food": "भोजन",
+    "nearMisses": "करीबी टक्कर",
+    "tab": { "endless": "अनंत", "daily": "दैनिक", "weekly": "साप्ताहिक" }
+  }
 }

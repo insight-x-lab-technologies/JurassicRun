@@ -160,5 +160,18 @@
     "on": "On",
     "off": "Off",
     "back": "Back"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "empty": "No records yet — play to set one!",
+    "score": "Score",
+    "distance": "Dist",
+    "food": "Food",
+    "nearMisses": "Near misses",
+    "tab": {
+      "endless": "Endless",
+      "daily": "Daily",
+      "weekly": "Weekly"
+    }
   }
 }

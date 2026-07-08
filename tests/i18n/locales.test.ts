@@ -63,6 +63,11 @@ const IDENTICAL_TO_EN_ALLOWLIST: ReadonlySet<string> = new Set<string>([
   'fr::expansions.active', 'fr::expansion.glacier.name', 'fr::trophy.centurion.name',
   // "Volume" — idêntico em pt-BR/fr/it.
   'pt-BR::settings.volume', 'fr::settings.volume', 'it::settings.volume',
+  // "Dist" — mesma abreviação de Distancia/Distância/Distance/Distanza/Distanz (molde de hud.distance).
+  'es::leaderboard.distance', 'pt-BR::leaderboard.distance', 'fr::leaderboard.distance',
+  'it::leaderboard.distance', 'de::leaderboard.distance',
+  // "Score" — cognato real em francês (uso corrente em jogos).
+  'fr::leaderboard.score',
 ]);
 
 // Valor que é só interpolação (ex.: "{{value}}") não tem o que traduzir.

@@ -151,5 +151,14 @@
     "startLife": { "desc": "Commence avec une vie supplémentaire." },
     "headStart": { "desc": "Commence avec un bouclier protecteur." }
   },
-  "settings": { "title": "Paramètres", "volume": "Volume", "menuMusic": "Musique du menu", "gameplayMusic": "Musique de jeu", "language": "Langue", "on": "Activé", "off": "Désactivé", "back": "Retour" }
+  "settings": { "title": "Paramètres", "volume": "Volume", "menuMusic": "Musique du menu", "gameplayMusic": "Musique de jeu", "language": "Langue", "on": "Activé", "off": "Désactivé", "back": "Retour" },
+  "leaderboard": {
+    "title": "Classement",
+    "empty": "Pas encore de record — jouez pour en établir un !",
+    "score": "Score",
+    "distance": "Dist",
+    "food": "Nourriture",
+    "nearMisses": "Quasi-collisions",
+    "tab": { "endless": "Infini", "daily": "Quotidien", "weekly": "Hebdomadaire" }
+  }
 }
