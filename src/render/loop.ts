@@ -1,5 +1,6 @@
 import { FIXED_DT, step } from '@core/sim';
 import type { WorldState } from '@core/sim';
+import type { InputTimeline } from '@core/replay';
 import { isEffectActive } from '@core/powerup';
 import type { InputSource } from './input';
 import { lerp } from './interpolate';
@@ -16,6 +17,7 @@ export class FixedStepLoop {
   private accumulator = 0;
   private prevX: number;
   private prevY: number;
+  private readonly recorded: boolean[] = [];
 
   constructor(world: WorldState, input: InputSource) {
     this.world = world;
@@ -35,7 +37,9 @@ export class FixedStepLoop {
     while (this.accumulator >= FIXED_DT) {
       this.prevX = pos.x; // snapshot 1 step atrás de `curr` (= pos após o step)
       this.prevY = pos.y;
-      step(this.world, this.input.sample());
+      const frame = this.input.sample();
+      this.recorded.push(frame.flap); // booleano primitivo (REGRA 3: sem alocação de objeto)
+      step(this.world, frame);
       this.accumulator -= FIXED_DT;
       steps += 1;
     }
@@ -53,5 +57,13 @@ export class FixedStepLoop {
 
   get renderY(): number {
     return lerp(this.prevY, this.world.pterodactyl.transform.position.y, this.alpha);
+  }
+
+  /**
+   * Timeline dos inputs consumidos até agora (um frame por step rodado). Montada sob demanda
+   * (cold path — chamada no game-over), não no hot path. Loop fresco ⇒ timeline vazia.
+   */
+  recordedTimeline(): InputTimeline {
+    return this.recorded.map((flap) => ({ flap }));
   }
 }
