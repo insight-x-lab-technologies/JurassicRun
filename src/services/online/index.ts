@@ -77,6 +77,27 @@ export class OnlineService {
     }
   }
 
+  async submitTrophies(ids: readonly string[]): Promise<void> {
+    const id = this._id.value;
+    if (this._status.value !== 'online' || id === null || this.client === null) return;
+    if (ids.length === 0) return;
+    try {
+      await this.client.submitTrophies(id, ids);
+    } catch {
+      // best-effort
+    }
+  }
+
+  async fetchTrophies(): Promise<readonly string[]> {
+    const id = this._id.value;
+    if (this._status.value !== 'online' || id === null || this.client === null) return [];
+    try {
+      return await this.client.fetchTrophies(id);
+    } catch {
+      return [];
+    }
+  }
+
   async init(deps: OnlineInitDeps = {}): Promise<void> {
     // Reentrante: descarta a assinatura de perfil anterior.
     if (this.disposeEffect !== null) {
