@@ -5,6 +5,9 @@ import {
   createSupabaseClient,
   type OnlineClient,
   type OnlinePlayer,
+  type OnlineScoreInput,
+  type OnlineScoreRow,
+  type OnlineMode,
 } from './client';
 
 export type OnlineStatus = 'offline' | 'connecting' | 'online' | 'error';
@@ -23,7 +26,7 @@ function signatureOf(p: OnlinePlayer): string {
   return `${p.id}|${p.name}|${p.avatar}`;
 }
 
-class OnlineService {
+export class OnlineService {
   private readonly _id = signal<string | null>(null);
   private readonly _status = signal<OnlineStatus>('offline');
   private client: OnlineClient | null = null;
@@ -33,6 +36,26 @@ class OnlineService {
 
   readonly globalPlayerId: ReadonlySignal<string | null> = computed(() => this._id.value);
   readonly status: ReadonlySignal<OnlineStatus> = computed(() => this._status.value);
+  readonly online: ReadonlySignal<boolean> = computed(() => this._status.value === 'online');
+
+  async submitScore(input: Omit<OnlineScoreInput, 'playerId'>): Promise<void> {
+    const id = this._id.value;
+    if (this._status.value !== 'online' || id === null || this.client === null) return;
+    try {
+      await this.client.submitScore({ ...input, playerId: id });
+    } catch {
+      // best-effort: falha de rede não derruba o status
+    }
+  }
+
+  async fetchScores(mode: OnlineMode, seed?: string): Promise<readonly OnlineScoreRow[]> {
+    if (this._status.value !== 'online' || this.client === null) return [];
+    try {
+      return await this.client.fetchScores(mode, seed);
+    } catch {
+      return [];
+    }
+  }
 
   async init(deps: OnlineInitDeps = {}): Promise<void> {
     // Reentrante: descarta a assinatura de perfil anterior.
@@ -95,3 +118,4 @@ class OnlineService {
 
 export const onlineService = new OnlineService();
 export type { OnlineConfig } from './config';
+export type { OnlineScoreInput, OnlineScoreRow, OnlineMode } from './client';

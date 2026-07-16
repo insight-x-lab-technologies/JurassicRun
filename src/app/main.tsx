@@ -12,6 +12,7 @@ import { replayService } from '@services/replay';
 import { settingsService } from '@services/settings';
 import { audioService, bindButtonSfx } from '@services/audio';
 import { onlineService } from '@services/online';
+import { createLeaderboardOnline } from './online/leaderboardAdapter';
 import { App } from './App';
 
 async function bootstrap(): Promise<void> {
@@ -23,7 +24,7 @@ async function bootstrap(): Promise<void> {
   walletService.init();
   entitlementsService.init();
   trophyService.init();
-  leaderboardService.init();
+  leaderboardService.init(undefined, createLeaderboardOnline());
   replayService.init();
 
   const root = document.getElementById('app');

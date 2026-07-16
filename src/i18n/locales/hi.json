@@ -160,6 +160,8 @@
     "distance": "दूरी",
     "food": "भोजन",
     "nearMisses": "करीबी टक्कर",
+    "player": "खिलाड़ी",
+    "source": { "global": "वैश्विक", "local": "स्थानीय" },
     "tab": { "endless": "अनंत", "daily": "दैनिक", "weekly": "साप्ताहिक" }
   },
   "online": {

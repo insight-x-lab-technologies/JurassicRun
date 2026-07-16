@@ -160,6 +160,8 @@
     "distance": "距离",
     "food": "食物",
     "nearMisses": "险些相撞",
+    "player": "玩家",
+    "source": { "global": "全球", "local": "本地" },
     "tab": { "endless": "无尽", "daily": "每日", "weekly": "每周" }
   },
   "online": {
