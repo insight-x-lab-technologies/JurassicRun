@@ -50,8 +50,25 @@ Supabase (free tier) criada pelo usuário.
       sem `.env`/offline degrada 100% ao local, sem exceção. `src/core/` intocado ⇒ determinismo
       **67 inalterado**; suíte 624 verde.
 
-### 6.4 Verificação de desafio (anti-cheat)
-- [ ] Edge Function que re-simula `(seed, InputTimeline)` e valida o score submetido.
+### 6.4 Verificação de desafio (anti-cheat) — CONCLUÍDO
+- [x] Edge Function que re-simula `(seed, InputTimeline)` e valida o score submetido.
+      Entregue: verificação pura `verifyChallengeSubmission` (`src/services/online/verifyChallenge.ts`,
+      importa só `@core/replay`) re-simula `{seed, trait:'none'}` + timeline e exige BOTH
+      `hashMatches` (timeline reproduz o estado final) AND `fieldsMatch` (colunas
+      `score/distance/food/nearMisses` batem com a re-sim — impede inflar coluna com hash
+      válido). Bundle ESM autocontido (`_verify.bundle.js`, esbuild via `npm run build:edge`)
+      + guarda de equivalência fonte↔bundle (staleness). Edge Function Deno
+      `supabase/functions/verify-challenge/` (service_role) varre `challenge_entries`
+      `verified=false` em lote e marca `verified=true` nos fiéis (idempotente; HTTP/cron).
+      Cliente passa a submeter `challenge_entries` (daily/weekly) reusando `buildReplayPayload`
+      (`OnlineClient.submitChallengeEntry`/`fetchVerifiedPlayers` + delegadores best-effort no
+      `OnlineService` + fiação no `startGame.onGameOver`). Leaderboard central exibe selo ✓
+      cruzando o conjunto verificado da seed (i18n `leaderboard.verified` nos 10 locales).
+      **Não posso fazer deploy** (pré-req do usuário, molde 6.1): `npm run build:edge` +
+      `supabase functions deploy verify-challenge`. `src/core/` intocado ⇒ determinismo **67
+      inalterado**; suíte **637** verde. **Adiados:** auto-invocação pós-submit; gate real
+      (esconder/ordenar por não-verificados) + verificar a coluna `scores` exibida (hoje o ✓
+      atesta o replay, o score exibido vem de `scores` não-verificado); verificação de Endless.
 
 ### 6.5 Troféus centrais
 - [ ] Top-3 do desafio diário recebem troféu no perfil (sincronizado).
