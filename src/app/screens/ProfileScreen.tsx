@@ -3,6 +3,7 @@ import type { VNode } from 'preact';
 import { back } from '../router';
 import { i18n } from '@services/i18n';
 import { profileService, avatarFor, type Profile } from '@services/profile';
+import { onlineService } from '@services/online';
 
 function Avatar({ profile }: { profile: Profile }): VNode {
   const { initial, hue } = avatarFor(profile);
@@ -16,6 +17,8 @@ function Avatar({ profile }: { profile: Profile }): VNode {
 export function ProfileScreen(): VNode {
   const active = profileService.activeProfile.value;
   const profiles = profileService.profiles.value;
+  const onlineStatus = onlineService.status.value;
+  const globalId = onlineService.globalPlayerId.value;
   const [renameValue, setRenameValue] = useState(active?.name ?? '');
   const [createValue, setCreateValue] = useState('');
   const renameInputRef = useRef<HTMLInputElement>(null);
@@ -58,6 +61,16 @@ export function ProfileScreen(): VNode {
           <span>{active.name}</span>
         </div>
       )}
+
+      <div class="online-status" data-testid="online-status">
+        <span class="online-status__label">{i18n.t('online.title')}</span>
+        <span class="online-status__value">{i18n.t(`online.status.${onlineStatus}`)}</span>
+        {globalId !== null && (
+          <span class="online-status__id">
+            {i18n.t('online.globalId')}: {globalId.slice(0, 8)}
+          </span>
+        )}
+      </div>
 
       <h2>{i18n.t('profile.rename')}</h2>
       <form class="form" data-testid="rename-form" onSubmit={submitRename}>

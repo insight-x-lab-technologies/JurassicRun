@@ -161,5 +161,15 @@
     "food": "भोजन",
     "nearMisses": "करीबी टक्कर",
     "tab": { "endless": "अनंत", "daily": "दैनिक", "weekly": "साप्ताहिक" }
+  },
+  "online": {
+    "title": "ऑनलाइन",
+    "status": {
+      "offline": "ऑफ़लाइन",
+      "connecting": "कनेक्ट हो रहा है…",
+      "online": "ऑनलाइन",
+      "error": "कनेक्शन त्रुटि"
+    },
+    "globalId": "वैश्विक ID"
   }
 }

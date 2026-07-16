@@ -11,12 +11,14 @@ import { leaderboardService } from '@services/leaderboard';
 import { replayService } from '@services/replay';
 import { settingsService } from '@services/settings';
 import { audioService, bindButtonSfx } from '@services/audio';
+import { onlineService } from '@services/online';
 import { App } from './App';
 
 async function bootstrap(): Promise<void> {
   await i18n.init();
   await settingsService.init();
   profileService.init();
+  void onlineService.init(); // fire-and-forget, não-bloqueante (offline-first)
   nestService.init();
   walletService.init();
   entitlementsService.init();

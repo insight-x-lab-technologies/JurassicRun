@@ -161,5 +161,15 @@
     "food": "エサ",
     "nearMisses": "ニアミス",
     "tab": { "endless": "エンドレス", "daily": "デイリー", "weekly": "ウィークリー" }
+  },
+  "online": {
+    "title": "オンライン",
+    "status": {
+      "offline": "オフライン",
+      "connecting": "接続中…",
+      "online": "オンライン",
+      "error": "接続エラー"
+    },
+    "globalId": "グローバルID"
   }
 }

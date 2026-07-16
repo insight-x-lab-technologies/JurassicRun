@@ -21,8 +21,19 @@ Supabase (free tier) criada pelo usuário.
       + `supabase/README.md`. **Pré-req do usuário p/ 6.2+:** aplicar a migração + habilitar
       `jurassicrun` em _Exposed schemas_ e _Anonymous sign-ins_ no dashboard.
 
-### 6.2 ID global de jogador
-- [ ] Registrar jogador no servidor e obter ID único mundial; vincular ao perfil local.
+### 6.2 ID global de jogador — CONCLUÍDO
+- [x] Registrar jogador no servidor e obter ID único mundial; vincular ao perfil local.
+      Entregue: identidade global via Supabase Auth anônimo (`players.id = auth.uid()`),
+      vinculada ao perfil local ativo (nome/avatar via upsert). Padrão puro×casca em
+      `src/services/online/`: `config.ts` (`parseOnlineConfig`/`onlineConfig` — sem env ⇒
+      `null` ⇒ modo offline), `client.ts` (interface `OnlineClient` + `memoryOnlineClient`
+      spy + casca real `createSupabaseClient` reusando a sessão anônima persistida),
+      `index.ts` (`OnlineService` reativo: sinais `globalPlayerId`/`status`
+      `offline|connecting|online|error`, `init` async não-bloqueante, sync do perfil ativo
+      com dedup por assinatura, effect reentrante). Offline-first: sem `.env` ou falha de
+      sign-in ⇒ jogo 100% local, sem exceção propagada. UI read-only de status na
+      `ProfileScreen`; fiação fire-and-forget no `main.tsx`; i18n `online.*` nos 10 locales.
+      `src/core/` intocado ⇒ determinismo **67 inalterado**.
 
 ### 6.3 Leaderboard central
 - [ ] Submeter e ler rankings Endless/Diário/Semanal. `LeaderboardService` passa a usar
