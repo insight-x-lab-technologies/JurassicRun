@@ -130,7 +130,7 @@
     "marathoner": { "name": "Marathoner", "desc": "Travel 10,000 total distance." },
     "highRoller": { "name": "High Roller", "desc": "Score 5000 in one run." },
     "persistent": { "name": "Persistent", "desc": "Play 25 games." },
-    "dailyPodium": { "name": "Daily Podium", "desc": "Finish top 3 on the local Daily Challenge." }
+    "dailyPodium": { "name": "Daily Podium", "desc": "Finish top 3 on the Daily Challenge." }
   },
   "dino": {
     "starter": { "name": "Scout" },

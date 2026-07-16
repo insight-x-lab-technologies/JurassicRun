@@ -130,7 +130,7 @@
     "marathoner": { "name": "マラソンランナー", "desc": "合計10,000の距離を移動する。" },
     "highRoller": { "name": "ハイローラー", "desc": "1回のプレイで5000点を獲得する。" },
     "persistent": { "name": "粘り強い", "desc": "25回プレイする。" },
-    "dailyPodium": { "name": "デイリー表彰台", "desc": "ローカルのデイリーチャレンジでトップ3に入る。" }
+    "dailyPodium": { "name": "デイリー表彰台", "desc": "デイリーチャレンジでトップ3に入る。" }
   },
   "dino": {
     "starter": { "name": "スカウト" },

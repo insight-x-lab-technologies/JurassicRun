@@ -130,7 +130,7 @@
     "marathoner": { "name": "马拉松选手", "desc": "累计行进10,000距离。" },
     "highRoller": { "name": "豪客", "desc": "在一局中得到5000分。" },
     "persistent": { "name": "坚持不懈", "desc": "游玩25局。" },
-    "dailyPodium": { "name": "每日领奖台", "desc": "在本地每日挑战中进入前三名。" }
+    "dailyPodium": { "name": "每日领奖台", "desc": "在每日挑战中进入前三名。" }
   },
   "dino": {
     "starter": { "name": "侦察兵" },

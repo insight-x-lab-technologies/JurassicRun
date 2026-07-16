@@ -34,7 +34,8 @@ export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): 
     onNewMatch: () => flap.reset(),
     onGameOver: (w) => {
       walletService.earn(coinsForFood(w.food));
-      leaderboardService.recordMatch({
+
+      const result = {
         mode,
         seed: match.seedLabel,
         score: w.score,
@@ -43,13 +44,27 @@ export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): 
         nearMisses: w.nearMisses,
         level: w.level,
         achievedAt: Date.now(),
-      });
-      const dailyRank =
-        mode === 'daily' ? leaderboardService.dailyRankForSeed(match.seedLabel) : undefined;
+      };
+      leaderboardService.recordMatch(result);
+
+      const online = leaderboardService.centralAvailable.value;
+      const localRank =
+        mode === 'daily' && !online
+          ? leaderboardService.dailyRankForSeed(match.seedLabel)
+          : undefined;
       trophyService.recordMatch(
         { distance: w.distance, food: w.food, nearMisses: w.nearMisses, score: w.score },
-        dailyRank !== undefined ? { dailyRank } : undefined,
+        localRank !== undefined ? { dailyRank: localRank } : undefined,
       );
+      if (mode === 'daily' && online) {
+        void leaderboardService
+          .centralDailyRank(result)
+          .then((rank) => {
+            if (rank !== undefined) trophyService.recordDailyPodium(rank);
+          })
+          .catch(() => {});
+      }
+
       const replay = buildReplayPayload(
         mode,
         match.seedLabel,
