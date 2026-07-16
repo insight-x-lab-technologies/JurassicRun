@@ -917,7 +917,45 @@ Critical/Important). Suíte verde (`check` limpo, **595 testes** [+10], determin
 e, no dashboard, adicionar `jurassicrun` a _Exposed schemas_ + habilitar _Anonymous sign-ins_ (o
 agente não tem senha do Postgres/service_role p/ aplicar). **Adiados/backlog:** `set search_path` na
 função de trigger (hardening, irrelevante a este seam — 6.4); empacotamento compacto da `timeline`
-(hoje `jsonb` de booleanos); dados por-perfil (hoje globais como wallet/trophy). **Próximo: 6.2 (ID
-global de jogador).**
+(hoje `jsonb` de booleanos); dados por-perfil (hoje globais como wallet/trophy).
 
-**Próximo: Fase 6 item 6.2 (ID global de jogador).** Ver `docs/roadmap/PHASE-06-online-supabase.md`.
+6.2 (ID global de jogador): identidade global do dispositivo via Supabase Auth **anônimo**
+(`players.id = auth.uid()`, como 6.1 previu), vinculada ao **perfil local ativo** (nome/avatar),
+**offline-first** — **só camada de serviços/app, `src/core/` intocado** ⇒ determinismo **67
+inalterado** (sem re-pin de goldens). Módulo `src/services/online/` no padrão puro×casca (molde
+wallet/trophy/settings): (1) `config.ts` PURO — `parseOnlineConfig(env)` devolve `{url,anonKey}` só
+quando **ambas** `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` são strings não-vazias, senão `null`
+(⇒ modo offline); casca `onlineConfig()` lê `import.meta.env`. (2) `client.ts` — **seam de IO**
+`OnlineClient {signInAnonymously():Promise<string>; upsertPlayer(p):Promise<void>}` +
+`memoryOnlineClient` (spy determinístico: `uid` fixável, `failSignIn`, conta `signInCount`/`upserts`;
+sem rede) + casca real `createSupabaseClient(config)` que embrulha `@supabase/supabase-js`
+(`createClient(url,key,{db:{schema:SUPABASE_SCHEMA}, auth:{persistSession:true,autoRefreshToken:true}})`);
+`signInAnonymously` **reusa a sessão persistida** (`getSession`) antes de criar nova, p/ não
+multiplicar usuários anônimos por boot; `upsertPlayer` faz upsert no `TABLES.players`. (3) `index.ts`
+— `OnlineService` reativo singleton: sinais `globalPlayerId:ReadonlySignal<string|null>` e
+`status:ReadonlySignal<'offline'|'connecting'|'online'|'error'>`; `init(deps?)` injetável
+(`{config?,client?,profile?}`, defaults reais) é **async não-bloqueante** e **nunca lança**: config
+`null`/client `null` ⇒ `offline` e retorna sem sign-in; senão `connecting`, `await
+signInAnonymously()`, on success seta id + `online` + 1º `syncActiveProfile()` + monta um `effect`
+que assina `profile.activeProfile` p/ re-sync em troca/rename; on error ⇒ `error` (id `null`, engole
+o erro). `syncActiveProfile` monta `avatar=String(hue)` de `avatarFor`, **dedup por assinatura
+`id|name|avatar`** (sem upsert redundante), best-effort (catch de rede não derruba status). `init`
+**reentrante** (descarta o `effect` anterior, molde `AudioService`). **O "vínculo" é o sync de
+nome/avatar** — não persistimos mapa próprio perfil↔uid (o `supabase-js` mantém a sessão). **1 ID
+global por dispositivo** (múltiplos perfis locais compartilham a identidade online; o ativo empresta
+nome/avatar). Fiação: `main.tsx` faz `void onlineService.init()` após `profileService.init()`
+(fire-and-forget); `ProfileScreen` mostra bloco read-only de status + `globalPlayerId` truncado
+(`slice(0,8)`) como evidência. i18n `online.{title,status.{offline,connecting,online,error},globalId}`
+nos 10 locales (REGRA 4; 9 pares "Online"/"Offline" pt-BR/it/de na allowlist como empréstimos padrão;
+paridade + scanner AST verdes). Dep nova `@supabase/supabase-js`. **Sem config/`.env` ⇒ status
+`offline` e o jogo funciona 100% igual** (comportamento testado). Execução SDD (retomada de sessão
+anterior: config Task 1 já commitada + client Task 2 implementado): Tasks 2–4 executadas INLINE (TDD,
+commit por task) + review final por subagente. Suíte verde (`check` limpo, **607 testes** [+22],
+determinismo **67 inalterado**). **Pré-req do usuário (herdado de 6.1):** migração aplicada +
+`jurassicrun` em _Exposed schemas_ + _Anonymous sign-ins_ habilitado + `.env` preenchido; sem isso,
+6.2 roda em `offline` (correto). **Adiados:** submeter/ler scores no servidor (6.3); verificação
+anti-cheat Edge Function (6.4); troféus centrais (6.5); multi-perfil-online (1 identidade por perfil);
+editar nome global independente do perfil; retry/backoff de reconexão (1 tentativa por boot, reload
+re-tenta); dados por-perfil (hoje globais).
+
+**Próximo: Fase 6 item 6.3 (Leaderboard central).** Ver `docs/roadmap/PHASE-06-online-supabase.md`.
