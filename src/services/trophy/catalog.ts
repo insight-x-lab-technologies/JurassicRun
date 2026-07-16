@@ -34,3 +34,7 @@ export const TROPHY_CATALOG: readonly TrophyDef[] = Object.freeze([
 export function trophyById(id: string): TrophyDef | undefined {
   return TROPHY_CATALOG.find((t) => t.id === id);
 }
+
+export function isKnownTrophyId(id: string): boolean {
+  return TROPHY_CATALOG.some((t) => t.id === id);
+}
