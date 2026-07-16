@@ -52,6 +52,10 @@ export interface OnlineClient {
   submitChallengeEntry(input: OnlineChallengeInput): Promise<void>;
   /** player_ids com challenge_entry verificado nesse modo+seed. */
   fetchVerifiedPlayers(mode: OnlineMode, seed: string): Promise<readonly string[]>;
+  /** Insert-only dos troféus do jogador (idempotente; UPDATE não permitido pela RLS). */
+  submitTrophies(playerId: string, ids: readonly string[]): Promise<void>;
+  /** trophy_ids desbloqueados do jogador. */
+  fetchTrophies(playerId: string): Promise<readonly string[]>;
 }
 
 export interface MemoryOnlineClient extends OnlineClient {
@@ -59,6 +63,7 @@ export interface MemoryOnlineClient extends OnlineClient {
   readonly signInCount: number;
   readonly submittedScores: OnlineScoreInput[];
   readonly submittedChallenges: OnlineChallengeInput[];
+  readonly submittedTrophies: { playerId: string; ids: readonly string[] }[];
 }
 
 /** Spy determinístico p/ testes: sem rede. */
@@ -68,17 +73,20 @@ export function memoryOnlineClient(
     failSignIn?: boolean;
     scores?: OnlineScoreRow[];
     verifiedPlayers?: string[];
+    trophies?: string[];
   } = {},
 ): MemoryOnlineClient {
   const uid = opts.uid ?? 'memory-uid';
   const upserts: OnlinePlayer[] = [];
   const submittedScores: OnlineScoreInput[] = [];
   const submittedChallenges: OnlineChallengeInput[] = [];
+  const submittedTrophies: { playerId: string; ids: readonly string[] }[] = [];
   let signInCount = 0;
   return {
     upserts,
     submittedScores,
     submittedChallenges,
+    submittedTrophies,
     get signInCount() {
       return signInCount;
     },
@@ -102,6 +110,12 @@ export function memoryOnlineClient(
     },
     async fetchVerifiedPlayers() {
       return opts.verifiedPlayers ?? [];
+    },
+    async submitTrophies(playerId, ids) {
+      submittedTrophies.push({ playerId, ids });
+    },
+    async fetchTrophies() {
+      return opts.trophies ?? [];
     },
   };
 }
@@ -180,6 +194,22 @@ export function createSupabaseClient(config: OnlineConfig): OnlineClient {
         .eq('verified', true);
       if (error !== null) throw error;
       return ((data ?? []) as { player_id: string }[]).map((r) => r.player_id);
+    },
+    async submitTrophies(playerId, ids) {
+      if (ids.length === 0) return;
+      const rows = ids.map((trophy_id) => ({ player_id: playerId, trophy_id }));
+      const { error } = await supabase
+        .from(TABLES.trophies)
+        .upsert(rows, { onConflict: 'player_id,trophy_id', ignoreDuplicates: true });
+      if (error !== null) throw error;
+    },
+    async fetchTrophies(playerId) {
+      const { data, error } = await supabase
+        .from(TABLES.trophies)
+        .select('trophy_id')
+        .eq('player_id', playerId);
+      if (error !== null) throw error;
+      return ((data ?? []) as { trophy_id: string }[]).map((r) => r.trophy_id);
     },
   };
 }

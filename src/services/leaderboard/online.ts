@@ -4,6 +4,7 @@ import type { OnlineScoreRow } from '@services/online/client';
 
 export interface LeaderboardOnline {
   readonly online: ReadonlySignal<boolean>;
+  readonly playerId: ReadonlySignal<string | null>;
   submitScore(input: LeaderboardResult): Promise<void>;
   fetchScores(mode: LeaderboardMode, seed?: string): Promise<readonly OnlineScoreRow[]>;
   fetchVerifiedPlayers(mode: LeaderboardMode, seed: string): Promise<readonly string[]>;
@@ -17,6 +18,7 @@ export interface MemoryLeaderboardOnline extends LeaderboardOnline {
 
 export function memoryLeaderboardOnline(opts: {
   online?: boolean;
+  playerId?: string | null;
   rows?: Partial<Record<LeaderboardMode, readonly OnlineScoreRow[]>>;
   seeds?: { daily: string; weekly: string };
   verified?: Partial<Record<LeaderboardMode, readonly string[]>>;
@@ -25,6 +27,7 @@ export function memoryLeaderboardOnline(opts: {
   const submitted: LeaderboardResult[] = [];
   return {
     online: _online,
+    playerId: signal(opts.playerId ?? null),
     submitted,
     setOnline(v) {
       _online.value = v;

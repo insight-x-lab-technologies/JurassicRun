@@ -3,6 +3,7 @@ import {
   initialLeaderboardState,
   recordMatch as recordMatchState,
   rankOf,
+  MAX_ENTRIES,
   type LeaderboardEntry,
   type LeaderboardMode,
   type LeaderboardResult,
@@ -15,6 +16,7 @@ import {
 } from './storage';
 import { toCentralEntries, type CentralEntry } from './central';
 import type { LeaderboardOnline } from './online';
+import type { OnlineScoreRow } from '@services/online/client';
 
 const EMPTY_CENTRAL: readonly CentralEntry[] = [];
 
@@ -80,6 +82,23 @@ export class LeaderboardService {
   /** Rank 1-based do recorde diário dessa seed; undefined se não houver. */
   dailyRankForSeed(seed: string): number | undefined {
     return rankOf(this._state.value.daily, seed);
+  }
+
+  /** Rank 1-based do jogador no board diário central da seed do `result` (undefined se offline/sem id/fora do board). */
+  async centralDailyRank(result: LeaderboardResult): Promise<number | undefined> {
+    const o = this.online;
+    if (o === null || !o.online.value || result.mode !== 'daily') return undefined;
+    const myId = o.playerId.value;
+    if (myId === null) return undefined;
+    const rows = await o.fetchScores('daily', result.seed);
+    const synthetic: OnlineScoreRow = {
+      playerId: myId, mode: 'daily', seed: result.seed, score: result.score,
+      distance: result.distance, food: result.food, nearMisses: result.nearMisses,
+      level: result.level, playerName: '', playerAvatar: '', createdAt: result.achievedAt,
+    };
+    const entries = toCentralEntries([...rows, synthetic], MAX_ENTRIES);
+    const idx = entries.findIndex((e) => e.playerId === myId);
+    return idx >= 0 ? idx + 1 : undefined;
   }
 
   private async refreshCentral(): Promise<void> {

@@ -46,3 +46,17 @@ describe('memoryOnlineClient scores', () => {
     expect((await c.fetchScores('daily', 'daily:2026-07-15'))[0]?.playerId).toBe('b');
   });
 });
+
+describe('memoryOnlineClient trophies', () => {
+  it('registra submitTrophies e devolve fetchTrophies', async () => {
+    const c = memoryOnlineClient({ trophies: ['firstFlight', 'forager'] });
+    await c.submitTrophies('p1', ['centurion']);
+    expect(c.submittedTrophies).toEqual([{ playerId: 'p1', ids: ['centurion'] }]);
+    expect(await c.fetchTrophies('p1')).toEqual(['firstFlight', 'forager']);
+  });
+
+  it('fetchTrophies vazio por default', async () => {
+    const c = memoryOnlineClient();
+    expect(await c.fetchTrophies('p1')).toEqual([]);
+  });
+});

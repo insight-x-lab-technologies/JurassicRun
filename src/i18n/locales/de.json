@@ -130,7 +130,7 @@
     "marathoner": { "name": "Marathonläufer", "desc": "Lege insgesamt 10.000 Distanz zurück." },
     "highRoller": { "name": "Großer Spieler", "desc": "Erziele 5000 Punkte in einem Lauf." },
     "persistent": { "name": "Beharrlich", "desc": "Spiele 25 Spiele." },
-    "dailyPodium": { "name": "Tages-Podium", "desc": "Erreiche die Top 3 in der lokalen Täglichen Herausforderung." }
+    "dailyPodium": { "name": "Tages-Podium", "desc": "Erreiche die Top 3 in der Täglichen Herausforderung." }
   },
   "dino": {
     "starter": { "name": "Späher" },

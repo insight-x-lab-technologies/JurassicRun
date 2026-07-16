@@ -13,6 +13,7 @@ import { settingsService } from '@services/settings';
 import { audioService, bindButtonSfx } from '@services/audio';
 import { onlineService } from '@services/online';
 import { createLeaderboardOnline } from './online/leaderboardAdapter';
+import { createTrophyOnline } from './online/trophyAdapter';
 import { App } from './App';
 
 async function bootstrap(): Promise<void> {
@@ -23,7 +24,7 @@ async function bootstrap(): Promise<void> {
   nestService.init();
   walletService.init();
   entitlementsService.init();
-  trophyService.init();
+  trophyService.init(undefined, createTrophyOnline());
   leaderboardService.init(undefined, createLeaderboardOnline());
   replayService.init();
 
