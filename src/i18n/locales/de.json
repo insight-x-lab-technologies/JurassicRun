@@ -160,6 +160,8 @@
     "distance": "Dist",
     "food": "Futter",
     "nearMisses": "Beinahe-Kollisionen",
+    "player": "Spieler",
+    "source": { "global": "Weltweit", "local": "Lokal" },
     "tab": { "endless": "Endlos", "daily": "Täglich", "weekly": "Wöchentlich" }
   },
   "online": {

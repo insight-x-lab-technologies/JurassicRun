@@ -169,6 +169,11 @@
     "distance": "Dist",
     "food": "Food",
     "nearMisses": "Near misses",
+    "player": "Player",
+    "source": {
+      "global": "Global",
+      "local": "Local"
+    },
     "tab": {
       "endless": "Endless",
       "daily": "Daily",

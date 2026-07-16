@@ -72,6 +72,8 @@ const IDENTICAL_TO_EN_ALLOWLIST: ReadonlySet<string> = new Set<string>([
   'pt-BR::online.title', 'pt-BR::online.status.offline', 'pt-BR::online.status.online',
   'it::online.title', 'it::online.status.offline', 'it::online.status.online',
   'de::online.title', 'de::online.status.offline', 'de::online.status.online',
+  // "Local" — cognato real (mesma grafia) em espanhol/português/francês (molde de settings.volume).
+  'es::leaderboard.source.local', 'pt-BR::leaderboard.source.local', 'fr::leaderboard.source.local',
 ]);
 
 // Valor que é só interpolação (ex.: "{{value}}") não tem o que traduzir.

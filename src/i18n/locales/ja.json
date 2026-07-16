@@ -160,6 +160,8 @@
     "distance": "距離",
     "food": "エサ",
     "nearMisses": "ニアミス",
+    "player": "プレイヤー",
+    "source": { "global": "グローバル", "local": "ローカル" },
     "tab": { "endless": "エンドレス", "daily": "デイリー", "weekly": "ウィークリー" }
   },
   "online": {

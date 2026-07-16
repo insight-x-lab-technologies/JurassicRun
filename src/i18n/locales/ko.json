@@ -160,6 +160,8 @@
     "distance": "거리",
     "food": "먹이",
     "nearMisses": "아슬아슬",
+    "player": "플레이어",
+    "source": { "global": "글로벌", "local": "로컬" },
     "tab": { "endless": "무한", "daily": "일일", "weekly": "주간" }
   },
   "online": {

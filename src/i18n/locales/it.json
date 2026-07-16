@@ -160,6 +160,8 @@
     "distance": "Dist",
     "food": "Cibo",
     "nearMisses": "Quasi collisioni",
+    "player": "Giocatore",
+    "source": { "global": "Globale", "local": "Locale" },
     "tab": { "endless": "Infinito", "daily": "Giornaliera", "weekly": "Settimanale" }
   },
   "online": {
