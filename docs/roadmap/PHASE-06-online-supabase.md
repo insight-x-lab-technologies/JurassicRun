@@ -35,9 +35,20 @@ Supabase (free tier) criada pelo usuário.
       `ProfileScreen`; fiação fire-and-forget no `main.tsx`; i18n `online.*` nos 10 locales.
       `src/core/` intocado ⇒ determinismo **67 inalterado**.
 
-### 6.3 Leaderboard central
-- [ ] Submeter e ler rankings Endless/Diário/Semanal. `LeaderboardService` passa a usar
+### 6.3 Leaderboard central — CONCLUÍDO
+- [x] Submeter e ler rankings Endless/Diário/Semanal. `LeaderboardService` passa a usar
       Supabase mantendo fallback local/offline.
+      Entregue: seam `OnlineClient` estendido (`submitScore`/`fetchScores`, mesma sessão
+      anônima) + `OnlineService` com sinal `online` e delegadores best-effort (nunca lançam);
+      `LeaderboardService` online-aware via interface injetável `LeaderboardOnline` (memória
+      nos testes, adapter `src/app/online/leaderboardAdapter.ts` no bootstrap) — sinais
+      `centralEndless/Daily/Weekly` + `centralAvailable`, submit fire-and-forget no `recordMatch`,
+      refresh na borda offline→online; mapeamento puro `toCentralEntries` (dedup por jogador,
+      top-10). Diário/Semanal central = período atual (mesma seed do submit). Tela alterna
+      Global/Local pelo status, com nome do jogador e destaque "você" (`globalPlayerId`); i18n
+      `leaderboard.source.{global,local}` + `leaderboard.player` nos 10 locales. Offline-first:
+      sem `.env`/offline degrada 100% ao local, sem exceção. `src/core/` intocado ⇒ determinismo
+      **67 inalterado**; suíte 624 verde.
 
 ### 6.4 Verificação de desafio (anti-cheat)
 - [ ] Edge Function que re-simula `(seed, InputTimeline)` e valida o score submetido.

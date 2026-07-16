@@ -958,4 +958,47 @@ anti-cheat Edge Function (6.4); troféus centrais (6.5); multi-perfil-online (1 
 editar nome global independente do perfil; retry/backoff de reconexão (1 tentativa por boot, reload
 re-tenta); dados por-perfil (hoje globais).
 
-**Próximo: Fase 6 item 6.3 (Leaderboard central).** Ver `docs/roadmap/PHASE-06-online-supabase.md`.
+6.3 (Leaderboard central): submeter e ler rankings globais Endless/Diário/Semanal via Supabase,
+com fallback local **offline-first** — **só camada de serviços/app, `src/core/` intocado** ⇒
+determinismo **67 inalterado** (sem re-pin de goldens). Seis peças no padrão puro×casca + seam de
+IO + reatividade `@preact/signals`: (1) **seam** — `OnlineClient` (`online/client.ts`) ganhou
+`submitScore(input)`/`fetchScores(mode,seed?)` na MESMA instância supabase (mesma sessão anônima do
+`upsertPlayer`) + tipos `OnlineMode`/`OnlineScoreInput`/`OnlineScoreRow`; `memoryOnlineClient` spy
+(`submittedScores` + filtro por mode/seed) e casca real (`insert` em `scores`; `select('*, players(name,
+avatar)')` ordenado por score, `limit MAX_ONLINE_ROWS=80` = folga p/ dedup no cliente; `mapScoreRow`
+do join). (2) **mapeamento puro** `leaderboard/central.ts` — `toCentralEntries(rows, max=MAX_ENTRIES)`:
+**dedup por `playerId` (mantém o melhor score)**, ordena score desc (desempate `createdAt`/`playerId`),
+top-10, saneia (`sanitizeStat`); tipo `CentralEntry` (+ `playerName`/`playerAvatar`). (3) **interface
+injetável** `leaderboard/online.ts` — `LeaderboardOnline {online, submitScore, fetchScores, currentSeeds}`
++ `memoryLeaderboardOnline` (double de teste) ⇒ `LeaderboardService` NÃO importa `OnlineService` nem
+render. (4) **`OnlineService`** (`online/index.ts`, agora `export class`) expõe sinal `online`
+(=`status==='online'`) + delegadores `submitScore(Omit<…,'playerId'>)` (anexa o próprio `globalPlayerId`
+= `auth.uid()` ⇒ RLS `player_id=auth.uid()`; cliente nunca injeta id nem `verified`) e `fetchScores`,
+ambos guardados e **best-effort (nunca lançam)**. (5) **`LeaderboardService`** online-aware
+(`export class`): sinais `centralEndless/Daily/Weekly` + `centralAvailable`; `init(storage?, online?)`
+monta um `effect` que dispara `refreshCentral()` na **borda offline→online** (guarda `lastOnline`,
+reentrante); `recordMatch` mantém o local intacto (store+localStorage) e, se online, faz
+`void submitScore(r).then(refreshMode).catch(()=>{})` (fire-and-forget); Diário/Semanal central =
+**período atual** (mesma seed que o submit usa — `currentSeeds()` = `dailyChallengeSeed`/`weeklyChallengeSeed`
+de `@render/seedSource`, idêntico ao `matchFactory`). (6) **adapter+UI** — `src/app/online/leaderboardAdapter.ts`
+(`createLeaderboardOnline` sobre `onlineService`+seedSource, injetável); `main.tsx` faz
+`leaderboardService.init(undefined, createLeaderboardOnline())`; `LeaderboardScreen` alterna
+**Global×Local** por `centralAvailable` (linha-fonte i18n, nome do jogador, destaque "você" via
+`globalPlayerId`); i18n `leaderboard.source.{global,local}` + `leaderboard.player` nos 10 locales
+(REGRA 4; allowlist só p/ "Local" idêntico em es/pt-BR/fr; scripts nativos em ja/zh/ko/hi; paridade +
+scanner AST verdes). **O `score` (composto de 1.8) é a métrica de rank exibida.** **Offline-first: sem
+`.env`/offline ⇒ `centralAvailable=false`, tela usa boards locais, zero submit, sem exceção — jogo
+idêntico ao anterior.** Execução SDD por subagentes (6 tasks: seam/puros haiku + integração/UI sonnet +
+review por task + review final opus **"READY TO MERGE"**, 0 Critical/Important; 2 polimentos pós-review
+aplicados inline: CSS do me-highlight/player/source antes inerte + `.catch` defensivo). Suíte verde
+(`check` limpo, **624 testes** [+17], determinismo **67 inalterado**). **Pré-req do usuário (herdado
+6.1/6.2):** migração aplicada + `jurassicrun` em _Exposed schemas_ + _Anonymous sign-ins_ + `.env`;
+sem isso 6.3 roda offline (correto). **Adiados/backlog:** verificação anti-cheat da Edge Function
+marcar `verified=true` + selo ✓ na tela (6.4); troféus centrais top-3 (6.5); agregação server-side
+(hoje dedup no cliente sobre janela de 80 — jogador prolífico pode subpreencher o top-10); refetch
+pós-submit usa período corrente (score de partida diária cruzando meia-noite UTC não aparece no board
+de hoje); realtime/paginação/histórico de períodos; leaderboards por-perfil (hoje globais); Minors —
+casts `as` no adapter (`OnlineScoresLike`/`svc.online`) erodem type-safety; `raw.mode as OnlineMode`
+sem validação de runtime na casca.
+
+**Próximo: Fase 6 item 6.4 (Verificação de desafio — anti-cheat).** Ver `docs/roadmap/PHASE-06-online-supabase.md`.
