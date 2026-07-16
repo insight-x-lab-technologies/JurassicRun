@@ -8,6 +8,7 @@ import {
   type OnlineScoreInput,
   type OnlineScoreRow,
   type OnlineMode,
+  type OnlineChallengeInput,
 } from './client';
 
 export type OnlineStatus = 'offline' | 'connecting' | 'online' | 'error';
@@ -52,6 +53,25 @@ export class OnlineService {
     if (this._status.value !== 'online' || this.client === null) return [];
     try {
       return await this.client.fetchScores(mode, seed);
+    } catch {
+      return [];
+    }
+  }
+
+  async submitChallengeEntry(input: Omit<OnlineChallengeInput, 'playerId'>): Promise<void> {
+    const id = this._id.value;
+    if (this._status.value !== 'online' || id === null || this.client === null) return;
+    try {
+      await this.client.submitChallengeEntry({ ...input, playerId: id });
+    } catch {
+      // best-effort
+    }
+  }
+
+  async fetchVerifiedPlayers(mode: OnlineMode, seed: string): Promise<readonly string[]> {
+    if (this._status.value !== 'online' || this.client === null) return [];
+    try {
+      return await this.client.fetchVerifiedPlayers(mode, seed);
     } catch {
       return [];
     }
@@ -118,4 +138,4 @@ export class OnlineService {
 
 export const onlineService = new OnlineService();
 export type { OnlineConfig } from './config';
-export type { OnlineScoreInput, OnlineScoreRow, OnlineMode } from './client';
+export type { OnlineScoreInput, OnlineScoreRow, OnlineMode, OnlineChallengeInput } from './client';

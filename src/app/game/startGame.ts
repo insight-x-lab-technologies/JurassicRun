@@ -10,6 +10,7 @@ import { walletService, coinsForFood } from '@services/wallet';
 import { trophyService } from '@services/trophy';
 import { leaderboardService } from '@services/leaderboard';
 import { replayService } from '@services/replay';
+import { onlineService } from '@services/online';
 import { buildReplayPayload } from './replayPayload';
 
 /**
@@ -57,6 +58,18 @@ export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): 
         Date.now(),
       );
       if (replay) replayService.record(replay);
+      if (replay && (mode === 'daily' || mode === 'weekly')) {
+        void onlineService.submitChallengeEntry({
+          mode,
+          seed: replay.seed,
+          score: replay.score,
+          distance: replay.distance,
+          food: replay.food,
+          nearMisses: replay.nearMisses,
+          timeline: replay.timeline,
+          finalHash: replay.finalHash,
+        });
+      }
     },
   });
 
