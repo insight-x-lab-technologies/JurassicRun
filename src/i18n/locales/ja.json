@@ -161,6 +161,7 @@
     "food": "エサ",
     "nearMisses": "ニアミス",
     "player": "プレイヤー",
+    "verified": "確認済み",
     "source": { "global": "グローバル", "local": "ローカル" },
     "tab": { "endless": "エンドレス", "daily": "デイリー", "weekly": "ウィークリー" }
   },

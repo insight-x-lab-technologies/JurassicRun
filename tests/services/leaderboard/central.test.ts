@@ -29,4 +29,9 @@ describe('toCentralEntries', () => {
     const out = toCentralEntries([row('a', Number.NaN, { distance: -3 })]);
     expect(out[0]).toMatchObject({ score: 0, distance: 0 });
   });
+
+  it('verified default false (o serviço sobrescreve os verificados)', () => {
+    const out = toCentralEntries([row('a', 5)]);
+    expect(out[0]).toMatchObject({ verified: false });
+  });
 });

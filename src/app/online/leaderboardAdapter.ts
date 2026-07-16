@@ -11,6 +11,7 @@ interface OnlineScoresLike {
     food: number; nearMisses: number; level: number;
   }): Promise<void>;
   fetchScores(mode: LeaderboardMode, seed?: string): Promise<readonly OnlineScoreRow[]>;
+  fetchVerifiedPlayers(mode: LeaderboardMode, seed: string): Promise<readonly string[]>;
 }
 
 export function createLeaderboardOnline(deps: {
@@ -31,6 +32,9 @@ export function createLeaderboardOnline(deps: {
     },
     fetchScores(mode, seed) {
       return svc.fetchScores(mode, seed);
+    },
+    fetchVerifiedPlayers(mode, seed) {
+      return svc.fetchVerifiedPlayers(mode, seed);
     },
     currentSeeds() {
       return { daily: dailySeed(), weekly: weeklySeed() };

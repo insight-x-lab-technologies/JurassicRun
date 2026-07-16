@@ -625,6 +625,13 @@ body {
   font-size: var(--font-size-sm);
 }
 
+.leaderboard__verified {
+  grid-area: seed;
+  justify-self: end;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
 .leaderboard__source {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
