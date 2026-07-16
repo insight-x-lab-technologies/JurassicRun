@@ -885,7 +885,7 @@ espelha leaderboard; `rank()` muta o argumento via `.sort()` seguro; `achievedAt
 como no leaderboard; `Date.now()` chamado 2× no `onGameOver`; nome de teste "um flap virado"
 desatualizado; falta teste explícito do filtro de `finalHash` vazio).
 
-**Fase 6 (Online — Supabase) — EM ANDAMENTO.** Item 6.1 concluído.
+**Fase 6 (Online — Supabase) — CONCLUÍDA.** Itens 6.1–6.5 concluídos.
 
 6.1 (Schema): schema do banco online — **só DDL/infra, `src/core/` intocado** ⇒ determinismo 67
 inalterado (sem re-pin de goldens). Banco Supabase **compartilhado entre projetos**
@@ -1043,5 +1043,43 @@ verificação de Endless (trait aleatório ⇒ guardar o trait); empacotamento c
 gate real; observabilidade da Edge Function (erro de update por linha engolido; `BATCH=100` sem
 paginação intra-chamada — cron cobre).
 
-**Próximo: Fase 6 item 6.5 (Troféus centrais — top-3 do desafio diário recebem troféu
-sincronizado no perfil).** Ver `docs/roadmap/PHASE-06-online-supabase.md`.
+6.5 (Troféus centrais sincronizados + pódio diário global): troféus locais passam a ser
+**sincronizados** ao perfil online (tabela `jurassicrun.trophies` de 6.1) e o `dailyPodium`
+endurece para o **top-3 CENTRAL** quando online — **só serviços/app, `src/core/` intocado** ⇒
+determinismo **67 inalterado** (sem re-pin de goldens). Duas peças no molde do leaderboard
+online (6.3): (1) **Sync bidirecional** — seam `OnlineClient.submitTrophies(playerId,ids)`/
+`fetchTrophies(playerId)` (upsert **insert-only** `{onConflict:'player_id,trophy_id',
+ignoreDuplicates:true}` porque a RLS de `trophies` só tem `select_public`+`insert_own`, sem
+UPDATE) + spy `submittedTrophies`; delegadores best-effort no `OnlineService` (anexam o próprio
+`auth.uid()`, guardados por `online`, nunca lançam); interface injetável `TrophyOnline` +
+adapter `createTrophyOnline` (o `TrophyService` **não importa** `OnlineService`); `TrophyService`
+online-aware (`init(storage?,online?)`): `pushToServer(newlyUnlocked)` após cada
+`recordMatch`/`recordDailyPodium`, e `mergeFromServer` na **borda offline→online** (effect+
+`lastOnline`, reentrante) que **une** os ids do servidor (filtrados por `isKnownTrophyId`) ao
+local e **empurra os locais-só** de volta ⇒ reconciliação cross-device na mesma identidade
+anônima. (2) **Pódio central** — `LeaderboardService.centralDailyRank(result)` computa o rank
+global 1-based da seed do dia **injetando uma `OnlineScoreRow` sintética do score recém-jogado**
+antes do `toCentralEntries` (dedup por melhor score ⇒ elimina a corrida com o `submitScore`
+fire-and-forget e dá rank correto na 1ª jogada), via novo seam `LeaderboardOnline.playerId`
+(→`onlineService.globalPlayerId`); novo `TrophyService.recordDailyPodium(rank)` reavalia só o
+pódio (função pura `evaluate`, sem dobrar stats). Fiação no `startGame.onGameOver`: **online ⇒
+só o rank central destrava o pódio** (`localRank` fica `undefined`, ramos mutuamente exclusivos);
+**offline ⇒ rank local** (fallback leniente, comportamento do 5.3). i18n: `trophy.dailyPodium.desc`
+perde "local" nos 10 locales (REGRA 4, paridade+scanner verdes; sem chaves novas).
+**Offline-first:** sem `.env`/offline ⇒ `pushToServer`/`mergeFromServer` no-op, `centralAvailable`
+false, pódio usa rank local, jogo 100% igual (best-effort, nunca lança). Execução SDD por
+subagentes (6 tasks: haiku seams / sonnet integração + review por task; **Task 3 finalizada
+INLINE** — subagente esbarrou em limite de sessão após só criar o test file, precedente 4.3/4.7/
+4.8) + determinismo 67 confirmado + review final opus **"READY TO MERGE"** (0 Critical/Important;
+5 Minors → backlog). Suíte verde (`check` limpo, **652 testes**, determinismo **67 inalterado**).
+**Decisão de produto:** `dailyPodium` online = top-3 **global** (estrito) / offline = top-3
+**local** (leniente) — dupla natureza offline-first, não bug. **Pré-req do usuário (herdado
+6.1–6.4):** migração aplicada + `jurassicrun` em _Exposed schemas_ + _Anonymous sign-ins_ +
+`.env`; sem isso 6.5 roda offline (correto). **Adiados/backlog:** troféu online cuja
+avaliação/push falha só re-tenta no próximo ciclo offline→online (best-effort, "sinal não gate");
+troféus **por-perfil** (hoje globais como wallet/nest); pódio semanal análogo; `recordDailyPodium`
+reavalia catálogo inteiro (inerte hoje); casca real de `submitTrophies`/`fetchTrophies`
+untested-by-unit (precedente de casca IO).
+
+**Fase 6 (Online — Supabase) CONCLUÍDA** (itens 6.1–6.5). **Próximo: Fase 7 (PWA & deploy).**
+Ver `docs/roadmap/PHASE-07-pwa-and-deploy.md`.

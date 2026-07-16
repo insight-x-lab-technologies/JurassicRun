@@ -70,8 +70,28 @@ Supabase (free tier) criada pelo usuário.
       (esconder/ordenar por não-verificados) + verificar a coluna `scores` exibida (hoje o ✓
       atesta o replay, o score exibido vem de `scores` não-verificado); verificação de Endless.
 
-### 6.5 Troféus centrais
-- [ ] Top-3 do desafio diário recebem troféu no perfil (sincronizado).
+### 6.5 Troféus centrais — CONCLUÍDO
+- [x] Top-3 do desafio diário recebem troféu no perfil (sincronizado).
+      Entregue, só serviços/app (`src/core/` intocado ⇒ determinismo **67 inalterado**):
+      (1) **Sync de troféus** à tabela `jurassicrun.trophies` (6.1): seam
+      `OnlineClient.submitTrophies`/`fetchTrophies` (upsert insert-only `ignoreDuplicates`
+      pela RLS sem UPDATE) → delegadores best-effort no `OnlineService` (anexam `auth.uid()`)
+      → interface injetável `TrophyOnline` + adapter (molde do leaderboard 6.3, `TrophyService`
+      não importa `OnlineService`) → `TrophyService` online-aware: push dos recém-desbloqueados
+      + **merge bidirecional** (união dos ids do servidor + push dos locais-só) na borda
+      offline→online. (2) **Pódio diário CENTRAL**: `LeaderboardService.centralDailyRank(result)`
+      computa o rank global da seed do dia **injetando o score recém-jogado** (elimina a corrida
+      com o submit fire-and-forget) + seam `playerId`; `dailyPodium` destrava só por rank central
+      quando online (estrito global), com fallback rank local quando offline. Fiação no
+      `startGame.onGameOver` + `trophyService.init(undefined, createTrophyOnline())` no bootstrap.
+      i18n: `dailyPodium.desc` perde "local" nos 10 locales (REGRA 4). Offline-first: sem `.env`
+      ⇒ push/merge no-op, pódio usa rank local, jogo 100% igual. Suíte **652** verde; SDD por
+      subagentes (6 tasks + review por task + review final opus **READY TO MERGE**, 0
+      Critical/Important). **Decisão:** `dailyPodium` online = top-3 global / offline = top-3
+      local (dupla natureza offline-first). **Adiados:** recuperação de troféu online cuja
+      avaliação/push falha só re-tenta no próximo ciclo offline→online (best-effort, "sinal não
+      gate"); troféus por-perfil (hoje globais); pódio semanal análogo; casca real de IO
+      untested-by-unit (precedente).
 
 ## Definição de pronto
 - Rankings centrais funcionando; verificação de desafio ativa; degrada graciosamente offline.
