@@ -68,6 +68,10 @@ const IDENTICAL_TO_EN_ALLOWLIST: ReadonlySet<string> = new Set<string>([
   'it::leaderboard.distance', 'de::leaderboard.distance',
   // "Score" — cognato real em francês (uso corrente em jogos).
   'fr::leaderboard.score',
+  // "Online"/"Offline" — empréstimos padrão de conectividade em pt-BR/it/de.
+  'pt-BR::online.title', 'pt-BR::online.status.offline', 'pt-BR::online.status.online',
+  'it::online.title', 'it::online.status.offline', 'it::online.status.online',
+  'de::online.title', 'de::online.status.offline', 'de::online.status.online',
 ]);
 
 // Valor que é só interpolação (ex.: "{{value}}") não tem o que traduzir.

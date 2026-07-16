@@ -161,5 +161,15 @@
     "food": "먹이",
     "nearMisses": "아슬아슬",
     "tab": { "endless": "무한", "daily": "일일", "weekly": "주간" }
+  },
+  "online": {
+    "title": "온라인",
+    "status": {
+      "offline": "오프라인",
+      "connecting": "연결 중…",
+      "online": "온라인",
+      "error": "연결 오류"
+    },
+    "globalId": "전역 ID"
   }
 }

@@ -161,5 +161,15 @@
     "food": "食物",
     "nearMisses": "险些相撞",
     "tab": { "endless": "无尽", "daily": "每日", "weekly": "每周" }
+  },
+  "online": {
+    "title": "在线",
+    "status": {
+      "offline": "离线",
+      "connecting": "连接中…",
+      "online": "在线",
+      "error": "连接错误"
+    },
+    "globalId": "全球 ID"
   }
 }

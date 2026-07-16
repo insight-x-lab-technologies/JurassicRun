@@ -161,5 +161,15 @@
     "food": "Nourriture",
     "nearMisses": "Quasi-collisions",
     "tab": { "endless": "Infini", "daily": "Quotidien", "weekly": "Hebdomadaire" }
+  },
+  "online": {
+    "title": "En ligne",
+    "status": {
+      "offline": "Hors ligne",
+      "connecting": "Connexion…",
+      "online": "En ligne",
+      "error": "Erreur de connexion"
+    },
+    "globalId": "ID mondial"
   }
 }

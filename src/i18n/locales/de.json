@@ -161,5 +161,15 @@
     "food": "Futter",
     "nearMisses": "Beinahe-Kollisionen",
     "tab": { "endless": "Endlos", "daily": "Täglich", "weekly": "Wöchentlich" }
+  },
+  "online": {
+    "title": "Online",
+    "status": {
+      "offline": "Offline",
+      "connecting": "Verbinde…",
+      "online": "Online",
+      "error": "Verbindungsfehler"
+    },
+    "globalId": "Globale ID"
   }
 }

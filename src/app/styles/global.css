@@ -158,6 +158,30 @@ body {
   font-size: var(--font-size-lg);
 }
 
+.online-status {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  background: var(--color-surface-2);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
+.online-status__label {
+  color: var(--color-text-muted);
+}
+
+.online-status__value {
+  font-weight: 600;
+}
+
+.online-status__id {
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
 .profile-list {
   list-style: none;
   margin: 0;
