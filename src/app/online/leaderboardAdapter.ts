@@ -6,6 +6,7 @@ import type { OnlineScoreRow } from '@services/online/client';
 
 interface OnlineScoresLike {
   readonly online: { readonly value: boolean };
+  readonly globalPlayerId: { readonly value: string | null };
   submitScore(input: {
     mode: LeaderboardMode; seed: string; score: number; distance: number;
     food: number; nearMisses: number; level: number;
@@ -24,6 +25,7 @@ export function createLeaderboardOnline(deps: {
   const weeklySeed = deps.weeklySeed ?? weeklyChallengeSeed;
   return {
     online: svc.online as LeaderboardOnline['online'],
+    playerId: svc.globalPlayerId as LeaderboardOnline['playerId'],
     async submitScore(r: LeaderboardResult) {
       await svc.submitScore({
         mode: r.mode, seed: r.seed, score: r.score, distance: r.distance,
