@@ -161,6 +161,7 @@
     "food": "Cibo",
     "nearMisses": "Quasi collisioni",
     "player": "Giocatore",
+    "verified": "Verificato",
     "source": { "global": "Globale", "local": "Locale" },
     "tab": { "endless": "Infinito", "daily": "Giornaliera", "weekly": "Settimanale" }
   },

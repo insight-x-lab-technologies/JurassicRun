@@ -161,6 +161,7 @@
     "food": "Futter",
     "nearMisses": "Beinahe-Kollisionen",
     "player": "Spieler",
+    "verified": "Verifiziert",
     "source": { "global": "Weltweit", "local": "Lokal" },
     "tab": { "endless": "Endlos", "daily": "Täglich", "weekly": "Wöchentlich" }
   },

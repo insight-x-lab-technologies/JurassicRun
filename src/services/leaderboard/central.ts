@@ -11,6 +11,7 @@ export interface CentralEntry {
   readonly food: number;
   readonly nearMisses: number;
   readonly createdAt: number;
+  readonly verified: boolean;
 }
 
 function entryOf(r: OnlineScoreRow): CentralEntry {
@@ -24,6 +25,7 @@ function entryOf(r: OnlineScoreRow): CentralEntry {
     food: sanitizeStat(r.food),
     nearMisses: sanitizeStat(r.nearMisses),
     createdAt: Number.isFinite(r.createdAt) ? r.createdAt : 0,
+    verified: false,
   };
 }
 

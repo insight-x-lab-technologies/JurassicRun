@@ -161,6 +161,7 @@
     "food": "Comida",
     "nearMisses": "Casi choques",
     "player": "Jugador",
+    "verified": "Verificado",
     "source": { "global": "Mundial", "local": "Local" },
     "tab": { "endless": "Infinito", "daily": "Diario", "weekly": "Semanal" }
   },

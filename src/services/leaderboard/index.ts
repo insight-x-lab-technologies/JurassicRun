@@ -98,7 +98,12 @@ export class LeaderboardService {
       : mode === 'weekly' ? o.currentSeeds().weekly
       : undefined;
     const rows = await o.fetchScores(mode, seed);
-    this._central.value = { ...this._central.value, [mode]: toCentralEntries(rows) };
+    let entries = toCentralEntries(rows);
+    if ((mode === 'daily' || mode === 'weekly') && seed !== undefined) {
+      const verifiedIds = new Set(await o.fetchVerifiedPlayers(mode, seed));
+      entries = entries.map((e) => ({ ...e, verified: verifiedIds.has(e.playerId) }));
+    }
+    this._central.value = { ...this._central.value, [mode]: entries };
   }
 }
 

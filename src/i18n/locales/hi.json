@@ -161,6 +161,7 @@
     "food": "भोजन",
     "nearMisses": "करीबी टक्कर",
     "player": "खिलाड़ी",
+    "verified": "सत्यापित",
     "source": { "global": "वैश्विक", "local": "स्थानीय" },
     "tab": { "endless": "अनंत", "daily": "दैनिक", "weekly": "साप्ताहिक" }
   },

@@ -6,6 +6,7 @@ export interface LeaderboardOnline {
   readonly online: ReadonlySignal<boolean>;
   submitScore(input: LeaderboardResult): Promise<void>;
   fetchScores(mode: LeaderboardMode, seed?: string): Promise<readonly OnlineScoreRow[]>;
+  fetchVerifiedPlayers(mode: LeaderboardMode, seed: string): Promise<readonly string[]>;
   currentSeeds(): { readonly daily: string; readonly weekly: string };
 }
 
@@ -18,6 +19,7 @@ export function memoryLeaderboardOnline(opts: {
   online?: boolean;
   rows?: Partial<Record<LeaderboardMode, readonly OnlineScoreRow[]>>;
   seeds?: { daily: string; weekly: string };
+  verified?: Partial<Record<LeaderboardMode, readonly string[]>>;
 } = {}): MemoryLeaderboardOnline {
   const _online = signal(opts.online ?? false);
   const submitted: LeaderboardResult[] = [];
@@ -32,6 +34,9 @@ export function memoryLeaderboardOnline(opts: {
     },
     async fetchScores(mode) {
       return opts.rows?.[mode] ?? [];
+    },
+    async fetchVerifiedPlayers(mode) {
+      return opts.verified?.[mode] ?? [];
     },
     currentSeeds() {
       return opts.seeds ?? { daily: 'daily:x', weekly: 'weekly:x' };

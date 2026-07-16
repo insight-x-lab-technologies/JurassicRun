@@ -27,6 +27,18 @@ export interface OnlineScoreRow extends OnlineScoreInput {
   readonly createdAt: number;
 }
 
+export interface OnlineChallengeInput {
+  readonly playerId: string;
+  readonly mode: 'daily' | 'weekly';
+  readonly seed: string;
+  readonly score: number;
+  readonly distance: number;
+  readonly food: number;
+  readonly nearMisses: number;
+  readonly timeline: readonly boolean[];
+  readonly finalHash: string;
+}
+
 export interface OnlineClient {
   /** Garante uma sessão anônima; resolve com o `auth.uid()`. */
   signInAnonymously(): Promise<string>;
@@ -36,25 +48,37 @@ export interface OnlineClient {
   submitScore(input: OnlineScoreInput): Promise<void>;
   /** Busca scores por modo e opcionalmente por seed. */
   fetchScores(mode: OnlineMode, seed?: string): Promise<readonly OnlineScoreRow[]>;
+  /** Upsert de um replay de desafio verificável (1 por player+seed). */
+  submitChallengeEntry(input: OnlineChallengeInput): Promise<void>;
+  /** player_ids com challenge_entry verificado nesse modo+seed. */
+  fetchVerifiedPlayers(mode: OnlineMode, seed: string): Promise<readonly string[]>;
 }
 
 export interface MemoryOnlineClient extends OnlineClient {
   readonly upserts: OnlinePlayer[];
   readonly signInCount: number;
   readonly submittedScores: OnlineScoreInput[];
+  readonly submittedChallenges: OnlineChallengeInput[];
 }
 
 /** Spy determinístico p/ testes: sem rede. */
 export function memoryOnlineClient(
-  opts: { uid?: string; failSignIn?: boolean; scores?: OnlineScoreRow[] } = {},
+  opts: {
+    uid?: string;
+    failSignIn?: boolean;
+    scores?: OnlineScoreRow[];
+    verifiedPlayers?: string[];
+  } = {},
 ): MemoryOnlineClient {
   const uid = opts.uid ?? 'memory-uid';
   const upserts: OnlinePlayer[] = [];
   const submittedScores: OnlineScoreInput[] = [];
+  const submittedChallenges: OnlineChallengeInput[] = [];
   let signInCount = 0;
   return {
     upserts,
     submittedScores,
+    submittedChallenges,
     get signInCount() {
       return signInCount;
     },
@@ -72,6 +96,12 @@ export function memoryOnlineClient(
     async fetchScores(mode, seed) {
       const all = opts.scores ?? [];
       return all.filter((r) => r.mode === mode && (seed === undefined || r.seed === seed));
+    },
+    async submitChallengeEntry(input) {
+      submittedChallenges.push(input);
+    },
+    async fetchVerifiedPlayers() {
+      return opts.verifiedPlayers ?? [];
     },
   };
 }
@@ -127,6 +157,29 @@ export function createSupabaseClient(config: OnlineConfig): OnlineClient {
       const { data, error } = await query;
       if (error !== null) throw error;
       return ((data ?? []) as unknown as RawScoreRow[]).map(mapScoreRow);
+    },
+    async submitChallengeEntry(input) {
+      const { error } = await supabase
+        .from(TABLES.challengeEntries)
+        .upsert(
+          {
+            player_id: input.playerId, mode: input.mode, seed: input.seed,
+            score: input.score, distance: input.distance, food: input.food,
+            near_misses: input.nearMisses, timeline: input.timeline, final_hash: input.finalHash,
+          },
+          { onConflict: 'player_id,seed' },
+        );
+      if (error !== null) throw error;
+    },
+    async fetchVerifiedPlayers(mode, seed) {
+      const { data, error } = await supabase
+        .from(TABLES.challengeEntries)
+        .select('player_id')
+        .eq('mode', mode)
+        .eq('seed', seed)
+        .eq('verified', true);
+      if (error !== null) throw error;
+      return ((data ?? []) as { player_id: string }[]).map((r) => r.player_id);
     },
   };
 }

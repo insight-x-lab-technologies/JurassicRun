@@ -31,6 +31,9 @@ function CentralRow({ entry, index, me }: { entry: CentralEntry; index: number; 
       <span class="leaderboard__rank" aria-hidden={index < 3 ? 'true' : undefined}>{rankGlyph(index)}</span>
       <span class="leaderboard__score" aria-label={i18n.t('leaderboard.score')}>{entry.score}</span>
       <span class="leaderboard__player" aria-label={i18n.t('leaderboard.player')}>{entry.playerName}</span>
+      {entry.verified && (
+        <span class="leaderboard__verified" title={i18n.t('leaderboard.verified')} aria-label={i18n.t('leaderboard.verified')}>✓</span>
+      )}
       <span class="leaderboard__detail">
         {i18n.t('leaderboard.distance')}: {entry.distance} · {i18n.t('leaderboard.food')}: {entry.food} · {i18n.t('leaderboard.nearMisses')}: {entry.nearMisses}
       </span>

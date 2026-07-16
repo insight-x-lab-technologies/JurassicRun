@@ -170,6 +170,7 @@
     "food": "Food",
     "nearMisses": "Near misses",
     "player": "Player",
+    "verified": "Verified",
     "source": {
       "global": "Global",
       "local": "Local"

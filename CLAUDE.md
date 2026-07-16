@@ -1001,4 +1001,47 @@ de hoje); realtime/paginação/histórico de períodos; leaderboards por-perfil 
 casts `as` no adapter (`OnlineScoresLike`/`svc.online`) erodem type-safety; `raw.mode as OnlineMode`
 sem validação de runtime na casca.
 
-**Próximo: Fase 6 item 6.4 (Verificação de desafio — anti-cheat).** Ver `docs/roadmap/PHASE-06-online-supabase.md`.
+6.4 (Verificação de desafio — anti-cheat): verificação server-side de replays de desafio
+(Diário/Semanal) — **só serviços/app/infra, `src/core/` intocado** ⇒ determinismo **67
+inalterado** (reusa `simulate`/`hashState` de `@core/replay`, read-only). Cinco peças: (1)
+**verificação pura** `src/services/online/verifyChallenge.ts` — única fonte da verdade,
+importa só `@core/replay`; re-simula `{seed, trait:'none'}` + timeline e exige BOTH
+`hashMatches` (o `finalHash` recomputado bate ⇒ timeline legítima) AND `fieldsMatch`
+(`score/distance/food/nearMisses` submetidos batem com a re-sim ⇒ colunas não infladas
+independentemente do hash); ambos necessários porque o hash é da re-sim, não das colunas.
+`challenge_entries` não tem `level` ⇒ não verificado. (2) **Bundle ESM autocontido** p/ Deno:
+`src/core/` usa aliases `@core/*` + imports relativos sem extensão que o Deno cru não resolve,
+então esbuild (`npm run build:edge` + devDep `esbuild`) empacota o verificador num único
+`supabase/functions/verify-challenge/_verify.bundle.js` (commitado, tree-shake do grafo do
+core) + **guarda de equivalência** `tests/online/edge-bundle.test.ts` (fonte↔bundle idênticos
+em casos fiéis+adulterados ⇒ detecta staleness). (3) **Edge Function** Deno
+`supabase/functions/verify-challenge/index.ts` (casca não-testada, molde da SQL de 6.1): com
+`SUPABASE_SERVICE_ROLE_KEY` (único papel que passa o trigger `lock_verified` de 6.1) varre
+`challenge_entries` `verified=false` em lote, re-verifica pelo bundle e marca `verified=true`
+nos fiéis (idempotente ⇒ HTTP pós-submit ou `pg_cron`); + `deno.json` + `README` de deploy. (4)
+**Cliente submete `challenge_entries`** (antes só `scores`): `OnlineClient.submitChallengeEntry`
+(upsert `onConflict player_id,seed`) + `fetchVerifiedPlayers(mode,seed)` (+ spy no
+`memoryOnlineClient`), delegadores best-effort no `OnlineService` (anexam o próprio `auth.uid()`,
+guardados por `online`, nunca lançam), fiados no `startGame.onGameOver` reusando o
+`buildReplayPayload` de 5.4 (fire-and-forget, só daily/weekly). (5) **Selo ✓ no leaderboard
+central**: `CentralEntry.verified` (default false); `LeaderboardService.refreshMode` cruza o
+conjunto verificado (`fetchVerifiedPlayers` via seam `LeaderboardOnline` + adapter) com as
+entradas daily/weekly da seed corrente (Endless sempre false, sem replay); `LeaderboardScreen`
+renderiza ✓ na aba Global; i18n `leaderboard.verified` nos 10 locales (REGRA 4). **Não posso
+fazer deploy** (pré-req do usuário: `npm run build:edge` + `supabase functions deploy
+verify-challenge`; regenerar+re-deploy o bundle sempre que `src/core/`/verificador mudar).
+**Offline-first:** sem `.env` ⇒ delegadores no-op, `centralAvailable=false`, sem selo, jogo
+idêntico. Execução SDD por subagentes (5 tasks: haiku puro / sonnet integração+UI + review por
+task + review final opus **"READY TO MERGE"**, 0 Critical/Important). Suíte verde (`check`
+limpo, **637 testes** [+13], determinismo **67 inalterado**). **Decisão de produto:** o ✓ é
+**sinal, não gate** — atesta que o jogador tem um `challenge_entry` verificado da seed; o score
+**exibido** vem de `scores` (não-verificado nesta fase) ⇒ o par honesto é consistente, mas
+endurecer p/ gate (esconder/ordenar por verificados + verificar a coluna exibida) fica p/
+backlog. **Adiados:** auto-invocação pós-submit (hoje HTTP/cron manual); "manter só a melhor
+tentativa" no upsert (hoje overwrite, trigger re-zera `verified`, re-verificação corrige);
+verificação de Endless (trait aleatório ⇒ guardar o trait); empacotamento compacto da timeline;
+gate real; observabilidade da Edge Function (erro de update por linha engolido; `BATCH=100` sem
+paginação intra-chamada — cron cobre).
+
+**Próximo: Fase 6 item 6.5 (Troféus centrais — top-3 do desafio diário recebem troféu
+sincronizado no perfil).** Ver `docs/roadmap/PHASE-06-online-supabase.md`.
