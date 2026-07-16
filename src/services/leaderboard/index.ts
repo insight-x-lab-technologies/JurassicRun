@@ -56,7 +56,7 @@ export class LeaderboardService {
         const isOnline = o.online.value; // assina o sinal
         if (isOnline && !this.lastOnline) {
           this.lastOnline = true;
-          void this.refreshCentral();
+          void this.refreshCentral().catch(() => {}); // never throws (offline-first)
         } else if (!isOnline) {
           this.lastOnline = false;
         }
@@ -73,7 +73,7 @@ export class LeaderboardService {
     }
     const o = this.online;
     if (o !== null && o.online.value) {
-      void o.submitScore(r).then(() => this.refreshMode(r.mode));
+      void o.submitScore(r).then(() => this.refreshMode(r.mode)).catch(() => {}); // never throws
     }
   }
 
