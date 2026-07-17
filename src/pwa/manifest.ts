@@ -17,7 +17,7 @@ export const pwaOptions: Partial<VitePWAOptions> = {
   manifest: {
     name: 'JurassicRun',
     short_name: 'JurassicRun',
-    description: 'Side-scroller de pterodáctilo, determinístico e offline.',
+    description: 'Deterministic pterodactyl side-scroller you can play offline.',
     theme_color: THEME,
     background_color: BACKGROUND,
     display: 'standalone',
