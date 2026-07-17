@@ -10,7 +10,8 @@
     "test:determinism": "vitest run tests/determinism",
     "check": "tsc --noEmit && eslint .",
     "build:edge": "node scripts/build-edge.mjs",
-    "gen:icons": "node scripts/gen-icons.mjs"
+    "gen:icons": "node scripts/gen-icons.mjs",
+    "package:itch": "node scripts/package-itch.mjs"
   },
   "keywords": [],
   "author": "",
