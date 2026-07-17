@@ -58,5 +58,6 @@ usada no manifesto de assets do render.
 |----|-----------|--------|------|
 | `icon.coin` `icon.trophy` `icon.settings` ... | ícones de UI | placeholder | — |
 | `logo.app` | logotipo do jogo | placeholder | — |
+| `pwa-icon` | ícone de instalação PWA (192/512/maskable-512) | spec | `specs/pwa-icon.md` |
 
 > Mantenha esta tabela em dia a cada novo asset (a skill `create-asset-spec` faz isso).
