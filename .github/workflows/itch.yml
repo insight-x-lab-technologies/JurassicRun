@@ -5,6 +5,9 @@ on:
     tags: ['v*']
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   butler-push:
     runs-on: ubuntu-latest
@@ -37,4 +40,5 @@ jobs:
       - name: Push to itch.io
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-        run: ./butler push dist "${{ vars.ITCH_TARGET }}:html5"
+          ITCH_TARGET: ${{ vars.ITCH_TARGET }}
+        run: ./butler push dist "$ITCH_TARGET:html5"
