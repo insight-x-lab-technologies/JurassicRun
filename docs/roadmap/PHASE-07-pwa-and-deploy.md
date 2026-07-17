@@ -40,7 +40,18 @@
       Actions** (não automatizável). `src/core/` intocado, determinismo 67._
 
 ### 7.4 Deploy itch.io
-- [ ] Empacotar build estático; publicar no itch.io.
+- [x] Empacotar build estático; publicar no itch.io.
+      _Concluído: tooling + automação + docs (publish final = ação manual do usuário, exige
+      conta/API key itch). Script `scripts/package-itch.mjs` (npm `package:itch`) roda o build
+      com `BASE_PATH=./` (base relativa, `resolveBasePath` de 7.3) e zipa o CONTEÚDO de `dist/`
+      em `jurassicrun-itch.zip` com `index.html` na raiz do zip (requisito HTML5 do itch;
+      `.zip` no gitignore). Workflow `.github/workflows/itch.yml` faz `butler push dist
+      <target>:html5` em tag `v*`/`workflow_dispatch`, gated por `vars.ITCH_TARGET` (offline-
+      first; `secrets` não vale em `if` de job) + secret `BUTLER_API_KEY`. Doc `docs/deploy/
+      README.md`: página HTML no itch, upload manual do zip ou butler, limitação PWA (SW pode
+      não registrar no iframe sandbox — jogo roda igual, precache é bônus do Pages). Verificado
+      por build real: zip com `index.html` na raiz, `dist/index.html` com refs relativas
+      (`./assets/…`), nenhum path absoluto. `src/core/` intocado, determinismo 67 inalterado._
 
 ### 7.5 Futuro (fora do MVP, registrado)
 - [ ] Wrappers para lojas Google/Samsung/Huawei/Microsoft (TWA/Capacitor) — avaliar depois.
