@@ -2,8 +2,10 @@ import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { VitePWA } from 'vite-plugin-pwa';
 import { pwaOptions } from './src/pwa/manifest';
+import { resolveBasePath } from './src/pwa/base';
 
 export default defineConfig({
+  base: resolveBasePath(process.env),
   plugins: [
     tsconfigPaths(),
     VitePWA(pwaOptions),
