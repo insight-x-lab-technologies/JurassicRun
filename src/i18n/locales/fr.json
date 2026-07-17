@@ -174,5 +174,8 @@
       "error": "Erreur de connexion"
     },
     "globalId": "ID mondial"
+  },
+  "rotateHint": {
+    "message": "Tournez votre appareil en mode paysage pour une meilleure expérience."
   }
 }

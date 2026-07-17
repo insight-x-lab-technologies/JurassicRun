@@ -174,5 +174,8 @@
       "error": "Verbindungsfehler"
     },
     "globalId": "Globale ID"
+  },
+  "rotateHint": {
+    "message": "Drehe dein Gerät ins Querformat für das beste Erlebnis."
   }
 }

@@ -1117,5 +1117,39 @@ HTTPS/localhost. **Adiados/backlog:** `base` de subdiretório + deploy (7.3/7.4)
 duplicam `#0e1116` em `manifest.ts`; `includeAssets:['icons/*.png']` levemente redundante com o
 glob; localização do manifesto (mono-idioma por plataforma).
 
-**Próximo: 7.2 (responsividade final) / 7.3 (deploy GitHub Pages).** Ver
+7.2 (responsividade final): responsividade transversal fechada — **só camada app/render,
+`src/core/` intocado** ⇒ determinismo **67 inalterado**. Padrão puro×casca: (1)
+`src/render/orientation.ts` PURO (`shouldSuggestRotate({portrait,coarsePointer})` = só toque
+em retrato) + (2) casca `src/app/hooks/useRotateHint.ts` que assina `matchMedia('(orientation:
+portrait)')`+`(pointer:coarse)` (reage a `change`, sem polling — REGRA 3; cleanup no unmount) e
+(3) overlay `.rotate-hint` na PlayScreen — **`pointer-events:none`** (não bloqueia flap/tap, só
+sugere girar; some em paisagem) com chave i18n nova `rotateHint.message` nos 10 locales (REGRA 4).
+**Decisão de produto:** campo lógico do jogo **fixo 320×180** (determinismo + justiça de
+leaderboard: todos jogam o mesmo campo) ⇒ a resposta a telas variadas é escalar+letterbox, nunca
+redimensionar o mundo; em celular retrato o 16:9 vira faixa fina ⇒ dica de girar (escolha do
+usuário: não-bloqueante). **Fix descoberto na validação Playwright (Task 5, o cerne do item):** o
+`Scale.FIT` do Phaser NÃO escalava — o container `.play-screen__canvas` com `height:100%`
+colapsava para 180px (quirk de flex item flexível não propagar altura definida) ⇒ FIT media
+180-alto ⇒ escala 1.0 ⇒ canvas ficava nativo 320×180 descentralizado. Correção (`src/app/styles/
+global.css`): container do canvas vira caixa de dimensão DEFINIDA (`position:absolute; inset:0`;
+`autoCenter:CENTER_BOTH` do Phaser centraliza — sem dupla centralização do flex); `#app` ganha
+**altura fixa** `100dvh` (fallback `100vh`) em vez de `min-height` (senão a shell crescia com o
+conteúdo e o `overflow-y` das telas ficava inerte, clipando o topo em paisagem curta); `.screen`/
+`.home__menu` ganham `min-height:0` + `justify-content: safe center` (centraliza quando cabe,
+alinha ao topo quando estoura — evita o bug clássico de clip do `center`); `overflow-x:hidden` em
+html/body/#app trava scroll horizontal; barras de letterbox na cor do tema (`--color-bg`
+`#0e1116`, casa com `theme-color`); Voltar respeita `env(safe-area-inset-*)`. Execução SDD por
+subagentes (4 tasks: orientation/i18n/overlay/CSS haiku+sonnet + review por task + review final
+opus **"READY TO MERGE"**, 0 Critical/Important) + Task 5 (validação) INLINE pelo controlador com
+o fix de escala descoberto ali. Suíte verde (`check` limpo, **669 testes**, determinismo **67
+inalterado**). Verificação visual (Playwright, matriz): canvas escala/centra simétrico (retrato
+390×844→390×219, paisagem 844×390→693×390, desktop 1440×900→1440×810 aspect 1.778=16:9 exato,
+barras no tema); dica de girar aparece só em toque+retrato com `pointer-events:none` provado;
+Nest em 844×390 rola sem clipar topo (topo 24, último card alcançável); zero scroll horizontal em
+todos os alvos. **Adiados/backlog:** Minors do review — `.rotate-hint` (z-20) escurece o Voltar
+(z-10) em retrato (cosmético, clique intacto); `.play-screen` mantém flex-center agora inerte
+(canvas/back/hint são absolutos); notch testado só por CSS `env()` (insets 0 no headless);
+tablet-paisagem 1024×768 coberto por analogia ao desktop. Merge (7.2).
+
+**Próximo: 7.3 (deploy GitHub Pages) / 7.4 (deploy itch.io).** Ver
 `docs/roadmap/PHASE-07-pwa-and-deploy.md`.

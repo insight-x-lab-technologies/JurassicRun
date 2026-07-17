@@ -8,6 +8,7 @@ html,
 body {
   margin: 0;
   height: 100%;
+  overflow-x: hidden; /* trava scroll horizontal em qualquer largura */
 }
 
 body {
@@ -19,10 +20,15 @@ body {
 }
 
 #app {
-  min-height: 100vh;
-  min-height: 100dvh;
+  /* Altura FIXA ao viewport (não min-height): limita a shell para que o scroll interno
+     das telas engate em paisagem curta. Sem isso, a shell cresce com o conteúdo e o
+     overflow-y das telas fica inerte (conteúdo de baixo inalcançável). dvh acompanha as
+     barras dinâmicas do mobile; vh é fallback para navegadores sem dvh. */
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
   /* Safe-area (viewport-fit=cover já no index.html) */
   padding: env(safe-area-inset-top) env(safe-area-inset-right)
     env(safe-area-inset-bottom) env(safe-area-inset-left);
@@ -30,13 +36,17 @@ body {
 
 .screen {
   flex: 1;
+  min-height: 0; /* permite encolher abaixo do conteúdo p/ o overflow-y engatar (flexbox) */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* `safe center`: centraliza quando cabe; alinha ao topo quando estoura (senão o topo
+     do conteúdo fica clipado e inalcançável — bug clássico de justify-content:center). */
+  justify-content: safe center;
   gap: var(--space-4);
   padding: var(--space-5);
   text-align: center;
+  overflow-y: auto; /* paisagem curta: conteúdo alto rola em vez de clipar */
 }
 
 .screen__title {
@@ -92,22 +102,52 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 0;
+  background: var(--color-bg); /* barras de letterbox na cor do tema */
 }
 
+/* Container do canvas Phaser: caixa de dimensões DEFINIDAS (absolute inset:0) para o
+   Scale.FIT medir o espaço real e escalar/letterbox corretamente. Sem flex-center aqui —
+   o autoCenter:CENTER_BOTH do Phaser é quem centraliza o canvas (evita dupla centralização). */
 .play-screen__canvas {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: absolute;
+  inset: 0;
 }
 
 .play-screen__back {
   position: absolute;
-  top: var(--space-3);
-  left: var(--space-3);
+  top: max(var(--space-3), env(safe-area-inset-top));
+  left: max(var(--space-3), env(safe-area-inset-left));
   z-index: 10;
   min-width: auto;
+}
+
+/* Dica de girar (7.2): não bloqueia o toque/flap; some em paisagem via o hook. */
+.rotate-hint {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  text-align: center;
+  pointer-events: none; /* CRÍTICO: deixa o flap/tap passarem para o canvas */
+  background: rgba(14, 17, 22, 0.55); /* fallback do scrim se color-mix não for suportado */
+  background: color-mix(in srgb, var(--color-bg) 55%, transparent);
+}
+
+.rotate-hint__icon {
+  font-size: var(--font-size-xl);
+  line-height: 1;
+}
+
+.rotate-hint__text {
+  margin: 0;
+  max-width: 20rem;
+  color: var(--color-text);
+  font-size: var(--font-size-md);
 }
 
 .form {
@@ -219,6 +259,7 @@ body {
   gap: var(--space-5);
   padding: var(--space-4);
   min-height: 0;
+  overflow-y: auto;
 }
 
 .home__topbar {
@@ -279,7 +320,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: safe center; /* paridade com .screen: sem clip de topo em paisagem curta */
   gap: var(--space-4);
   min-height: 0;
 }
