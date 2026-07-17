@@ -9,7 +9,8 @@
     "test": "vitest run",
     "test:determinism": "vitest run tests/determinism",
     "check": "tsc --noEmit && eslint .",
-    "build:edge": "node scripts/build-edge.mjs"
+    "build:edge": "node scripts/build-edge.mjs",
+    "gen:icons": "node scripts/gen-icons.mjs"
   },
   "keywords": [],
   "author": "",
