@@ -92,6 +92,7 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 0;
+  background: var(--color-bg); /* barras de letterbox na cor do tema */
 }
 
 .play-screen__canvas {
@@ -104,10 +105,38 @@ body {
 
 .play-screen__back {
   position: absolute;
-  top: var(--space-3);
-  left: var(--space-3);
+  top: max(var(--space-3), env(safe-area-inset-top));
+  left: max(var(--space-3), env(safe-area-inset-left));
   z-index: 10;
   min-width: auto;
+}
+
+/* Dica de girar (7.2): não bloqueia o toque/flap; some em paisagem via o hook. */
+.rotate-hint {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  text-align: center;
+  pointer-events: none; /* CRÍTICO: deixa o flap/tap passarem para o canvas */
+  background: color-mix(in srgb, var(--color-bg) 55%, transparent);
+}
+
+.rotate-hint__icon {
+  font-size: var(--font-size-xl);
+  line-height: 1;
+}
+
+.rotate-hint__text {
+  margin: 0;
+  max-width: 20rem;
+  color: var(--color-text);
+  font-size: var(--font-size-md);
 }
 
 .form {
