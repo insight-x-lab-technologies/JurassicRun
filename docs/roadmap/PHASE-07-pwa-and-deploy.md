@@ -16,8 +16,16 @@
       deploy HTTPS (7.3) — validado por build (`dist/manifest.webmanifest`+`sw.js`+ícones)._
 
 ### 7.2 Responsividade (transversal, finalizada aqui)
-- [ ] Desktop, tablet, celular; retrato e paisagem; vários tamanhos.
-- [ ] Canvas do jogo escala/letterbox corretamente; UI respeita safe-areas.
+- [x] Desktop, tablet, celular; retrato e paisagem; vários tamanhos.
+- [x] Canvas do jogo escala/letterbox corretamente; UI respeita safe-areas.
+      _Concluído: campo lógico fixo 320×180 escala/letterbox via `Scale.FIT` (barras na cor
+      do tema); dica de girar não-bloqueante (`shouldSuggestRotate` puro + hook `matchMedia`,
+      `pointer-events:none`) em celular retrato; telas roláveis sem clip em paisagem curta
+      (`#app` altura fixa 100dvh + `.screen`/`.home__menu` `safe center`); zero scroll
+      horizontal; safe-areas via `env()`. Fix descoberto na validação: o container do canvas
+      precisava de dimensão definida (`absolute; inset:0`) senão o FIT media altura colapsada
+      e não escalava. Validado por Playwright (retrato 390×219, paisagem 693×390, desktop
+      1440×810 16:9)._
 
 ### 7.3 Deploy GitHub Pages
 - [ ] GitHub Actions: build + publish em Pages. Base path correto para subdiretório.
