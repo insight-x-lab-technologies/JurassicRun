@@ -134,6 +134,7 @@ body {
   padding: var(--space-5);
   text-align: center;
   pointer-events: none; /* CRÍTICO: deixa o flap/tap passarem para o canvas */
+  background: rgba(14, 17, 22, 0.55); /* fallback do scrim se color-mix não for suportado */
   background: color-mix(in srgb, var(--color-bg) 55%, transparent);
 }
 
@@ -319,7 +320,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: safe center; /* paridade com .screen: sem clip de topo em paisagem curta */
   gap: var(--space-4);
   min-height: 0;
 }
