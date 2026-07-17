@@ -15,6 +15,7 @@
 - **Margens/padding seguros:** 4px
 
 ## Direção de arte
+> **Coerência de mundo:** seguir `docs/assets/ART-DIRECTION.md` (Style Bible). Asset **Tier 2** (in-game): manter legibilidade a 320×180, silhueta forte, alinhar a paleta ao mundo pintado sem detalhe fino que suma a tamanho pequeno.
 - **Estilo:** cartoon vetorial chapado, contorno definido, sombreamento simples (coerente com `dino.default`).
 - **Paleta:** estalactite `#8a8a8a`, sombra/profundidade `#5a5a5a`, contorno `#3a3a3a`, realce `#aaaaaa`.
 - **Iluminação/ângulo:** vista lateral 2D, luz superior, ápice afiado apontando para baixo.

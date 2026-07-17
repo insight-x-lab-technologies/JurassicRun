@@ -1202,3 +1202,39 @@ criar a página HTML no itch.io + (opcional automação) API key butler → `BUT
 `ITCH_TARGET` variable no repo. **Adiados:** publish real (ação do usuário); wrappers de loja
 TWA/Capacitor (7.5, futuro); empacotamento compacto/otimização do zip; testar SW dentro do iframe
 do itch (ambiente externo, documentado). **Fase 7: resta só 7.5 (futuro, fora do MVP).**
+
+**7.5 (wrappers de loja) — ADIADO por decisão do usuário** (fora do MVP: custo de contas de
+loja + tooling nativo colidem com "hobby web sem custo"). Fica registrado `[ ]`. **Fase 7
+essencialmente fechada** (MVP instalável/offline/responsivo/deploy pronto).
+
+**Fase 8 (Arte AAA & packs) — EM ANDAMENTO.** Item 8.1 (parte de ESPECIFICAÇÃO) concluída.
+
+8.1 (specs de arte — docs-only): a partir de 6 imagens conceituais AAA do usuário (`ref/`, look
+"Ptero Ascent"), produzido o sistema de especificação para geração externa por IA — **`src/` e
+`src/core/` intocados ⇒ determinismo 67 inalterado** (a geração das imagens em si e o atlas ficam
+para sessão futura / usuário). **Decisões de produto:** (1) **nome mantido "JurassicRun"** (logo
+ornamentado, mas wordmark diz JurassicRun; rebrand "Ptero Ascent" é decisão futura separada); (2)
+**regra dos dois tiers** — Tier 1 (UI/menus + fundos de tela) = AAA pintado full-res no DOM; Tier
+2 (entidades in-game) = sprite legível a 320×180 no canvas (campo lógico fixo é REGRA travada);
+(3) **HUD-fantasia do concept de gameplay REJEITADO** (`ref_GamePlay.png` mostra habilidades/
+minimapa/objetivos/boost/dive/XP que violam o flap-only determinístico + justiça de leaderboard —
+usado só como referência de *look*); (4) **fundos de tela** = 1 base `classic` + variantes
+`volcano`/`glacier` trocadas pela expansão ativa (reusa o seam `activeExpansion` de 4.6). Cinco
+artefatos: **Style Bible** `docs/assets/ART-DIRECTION.md` (paleta mestra slate+ouro+azul-glow,
+materiais, tipografia, iconografia, regra dos dois tiers, REGRA 2); **catálogo de specs
+prontas-para-IA** dos assets novos (`logo.app`; UI chrome `ui.panel.frame`/`ui.button`[primary+
+secondary, 9-slice]/`ui.header.emblem`/`ui.statchip.frame`/`ui.medals`[gold/silver/bronze]/
+`ui.nav.bar`/`ui.icons`[conjunto de 10 ícones de nav]; fundos `bg.screen`[classic/volcano/glacier]
++ `expansion.covers`) — cada spec no formato existente com dimensão exata @1x/@2x, transparência,
+9-slice quando moldura, atlas alvo e **prompt IA copiável** referenciando o Style Bible;
+**realinhamento** dos 24 specs existentes (nota de coerência + tier ao Style Bible, hitbox/prompts
+técnicos intactos); **registro** `asset-registry.md` com seções novas "UI / chrome" e "Fundos de
+tela" (todos os ids `spec`); **guarda de paridade** `tests/assets/registry-specs.test.ts` (todo
+spec-path do registro existe em disco + todo spec novo tem bloco de prompt IA — testada com dente:
+quebra→FAIL, revert→PASS). Migração concept→atual em `docs/superpowers/specs/2026-07-17-art-
+direction-migration-design.md`: telas de menu são re-skin ~1:1 via remap de tokens CSS (documentado,
+aplicação é 8.2); Game Over ganha linha Clima + badge "NOVO RECORDE!" (dado já no core, UI futura).
+Execução **INLINE** (autoria dos prompts exige o contexto das 6 imagens que subagentes frescos não
+teriam) + verificação real. Suíte verde (`check` limpo, **681 testes** [+3 da guarda], determinismo
+**67 inalterado**). **Resta em 8.1:** gerar as imagens (usuário, IA externa) + empacotar em atlases;
+**8.2** troca o manifesto para `kind:"sprite"` + aplica o remap de tokens no CSS.

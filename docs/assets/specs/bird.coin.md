@@ -15,6 +15,7 @@
 - **Margens/padding seguros:** 3px
 
 ## Direção de arte
+> **Coerência de mundo:** seguir `docs/assets/ART-DIRECTION.md` (Style Bible). Asset **Tier 2** (in-game): manter legibilidade a 320×180, silhueta forte, alinhar a paleta ao mundo pintado sem detalhe fino que suma a tamanho pequeno.
 - **Estilo:** cartoon vetorial chapado, contorno definido, sombreamento simples (coerente com `dino.default`).
 - **Paleta:** corpo dourado `#f2c14e`, asa `#e0a92e`, contorno `#7a5a12`, realce `#ffe39b`.
 - **Iluminação/ângulo:** vista lateral (perfil de voo), luz superior suave.

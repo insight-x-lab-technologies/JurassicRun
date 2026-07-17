@@ -56,8 +56,34 @@ usada no manifesto de assets do render.
 ## UI / ícones
 | id | descrição | status | spec |
 |----|-----------|--------|------|
-| `icon.coin` `icon.trophy` `icon.settings` ... | ícones de UI | placeholder | — |
-| `logo.app` | logotipo do jogo | placeholder | — |
+| `icon.coin` `icon.trophy` ... | ícones de HUD | placeholder | — |
+| `logo.app` | logotipo do jogo (wordmark ornamentado "JurassicRun") | spec | `specs/logo.app.md` |
 | `pwa-icon` | ícone de instalação PWA (192/512/maskable-512) | spec | `specs/pwa-icon.md` |
+
+## UI / chrome (Fase 8 — look AAA)
+> Molduras/botões/ícones de menu. Ver `docs/assets/ART-DIRECTION.md` (Style Bible). Tier 1.
+| id | descrição | status | spec |
+|----|-----------|--------|------|
+| `ui.panel.frame` | moldura de painel/card (9-slice) | spec | `specs/ui.panel.frame.md` |
+| `ui.button.primary` | botão CTA azul-glow (9-slice) | spec | `specs/ui.button.md` |
+| `ui.button.secondary` | botão escuro borda dourada (9-slice) | spec | `specs/ui.button.md` |
+| `ui.header.emblem` | crista de pterodáctilo (divisor de header) | spec | `specs/ui.header.emblem.md` |
+| `ui.statchip.frame` | moldura dos stat-chips do topo (9-slice) | spec | `specs/ui.statchip.frame.md` |
+| `ui.medal.gold` | medalha de 1º lugar | spec | `specs/ui.medals.md` |
+| `ui.medal.silver` | medalha de 2º lugar | spec | `specs/ui.medals.md` |
+| `ui.medal.bronze` | medalha de 3º lugar | spec | `specs/ui.medals.md` |
+| `ui.nav.bar` | fundo da barra de nav inferior (9-slice) | spec | `specs/ui.nav.bar.md` |
+| `icon.daily` `icon.weekly` `icon.nest` `icon.shop` `icon.expansions` `icon.leaderboard` `icon.settings` `icon.share` `icon.donate` `icon.back` | conjunto de 10 ícones de nav (dourados) | spec | `specs/ui.icons.md` |
+
+## Fundos de tela (Fase 8 — Tier 1, pintados)
+> Trocados pela expansão ativa (seam `activeExpansion`, 4.6).
+| id | descrição | status | spec |
+|----|-----------|--------|------|
+| `bg.screen.classic` | fundo de menu — jungle canyon (default) | spec | `specs/bg.screen.md` |
+| `bg.screen.volcano` | fundo de menu — terras ardentes (expansão Vulcão) | spec | `specs/bg.screen.md` |
+| `bg.screen.glacier` | fundo de menu — gelo/aurora (expansão Geleira) | spec | `specs/bg.screen.md` |
+| `expansion.classic` | capa de card — Clássica | spec | `specs/expansion.covers.md` |
+| `expansion.volcano` | capa de card — Vulcão | spec | `specs/expansion.covers.md` |
+| `expansion.glacier` | capa de card — Geleira | spec | `specs/expansion.covers.md` |
 
 > Mantenha esta tabela em dia a cada novo asset (a skill `create-asset-spec` faz isso).

@@ -21,6 +21,7 @@
 - **Margens/padding seguros:** 8px de respiro nas 4 bordas do frame.
 
 ## Direção de arte
+> **Coerência de mundo:** seguir `docs/assets/ART-DIRECTION.md` (Style Bible). Asset **Tier 2** (in-game): manter legibilidade a 320×180, silhueta forte, alinhar a paleta ao mundo pintado sem detalhe fino que suma a tamanho pequeno.
 - **Estilo:** cartoon vetorial chapado, contorno definido, sombreamento simples — mais
   "lendário"/ornamentado que `dino.goldbeak` (o traço é mais raro e mais caro).
 - **Paleta:** corpo inteiro banhado a ouro `#b8a12e` (`hsl(50,60%,45%)` — matiz do roster),

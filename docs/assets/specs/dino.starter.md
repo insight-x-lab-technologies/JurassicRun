@@ -23,6 +23,7 @@
   das asas no atlas.
 
 ## Direção de arte
+> **Coerência de mundo:** seguir `docs/assets/ART-DIRECTION.md` (Style Bible). Asset **Tier 2** (in-game): manter legibilidade a 320×180, silhueta forte, alinhar a paleta ao mundo pintado sem detalhe fino que suma a tamanho pequeno.
 - **Estilo:** cartoon vetorial chapado, contorno definido, sombreamento simples — mesmo
   estilo-base de `dino.default`.
 - **Paleta:** corpo `#2e8ab8` (azul-petróleo, `hsl(200,60%,45%)` — matiz do roster), barriga

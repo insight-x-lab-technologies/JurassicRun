@@ -27,6 +27,7 @@
   — o SO pode aplicar máscaras circulares/squircle/etc. que cortam a borda).
 
 ## Direção de arte
+> **Coerência de mundo:** seguir `docs/assets/ART-DIRECTION.md` (Style Bible). Ícone de SO (não in-game): reusar a marca/emblema dourado do logo em pequena escala.
 - **Estilo:** cartoon vetorial chapado, silhueta única, sem contorno/sombreamento — molde do
   placeholder geométrico do resto do jogo (Fases 1–7, `ASSET_MANIFEST` de `src/render/manifest.ts`).
 - **Paleta:** fundo `#0e1116` (`--color-bg`); silhueta `#4ea1ff` (`--color-primary`) no
