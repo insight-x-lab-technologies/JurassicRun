@@ -28,7 +28,16 @@
       1440×810 16:9)._
 
 ### 7.3 Deploy GitHub Pages
-- [ ] GitHub Actions: build + publish em Pages. Base path correto para subdiretório.
+- [x] GitHub Actions: build + publish em Pages. Base path correto para subdiretório.
+      _Concluído: `base` do Vite dirigido por env var `BASE_PATH` (helper puro testável
+      `resolveBasePath`, `src/pwa/base.ts`) — default `/` (dev/testes), `/JurassicRun/`
+      (Pages, normalizado com barras), `./`/`..` relativo passthrough (itch.io 7.4).
+      Workflow `.github/workflows/deploy.yml` (configure-pages/upload-pages-artifact/
+      deploy-pages, seta `BASE_PATH=/JurassicRun/` no build, push em main +
+      workflow_dispatch). Build local com base absoluta verificado: assets/manifest/SW
+      prefixados por `/JurassicRun/`, `start_url`/`scope` corretos. Doc `docs/deploy/
+      README.md`. **Pré-req manual do usuário: Settings → Pages → Source = GitHub
+      Actions** (não automatizável). `src/core/` intocado, determinismo 67._
 
 ### 7.4 Deploy itch.io
 - [ ] Empacotar build estático; publicar no itch.io.
