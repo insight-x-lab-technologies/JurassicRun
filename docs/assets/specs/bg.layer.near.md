@@ -16,6 +16,7 @@
 - **Margens/padding seguros:** bordas laterais casadas; enraíza atrás da linha do solo.
 
 ## Direção de arte
+> **Coerência de mundo:** seguir `docs/assets/ART-DIRECTION.md` (Style Bible). Camada de parallax in-game (Tier 1.5): silhueta neutra que aceita o tint de daynight; alinhar ao mundo pintado sem cor saturada que brigue com o tint.
 - **Estilo:** silhueta chapada, maior contraste (camada mais próxima).
 - **Paleta:** verde escuro `0x2f5233`.
 - **Iluminação/ângulo:** vista lateral 2D.

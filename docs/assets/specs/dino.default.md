@@ -18,6 +18,7 @@
 - **Formato de exportação:** PNG com alpha, @1x e @2x
 
 ## Direção de arte
+> **Coerência de mundo:** seguir `docs/assets/ART-DIRECTION.md` (Style Bible). Asset **Tier 2** (in-game): manter legibilidade a 320×180, silhueta forte, alinhar a paleta ao mundo pintado sem detalhe fino que suma a tamanho pequeno.
 - **Estilo:** cartoon vetorial chapado, contorno definido, sombreamento simples.
 - **Paleta:** corpo `#cc5544`, barriga `#f0c0a0`, crista `#3a8fb0`, contorno `#3a1f1a`.
 - **Iluminação/ângulo:** vista lateral 2D, voltado para a direita, luz superior suave.

@@ -21,6 +21,7 @@
 - **Margens/padding seguros:** 8px de respiro nas 4 bordas do frame.
 
 ## Direção de arte
+> **Coerência de mundo:** seguir `docs/assets/ART-DIRECTION.md` (Style Bible). Asset **Tier 2** (in-game): manter legibilidade a 320×180, silhueta forte, alinhar a paleta ao mundo pintado sem detalhe fino que suma a tamanho pequeno.
 - **Estilo:** cartoon vetorial chapado, contorno definido, sombreamento simples.
 - **Paleta:** corpo `#2e73b8` (azul-aço, `hsl(210,60%,45%)` — matiz do roster), barriga
   `#dcebf7`, placas de armadura estilizadas em azul-acinzentado `#7a94ab`, contorno `#0d2436`.

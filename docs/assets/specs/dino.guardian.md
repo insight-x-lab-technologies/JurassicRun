@@ -22,6 +22,7 @@
 - **Margens/padding seguros:** 8px de respiro nas 4 bordas do frame.
 
 ## Direção de arte
+> **Coerência de mundo:** seguir `docs/assets/ART-DIRECTION.md` (Style Bible). Asset **Tier 2** (in-game): manter legibilidade a 320×180, silhueta forte, alinhar a paleta ao mundo pintado sem detalhe fino que suma a tamanho pequeno.
 - **Estilo:** cartoon vetorial chapado, contorno definido, sombreamento simples — mais
   "couraçado"/pesado que `dino.aegis` (preço mais alto ⇒ visual mais robusto).
 - **Paleta:** corpo `#2e2eb8` (índigo, `hsl(240,60%,45%)` — matiz do roster), barriga `#dcdcf7`,

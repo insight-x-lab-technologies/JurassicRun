@@ -17,6 +17,7 @@
 - **Margens/padding seguros:** bordas esquerda/direita devem casar para tilear.
 
 ## Direção de arte
+> **Coerência de mundo:** seguir `docs/assets/ART-DIRECTION.md` (Style Bible). Camada de parallax in-game (Tier 1.5): silhueta neutra que aceita o tint de daynight; alinhar ao mundo pintado sem cor saturada que brigue com o tint.
 - **Estilo:** silhueta chapada, sem detalhe interno; sensação de distância (baixo contraste).
 - **Paleta:** azul-acinzentado enevoado `0x6b7a8f`.
 - **Iluminação/ângulo:** vista lateral 2D; atmosfera enevoada (mais claro = mais longe).
