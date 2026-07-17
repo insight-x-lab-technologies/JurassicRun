@@ -1151,5 +1151,30 @@ todos os alvos. **Adiados/backlog:** Minors do review — `.rotate-hint` (z-20) 
 (canvas/back/hint são absolutos); notch testado só por CSS `env()` (insets 0 no headless);
 tablet-paisagem 1024×768 coberto por analogia ao desktop. Merge (7.2).
 
-**Próximo: 7.3 (deploy GitHub Pages) / 7.4 (deploy itch.io).** Ver
-`docs/roadmap/PHASE-07-pwa-and-deploy.md`.
+7.3 (deploy GitHub Pages): build da PWA publicado no GitHub Pages via GitHub Actions com base
+path correto para o subdiretório do repo de projeto — **só build/infra, `src/core/` intocado**
+⇒ determinismo **67 inalterado**. Padrão puro×casca: `src/pwa/base.ts` PURO testável
+`resolveBasePath(env)` resolve o `base` do Vite a partir da env var `BASE_PATH` — ausente/vazio
+⇒ `'/'` (dev/testes, sem regressão); começa com `.` (`.`/`./`/`..`/`../algo`) ⇒ passthrough
+relativo (caso legítimo do Vite p/ host em path arbitrário, ex.: itch.io 7.4 — um `..`
+acidental não vira absoluto inválido); absoluto ⇒ normalizado com barra inicial+final
+(guarda contra o footgun de assets 404 quando falta a barra final). `vite.config.ts` (casca)
+passou a `base: resolveBasePath(process.env)`. Workflow `.github/workflows/deploy.yml` (deploy
+oficial de Pages: `configure-pages@v5`/`upload-pages-artifact@v3`/`deploy-pages@v4`,
+`permissions` mínimas `contents:read`+`pages:write`+`id-token:write`, `concurrency:pages`
+`cancel-in-progress:false`, push em `main` + `workflow_dispatch`) roda `npm run build`
+(`tsc && vite build` ⇒ erro de tipo falha o deploy) com `BASE_PATH=/JurassicRun/`; publica
+`dist/`. Separado do `ci.yml` (suíte completa em paralelo; gate `needs: ci` adiado). Doc
+`docs/deploy/README.md` (mecanismo `BASE_PATH` + pré-req). Sem strings i18n (metadados de
+infra). Execução INLINE (item pequeno de infra, TDD) + review final por subagente
+**APROVADO** (0 bloqueadores; Minor `..` aplicado com teste). Suíte verde (`check` limpo,
+**677 testes**, determinismo **67 inalterado**). Verificação de build local: `BASE_PATH=/
+JurassicRun/ npm run build` ⇒ `dist/index.html` referencia `/JurassicRun/assets/…`,
+`/JurassicRun/registerSW.js`, `/JurassicRun/manifest.webmanifest`; manifest `start_url`/
+`scope` = `/JurassicRun/`, ícones em path relativo (resolvem sob o scope); build default (`/`)
+sem prefixo. **Pré-req manual do usuário (não automatizável, `gh` não autenticado):
+Settings → Pages → Source = GitHub Actions** no repo `insight-x-lab-technologies/JurassicRun`;
+sem isso o job `deploy` falha "Pages não habilitado". **Adiados:** deploy itch.io (7.4, reusa
+`BASE_PATH=./`); domínio customizado (CNAME); gate `needs: ci`; arte real dos ícones (Fase 8).
+
+**Próximo: 7.4 (deploy itch.io).** Ver `docs/roadmap/PHASE-07-pwa-and-deploy.md`.

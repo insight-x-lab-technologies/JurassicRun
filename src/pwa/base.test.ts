@@ -33,4 +33,8 @@ describe('resolveBasePath', () => {
   it('passa base relativa "." inalterada', () => {
     expect(resolveBasePath({ BASE_PATH: '.' })).toBe('.');
   });
+
+  it('passa base relativa com ".." inalterada (não vira absoluto inválido)', () => {
+    expect(resolveBasePath({ BASE_PATH: '../foo/' })).toBe('../foo/');
+  });
 });
