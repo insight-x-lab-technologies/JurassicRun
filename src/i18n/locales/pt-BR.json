@@ -174,5 +174,8 @@
       "error": "Erro de conexão"
     },
     "globalId": "ID global"
+  },
+  "rotateHint": {
+    "message": "Gire o dispositivo para a horizontal para uma experiência melhor."
   }
 }

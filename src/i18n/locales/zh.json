@@ -174,5 +174,8 @@
       "error": "连接错误"
     },
     "globalId": "全球 ID"
+  },
+  "rotateHint": {
+    "message": "请将设备旋转为横屏以获得最佳体验。"
   }
 }

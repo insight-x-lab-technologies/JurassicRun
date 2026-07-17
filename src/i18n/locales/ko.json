@@ -174,5 +174,8 @@
       "error": "연결 오류"
     },
     "globalId": "전역 ID"
+  },
+  "rotateHint": {
+    "message": "최적의 환경을 위해 기기를 가로로 돌려 주세요."
   }
 }
