@@ -1,0 +1,40 @@
+name: Deploy to itch.io
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  butler-push:
+    runs-on: ubuntu-latest
+    # Inerte até ser configurado (offline-first): só roda quando a repository variable
+    # ITCH_TARGET existe. Nota: o contexto `secrets` não é permitido em `if` de job no
+    # GitHub Actions, então gateamos na `vars` (o usuário configura ITCH_TARGET + o secret
+    # BUTLER_API_KEY juntos para publicar). Sem o secret, o passo do butler falha alto.
+    if: ${{ vars.ITCH_TARGET != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+        env:
+          BASE_PATH: './'
+
+      - name: Install butler
+        run: |
+          curl -L -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip butler.zip
+          chmod +x butler
+          ./butler -V
+
+      - name: Push to itch.io
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: ./butler push dist "${{ vars.ITCH_TARGET }}:html5"
