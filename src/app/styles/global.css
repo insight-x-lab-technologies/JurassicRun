@@ -20,8 +20,12 @@ body {
 }
 
 #app {
-  min-height: 100vh;
-  min-height: 100dvh;
+  /* Altura FIXA ao viewport (não min-height): limita a shell para que o scroll interno
+     das telas engate em paisagem curta. Sem isso, a shell cresce com o conteúdo e o
+     overflow-y das telas fica inerte (conteúdo de baixo inalcançável). dvh acompanha as
+     barras dinâmicas do mobile; vh é fallback para navegadores sem dvh. */
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
@@ -32,10 +36,13 @@ body {
 
 .screen {
   flex: 1;
+  min-height: 0; /* permite encolher abaixo do conteúdo p/ o overflow-y engatar (flexbox) */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* `safe center`: centraliza quando cabe; alinha ao topo quando estoura (senão o topo
+     do conteúdo fica clipado e inalcançável — bug clássico de justify-content:center). */
+  justify-content: safe center;
   gap: var(--space-4);
   padding: var(--space-5);
   text-align: center;
@@ -98,12 +105,12 @@ body {
   background: var(--color-bg); /* barras de letterbox na cor do tema */
 }
 
+/* Container do canvas Phaser: caixa de dimensões DEFINIDAS (absolute inset:0) para o
+   Scale.FIT medir o espaço real e escalar/letterbox corretamente. Sem flex-center aqui —
+   o autoCenter:CENTER_BOTH do Phaser é quem centraliza o canvas (evita dupla centralização). */
 .play-screen__canvas {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: absolute;
+  inset: 0;
 }
 
 .play-screen__back {
