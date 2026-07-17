@@ -1083,7 +1083,8 @@ untested-by-unit (precedente de casca IO).
 
 **Fase 6 (Online — Supabase) CONCLUÍDA** (itens 6.1–6.5).
 
-**Fase 7 (PWA, responsividade & deploy) — EM ANDAMENTO.** Item 7.1 concluído.
+**Fase 7 (PWA, responsividade & deploy) — EM ANDAMENTO.** Itens 7.1, 7.2, 7.3 e 7.4
+concluídos (resta só 7.5 = wrappers de loja, futuro/fora do MVP).
 
 7.1 (PWA — instalável + offline): manifesto Web App + service worker com precache ⇒ jogo
 instalável (Android/desktop) e jogável offline. **Só build/infra/app, `src/core/` intocado**
@@ -1177,4 +1178,27 @@ Settings → Pages → Source = GitHub Actions** no repo `insight-x-lab-technolo
 sem isso o job `deploy` falha "Pages não habilitado". **Adiados:** deploy itch.io (7.4, reusa
 `BASE_PATH=./`); domínio customizado (CNAME); gate `needs: ci`; arte real dos ícones (Fase 8).
 
-**Próximo: 7.4 (deploy itch.io).** Ver `docs/roadmap/PHASE-07-pwa-and-deploy.md`.
+7.4 (deploy itch.io): empacotamento do build estático para publicação no itch.io como jogo
+HTML5 — **só build/infra, `src/core/` intocado** ⇒ determinismo **67 inalterado**. Reusa
+`resolveBasePath` (7.3): `BASE_PATH=./` (base relativa) já é passthrough p/ host em path
+arbitrário. **Publicar de fato = ação manual do usuário** (exige conta itch + API key butler);
+o item entrega tooling + automação inerte + docs. Três peças: (1) `scripts/package-itch.mjs`
+(npm `package:itch`, molde `build-edge.mjs`): roda `npm run build` com `BASE_PATH=./` e zipa o
+**conteúdo** de `dist/` (não a pasta) em `jurassicrun-itch.zip` com `index.html` na **raiz do
+zip** (requisito do player HTML5 do itch), via `zip` do sistema; `.zip` no `.gitignore` (saída
+de build). (2) `.github/workflows/itch.yml`: `butler push dist "<ITCH_TARGET>:html5"` em tag
+`v*` + `workflow_dispatch`, **gated por `vars.ITCH_TARGET`** (offline-first, inerte até
+configurar) — gate na *variable* porque o contexto `secrets` NÃO é permitido em `if` de job no
+GitHub Actions; secret `BUTLER_API_KEY` no passo do push. (3) `docs/deploy/README.md` estende
+com a seção itch.io (criar página Kind=HTML "jogado no browser"/viewport 640×360, upload manual
+do zip **ou** setup butler [API key → secret+var], e a **limitação PWA**: itch embute em iframe
+sandbox de subdomínio aleatório ⇒ SW pode não registrar; jogo roda igual, precache offline é
+bônus do Pages). Sem strings i18n. Execução **INLINE** (item pequeno de infra, precedente 7.3);
+TDD-por-build (verificação por build real, não unit test de script de empacotamento). Verificado:
+`npm run package:itch` ⇒ zip com `index.html` na raiz (sem prefixo `dist/`), `dist/index.html`
+com refs relativas (`./assets/…`, `./registerSW.js`, `icons/…`), zero path absoluto. Suíte verde
+(`check` limpo, **678 testes**, determinismo **67 inalterado**). **Pré-req do usuário p/ publicar:**
+criar a página HTML no itch.io + (opcional automação) API key butler → `BUTLER_API_KEY` secret +
+`ITCH_TARGET` variable no repo. **Adiados:** publish real (ação do usuário); wrappers de loja
+TWA/Capacitor (7.5, futuro); empacotamento compacto/otimização do zip; testar SW dentro do iframe
+do itch (ambiente externo, documentado). **Fase 7: resta só 7.5 (futuro, fora do MVP).**

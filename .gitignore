@@ -10,5 +10,6 @@ build/
 .claudebot/
 .devserver.pid
 dev-dist/
+jurassicrun-itch.zip
 .superpowers/
 .playwright-mcp/
