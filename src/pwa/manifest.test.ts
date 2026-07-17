@@ -11,6 +11,7 @@ describe('pwaOptions', () => {
 
   it('não fixa scope/start_url absolutos (derivados do base em 7.3)', () => {
     const m = pwaOptions.manifest;
+    expect(m && typeof m !== 'boolean').toBe(true);
     if (m && typeof m === 'object') {
       expect(m.scope).toBeUndefined();
       expect(m.start_url).toBeUndefined();
@@ -37,6 +38,7 @@ describe('pwaOptions.manifest', () => {
   });
 
   it('tem ícones 192 e 512 "any" + um 512 "maskable"', () => {
+    expect(m && typeof m !== 'boolean').toBe(true);
     if (m && typeof m === 'object') {
       const icons = m.icons ?? [];
       expect(icons.some((i) => i.sizes === '192x192')).toBe(true);
@@ -48,6 +50,7 @@ describe('pwaOptions.manifest', () => {
   });
 
   it('usa caminhos de ícone relativos (corretos sob qualquer base)', () => {
+    expect(m && typeof m !== 'boolean').toBe(true);
     if (m && typeof m === 'object') {
       for (const i of m.icons ?? []) expect(i.src.startsWith('/')).toBe(false);
     }
