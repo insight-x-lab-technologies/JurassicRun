@@ -1081,5 +1081,41 @@ troféus **por-perfil** (hoje globais como wallet/nest); pódio semanal análogo
 reavalia catálogo inteiro (inerte hoje); casca real de `submitTrophies`/`fetchTrophies`
 untested-by-unit (precedente de casca IO).
 
-**Fase 6 (Online — Supabase) CONCLUÍDA** (itens 6.1–6.5). **Próximo: Fase 7 (PWA & deploy).**
-Ver `docs/roadmap/PHASE-07-pwa-and-deploy.md`.
+**Fase 6 (Online — Supabase) CONCLUÍDA** (itens 6.1–6.5).
+
+**Fase 7 (PWA, responsividade & deploy) — EM ANDAMENTO.** Item 7.1 concluído.
+
+7.1 (PWA — instalável + offline): manifesto Web App + service worker com precache ⇒ jogo
+instalável (Android/desktop) e jogável offline. **Só build/infra/app, `src/core/` intocado**
+⇒ determinismo **67 inalterado** (sem re-pin de goldens). Padrão puro×casca: (1)
+`src/pwa/manifest.ts` PURO testável exporta `pwaOptions: Partial<VitePWAOptions>` (manifesto —
+nome, `display:'standalone'`, `theme_color`/`background_color` `#0e1116` dos design tokens,
+ícones 192/512 `any`+512 `maskable` com **caminhos relativos**; workbox `globPatterns` +
+`maximumFileSizeToCacheInBytes:4MB` p/ caber o chunk Phaser ~1.4MB no precache; `navigateFallback`
+index.html; `registerType:'autoUpdate'`+`injectRegister:'auto'` ⇒ registro do SW **injetado pelo
+plugin**, `main.tsx` intocado; `devOptions.enabled:false`), consumido pela casca `vite.config.ts`
+(`VitePWA(pwaOptions)` no lugar de `disable:true`). (2) **Ícones placeholder** (arte real = Fase 8):
+`scripts/gen-icons.mjs` = encoder PNG **puro node-native** (só `node:zlib`+CRC32 manual, zero dep
+nova, molde de `scripts/build-edge.mjs`) — `encodePng`/`renderIcon` (fundo sólido + triângulo,
+ecoando o dino cosmético; safe-zone ~76% no maskable) geram os 3 PNGs **comitados** em
+`public/icons/` (`npm run gen:icons`; `.d.mts` sibling p/ o teste `.ts` tipar o import do `.mjs`).
+(3) `index.html` ganha meta `theme-color`/`description` (inglês, app inglês-first) + `<link>` de
+ícone/apple-touch (o `<link rel="manifest">` é injetado, não hardcodado). Asset-spec
+`docs/assets/specs/pwa-icon.md` + registro (REGRA 5). **`base` de subdiretório fica p/ 7.3** — o
+plugin deriva `scope`/`start_url` do `base` do Vite (default `/` hoje) ⇒ não fixar absolutos aqui.
+Sem strings de UI i18n novas (nome do manifesto é metadado OS-level, não passa pelo scanner AST).
+Testes: `src/pwa/manifest.test.ts` (contrato do manifesto, endurecido contra regressão
+`manifest:false`) + `tests/pwa/icons.test.ts` (assinatura PNG+IHDR+determinismo do encoder + os 3
+PNGs comitados). Verificação de build: `npm run build` gera `dist/manifest.webmanifest`+`dist/sw.js`
++`dist/icons/*` e injeta o registro do SW no HTML (precache 12 entradas/1744 KiB). Execução SDD por
+subagentes (3 tasks: coder haiku 1–2 / sonnet 3 + review por task + review final opus **"READY TO
+MERGE"**, 0 Critical/Important; fixes aplicados: hardening de teste, status do registro, description
+EN). Suíte verde (`check` limpo, **665 testes**, determinismo **67 inalterado**). **Pré-req do
+usuário p/ prompt de instalação real:** deploy HTTPS (7.3 GitHub Pages) — SW só ativa em
+HTTPS/localhost. **Adiados/backlog:** `base` de subdiretório + deploy (7.3/7.4); arte real dos
+ícones (Fase 8, substitui `public/icons/` sem tocar código); Minors — `THEME`/`BACKGROUND`
+duplicam `#0e1116` em `manifest.ts`; `includeAssets:['icons/*.png']` levemente redundante com o
+glob; localização do manifesto (mono-idioma por plataforma).
+
+**Próximo: 7.2 (responsividade final) / 7.3 (deploy GitHub Pages).** Ver
+`docs/roadmap/PHASE-07-pwa-and-deploy.md`.
