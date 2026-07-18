@@ -48,6 +48,15 @@ class EntitlementsService {
     this.commit(setActive(this._state.value, id));
   }
 
+  /**
+   * Concede + ativa uma expansão IGNORANDO o provider (o servidor já validou a compra — 8.4).
+   * Distinto de `unlock`, que passa pelo provider honor-system (fallback).
+   */
+  grantAndSelect(id: string): void {
+    const { state } = unlockState(this._state.value, id);
+    this.commit(setActive(state, id));
+  }
+
   private commit(state: EntitlementsState): void {
     this._state.value = state;
     this.storage.save(state);
