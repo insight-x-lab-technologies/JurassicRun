@@ -109,6 +109,7 @@
     "active": "Active",
     "select": "Sélectionner",
     "unlock": "Débloquer",
+    "locked": "Verrouillé",
     "honorNote": "Système d'honneur — débloquez instantanément, sans paiement. Merci d'envisager de soutenir le jeu avec un don.",
     "back": "Retour"
   },
@@ -174,6 +175,19 @@
       "error": "Erreur de connexion"
     },
     "globalId": "ID mondial"
+  },
+  "purchase": {
+    "redeemTitle": "Utiliser un code",
+    "redeemPlaceholder": "Collez votre code",
+    "redeemButton": "Valider",
+    "help": "Acheté sur Ko-fi ? Collez le code que vous avez reçu.",
+    "result": {
+      "ok": "Validé ! Votre récompense a été appliquée.",
+      "invalid": "Code invalide.",
+      "used": "Ce code a déjà été utilisé.",
+      "unavailable": "L'utilisation de code est indisponible pour le moment.",
+      "error": "Une erreur est survenue. Réessayez."
+    }
   },
   "rotateHint": {
     "message": "Tournez votre appareil en mode paysage pour une meilleure expérience."

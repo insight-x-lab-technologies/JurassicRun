@@ -12,8 +12,10 @@ import { replayService } from '@services/replay';
 import { settingsService } from '@services/settings';
 import { audioService, bindButtonSfx } from '@services/audio';
 import { onlineService } from '@services/online';
+import { purchaseService } from '@services/purchase';
 import { createLeaderboardOnline } from './online/leaderboardAdapter';
 import { createTrophyOnline } from './online/trophyAdapter';
+import { createRedemptionGateway } from './purchase/gatewayAdapter';
 import { bindPackTheme } from './theme';
 import { App } from './App';
 
@@ -25,6 +27,7 @@ async function bootstrap(): Promise<void> {
   nestService.init();
   walletService.init();
   entitlementsService.init();
+  purchaseService.init({ gateway: createRedemptionGateway() }); // após online/wallet/entitlements
   bindPackTheme(); // tema CSS do pack ativo, reativo (8.3)
   trophyService.init(undefined, createTrophyOnline());
   leaderboardService.init(undefined, createLeaderboardOnline());

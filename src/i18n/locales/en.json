@@ -109,6 +109,7 @@
     "active": "Active",
     "select": "Select",
     "unlock": "Unlock",
+    "locked": "Locked",
     "honorNote": "Honor system — unlock instantly, no payment. Please consider supporting the game with a donation.",
     "back": "Back"
   },
@@ -190,6 +191,19 @@
       "error": "Connection error"
     },
     "globalId": "Global ID"
+  },
+  "purchase": {
+    "redeemTitle": "Redeem a code",
+    "redeemPlaceholder": "Paste your code",
+    "redeemButton": "Redeem",
+    "help": "Bought on Ko-fi? Paste the code you received.",
+    "result": {
+      "ok": "Redeemed! Your reward was applied.",
+      "invalid": "Invalid code.",
+      "used": "This code was already redeemed.",
+      "unavailable": "Redeeming is unavailable right now.",
+      "error": "Something went wrong. Try again."
+    }
   },
   "rotateHint": {
     "message": "Rotate your device to landscape for the best experience."

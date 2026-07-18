@@ -109,6 +109,7 @@
     "active": "Aktiv",
     "select": "Auswählen",
     "unlock": "Freischalten",
+    "locked": "Gesperrt",
     "honorNote": "Ehrensystem — sofort freischalten, ohne Bezahlung. Bitte erwäge, das Spiel mit einer Spende zu unterstützen.",
     "back": "Zurück"
   },
@@ -174,6 +175,19 @@
       "error": "Verbindungsfehler"
     },
     "globalId": "Globale ID"
+  },
+  "purchase": {
+    "redeemTitle": "Code einlösen",
+    "redeemPlaceholder": "Code einfügen",
+    "redeemButton": "Einlösen",
+    "help": "Auf Ko-fi gekauft? Füge den erhaltenen Code ein.",
+    "result": {
+      "ok": "Eingelöst! Deine Belohnung wurde angewendet.",
+      "invalid": "Ungültiger Code.",
+      "used": "Dieser Code wurde bereits eingelöst.",
+      "unavailable": "Einlösen ist gerade nicht verfügbar.",
+      "error": "Etwas ist schiefgelaufen. Versuch es erneut."
+    }
   },
   "rotateHint": {
     "message": "Drehe dein Gerät ins Querformat für das beste Erlebnis."

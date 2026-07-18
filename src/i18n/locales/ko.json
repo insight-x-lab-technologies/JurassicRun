@@ -109,6 +109,7 @@
     "active": "사용 중",
     "select": "선택",
     "unlock": "잠금 해제",
+    "locked": "잠김",
     "honorNote": "정직 시스템 — 결제 없이 즉시 잠금 해제됩니다. 기부로 게임을 응원해 주시면 감사하겠습니다.",
     "back": "뒤로"
   },
@@ -174,6 +175,19 @@
       "error": "연결 오류"
     },
     "globalId": "전역 ID"
+  },
+  "purchase": {
+    "redeemTitle": "코드 사용",
+    "redeemPlaceholder": "코드를 붙여넣기",
+    "redeemButton": "사용하기",
+    "help": "Ko-fi에서 구매하셨나요? 받은 코드를 붙여넣으세요.",
+    "result": {
+      "ok": "사용 완료! 보상이 적용되었습니다.",
+      "invalid": "잘못된 코드입니다.",
+      "used": "이미 사용된 코드입니다.",
+      "unavailable": "지금은 코드를 사용할 수 없습니다.",
+      "error": "문제가 발생했습니다. 다시 시도하세요."
+    }
   },
   "rotateHint": {
     "message": "최적의 환경을 위해 기기를 가로로 돌려 주세요."
