@@ -39,6 +39,13 @@ export interface OnlineChallengeInput {
   readonly finalHash: string;
 }
 
+/** Resposta do resgate de código (Edge Function `redeem-code`, 8.4). */
+export interface RedeemResponse {
+  readonly ok: boolean;
+  readonly sku?: string;
+  readonly reason?: 'invalid' | 'used' | 'error';
+}
+
 export interface OnlineClient {
   /** Garante uma sessão anônima; resolve com o `auth.uid()`. */
   signInAnonymously(): Promise<string>;
