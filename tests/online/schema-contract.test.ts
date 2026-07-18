@@ -6,12 +6,24 @@ import {
   TABLE_NAMES,
   TABLE_COLUMNS,
   VERIFIED_TABLES,
+  REDEMPTION_TABLE,
+  REDEMPTION_COLUMNS,
 } from '@services/online/schema';
 
 const SQL = readFileSync(
   fileURLToPath(
     new URL(
       '../../supabase/migrations/20260708000000_jr_schema.sql',
+      import.meta.url,
+    ),
+  ),
+  'utf8',
+);
+
+const REDEMPTION_SQL = readFileSync(
+  fileURLToPath(
+    new URL(
+      '../../supabase/migrations/20260718000000_redemption_codes.sql',
       import.meta.url,
     ),
   ),
@@ -63,5 +75,25 @@ describe('migração casa com as constantes do schema', () => {
         new RegExp(`create trigger lock_verified before insert or update on ${SUPABASE_SCHEMA}\\.${t}`),
       );
     }
+  });
+
+  it('cria a tabela redemption_codes no schema dedicado', () => {
+    expect(REDEMPTION_SQL).toContain(`create table if not exists ${SUPABASE_SCHEMA}.${REDEMPTION_TABLE} (`);
+  });
+
+  it('declara as colunas de redemption_codes', () => {
+    const start = REDEMPTION_SQL.indexOf(`${SUPABASE_SCHEMA}.${REDEMPTION_TABLE} (`);
+    const body = REDEMPTION_SQL.slice(start, REDEMPTION_SQL.indexOf(');', start));
+    for (const col of REDEMPTION_COLUMNS) {
+      expect(body, `redemption_codes.${col}`).toMatch(new RegExp(`\\b${col}\\b`));
+    }
+  });
+
+  it('habilita RLS em redemption_codes sem policy de cliente (deny-by-default)', () => {
+    expect(REDEMPTION_SQL).toMatch(
+      new RegExp(`alter table ${SUPABASE_SCHEMA}\\.${REDEMPTION_TABLE}\\s+enable row level security`),
+    );
+    expect(REDEMPTION_SQL).not.toContain(`create policy ${REDEMPTION_TABLE}_select`);
+    expect(REDEMPTION_SQL).not.toContain(`create policy ${REDEMPTION_TABLE}_insert`);
   });
 });

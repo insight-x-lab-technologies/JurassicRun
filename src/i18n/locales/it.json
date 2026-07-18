@@ -109,6 +109,7 @@
     "active": "Attiva",
     "select": "Seleziona",
     "unlock": "Sblocca",
+    "locked": "Bloccato",
     "honorNote": "Sistema basato sulla fiducia — sblocca all'istante, senza pagamento. Valuta di sostenere il gioco con una donazione.",
     "back": "Indietro"
   },
@@ -174,6 +175,19 @@
       "error": "Errore di connessione"
     },
     "globalId": "ID globale"
+  },
+  "purchase": {
+    "redeemTitle": "Riscatta un codice",
+    "redeemPlaceholder": "Incolla il tuo codice",
+    "redeemButton": "Riscatta",
+    "help": "Comprato su Ko-fi? Incolla il codice che hai ricevuto.",
+    "result": {
+      "ok": "Riscattato! La tua ricompensa è stata applicata.",
+      "invalid": "Codice non valido.",
+      "used": "Questo codice è già stato riscattato.",
+      "unavailable": "Il riscatto non è disponibile al momento.",
+      "error": "Qualcosa è andato storto. Riprova."
+    }
   },
   "rotateHint": {
     "message": "Ruota il dispositivo in orizzontale per un'esperienza migliore."

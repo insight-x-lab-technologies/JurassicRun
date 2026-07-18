@@ -7,15 +7,19 @@ import {
   isUnlocked,
   type ExpansionDef,
 } from '@services/entitlements';
+import { purchaseService } from '@services/purchase';
+import { RedeemCodeForm } from '../purchase/RedeemCodeForm';
 
 function ExpansionCard({
   exp,
   active,
   unlocked,
+  gateway,
 }: {
   exp: ExpansionDef;
   active: boolean;
   unlocked: boolean;
+  gateway: boolean;
 }): VNode {
   return (
     <li class="expansion-card" data-testid={`expansion-card-${exp.id}`}>
@@ -39,6 +43,10 @@ function ExpansionCard({
         >
           {i18n.t('expansions.select')}
         </button>
+      ) : gateway ? (
+        <span class="expansion-card__badge expansion-card__badge--locked" data-testid={`expansion-locked-${exp.id}`}>
+          {i18n.t('expansions.locked')}
+        </span>
       ) : (
         <button
           type="button"
@@ -56,6 +64,7 @@ function ExpansionCard({
 export function ExpansionsScreen(): VNode {
   const activeId = entitlementsService.activeExpansion.value.id;
   const unlocked = entitlementsService.unlockedIds.value;
+  const gateway = purchaseService.available.value;
 
   return (
     <div class="screen expansions">
@@ -68,11 +77,14 @@ export function ExpansionsScreen(): VNode {
             exp={exp}
             active={exp.id === activeId}
             unlocked={isUnlocked({ unlocked, activeId }, exp.id)}
+            gateway={gateway}
           />
         ))}
       </ul>
 
-      <p class="expansions__note">{i18n.t('expansions.honorNote')}</p>
+      {gateway && <RedeemCodeForm />}
+
+      {!gateway && <p class="expansions__note">{i18n.t('expansions.honorNote')}</p>}
       <button class="btn btn--ghost" onClick={() => back()}>
         {i18n.t('expansions.back')}
       </button>

@@ -109,6 +109,7 @@
     "active": "使用中",
     "select": "选择",
     "unlock": "解锁",
+    "locked": "已锁定",
     "honorNote": "诚信系统 — 立即解锁，无需付款。欢迎通过捐赠支持本游戏。",
     "back": "返回"
   },
@@ -174,6 +175,19 @@
       "error": "连接错误"
     },
     "globalId": "全球 ID"
+  },
+  "purchase": {
+    "redeemTitle": "兑换代码",
+    "redeemPlaceholder": "粘贴你的代码",
+    "redeemButton": "兑换",
+    "help": "在 Ko-fi 上购买了吗？粘贴你收到的代码。",
+    "result": {
+      "ok": "已兑换！奖励已发放。",
+      "invalid": "代码无效。",
+      "used": "此代码已被兑换。",
+      "unavailable": "暂时无法兑换。",
+      "error": "出错了。请重试。"
+    }
   },
   "rotateHint": {
     "message": "请将设备旋转为横屏以获得最佳体验。"

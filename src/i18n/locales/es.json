@@ -109,6 +109,7 @@
     "active": "Activa",
     "select": "Seleccionar",
     "unlock": "Desbloquear",
+    "locked": "Bloqueado",
     "honorNote": "Sistema de honor — desbloquea al instante, sin pago. Considera apoyar el juego con una donación.",
     "back": "Atrás"
   },
@@ -174,6 +175,19 @@
       "error": "Error de conexión"
     },
     "globalId": "ID global"
+  },
+  "purchase": {
+    "redeemTitle": "Canjear un código",
+    "redeemPlaceholder": "Pega tu código",
+    "redeemButton": "Canjear",
+    "help": "¿Compraste en Ko-fi? Pega el código que recibiste.",
+    "result": {
+      "ok": "¡Canjeado! Tu recompensa se aplicó.",
+      "invalid": "Código no válido.",
+      "used": "Este código ya fue canjeado.",
+      "unavailable": "El canje no está disponible ahora.",
+      "error": "Algo salió mal. Inténtalo de nuevo."
+    }
   },
   "rotateHint": {
     "message": "Gira tu dispositivo a horizontal para una mejor experiencia."

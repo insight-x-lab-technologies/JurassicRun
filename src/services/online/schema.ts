@@ -37,3 +37,11 @@ export const TABLE_COLUMNS: Record<(typeof TABLE_NAMES)[number], readonly string
   ],
   trophies: ['player_id', 'trophy_id', 'unlocked_at'],
 };
+
+/** Tabela service-role-only (ledger de códigos de resgate, 8.4). Fora de TABLE_NAMES:
+ *  deny-by-default, sem policy de cliente. */
+export const REDEMPTION_TABLE = 'redemption_codes' as const;
+
+export const REDEMPTION_COLUMNS: readonly string[] = [
+  'code', 'sku', 'redeemed_by', 'redeemed_at', 'created_at',
+];

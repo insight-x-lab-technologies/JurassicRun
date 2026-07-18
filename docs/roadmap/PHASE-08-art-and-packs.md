@@ -57,9 +57,34 @@ performance, e habilitar packs cosméticos compráveis.
       vermelho + parallax basalto). Sem strings i18n novas (nomes de expansão já existem)._
 
 ### 8.4 Monetização real (gateway plugável)
-- [ ] Implementar provider real de entitlements por trás da interface (ADR-0004):
+- [x] Implementar provider real de entitlements por trás da interface (ADR-0004):
       compra de packs/moedas via gateway (ex.: Ko-Fi shop/Stripe) + validação (Edge Function).
-- [ ] Manter honor-system como fallback.
+- [x] Manter honor-system como fallback.
+      _CONCLUÍDO (`src/core/` intocado, determinismo **67**; spec `docs/superpowers/specs/2026-07-18-
+      monetization-gateway-design.md`, plano `docs/superpowers/plans/2026-07-18-monetization-gateway.md`).
+      **Decisão de produto: Ko-Fi + código de resgate single-use** (não Stripe — fora do ethos
+      hobby-sem-custo). Fluxo: compra/doação no Ko-Fi (externo) gera um código; jogador cola na Loja/
+      Expansões; Edge Function `redeem-code` (Deno, service_role, claim atômico single-use contra
+      `jurassicrun.redemption_codes`, guard por `redeemed_at is null`) valida e devolve o SKU; cliente
+      aplica LOCAL (moedas→`walletService.earn`; expansão→`entitlementsService.grantAndSelect`, bypassa
+      o provider honor-system que fica só de fallback). Peças puro×casca: catálogo SKU puro (`sku.ts`,
+      fonte única dos coin packs), seam `RedemptionGateway` (`available` reativo + doubles), casca
+      `OnlineClient.redeemCode` (`functions.invoke`) + delegador best-effort, `PurchaseService` (aplica
+      SKU, nunca lança, SKU desconhecido do servidor ⇒ error sem aplicar), adapter, `RedeemCodeForm`.
+      **Honor-system = fallback:** botões de crédito/unlock grátis aparecem SÓ quando o gateway está
+      offline (`!purchaseService.available`); online ⇒ campo de código. **Offline-first:** sem `.env` ⇒
+      `available=false` ⇒ UI honor-system ⇒ jogo idêntico. Migração append-only (arquivo NOVO
+      `20260718000000_redemption_codes.sql`, não edita o `20260708` já-aplicado; deny-by-default, só
+      service_role). i18n `purchase.*`/`expansions.locked` nos 10 locales. Execução SDD por subagentes
+      (7 tasks + review por task + review final opus **"READY TO MERGE"**; 1 Important pós-review-final
+      corrigido: guard de uso-único trocado de `redeemed_by` p/ `redeemed_at`). Suíte verde (`check`
+      limpo, **721 testes**, determinismo **67**). **Pré-req do usuário (não automatizável, igual
+      Supabase 6.x):** aplicar a migração `redemption_codes`; `supabase functions deploy redeem-code`;
+      criar conta Ko-Fi e inserir `(code, sku)` em `redemption_codes` ao fulfillar pedidos; `.env`
+      preenchido. **Adiados/backlog:** Ko-Fi Webhook auto-grant; geração automática de códigos/painel
+      admin; Stripe/cartão direto; reembolso; auditoria de `redeemed_by` quando o JWT falha (SKU ainda
+      entregue); entitlements/wallet por-perfil (hoje globais). **Fase 8 essencialmente fechada** (resta
+      só 8.1 arte AAA real, gerada externamente pelo usuário + empacotada em atlas)._
 
 ## Definição de pronto
 - Jogo com arte AAA a 60fps; ao menos 1 pack alternativo funcional; compra de pack plugável.

@@ -9,6 +9,7 @@ import {
   type OnlineScoreRow,
   type OnlineMode,
   type OnlineChallengeInput,
+  type RedeemResponse,
 } from './client';
 
 export type OnlineStatus = 'offline' | 'connecting' | 'online' | 'error';
@@ -95,6 +96,17 @@ export class OnlineService {
       return await this.client.fetchTrophies(id);
     } catch {
       return [];
+    }
+  }
+
+  async redeemCode(code: string): Promise<RedeemResponse> {
+    if (this._status.value !== 'online' || this.client === null) {
+      return { ok: false, reason: 'error' };
+    }
+    try {
+      return await this.client.redeemCode(code);
+    } catch {
+      return { ok: false, reason: 'error' };
     }
   }
 

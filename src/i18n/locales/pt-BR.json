@@ -109,6 +109,7 @@
     "active": "Ativa",
     "select": "Selecionar",
     "unlock": "Desbloquear",
+    "locked": "Bloqueado",
     "honorNote": "Sistema de honra — desbloqueia na hora, sem pagamento. Considere apoiar o jogo com uma doação.",
     "back": "Voltar"
   },
@@ -174,6 +175,19 @@
       "error": "Erro de conexão"
     },
     "globalId": "ID global"
+  },
+  "purchase": {
+    "redeemTitle": "Resgatar um código",
+    "redeemPlaceholder": "Cole seu código",
+    "redeemButton": "Resgatar",
+    "help": "Comprou no Ko-fi? Cole o código que você recebeu.",
+    "result": {
+      "ok": "Resgatado! Sua recompensa foi aplicada.",
+      "invalid": "Código inválido.",
+      "used": "Este código já foi resgatado.",
+      "unavailable": "O resgate está indisponível no momento.",
+      "error": "Algo deu errado. Tente de novo."
+    }
   },
   "rotateHint": {
     "message": "Gire o dispositivo para a horizontal para uma experiência melhor."

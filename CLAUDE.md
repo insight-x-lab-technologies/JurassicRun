@@ -1310,3 +1310,35 @@ textura de parallax cresce por pack visitado (desprezível a 3 packs); fallback 
 recebe tint (caminho inatingível hoje); dead sprite-branch em `CLASSIC_PARALLAX` (para quando 8.1 trocar
 camadas para sprite); tuning das paletas volcano/glacier (arte). **Resta na Fase 8:** 8.1 (arte real),
 8.4 (gateway).
+
+8.4 (monetização — gateway plugável): provider real de compra por trás do seam ADR-0004, **`src/core/`
+intocado ⇒ determinismo 67** (spec `docs/superpowers/specs/2026-07-18-monetization-gateway-design.md`,
+plano `docs/superpowers/plans/2026-07-18-monetization-gateway.md`). **Decisão de produto: Ko-Fi + código
+de resgate single-use** (não Stripe — fora do ethos hobby-sem-custo). Compra/doação no Ko-Fi (externo) gera
+um código; jogador cola na Loja/Expansões; Edge Function `redeem-code` (Deno, service_role, claim atômico
+single-use contra `jurassicrun.redemption_codes`, **guard por `redeemed_at is null`** — não `redeemed_by`,
+que pode ser null quando o JWT falha) valida e devolve o SKU; cliente aplica LOCAL (moedas→
+`walletService.earn`; expansão→`entitlementsService.grantAndSelect`, que bypassa o provider honor-system —
+este fica só de fallback). Peças puro×casca (molde 6.3/6.4): `src/services/purchase/sku.ts` puro (catálogo
+SKU `coins:{small,medium,large}`/`expansion:{volcano,glacier}`, `parseSku`/`skuEffect`, `COIN_SKU_AMOUNTS`
+fonte única dos coin packs), seam `RedemptionGateway` (`available` reativo + `unavailableGateway`/
+`memoryRedemptionGateway`), casca `OnlineClient.redeemCode` (`functions.invoke`) + delegador best-effort
+`OnlineService.redeemCode`, `PurchaseService` reativo (aplica SKU, nunca lança; ordem trim→available→
+gateway→reason→parseSku; **SKU desconhecido do servidor ⇒ error SEM aplicar**), adapter
+`createRedemptionGateway`, UI `RedeemCodeForm` (ref ao nó DOM p/ ler o código no submit — gotcha 4.2). Wire
+type `RedeemResponse` único em `client.ts`. **Honor-system = fallback:** ShopScreen/ExpansionsScreen mostram
+os botões de crédito/unlock grátis SÓ quando `!purchaseService.available` (offline); online ⇒ campo de
+código. **Offline-first:** sem `.env` ⇒ `available=false` ⇒ jogo idêntico. Migração **append-only** (arquivo
+NOVO `20260718000000_redemption_codes.sql`, não edita o `20260708` já-aplicado; RLS deny-by-default, só
+service_role; `REDEMPTION_TABLE`/`REDEMPTION_COLUMNS` fora de `TABLE_NAMES` na guarda de contrato). i18n
+`purchase.*`+`expansions.locked` nos 10 locales (REGRA 4). Execução SDD por subagentes (7 tasks + review por
+task; **Task 1 corrigida** — implementador editou migração já-aplicada ⇒ fix p/ arquivo novo; review final
+opus **"READY TO MERGE"** + 1 Important corrigido: guard de uso-único `redeemed_by`→`redeemed_at`).
+**Gotcha:** `git commit -am` de subagente varreu trabalho pré-existente do usuário (arte 8.1/plans/scripts)
+p/ o commit final ⇒ reescrevi o commit p/ só os 3 arquivos do fix, restaurando o resto ao working tree.
+Suíte verde (`check` limpo, **721 testes**, determinismo **67 inalterado**). **Pré-req do usuário (igual
+Supabase 6.x):** migração aplicada + `supabase functions deploy redeem-code` + conta Ko-Fi + inserir
+`(code, sku)` em `redemption_codes` ao fulfillar + `.env`; sem isso roda honor-system (correto).
+**Adiados:** Ko-Fi Webhook auto-grant; geração/painel de códigos; Stripe/cartão direto; reembolso; auditoria
+de `redeemed_by` quando JWT falha; entitlements/wallet por-perfil. **Fase 8 essencialmente fechada** (resta
+só 8.1 arte AAA real, gerada externamente pelo usuário + empacotada em atlas).
