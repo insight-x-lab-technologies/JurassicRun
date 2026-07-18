@@ -836,7 +836,7 @@ Componente de resgate compartilhado; honor-system some quando o gateway está on
 - Modify: `src/app/screens/ExpansionsScreen.tsx`
 - Modify: `src/app/main.tsx` (init do `purchaseService` com o adapter)
 - Modify: `src/i18n/locales/*.json` (10 arquivos) — via skill `add-locale`
-- Create: `tests/purchase/redeem-form.test.tsx`
+- Create: `tests/app/redeem-form.test.tsx`
 
 **Interfaces:**
 - Consumes: `purchaseService` (`available`, `redeem`), `createRedemptionGateway` (Tasks 5).
@@ -858,12 +858,12 @@ purchase.result.error   = "Something went wrong. Try again."
 
 Rode a suíte i18n: `npx vitest run tests/i18n` → PASS (paridade + scanner).
 
-- [ ] **Step 2: Escreva o teste falho do componente** `tests/purchase/redeem-form.test.tsx` (happy-dom; molde dos testes de componente do 4.2 — signals+happy-dom exigem `await Promise.resolve()` p/ flush):
+- [ ] **Step 2: Escreva o teste falho do componente** `tests/app/redeem-form.test.tsx` (happy-dom; padrão REAL do repo = `render` do `preact` num container, `dispatchEvent`, sem testing-library; signals+happy-dom exigem `await Promise.resolve()` p/ flush — molde de `tests/app/expansions-screen.test.tsx`):
 
 ```tsx
 // @vitest-environment happy-dom
-import { describe, expect, it, beforeEach } from 'vitest';
-import { render, fireEvent } from '@testing-library/preact';
+import { describe, expect, it, beforeEach, afterEach } from 'vitest';
+import { render } from 'preact';
 import { RedeemCodeForm } from '@app/purchase/RedeemCodeForm';
 import { purchaseService } from '@services/purchase';
 import { memoryRedemptionGateway } from '@services/purchase/gateway';
@@ -873,38 +873,58 @@ import { walletService } from '@services/wallet';
 import { memoryWalletStorage } from '@services/wallet/storage';
 import { i18n } from '@services/i18n';
 
+function setInput(el: Element | null, value: string): void {
+  const input = el as HTMLInputElement;
+  input.value = value;
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+}
+function submitForm(container: HTMLElement): void {
+  container.querySelector('form')?.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+}
+const tick = async (): Promise<void> => {
+  await Promise.resolve();
+  await Promise.resolve();
+};
+
 describe('RedeemCodeForm', () => {
+  let container: HTMLDivElement;
   beforeEach(async () => {
     await i18n.init();
     walletService.init(memoryWalletStorage());
     entitlementsService.init(memoryEntitlementsStorage());
     purchaseService.init({ gateway: memoryRedemptionGateway({ GOLD: 'coins:medium' }) });
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    render(<RedeemCodeForm />, container);
+  });
+  afterEach(() => {
+    render(null, container);
+    container.remove();
   });
 
   it('resgata um código válido e mostra sucesso', async () => {
-    const { getByTestId } = render(<RedeemCodeForm />);
-    const input = getByTestId('redeem-input') as HTMLInputElement;
-    fireEvent.input(input, { target: { value: 'GOLD' } });
-    fireEvent.click(getByTestId('redeem-submit'));
-    await Promise.resolve();
-    await Promise.resolve();
-    expect(getByTestId('redeem-status').textContent).toBe(i18n.t('purchase.result.ok'));
+    setInput(container.querySelector('[data-testid="redeem-input"]'), 'GOLD');
+    submitForm(container);
+    await tick();
+    expect(container.querySelector('[data-testid="redeem-status"]')?.textContent).toBe(
+      i18n.t('purchase.result.ok'),
+    );
   });
 
   it('código inválido mostra erro de inválido', async () => {
-    const { getByTestId } = render(<RedeemCodeForm />);
-    fireEvent.input(getByTestId('redeem-input'), { target: { value: 'NOPE' } });
-    fireEvent.click(getByTestId('redeem-submit'));
-    await Promise.resolve();
-    await Promise.resolve();
-    expect(getByTestId('redeem-status').textContent).toBe(i18n.t('purchase.result.invalid'));
+    setInput(container.querySelector('[data-testid="redeem-input"]'), 'NOPE');
+    submitForm(container);
+    await tick();
+    expect(container.querySelector('[data-testid="redeem-status"]')?.textContent).toBe(
+      i18n.t('purchase.result.invalid'),
+    );
   });
 });
 ```
 
 - [ ] **Step 3: Rode — deve FALHAR**
 
-Run: `npx vitest run tests/purchase/redeem-form.test.tsx`
+Run: `npx vitest run tests/app/redeem-form.test.tsx`
 Expected: FAIL (componente inexistente).
 
 - [ ] **Step 4: Implemente** `src/app/purchase/RedeemCodeForm.tsx` (input controlado + ref no submit p/ evitar leitura stale — gotcha de 4.2):
@@ -961,7 +981,7 @@ export function RedeemCodeForm(): VNode {
 
 - [ ] **Step 5: Rode — deve PASSAR**
 
-Run: `npx vitest run tests/purchase/redeem-form.test.tsx`
+Run: `npx vitest run tests/app/redeem-form.test.tsx`
 Expected: PASS.
 
 - [ ] **Step 6: Fie a ShopScreen** — `src/app/screens/ShopScreen.tsx`: honor-buttons só quando `!available`; senão o `RedeemCodeForm`. Substitua o corpo:
@@ -1059,7 +1079,7 @@ Expected: check limpo; todos verdes (incluindo i18n e scanner AST). Determinismo
 - [ ] **Step 10: Commit**
 
 ```bash
-git add src/app/purchase/RedeemCodeForm.tsx src/app/screens/ShopScreen.tsx src/app/screens/ExpansionsScreen.tsx src/app/main.tsx src/i18n/locales tests/purchase/redeem-form.test.tsx
+git add src/app/purchase/RedeemCodeForm.tsx src/app/screens/ShopScreen.tsx src/app/screens/ExpansionsScreen.tsx src/app/main.tsx src/i18n/locales tests/app/redeem-form.test.tsx
 git commit -m "feat(8.4): RedeemCodeForm + Loja/Expansões via gateway, honor-system só offline"
 ```
 
