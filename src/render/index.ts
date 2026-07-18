@@ -9,3 +9,4 @@ export * from './daynight';
 export * from './hud';
 export * from './seedSource';
 export * from './match';
+export * from './sprites';

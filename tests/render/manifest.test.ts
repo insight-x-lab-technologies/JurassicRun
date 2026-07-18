@@ -4,12 +4,12 @@ import { OBSTACLE_CATALOG, COLLECTIBLE_CATALOG } from '@core/spawn';
 import { POWERUP_CATALOG } from '@core/powerup';
 
 describe('manifesto de assets', () => {
-  it('mapeia um id conhecido para um Renderable', () => {
+  it('mapeia o dino para um sprite do atlas', () => {
     const r = renderableFor(DINO_TYPE_ID);
-    expect(r.kind).toBe('primitive');
-    if (r.kind === 'primitive') {
-      expect(r.color).toBe(0xcc5544);
-      expect(r.shape).toBe('triangle');
+    expect(r.kind).toBe('sprite');
+    if (r.kind === 'sprite') {
+      expect(r.atlas).toBe('entities');
+      expect(r.frame).toBe(DINO_TYPE_ID);
     }
   });
 

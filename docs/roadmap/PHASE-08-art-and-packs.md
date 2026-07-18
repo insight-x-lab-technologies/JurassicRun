@@ -22,8 +22,19 @@ performance, e habilitar packs cosméticos compráveis.
       "JurassicRun". **Resta:** gerar as imagens (usuário, IA externa) + empacotar em atlases._
 
 ### 8.2 Trocar manifesto geométrico → sprite
-- [ ] Atualizar entradas do manifesto para `kind: "sprite"`. **Sem** tocar core/hitboxes.
-- [ ] Validar 60fps com atlases (budget de draw calls, culling, pooling).
+- [x] Atualizar entradas do manifesto para `kind: "sprite"`. **Sem** tocar core/hitboxes.
+- [x] Validar 60fps com atlases (budget de draw calls, culling, pooling).
+      _CONCLUÍDO (`src/core/` intocado, determinismo 67; spec `docs/superpowers/specs/2026-07-17-
+      sprite-pipeline-design.md`, plano `docs/superpowers/plans/2026-07-17-sprite-pipeline.md`).
+      As 11 entidades in-game (Tier 2) passaram a renderizar por sprites de um **texture atlas
+      placeholder** gerado proceduralmente (`scripts/gen-atlas.mjs`, encoder PNG puro reusando
+      `gen-icons`; `public/atlas/entities.{png,json}` — JSONHash, frames = ids do manifesto). O
+      manifesto virou `kind:'sprite'`; `GameScene` carrega o atlas no `preload` e desenha via
+      **pool de `Image`** (alocação-zero no hot path, culling preservado, fallback primitivo
+      mantido). Arte AAA real (8.1-restante) entra só trocando PNG/JSON do atlas (REGRA 2).
+      Evidência Playwright: sprites do atlas renderizam; **p50 16,7ms (60fps), 0 frames >50ms**
+      (sem jank; a média sub-60 é o cap de vsync do headless, não o jogo); **6 draw calls/frame**
+      = batching (1 textura de atlas). Parallax/fundos e packs seguem fora de escopo (8.1/8.3)._
 
 ### 8.3 Packs look&feel
 - [ ] Formato de pack (atlases + sons + fundos + overrides de manifesto + locales opcionais).

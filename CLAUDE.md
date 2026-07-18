@@ -1238,3 +1238,40 @@ Execução **INLINE** (autoria dos prompts exige o contexto das 6 imagens que su
 teriam) + verificação real. Suíte verde (`check` limpo, **681 testes** [+3 da guarda], determinismo
 **67 inalterado**). **Resta em 8.1:** gerar as imagens (usuário, IA externa) + empacotar em atlases;
 **8.2** troca o manifesto para `kind:"sprite"` + aplica o remap de tokens no CSS.
+
+8.2 (trocar manifesto geométrico → sprite): as 11 entidades in-game (Tier 2) passaram a renderizar
+por **sprites de um texture atlas**, sem tocar `src/core/`/hitboxes ⇒ determinismo **67 inalterado**
+(sem re-pin de goldens). **Decisão de escopo:** a arte AAA real (8.1-restante) é gerada externamente
+pelo usuário; em vez de bloquear, o pipeline foi construído contra um **atlas PLACEHOLDER gerado
+proceduralmente** (mesma filosofia de placeholders do projeto — áudio procedural, ícones PWA,
+honor-system). A arte real entra depois **só trocando o PNG/JSON do atlas** (REGRA 2, zero retrabalho
+de código). Padrão puro×casca. Quatro peças: (1) **gerador** `scripts/gen-atlas.mjs` (encoder PNG puro
+node-native **reusando `encodePng` de `gen-icons.mjs`**, zero dep; `ATLAS_FRAMES` = 11 ids do manifesto
+com cor/forma, grid `CELL=64`/`COLS=4`; `renderAtlas()` determinístico) que escreve
+`public/atlas/entities.{png,json}` (formato **Phaser JSONHash**, frames nomeados pelos ids do manifesto;
+`npm run gen:atlas`). (2) **helpers puros** `src/render/sprites.ts` (`spriteSizeFor(hitbox)→{w,h}` =
+bounding box da hitbox via switch exaustivo `default:never` — hitboxes são aleatórias por instância, o
+sprite cobre; `frameFor(typeId)→string|null` resolve o frame do manifesto ou null p/ fallback;
+`ATLAS_KEY`/`ATLAS_PNG`/`ATLAS_JSON` relativos ao `BASE_URL`). (3) **manifesto** — as 11 entradas de
+`ASSET_MANIFEST` viraram `{kind:'sprite',atlas:'entities',frame:'<id>'}`; `FALLBACK` primitivo (magenta)
+mantido como segurança; guarda de completude do teste passou a cruzar manifesto↔atlas de fato. (4)
+**casca** `GameScene` — `preload()` faz `this.load.atlas(ATLAS_KEY, BASE_URL+ATLAS_PNG, +ATLAS_JSON)`
+(respeita base de Pages/itch); render por **pool de `Image`** (cresce 1× até o pico ⇒ alocação-zero no
+hot path, REGRA 3; `sizeCache` por tipo; culling existente preservado; sprites em world-space
+scrollFactor 1; dino = `Image` dedicado na posição interpolada, nunca cullado; ordem de pintura
+obstáculos→coletáveis→power-ups→dino) + `drawPrimitive`/`drawEntity` mantidos p/ o fallback
+(`frameFor===null`); o antigo `drawVisible` removido. Sem strings i18n novas; sem trabalho por frame
+além dos mutadores. Execução SDD por subagentes (4 tasks impl: haiku puros/transcrição + sonnet
+integração da casca + review por task + review final opus; T5 validação INLINE pelo controlador com
+Playwright). **Evidência de fps** (Playwright, rAF real, mobile emulado 390×844, partida ativa com
+flap): sprites do atlas renderizam (círculos p/ moedas/power-ups, retângulos p/ obstáculos, dino
+vermelho); **p50 16,7ms = 60fps, 0 frames >50ms** (sem jank/GC; a média ~53fps é o cap de vsync
+~57Hz do headless, não custo do jogo — idêntico ao achado de 2.7); **6 draw calls por frame** = prova
+de batching (1 textura de atlas compartilhada pelas 11 entidades). Suíte verde (`check` limpo, **692
+testes**, determinismo **67 inalterado**). **Adiados/backlog:** parallax e fundos de tela seguem
+geométricos (Tier 1 / `ParallaxVisual` separado — 8.1/futuro); arte AAA real + atlas real (8.1-restante,
+usuário); packs cosméticos (8.3); gateway real (8.4); Minors de review — dino usa frame literal em vez
+de `frameFor()` (funciona por coincidência `frame===typeId`, footgun latente), sprites do pool em depth
+0 uniforme (ordem de pintura entre tipos não garantida frame-a-frame, mas depth uniforme **ajuda o
+batching** — objetivo do 8.2 — e colisão usa hitbox, não ordem de desenho); tuning das cores/formas
+placeholder do atlas. **Resta na Fase 8:** 8.1 (arte real), 8.2-CONCLUÍDO, 8.3 (packs), 8.4 (gateway).
