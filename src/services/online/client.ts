@@ -63,6 +63,8 @@ export interface OnlineClient {
   submitTrophies(playerId: string, ids: readonly string[]): Promise<void>;
   /** trophy_ids desbloqueados do jogador. */
   fetchTrophies(playerId: string): Promise<readonly string[]>;
+  /** Resgata um código de compra via Edge Function `redeem-code`. */
+  redeemCode(code: string): Promise<RedeemResponse>;
 }
 
 export interface MemoryOnlineClient extends OnlineClient {
@@ -71,6 +73,7 @@ export interface MemoryOnlineClient extends OnlineClient {
   readonly submittedScores: OnlineScoreInput[];
   readonly submittedChallenges: OnlineChallengeInput[];
   readonly submittedTrophies: { playerId: string; ids: readonly string[] }[];
+  readonly redeemCalls: string[];
 }
 
 /** Spy determinístico p/ testes: sem rede. */
@@ -81,6 +84,7 @@ export function memoryOnlineClient(
     scores?: OnlineScoreRow[];
     verifiedPlayers?: string[];
     trophies?: string[];
+    redeemResponses?: Record<string, RedeemResponse>;
   } = {},
 ): MemoryOnlineClient {
   const uid = opts.uid ?? 'memory-uid';
@@ -88,12 +92,14 @@ export function memoryOnlineClient(
   const submittedScores: OnlineScoreInput[] = [];
   const submittedChallenges: OnlineChallengeInput[] = [];
   const submittedTrophies: { playerId: string; ids: readonly string[] }[] = [];
+  const redeemCalls: string[] = [];
   let signInCount = 0;
   return {
     upserts,
     submittedScores,
     submittedChallenges,
     submittedTrophies,
+    redeemCalls,
     get signInCount() {
       return signInCount;
     },
@@ -123,6 +129,11 @@ export function memoryOnlineClient(
     },
     async fetchTrophies() {
       return opts.trophies ?? [];
+    },
+    async redeemCode(code) {
+      redeemCalls.push(code);
+      const r = opts.redeemResponses?.[code];
+      return r ?? { ok: false, reason: 'invalid' };
     },
   };
 }
@@ -217,6 +228,16 @@ export function createSupabaseClient(config: OnlineConfig): OnlineClient {
         .eq('player_id', playerId);
       if (error !== null) throw error;
       return ((data ?? []) as { trophy_id: string }[]).map((r) => r.trophy_id);
+    },
+    async redeemCode(code) {
+      const { data, error } = await supabase.functions.invoke('redeem-code', {
+        body: { code },
+      });
+      if (error !== null) return { ok: false, reason: 'error' };
+      const d = data as { ok?: boolean; sku?: string; reason?: string } | null;
+      if (d?.ok === true && typeof d.sku === 'string') return { ok: true, sku: d.sku };
+      const reason = d?.reason === 'invalid' || d?.reason === 'used' ? d.reason : 'error';
+      return { ok: false, reason };
     },
   };
 }
