@@ -86,4 +86,29 @@ usada no manifesto de assets do render.
 | `expansion.volcano` | capa de card — Vulcão | spec | `specs/expansion.covers.md` |
 | `expansion.glacier` | capa de card — Geleira | spec | `specs/expansion.covers.md` |
 
+## Packs look&feel (8.3 — sistema de reskin trocável)
+> Um **pack** é um bundle cosmético trocável do jogo inteiro. É keyed pela **expansão ativa**
+> (seam `activeExpansion`, 4.6): `classic`/`volcano`/`glacier` são os packs, unlock por
+> honor-system agora (gateway na 8.4). 100% render/app ⇒ NÃO toca `src/core/` (determinismo
+> intacto). Trocar look = editar dados de pack, nunca a lógica (REGRA 2).
+>
+> **Formato** (`LookPack`, `src/render/packs.ts`):
+> - `theme` — custom properties CSS aplicadas em `:root` (reskin dos menus DOM, tema reativo em
+>   `src/app/theme.ts`). Defaults do `classic` vivem em `src/app/styles/tokens.css`.
+> - `dayNight` — as 4 paletas do mundo (céu/chão/teto/tint de parallax). A **seleção** entre elas
+>   continua derivada da seed (dia/noite 3.3) ⇒ pack (escolha do jogador) e dia/noite (justiça de
+>   leaderboard) são ortogonais: `paleta = pack.dayNight[timeOfDayForSeed(seed)]`.
+> - `parallax` — cor de cada camada de silhueta (regeneradas por pack; chave de textura inclui o
+>   `packId`).
+> - `entityTint` — tint multiplicativo dos sprites de entidade (0xffffff = neutro, `classic`).
+>
+> **`classic` = look atual, zero regressão** (reexporta `DAY_NIGHT_PALETTES`/`PARALLAX_LAYERS`/
+> tokens padrão). `volcano` (quente) e `glacier` (frio) são recolors placeholder coerentes com o
+> Style Bible; refinados quando a arte AAA chegar.
+>
+> **Ponto de extensão (REGRA 2):** atlas/áudio/locale **próprios por pack** ainda não têm campo —
+> hoje todos os packs apontam para o atlas `entities` e as faixas procedurais, recolorindo por
+> tint/paleta. Um pack futuro com arte própria entra adicionando os arquivos (atlas PNG/JSON, sons,
+> locale JSON) e apontando o pack para eles, sem tocar consumidores. Sem código morto até lá.
+
 > Mantenha esta tabela em dia a cada novo asset (a skill `create-asset-spec` faz isso).

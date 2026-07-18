@@ -1275,3 +1275,38 @@ de `frameFor()` (funciona por coincidência `frame===typeId`, footgun latente), 
 0 uniforme (ordem de pintura entre tipos não garantida frame-a-frame, mas depth uniforme **ajuda o
 batching** — objetivo do 8.2 — e colisão usa hitbox, não ordem de desenho); tuning das cores/formas
 placeholder do atlas. **Resta na Fase 8:** 8.1 (arte real), 8.2-CONCLUÍDO, 8.3 (packs), 8.4 (gateway).
+
+8.3 (packs look&feel): sistema de reskin cosmético trocável do jogo inteiro, **`src/core/` intocado**
+⇒ determinismo **67 inalterado** (spec `docs/superpowers/specs/2026-07-18-look-and-feel-packs-design.md`,
+plano `docs/superpowers/plans/2026-07-18-look-and-feel-packs.md`). **Decisão-chave: pack ≡ expansão
+ativa** — reusa o seam `entitlementsService.activeExpansion` (4.6, anotado como "o render lê a expansão
+ativa daqui") em vez de criar `PackService`/storage/tela paralelos; `classic`/`volcano`/`glacier` viram
+os packs (unlock honor-system agora, gateway 8.4). Módulo puro `src/render/packs.ts`: `LookPack
+{theme(custom properties CSS), dayNight(4 paletas do mundo), parallax(cor por camada), entityTint}` +
+`packForId(id)` (fallback `classic`) + guarda de completude expansão↔pack. `classic` **reexporta**
+`DAY_NIGHT_PALETTES`/`PARALLAX_LAYERS`/tokens padrão ⇒ **zero regressão** (provado byte-a-byte no teste).
+Tema CSS reativo `src/app/theme.ts`: `applyPackTheme(pack)` seta as custom properties em `:root`;
+`bindPackTheme()` é um `effect` que assina `activeExpansion` ⇒ **reskin dos menus AO VIVO** (molde do
+`audioService`); `main.tsx` chama no bootstrap após `entitlementsService.init()`; `tokens.css` guarda os
+defaults (= classic) + novo `--color-gold`. `GameScene` (casca) lê o pack ativo em `applyDayNight`:
+paleta = `pack.dayNight[timeOfDayForSeed(seed)]` (**a seleção segue derivada da seed** ⇒ pack cosmético e
+dia/noite justo são ortogonais/componíveis), cores de parallax (regeneradas por pack; chave de textura
+inclui `packId`) e tint de entidade (`setTint`, **cacheado em `appliedEntityTint` na transição** ⇒
+alocação-zero por frame, REGRA 3; guarda `appliedPackId`+`appliedDayNightSeed`). **Recolor procedural**
+(volcano quente / glacier frio, placeholders coerentes com o Style Bible) SEM arte nova: atlas/áudio/
+locale próprios por pack são o **ponto de extensão** documentado (`asset-registry.md`, REGRA 2) — um pack
+futuro entra trocando os arquivos, sem tocar consumidores; sem código morto. Sem strings i18n novas
+(nomes de expansão já existem). Execução SDD por subagentes (4 tasks: puros haiku / integração sonnet +
+review por task — **T2 reprovada** (teste reinventava setup happy-dom com 3 `any` → fix pragma
+`@vitest-environment happy-dom`); **T3 reprovada** (Critical REGRA 3: `packForId`/`Array.find` por frame
+→ fix cacheia `appliedEntityTint`); **T4 INLINE** pelo controlador: docs + verificação visual). Suíte
+verde (`check` limpo, **698 testes**, determinismo **67 inalterado**). Verificação Playwright (bundle
+real; **gotcha 7.2 reconfirmado**: SW servia dist antigo em cache → unregister+clear caches+`?nocache`):
+troca de tema CSS ao vivo (classic `--color-primary` #4ea1ff → volcano #ff7a3c, `--color-gold`
+#c9a227→#d98a2b) + persistência (`activeId:volcano`); canvas recolorido ponta-a-ponta (classic céu creme
++ parallax cinza-verde + árvores verdes vs volcano céu vermelho-escuro + parallax basalto-vermelho).
+**Adiados/backlog:** arte AAA real por pack (atlas/áudio próprios, 8.1-restante + futuro); cache de
+textura de parallax cresce por pack visitado (desprezível a 3 packs); fallback primitivo de entidade não
+recebe tint (caminho inatingível hoje); dead sprite-branch em `CLASSIC_PARALLAX` (para quando 8.1 trocar
+camadas para sprite); tuning das paletas volcano/glacier (arte). **Resta na Fase 8:** 8.1 (arte real),
+8.4 (gateway).
