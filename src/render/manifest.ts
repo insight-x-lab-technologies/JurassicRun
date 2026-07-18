@@ -1,7 +1,7 @@
 /**
- * Representação visual de um tipo lógico (REGRA 2). Na fase geométrica, `primitive` desenha a
- * geometria da HITBOX do entity na cor dada; `shape:'triangle'` é exceção cosmética (dino),
- * inscrita nos bounds da hitbox. Trocar para arte = mudar a entrada para `kind:'sprite'`.
+ * Representação visual de um tipo lógico (REGRA 2). Agora na fase de sprites, `kind:'sprite'`
+ * renderiza um frame do atlas; `kind:'primitive'` é fallback para ids desconhecidos.
+ * Para trocar entre sprites = editar a entrada aqui (atlas/frame).
  */
 export type Renderable =
   | { readonly kind: 'primitive'; readonly color: number; readonly shape?: 'hitbox' | 'triangle' }
@@ -13,19 +13,19 @@ export const DINO_TYPE_ID = 'dino.default';
 /** Visível quando um id não tem entrada (não deveria acontecer — há guarda de completude). */
 const FALLBACK: Renderable = { kind: 'primitive', color: 0xff00ff };
 
-/** Mapa id lógico → visual. Cores dos asset-specs / RENDERING-AND-ASSETS.md. */
+/** Mapa id lógico → visual. Todos os sprites vêm do atlas 'entities'. */
 export const ASSET_MANIFEST: Readonly<Record<string, Renderable>> = {
-  [DINO_TYPE_ID]: { kind: 'primitive', color: 0xcc5544, shape: 'triangle' },
-  'obstacle.tree': { kind: 'primitive', color: 0x6b4a2f },
-  'obstacle.vine': { kind: 'primitive', color: 0x2f6b2f },
-  'obstacle.boulder': { kind: 'primitive', color: 0x808896 },
-  'obstacle.stalactite': { kind: 'primitive', color: 0x9aa3b2 },
-  'bird.coin': { kind: 'primitive', color: 0xffd54a },
-  'powerup.shield': { kind: 'primitive', color: 0x4ac0ff },
-  'powerup.extraLife': { kind: 'primitive', color: 0xff5a7a },
-  'powerup.magnet': { kind: 'primitive', color: 0xc061ff },
-  'powerup.doubleCoin': { kind: 'primitive', color: 0xffe14a },
-  'powerup.slowMo': { kind: 'primitive', color: 0x66ffcc },
+  [DINO_TYPE_ID]: { kind: 'sprite', atlas: 'entities', frame: 'dino.default' },
+  'obstacle.tree': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.tree' },
+  'obstacle.vine': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.vine' },
+  'obstacle.boulder': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.boulder' },
+  'obstacle.stalactite': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.stalactite' },
+  'bird.coin': { kind: 'sprite', atlas: 'entities', frame: 'bird.coin' },
+  'powerup.shield': { kind: 'sprite', atlas: 'entities', frame: 'powerup.shield' },
+  'powerup.extraLife': { kind: 'sprite', atlas: 'entities', frame: 'powerup.extraLife' },
+  'powerup.magnet': { kind: 'sprite', atlas: 'entities', frame: 'powerup.magnet' },
+  'powerup.doubleCoin': { kind: 'sprite', atlas: 'entities', frame: 'powerup.doubleCoin' },
+  'powerup.slowMo': { kind: 'sprite', atlas: 'entities', frame: 'powerup.slowMo' },
 };
 
 /** Visual de um tipo lógico; fallback primitivo para ids desconhecidos. */
