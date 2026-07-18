@@ -84,7 +84,7 @@ export function ExpansionsScreen(): VNode {
 
       {gateway && <RedeemCodeForm />}
 
-      <p class="expansions__note">{i18n.t('expansions.honorNote')}</p>
+      {!gateway && <p class="expansions__note">{i18n.t('expansions.honorNote')}</p>}
       <button class="btn btn--ghost" onClick={() => back()}>
         {i18n.t('expansions.back')}
       </button>

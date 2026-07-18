@@ -6,8 +6,6 @@ export type Sku =
   | 'expansion:volcano'
   | 'expansion:glacier';
 
-export type SkuKind = 'coins' | 'expansion';
-
 export type SkuEffect =
   | { readonly kind: 'coins'; readonly coins: number }
   | { readonly kind: 'expansion'; readonly expansionId: string };

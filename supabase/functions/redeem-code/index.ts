@@ -39,19 +39,19 @@ Deno.serve(async (req) => {
 
     const { data: row, error: selErr } = await supabase
       .from('redemption_codes')
-      .select('sku, redeemed_by')
+      .select('sku, redeemed_at')
       .eq('code', code)
       .maybeSingle();
     if (selErr) return json({ ok: false, reason: 'error' });
     if (!row) return json({ ok: false, reason: 'invalid' });
-    if (row.redeemed_by) return json({ ok: false, reason: 'used' });
+    if (row.redeemed_at) return json({ ok: false, reason: 'used' });
 
-    // Claim atômico: só vence quem ainda vê redeemed_by null.
+    // Claim atômico: só vence quem ainda vê redeemed_at null.
     const { data: claimed, error: updErr } = await supabase
       .from('redemption_codes')
       .update({ redeemed_by: redeemedBy, redeemed_at: new Date().toISOString() })
       .eq('code', code)
-      .is('redeemed_by', null)
+      .is('redeemed_at', null)
       .select('sku');
     if (updErr) return json({ ok: false, reason: 'error' });
     if (!claimed || claimed.length === 0) return json({ ok: false, reason: 'used' });
