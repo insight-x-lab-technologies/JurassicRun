@@ -7,6 +7,7 @@ import type { PauseController } from './input';
 import { PARALLAX_LAYERS, parallaxTileOffset } from './parallax';
 import type { ParallaxLayer } from './parallax';
 import { isHorizontallyVisible } from './culling';
+import { ATLAS_KEY, ATLAS_PNG, ATLAS_JSON, spriteSizeFor, frameFor } from './sprites';
 import { paletteFor, timeOfDayForSeed } from './daynight';
 import { i18n } from '@services/i18n';
 import { HudTicker, formatHudValues } from './hud';
@@ -58,11 +59,20 @@ export class GameScene extends Phaser.Scene {
   private wasDead = false;
   private dinoBoundsHitbox: Hitbox | null = null;
   private dinoBounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+  private spritePool: Phaser.GameObjects.Image[] = [];
+  private spritePoolUsed = 0;
+  private dinoSprite!: Phaser.GameObjects.Image;
+  private readonly sizeCache = new Map<string, { w: number; h: number }>();
 
   constructor(match: MatchController, pause: PauseController) {
     super('GameScene');
     this.match = match;
     this.pause = pause;
+  }
+
+  preload(): void {
+    const base = import.meta.env.BASE_URL; // termina com '/'
+    this.load.atlas(ATLAS_KEY, base + ATLAS_PNG, base + ATLAS_JSON);
   }
 
   create(): void {
@@ -87,6 +97,9 @@ export class GameScene extends Phaser.Scene {
 
     // Graphics do mundo (scrollFactor 1 ⇒ acompanha a câmera).
     this.gfx = this.add.graphics();
+
+    // Sprite do dino (8.2): sempre visível, posição interpolada, acima das outras entidades.
+    this.dinoSprite = this.add.image(0, 0, ATLAS_KEY, DINO_TYPE_ID).setDepth(1);
 
     // Overlay de pausa: retângulo semitransparente de tela cheia (scrollFactor 0, depth 1000).
     this.pauseOverlay = this.add.graphics().setScrollFactor(0);
@@ -197,10 +210,23 @@ export class GameScene extends Phaser.Scene {
 
     const g = this.gfx;
     g.clear();
-    this.drawVisible(g, world.obstacles, scrollX);
-    this.drawVisible(g, world.collectibles, scrollX);
-    this.drawVisible(g, world.powerups, scrollX);
-    this.drawPrimitive(g, DINO_TYPE_ID, world.pterodactyl.hitbox, loop.renderX, loop.renderY);
+    this.spritePoolUsed = 0;
+    this.drawVisibleSprites(world.obstacles, scrollX);
+    this.drawVisibleSprites(world.collectibles, scrollX);
+    this.drawVisibleSprites(world.powerups, scrollX);
+    // Dino: sprite se o manifesto for sprite; senão primitivo (fallback de segurança).
+    if (frameFor(DINO_TYPE_ID) !== null) {
+      this.dinoSprite.setVisible(true).setPosition(loop.renderX, loop.renderY);
+      const ds = this.sizeFor(DINO_TYPE_ID, world.pterodactyl.hitbox);
+      this.dinoSprite.setDisplaySize(ds.w, ds.h);
+    } else {
+      this.dinoSprite.setVisible(false);
+      this.drawPrimitive(g, DINO_TYPE_ID, world.pterodactyl.hitbox, loop.renderX, loop.renderY);
+    }
+    // Esconde os sprites do pool não usados neste frame.
+    for (let i = this.spritePoolUsed; i < this.spritePool.length; i++) {
+      this.spritePool[i]!.setVisible(false);
+    }
 
     const fps = this.hudTicker.tick(deltaMs / 1000);
     if (fps !== null) this.refreshHud(fps);
@@ -256,15 +282,48 @@ export class GameScene extends Phaser.Scene {
     this.drawPrimitive(g, typeId, e.hitbox, e.transform.position.x, e.transform.position.y);
   }
 
-  /** Desenha só as entidades cuja extensão horizontal intersecta o viewport (culling, REGRA 3). */
-  private drawVisible(g: Phaser.GameObjects.Graphics, entities: readonly Entity[], scrollX: number): void {
-    for (const e of entities) {
-      const x = e.transform.position.x;
-      if (!isHorizontallyVisible(x, leftExtent(e.hitbox), rightExtent(e.hitbox), scrollX, VIEW_WIDTH, CULL_MARGIN)) {
-        continue;
-      }
-      this.drawEntity(g, e);
+  /** Devolve um Image do pool (cresce 1× até o pico), pronto e visível (REGRA 3). */
+  private acquireSprite(): Phaser.GameObjects.Image {
+    let img = this.spritePool[this.spritePoolUsed];
+    if (img === undefined) {
+      img = this.add.image(0, 0, ATLAS_KEY).setDepth(0);
+      this.spritePool.push(img);
     }
+    this.spritePoolUsed += 1;
+    img.setVisible(true);
+    return img;
+  }
+
+  /** displaySize da hitbox, cacheado por tipo (tamanho estável dentro do range do catálogo). */
+  private sizeFor(typeId: string, hitbox: Hitbox): { w: number; h: number } {
+    let s = this.sizeCache.get(typeId);
+    if (s === undefined) {
+      s = spriteSizeFor(hitbox);
+      this.sizeCache.set(typeId, s);
+    }
+    return s;
+  }
+
+  private drawSpriteEntity(e: Entity, scrollX: number): void {
+    const x = e.transform.position.x;
+    if (!isHorizontallyVisible(x, leftExtent(e.hitbox), rightExtent(e.hitbox), scrollX, VIEW_WIDTH, CULL_MARGIN)) {
+      return;
+    }
+    const typeId = e.tags[0] ?? '';
+    const frame = frameFor(typeId);
+    if (frame === null) { // fallback primitivo (id desconhecido)
+      this.drawEntity(this.gfx, e);
+      return;
+    }
+    const img = this.acquireSprite();
+    img.setTexture(ATLAS_KEY, frame);
+    const s = this.sizeFor(typeId, e.hitbox);
+    img.setDisplaySize(s.w, s.h);
+    img.setPosition(x, e.transform.position.y);
+  }
+
+  private drawVisibleSprites(entities: readonly Entity[], scrollX: number): void {
+    for (const e of entities) this.drawSpriteEntity(e, scrollX);
   }
 
   /** Aplica a paleta de tempo do dia (3.3): céu, faixas chão/teto e tint das camadas de parallax.
