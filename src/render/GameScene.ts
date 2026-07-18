@@ -8,8 +8,10 @@ import { PARALLAX_LAYERS, parallaxTileOffset } from './parallax';
 import type { ParallaxLayer } from './parallax';
 import { isHorizontallyVisible } from './culling';
 import { ATLAS_KEY, ATLAS_PNG, ATLAS_JSON, spriteSizeFor, frameFor } from './sprites';
-import { paletteFor, timeOfDayForSeed } from './daynight';
+import { timeOfDayForSeed } from './daynight';
+import { packForId } from './packs';
 import { i18n } from '@services/i18n';
+import { entitlementsService } from '@services/entitlements';
 import { HudTicker, formatHudValues } from './hud';
 import { formatGameOverStats } from './gameover';
 import {
@@ -56,6 +58,8 @@ export class GameScene extends Phaser.Scene {
   private gameOverQuit!: Phaser.GameObjects.Text;
   private bandsGfx!: Phaser.GameObjects.Graphics;
   private appliedDayNightSeed: string | null = null;
+  private appliedPackId: string | null = null;
+  private appliedEntityTint = 0xffffff;
   private wasDead = false;
   private dinoBoundsHitbox: Hitbox | null = null;
   private dinoBounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
@@ -78,8 +82,9 @@ export class GameScene extends Phaser.Scene {
   create(): void {
     // Parallax (2.3): camadas de silhueta atrás do mundo. Texturas geradas 1×; por frame só
     // ajusta tilePositionX (zero alocação — REGRA 3). scrollFactor(0) prende à câmera.
+    const createPack = packForId(entitlementsService.activeExpansion.value.id);
     this.parallaxTiles = PARALLAX_LAYERS.map((layer, index) => {
-      const key = this.ensureLayerTexture(layer);
+      const key = this.ensureLayerTexture(layer, createPack.parallax[index]!.color, createPack.id);
       const tile = this.add
         .tileSprite(0, 0, VIEW_WIDTH, VIEW_HEIGHT, key)
         .setOrigin(0, 0)
@@ -188,7 +193,8 @@ export class GameScene extends Phaser.Scene {
 
     // Restart traz nova seed ⇒ possivelmente nova fase do dia. Compara-e-aplica só na troca
     // (string compare por frame não aloca; o redesenho só ocorre na transição — REGRA 3).
-    if (this.match.seedLabel !== this.appliedDayNightSeed) {
+    const packId = entitlementsService.activeExpansion.value.id;
+    if (this.match.seedLabel !== this.appliedDayNightSeed || packId !== this.appliedPackId) {
       this.applyDayNight(this.match.seedLabel);
     }
 
@@ -210,15 +216,18 @@ export class GameScene extends Phaser.Scene {
       this.parallaxTiles[i]!.tilePositionX = parallaxTileOffset(scrollX, PARALLAX_LAYERS[i]!.scrollFactor);
     }
 
+    const entityTint = this.appliedEntityTint;
+
     const g = this.gfx;
     g.clear();
     this.spritePoolUsed = 0;
-    this.drawVisibleSprites(world.obstacles, scrollX);
-    this.drawVisibleSprites(world.collectibles, scrollX);
-    this.drawVisibleSprites(world.powerups, scrollX);
+    this.drawVisibleSprites(world.obstacles, scrollX, entityTint);
+    this.drawVisibleSprites(world.collectibles, scrollX, entityTint);
+    this.drawVisibleSprites(world.powerups, scrollX, entityTint);
     // Dino: sprite se o manifesto for sprite; senão primitivo (fallback de segurança).
     if (frameFor(DINO_TYPE_ID) !== null) {
       this.dinoSprite.setVisible(true).setPosition(loop.renderX, loop.renderY);
+      this.dinoSprite.setTint(entityTint);
       const ds = this.sizeFor(DINO_TYPE_ID, world.pterodactyl.hitbox);
       this.dinoSprite.setDisplaySize(ds.w, ds.h);
     } else {
@@ -306,7 +315,7 @@ export class GameScene extends Phaser.Scene {
     return s;
   }
 
-  private drawSpriteEntity(e: Entity, scrollX: number): void {
+  private drawSpriteEntity(e: Entity, scrollX: number, entityTint: number): void {
     const x = e.transform.position.x;
     if (!isHorizontallyVisible(x, leftExtent(e.hitbox), rightExtent(e.hitbox), scrollX, VIEW_WIDTH, CULL_MARGIN)) {
       return;
@@ -319,19 +328,21 @@ export class GameScene extends Phaser.Scene {
     }
     const img = this.acquireSprite();
     img.setTexture(ATLAS_KEY, frame);
+    img.setTint(entityTint);
     const s = this.sizeFor(typeId, e.hitbox);
     img.setDisplaySize(s.w, s.h);
     img.setPosition(x, e.transform.position.y);
   }
 
-  private drawVisibleSprites(entities: readonly Entity[], scrollX: number): void {
-    for (const e of entities) this.drawSpriteEntity(e, scrollX);
+  private drawVisibleSprites(entities: readonly Entity[], scrollX: number, entityTint: number): void {
+    for (const e of entities) this.drawSpriteEntity(e, scrollX, entityTint);
   }
 
   /** Aplica a paleta de tempo do dia (3.3): céu, faixas chão/teto e tint das camadas de parallax.
    *  Só chamado na criação e quando a seed da partida muda (restart) — nunca por frame (REGRA 3). */
   private applyDayNight(seed: string): void {
-    const p = paletteFor(timeOfDayForSeed(seed));
+    const pack = packForId(entitlementsService.activeExpansion.value.id);
+    const p = pack.dayNight[timeOfDayForSeed(seed)];
     // sky < 0x1000000 ⇒ Phaser trata como RGB opaco (alpha 255). Cobre o backgroundColor do jogo.
     this.cameras.main.setBackgroundColor(p.sky);
     const g = this.bandsGfx;
@@ -340,16 +351,23 @@ export class GameScene extends Phaser.Scene {
     g.fillRect(0, 0, VIEW_WIDTH, GROUND_THICKNESS);
     g.fillStyle(p.ground, 1);
     g.fillRect(0, VIEW_HEIGHT - GROUND_THICKNESS, VIEW_WIDTH, GROUND_THICKNESS);
-    for (const tile of this.parallaxTiles) tile.setTint(p.parallaxTint);
+    // Regenera as texturas de silhueta do pack (chave inclui packId) e re-tinta.
+    for (let i = 0; i < this.parallaxTiles.length; i++) {
+      const key = this.ensureLayerTexture(PARALLAX_LAYERS[i]!, pack.parallax[i]!.color, pack.id);
+      this.parallaxTiles[i]!.setTexture(key);
+      this.parallaxTiles[i]!.setTint(p.parallaxTint);
+    }
     this.appliedDayNightSeed = seed;
+    this.appliedPackId = pack.id;
+    this.appliedEntityTint = pack.entityTint;
   }
 
-  /** Gera (1×) a textura de tile de uma camada: linha de triângulos como silhueta. Chave = id. */
-  private ensureLayerTexture(layer: ParallaxLayer): string {
-    const key = `parallax:${layer.id}`;
+  /** Gera (1×) a textura de tile de uma camada: linha de triângulos como silhueta. Chave = id+pack. */
+  private ensureLayerTexture(layer: ParallaxLayer, color: number, packId: string): string {
+    const key = `parallax:${packId}:${layer.id}`;
     if (this.textures.exists(key)) return key;
     if (layer.visual.kind !== 'primitive') return key; // sprite: arte real (fase posterior)
-    const { color, tileWidth, peakHeight, baseFromBottom } = layer.visual;
+    const { tileWidth, peakHeight, baseFromBottom } = layer.visual;
     const baseY = VIEW_HEIGHT - baseFromBottom; // base da silhueta (px do topo)
     const topY = baseY - peakHeight; // ápice dos triângulos
     const g = this.make.graphics({ x: 0, y: 0 }, false);
