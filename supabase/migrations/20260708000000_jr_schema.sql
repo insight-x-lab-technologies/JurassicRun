@@ -54,6 +54,16 @@ create table if not exists jurassicrun.trophies (
   primary key (player_id, trophy_id)
 );
 
+-- ── redemption_codes (ledger de códigos de resgate, 8.4) ──────────────────────
+-- Single-use, service-role-only. Deny-by-default: sem policy de cliente.
+create table if not exists jurassicrun.redemption_codes (
+  code        text primary key,
+  sku         text not null,
+  redeemed_by uuid references auth.users(id),
+  redeemed_at timestamptz,
+  created_at  timestamptz not null default now()
+);
+
 -- ── trigger de integridade: só o service_role pode marcar verified=true ──────
 create or replace function jurassicrun.lock_verified()
 returns trigger language plpgsql as $$
@@ -77,6 +87,7 @@ alter table jurassicrun.players            enable row level security;
 alter table jurassicrun.scores             enable row level security;
 alter table jurassicrun.challenge_entries  enable row level security;
 alter table jurassicrun.trophies           enable row level security;
+alter table jurassicrun.redemption_codes   enable row level security;
 
 -- players: leitura pública; escrita só da própria linha.
 drop policy if exists players_select_public on jurassicrun.players;

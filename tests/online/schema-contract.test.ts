@@ -6,6 +6,8 @@ import {
   TABLE_NAMES,
   TABLE_COLUMNS,
   VERIFIED_TABLES,
+  REDEMPTION_TABLE,
+  REDEMPTION_COLUMNS,
 } from '@services/online/schema';
 
 const SQL = readFileSync(
@@ -63,5 +65,25 @@ describe('migração casa com as constantes do schema', () => {
         new RegExp(`create trigger lock_verified before insert or update on ${SUPABASE_SCHEMA}\\.${t}`),
       );
     }
+  });
+
+  it('cria a tabela redemption_codes no schema dedicado', () => {
+    expect(SQL).toContain(`create table if not exists ${SUPABASE_SCHEMA}.${REDEMPTION_TABLE} (`);
+  });
+
+  it('declara as colunas de redemption_codes', () => {
+    const start = SQL.indexOf(`${SUPABASE_SCHEMA}.${REDEMPTION_TABLE} (`);
+    const body = SQL.slice(start, SQL.indexOf(');', start));
+    for (const col of REDEMPTION_COLUMNS) {
+      expect(body, `redemption_codes.${col}`).toMatch(new RegExp(`\\b${col}\\b`));
+    }
+  });
+
+  it('habilita RLS em redemption_codes sem policy de cliente (deny-by-default)', () => {
+    expect(SQL).toMatch(
+      new RegExp(`alter table ${SUPABASE_SCHEMA}\\.${REDEMPTION_TABLE}\\s+enable row level security`),
+    );
+    expect(SQL).not.toContain(`create policy ${REDEMPTION_TABLE}_select`);
+    expect(SQL).not.toContain(`create policy ${REDEMPTION_TABLE}_insert`);
   });
 });
