@@ -59,6 +59,7 @@ export class GameScene extends Phaser.Scene {
   private bandsGfx!: Phaser.GameObjects.Graphics;
   private appliedDayNightSeed: string | null = null;
   private appliedPackId: string | null = null;
+  private appliedEntityTint = 0xffffff;
   private wasDead = false;
   private dinoBoundsHitbox: Hitbox | null = null;
   private dinoBounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
@@ -215,7 +216,7 @@ export class GameScene extends Phaser.Scene {
       this.parallaxTiles[i]!.tilePositionX = parallaxTileOffset(scrollX, PARALLAX_LAYERS[i]!.scrollFactor);
     }
 
-    const entityTint = packForId(entitlementsService.activeExpansion.value.id).entityTint;
+    const entityTint = this.appliedEntityTint;
 
     const g = this.gfx;
     g.clear();
@@ -358,6 +359,7 @@ export class GameScene extends Phaser.Scene {
     }
     this.appliedDayNightSeed = seed;
     this.appliedPackId = pack.id;
+    this.appliedEntityTint = pack.entityTint;
   }
 
   /** Gera (1×) a textura de tile de uma camada: linha de triângulos como silhueta. Chave = id+pack. */
