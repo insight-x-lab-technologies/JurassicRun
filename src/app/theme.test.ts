@@ -1,18 +1,9 @@
+// @vitest-environment happy-dom
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Window } from 'happy-dom';
 import { applyPackTheme, bindPackTheme } from './theme';
 import { packForId } from '@render/packs';
 import { entitlementsService } from '@services/entitlements';
 import { memoryEntitlementsStorage } from '@services/entitlements/storage';
-
-const window = new Window();
-const document = window.document;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-global.document = document as any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-global.window = window as any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-global.HTMLElement = window.HTMLElement as any;
 
 describe('theme', () => {
   beforeEach(() => {
