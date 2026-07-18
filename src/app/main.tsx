@@ -14,6 +14,7 @@ import { audioService, bindButtonSfx } from '@services/audio';
 import { onlineService } from '@services/online';
 import { createLeaderboardOnline } from './online/leaderboardAdapter';
 import { createTrophyOnline } from './online/trophyAdapter';
+import { bindPackTheme } from './theme';
 import { App } from './App';
 
 async function bootstrap(): Promise<void> {
@@ -24,6 +25,7 @@ async function bootstrap(): Promise<void> {
   nestService.init();
   walletService.init();
   entitlementsService.init();
+  bindPackTheme(); // tema CSS do pack ativo, reativo (8.3)
   trophyService.init(undefined, createTrophyOnline());
   leaderboardService.init(undefined, createLeaderboardOnline());
   replayService.init();
