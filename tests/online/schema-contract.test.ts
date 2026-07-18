@@ -20,6 +20,16 @@ const SQL = readFileSync(
   'utf8',
 );
 
+const REDEMPTION_SQL = readFileSync(
+  fileURLToPath(
+    new URL(
+      '../../supabase/migrations/20260718000000_redemption_codes.sql',
+      import.meta.url,
+    ),
+  ),
+  'utf8',
+);
+
 describe('migração casa com as constantes do schema', () => {
   it('cria o schema dedicado', () => {
     expect(SQL).toContain(`create schema if not exists ${SUPABASE_SCHEMA}`);
@@ -68,22 +78,22 @@ describe('migração casa com as constantes do schema', () => {
   });
 
   it('cria a tabela redemption_codes no schema dedicado', () => {
-    expect(SQL).toContain(`create table if not exists ${SUPABASE_SCHEMA}.${REDEMPTION_TABLE} (`);
+    expect(REDEMPTION_SQL).toContain(`create table if not exists ${SUPABASE_SCHEMA}.${REDEMPTION_TABLE} (`);
   });
 
   it('declara as colunas de redemption_codes', () => {
-    const start = SQL.indexOf(`${SUPABASE_SCHEMA}.${REDEMPTION_TABLE} (`);
-    const body = SQL.slice(start, SQL.indexOf(');', start));
+    const start = REDEMPTION_SQL.indexOf(`${SUPABASE_SCHEMA}.${REDEMPTION_TABLE} (`);
+    const body = REDEMPTION_SQL.slice(start, REDEMPTION_SQL.indexOf(');', start));
     for (const col of REDEMPTION_COLUMNS) {
       expect(body, `redemption_codes.${col}`).toMatch(new RegExp(`\\b${col}\\b`));
     }
   });
 
   it('habilita RLS em redemption_codes sem policy de cliente (deny-by-default)', () => {
-    expect(SQL).toMatch(
+    expect(REDEMPTION_SQL).toMatch(
       new RegExp(`alter table ${SUPABASE_SCHEMA}\\.${REDEMPTION_TABLE}\\s+enable row level security`),
     );
-    expect(SQL).not.toContain(`create policy ${REDEMPTION_TABLE}_select`);
-    expect(SQL).not.toContain(`create policy ${REDEMPTION_TABLE}_insert`);
+    expect(REDEMPTION_SQL).not.toContain(`create policy ${REDEMPTION_TABLE}_select`);
+    expect(REDEMPTION_SQL).not.toContain(`create policy ${REDEMPTION_TABLE}_insert`);
   });
 });
