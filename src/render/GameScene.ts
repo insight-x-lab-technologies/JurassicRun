@@ -99,7 +99,9 @@ export class GameScene extends Phaser.Scene {
     this.gfx = this.add.graphics();
 
     // Sprite do dino (8.2): sempre visível, posição interpolada, acima das outras entidades.
-    this.dinoSprite = this.add.image(0, 0, ATLAS_KEY, DINO_TYPE_ID).setDepth(1);
+    // Resolve o frame pela mesma abstração das demais entidades (frameFor) em vez do literal —
+    // evita render errado se o manifesto do dino apontar um frame != typeId. Fallback ao id.
+    this.dinoSprite = this.add.image(0, 0, ATLAS_KEY, frameFor(DINO_TYPE_ID) ?? DINO_TYPE_ID).setDepth(1);
 
     // Overlay de pausa: retângulo semitransparente de tela cheia (scrollFactor 0, depth 1000).
     this.pauseOverlay = this.add.graphics().setScrollFactor(0);
