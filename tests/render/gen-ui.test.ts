@@ -7,9 +7,10 @@ import { UI_SOURCES, renderUi } from '../../scripts/gen-ui.mjs';
 const root = fileURLToPath(new URL('../..', import.meta.url));
 
 describe('processador de assets de UI (gen-ui)', () => {
-  it('renderUi produz um PNG válido por fonte', () => {
+  it('renderUi produz um PNG válido por fonte (uma célula por asset, achatando grids)', () => {
     const outs = renderUi();
-    expect(outs.length).toBe(UI_SOURCES.length);
+    const expectedCount = UI_SOURCES.reduce((n, s) => n + (s.grid ? s.grid.names.length : 1), 0);
+    expect(outs.length).toBe(expectedCount);
     for (const { out, png } of outs) {
       expect(png.subarray(0, 8).toString('hex'), out).toBe('89504e470d0a1a0a');
       expect(png.subarray(12, 16).toString('ascii'), out).toBe('IHDR');
@@ -32,6 +33,15 @@ describe('processador de assets de UI (gen-ui)', () => {
     for (const { out, png } of renderUi()) {
       const committed = readFileSync(path.join(root, 'public/ui', `${out}.png`));
       expect(committed.equals(png), out).toBe(true);
+    }
+  });
+
+  it('grid gera um asset por célula (botões + ícones)', () => {
+    const names = renderUi().map((o) => o.out);
+    for (const n of ['button.primary', 'button.secondary',
+      'icon.daily', 'icon.weekly', 'icon.nest', 'icon.shop', 'icon.expansions',
+      'icon.leaderboard', 'icon.settings', 'icon.share', 'icon.donate', 'icon.back']) {
+      expect(names, n).toContain(n);
     }
   });
 });

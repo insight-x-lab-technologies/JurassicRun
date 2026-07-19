@@ -10,30 +10,49 @@ import path from 'node:path';
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const ART = path.join(ROOT, 'public/art/final');
 
-// Rodada A. Rodadas B/C estendem esta lista (grid-slice de sheets entra aqui).
+// Rodada A + B. Rodada C estende esta lista (mais grid-slices de sheets entram aqui).
 export const UI_SOURCES = [
   { out: 'panel', file: 'ui/ui.panel.frame.png', maxDim: 512 },
   { out: 'logo', file: 'ui/logo.app.png', maxDim: 640 },
-  { out: 'bg.screen.classic', file: 'backgrounds/bg.screen.classic.png', maxDim: 1280, opaque: true },
-  { out: 'bg.screen.volcano', file: 'backgrounds/bg.screen.volcano.png', maxDim: 1280, opaque: true },
-  { out: 'bg.screen.glacier', file: 'backgrounds/bg.screen.glacier.png', maxDim: 1280, opaque: true },
+  { out: 'bg.screen.classic', file: 'backgrounds/bg.screen.classic.png', maxDim: 900, opaque: true },
+  { out: 'bg.screen.volcano', file: 'backgrounds/bg.screen.volcano.png', maxDim: 900, opaque: true },
+  { out: 'bg.screen.glacier', file: 'backgrounds/bg.screen.glacier.png', maxDim: 900, opaque: true },
+  { out: 'button', file: 'ui/ui.buttons.png', maxDim: 512,
+    grid: { cols: 1, rows: 2, names: ['button.primary', 'button.secondary'] } },
+  { out: 'icon', file: 'ui/ui.icons.png', maxDim: 96,
+    grid: { cols: 5, rows: 2, names: [
+      'icon.daily', 'icon.weekly', 'icon.nest', 'icon.shop', 'icon.expansions',
+      'icon.leaderboard', 'icon.settings', 'icon.share', 'icon.donate', 'icon.back'] } },
 ];
 
-function processSource(src) {
-  const img = decodePng(readFileSync(path.join(ART, src.file)));
-  let x0 = 0, y0 = 0, x1 = img.w, y1 = img.h;
-  if (!src.opaque) { const b = contentBounds(img, 0, 0, img.w, img.h); x0 = b.minX; y0 = b.minY; x1 = b.maxX; y1 = b.maxY; }
+// Recorta a bbox de conteúdo dentro de [x0,x1)×[y0,y1), downscala por maxDim, devolve {w,h,pixels}.
+function crop(img, x0, y0, x1, y1, maxDim, opaque) {
+  if (!opaque) { const b = contentBounds(img, x0, y0, x1, y1); x0 = b.minX; y0 = b.minY; x1 = b.maxX; y1 = b.maxY; }
   const sw = x1 - x0, sh = y1 - y0;
-  const s = Math.min(1, src.maxDim / Math.max(sw, sh));
+  const s = Math.min(1, maxDim / Math.max(sw, sh));
   const dw = Math.max(1, Math.round(sw * s)), dh = Math.max(1, Math.round(sh * s));
   return { w: dw, h: dh, pixels: cropResize(img, x0, y0, sw, sh, dw, dh) };
 }
 
 export function renderUi() {
-  return UI_SOURCES.map((src) => {
-    const { w, h, pixels } = processSource(src);
-    return { out: src.out, png: encodePng(w, h, pixels) };
-  });
+  const outs = [];
+  for (const src of UI_SOURCES) {
+    const img = decodePng(readFileSync(path.join(ART, src.file)));
+    if (src.grid) {
+      const { cols, rows, names } = src.grid;
+      if (names.length !== cols * rows) throw new Error(`grid ${src.out}: names ${names.length} != ${cols * rows}`);
+      const cw = Math.floor(img.w / cols), ch = Math.floor(img.h / rows);
+      let i = 0;
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        const { w, h, pixels } = crop(img, c * cw, r * ch, c * cw + cw, r * ch + ch, src.maxDim, false);
+        outs.push({ out: names[i++], png: encodePng(w, h, pixels) });
+      }
+    } else {
+      const { w, h, pixels } = crop(img, 0, 0, img.w, img.h, src.maxDim, src.opaque);
+      outs.push({ out: src.out, png: encodePng(w, h, pixels) });
+    }
+  }
+  return outs;
 }
 
 function main() {
