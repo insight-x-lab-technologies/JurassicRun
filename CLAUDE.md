@@ -1340,5 +1340,36 @@ Suíte verde (`check` limpo, **721 testes**, determinismo **67 inalterado**). **
 Supabase 6.x):** migração aplicada + `supabase functions deploy redeem-code` + conta Ko-Fi + inserir
 `(code, sku)` em `redemption_codes` ao fulfillar + `.env`; sem isso roda honor-system (correto).
 **Adiados:** Ko-Fi Webhook auto-grant; geração/painel de códigos; Stripe/cartão direto; reembolso; auditoria
-de `redeemed_by` quando JWT falha; entitlements/wallet por-perfil. **Fase 8 essencialmente fechada** (resta
-só 8.1 arte AAA real, gerada externamente pelo usuário + empacotada em atlas).
+de `redeemed_by` quando JWT falha; entitlements/wallet por-perfil.
+
+8.1 (arte real de entidades in-game — PARTE in-game): as 11 entidades in-game (Tier 2) passaram do
+atlas placeholder procedural para **arte real** gerada pelo usuário (`public/art/final/`), com o
+**dino animado** (flap de 6 frames), e foi criado o **seam de atlas por tema**. **`src/core/`
+intocado ⇒ determinismo 67** (spec `docs/superpowers/specs/2026-07-19-real-entity-art-and-theme-atlas-
+design.md`, plano `.../plans/2026-07-19-real-entity-art-and-theme-atlas.md`). Validação (feita, decoder
+PNG próprio + amostra de alpha): os PNGs do usuário são corretos (transparência OK; backgrounds RGB
+opaco); NÃO drop-in (dinos são strips de 6 frames; UI/covers/parallax são sheets sem JSON de slice).
+`scripts/gen-atlas.mjs` reescrito de gerador-de-shapes → **empacotador de PNGs reais** (reusa
+`encodePng`, decoder próprio, zero dep): trim por conteúdo + slice do strip do dino com **bbox-união**
+(registro estável) + downscale box-average peso-alpha + shelf-pack → `public/atlas/entities.{png,json}`
+(JSONHash, 512×522, **17 frames** = 10 singles + `dino.default.0..5` + alias `dino.default`=frame 0). O
+**dino virou `Sprite` animado** (`GameScene` cria anim `dino.flap` 12fps de `generateFrameNames`
+prefix `dino.default.`; alocação-zero — anim roda no motor Phaser). **Seam de tema** (o que o usuário
+pediu p/ futuras artes séria/cartoon): `LookPack.atlas?:AtlasRef` + `atlasRefFor(pack)` em
+`sprites.ts` (classic=atlas real=default; volcano/glacier omitem ⇒ fallback+entityTint); `preload`
+carrega o atlas do pack ativo. Registro: 11 ids `spec`→`art` + guarda de fonte. **Fix de precache**
+(controlador): arte-fonte em `public/art/` é insumo de build (só o atlas é runtime) ⇒
+`workbox.globIgnores:['**/art/**']` (precache 61MB→**1,9MB**, atlas 232KB segue cacheado). Execução SDD
+por subagentes (4 tasks + review por task + review final opus **"READY TO MERGE"**, 0
+Critical/Important; 5 Minors→backlog). Suíte verde (`check` limpo, **730 testes**, determinismo **67**).
+Playwright (build de produção, 390×844): entidades reais renderizam (dino/moeda/power-ups/obstáculos);
+atlas real servido (512×522, 17 frames); **p50 16,7ms/60fps steady, 0 frames >50ms** (max=1 frame
+perdido=cadência de vsync do headless); atlas único ⇒ batching. **DECISÃO do usuário: construir o seam
+de tema AGORA** (este set = tema default) + **escopo só entidades in-game**. **Adiados/backlog:**
+Tier-1 (logo/UI 9-slice/ícones/medalhas/fundos de tela por bioma/parallax real com `bg.layers.png`) +
+os 10 dinos do Ninho + capas de expansão (rodada futura, arte já gerada em `public/art/final/`); **mover
+arte-fonte p/ fora de `publicDir`** (ainda copiada pro `dist`, só não precacheada) antes da rodada
+Tier-1; fiar `ref.key` no pipeline de render (`acquireSprite`/`drawSpriteEntity`/dino usam `ATLAS_KEY`
+de módulo — inerte hoje, quebra se um pack tiver atlas próprio); Minors T1 (constraint 8-bit do decoder
+sem doc; teste de bbox-apertada; suíte +~19s por `renderAtlas` sem memoize). **Fase 8: resta a rodada
+Tier-1 do 8.1** (UI/fundos/dinos do Ninho).

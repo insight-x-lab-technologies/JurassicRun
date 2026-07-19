@@ -6,8 +6,28 @@ performance, e habilitar packs cosméticos compráveis.
 ## Itens
 
 ### 8.1 Produção de arte a partir das asset-specs
-- [ ] Gerar imagens via IA seguindo `docs/assets/specs/*` e `asset-registry.md`.
-- [ ] Empacotar em texture atlases.
+- [x] Gerar imagens via IA seguindo `docs/assets/specs/*` e `asset-registry.md`. _(Usuário gerou
+      todos os PNGs em `public/art/`; 11 entidades in-game validadas e integradas.)_
+- [x] Empacotar em texture atlases. _(Entidades in-game empacotadas; Tier-1/UI/fundos pendentes.)_
+      _**Parte in-game CONCLUÍDA** (`src/core/` intocado, determinismo **67**; spec
+      `docs/superpowers/specs/2026-07-19-real-entity-art-and-theme-atlas-design.md`, plano
+      `docs/superpowers/plans/2026-07-19-real-entity-art-and-theme-atlas.md`). As 11 entidades in-game
+      (Tier 2) passaram do atlas placeholder procedural para **arte real** gerada pelo usuário:
+      `scripts/gen-atlas.mjs` foi reescrito de gerador-de-shapes para **empacotador de PNGs reais**
+      (decoder PNG próprio + `encodePng`, zero dep) que faz trim/slice/downscale/shelf-pack de
+      `public/art/final/` → `public/atlas/entities.{png,json}` (JSONHash, 512×522, 17 frames incl.
+      **dino de 6 frames de flap** `dino.default.0..5` + alias). O **dino agora é animado** (`Sprite`
+      + anim `dino.flap` 12fps no `GameScene`). Criado o **seam de atlas por tema**
+      (`LookPack.atlas?`/`atlasRefFor`, `preload` carrega o atlas do pack ativo) para sets de arte
+      alternativos futuros trocarem sem tocar consumidores (REGRA 2). Registro: 11 ids `spec`→`art`
+      + guarda de fonte. Precache do SW corrigido (`globIgnores` da arte-fonte: 61MB→1.9MB). Playwright
+      (build de produção): entidades reais renderizam, **p50 16,7ms/60fps, 0 frames >50ms**, atlas
+      único ⇒ batching. Execução SDD por subagentes (4 tasks + review por task + review final opus
+      **"READY TO MERGE"**, 0 Critical/Important; 5 Minors → backlog). **Resta em 8.1 (rodada futura):**
+      Tier-1 (logo/UI 9-slice/ícones/medalhas/fundos de tela por bioma/parallax real) + os 10 dinos do
+      Ninho; mover a arte-fonte p/ fora de `publicDir`; fiar `ref.key` no pipeline de render quando um
+      pack tiver atlas próprio._
+
       _Parte de especificação CONCLUÍDA (docs-only, `src/` intocado, determinismo 67):
       Style Bible `docs/assets/ART-DIRECTION.md` (paleta/materiais/tipografia/iconografia +
       regra dos dois tiers), catálogo de specs prontas-para-IA dos assets novos que os
