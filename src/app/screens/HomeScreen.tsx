@@ -45,6 +45,7 @@ export function HomeScreen(): VNode {
   return (
     <div class="home">
       <h1 class="sr-only">{i18n.t('app.title')}</h1>
+      <img class="home__logo" src={`${import.meta.env.BASE_URL}ui/logo.png`} alt="" />
       <header class="home__topbar">
         {active !== null && (
           <button

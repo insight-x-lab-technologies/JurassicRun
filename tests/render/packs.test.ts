@@ -13,4 +13,12 @@ describe('packs look&feel', () => {
   it('packForId cai em classic para id desconhecido', () => {
     expect(packForId('nao.existe').id).toBe('classic');
   });
+
+  describe('bgScreen por pack', () => {
+    it('cada pack aponta seu fundo de tela', () => {
+      expect(PACK_CLASSIC.bgScreen).toBe('bg.screen.classic');
+      expect(packForId('volcano').bgScreen).toBe('bg.screen.volcano');
+      expect(packForId('glacier').bgScreen).toBe('bg.screen.glacier');
+    });
+  });
 });

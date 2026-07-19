@@ -12,6 +12,9 @@ export function applyPackTheme(pack: LookPack, root: HTMLElement = document.docu
   for (const [prop, value] of Object.entries(pack.theme)) {
     root.style.setProperty(prop, value);
   }
+  const base = import.meta.env.BASE_URL; // termina com '/'
+  root.style.setProperty('--bg-screen', `url(${base}ui/${pack.bgScreen}.png)`);
+  root.style.setProperty('--ui-panel', `url(${base}ui/panel.png)`);
 }
 
 /** Liga a reatividade tema↔expansão ativa. Retorna cleanup do effect. */

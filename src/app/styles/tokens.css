@@ -31,4 +31,8 @@
   --radius-md: 12px;
   --radius-lg: 20px;
   --shadow-1: 0 2px 8px rgba(0, 0, 0, 0.35);
+
+  /* Assets de UI Tier-1 (o theme.ts sobrescreve com BASE_URL correto por expansão). */
+  --bg-screen: none;
+  --ui-panel: none;
 }

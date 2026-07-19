@@ -24,6 +24,8 @@ export interface LookPack {
   readonly entityTint: number;
   /** Atlas de entidades do tema; ausente ⇒ reusa o default (seam para arte alternativa, 8.1). */
   readonly atlas?: AtlasRef;
+  /** Nome do fundo de tela em public/ui/ (por expansão ativa). Seam Tier-1 (8.1). */
+  readonly bgScreen: string;
 }
 
 /** Cores de parallax atuais, extraídas das camadas primitivas (classic). */
@@ -48,6 +50,7 @@ export const PACK_CLASSIC: LookPack = {
   parallax: CLASSIC_PARALLAX,
   entityTint: 0xffffff,
   atlas: DEFAULT_ATLAS,
+  bgScreen: 'bg.screen.classic',
 };
 
 /** Vulcão — quente/basalto. Placeholders coerentes com o Style Bible (8.1); tuning na arte. */
@@ -69,6 +72,7 @@ const PACK_VOLCANO: LookPack = {
   },
   parallax: [{ color: 0x7a4a4a }, { color: 0x8a3f2a }, { color: 0x532f24 }],
   entityTint: 0xffd9c8,
+  bgScreen: 'bg.screen.volcano',
 };
 
 /** Geleira — frio/gelo. Placeholders coerentes com o Style Bible (8.1); tuning na arte. */
@@ -90,6 +94,7 @@ const PACK_GLACIER: LookPack = {
   },
   parallax: [{ color: 0x9fb8cc }, { color: 0x7fa8c0 }, { color: 0x5f88a0 }],
   entityTint: 0xd8ecff,
+  bgScreen: 'bg.screen.glacier',
 };
 
 export const LOOK_PACKS: readonly LookPack[] = [PACK_CLASSIC, PACK_VOLCANO, PACK_GLACIER];

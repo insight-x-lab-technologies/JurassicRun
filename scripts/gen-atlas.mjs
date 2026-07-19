@@ -30,7 +30,7 @@ export const ATLAS_SOURCES = [
 ];
 
 /** Decodifica PNG 8-bit RGBA/RGB não entrelaçado. Retorna {w,h,rgba:Buffer(w*h*4)}. */
-function decodePng(buf) {
+export function decodePng(buf) {
   if (buf.readUInt32BE(0) !== 0x89504e47) throw new Error('não é PNG');
   let off = 8, w, h, bitDepth, colorType, interlace;
   const idat = [];
@@ -78,7 +78,7 @@ function decodePng(buf) {
 }
 
 /** Bounding box do conteúdo com alpha>0 dentro do sub-retângulo [x0,x1)×[y0,y1). */
-function contentBounds(img, x0, y0, x1, y1) {
+export function contentBounds(img, x0, y0, x1, y1) {
   let minX = x1, minY = y1, maxX = x0, maxY = y0;
   for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
     if (img.rgba[(y * img.w + x) * 4 + 3] > 0) {
@@ -91,7 +91,7 @@ function contentBounds(img, x0, y0, x1, y1) {
 }
 
 /** Downscale box-average (peso por alpha ⇒ sem halo preto) do sub-rect origem para dw×dh RGBA. */
-function cropResize(img, sx, sy, sw, sh, dw, dh) {
+export function cropResize(img, sx, sy, sw, sh, dw, dh) {
   const out = Buffer.alloc(dw * dh * 4);
   for (let dy = 0; dy < dh; dy++) for (let dx = 0; dx < dw; dx++) {
     const bx0 = sx + Math.floor((dx * sw) / dw), bx1 = sx + Math.max(Math.floor(((dx + 1) * sw) / dw), Math.floor((dx * sw) / dw) + 1);

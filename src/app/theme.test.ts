@@ -27,4 +27,12 @@ describe('theme', () => {
     expect(document.documentElement.style.getPropertyValue('--color-primary')).toBe('#ff7a3c');
     cleanup();
   });
+
+  it('applyPackTheme seta --bg-screen e --ui-panel', () => {
+    applyPackTheme(packForId('volcano'));
+    const bg = document.documentElement.style.getPropertyValue('--bg-screen');
+    const panel = document.documentElement.style.getPropertyValue('--ui-panel');
+    expect(bg).toContain('ui/bg.screen.volcano.png');
+    expect(panel).toContain('ui/panel.png');
+  });
 });

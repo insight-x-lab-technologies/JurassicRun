@@ -12,3 +12,8 @@ export function renderAtlas(): {
     meta: Record<string, unknown>;
   };
 };
+
+export interface DecodedPng { w: number; h: number; rgba: Buffer; }
+export function decodePng(buf: Buffer): DecodedPng;
+export function contentBounds(img: DecodedPng, x0: number, y0: number, x1: number, y1: number): { minX: number; minY: number; maxX: number; maxY: number };
+export function cropResize(img: DecodedPng, sx: number, sy: number, sw: number, sh: number, dw: number, dh: number): Buffer;

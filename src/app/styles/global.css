@@ -15,7 +15,11 @@ body {
   font-family: var(--font-family);
   font-size: var(--font-size-md);
   color: var(--color-text);
-  background: var(--color-bg);
+  background-color: var(--color-bg); /* fallback/letterbox sob a imagem */
+  background-image: var(--bg-screen); /* pintado por expansão (theme.ts); `none` pré-JS */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -687,4 +691,21 @@ body {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   text-align: center;
+}
+
+/* Painel 9-slice (Tier-1 8.1): moldura ornamentada + centro translúcido escuro (o `fill`)
+   ⇒ menus legíveis sobre o fundo pintado. NÃO se aplica a .play-screen (o jogo). O centro
+   translúcido vem da arte; o border-image escala para qualquer tamanho de caixa. */
+.screen,
+.home {
+  border: 22px solid transparent;
+  border-image: var(--ui-panel) 12% fill / 22px / 0 stretch;
+}
+
+.home__logo {
+  display: block;
+  align-self: center;
+  width: min(80%, 22rem);
+  height: auto;
+  margin: 0 auto var(--space-2);
 }
