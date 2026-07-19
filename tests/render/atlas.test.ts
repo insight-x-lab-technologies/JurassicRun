@@ -2,46 +2,52 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { ATLAS_FRAMES, renderAtlas } from '../../scripts/gen-atlas.mjs';
+import { renderAtlas } from '../../scripts/gen-atlas.mjs';
 import { ASSET_MANIFEST } from '@render/manifest';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
 
-describe('atlas placeholder de entidades', () => {
+describe('atlas de entidades (arte real)', () => {
   it('renderAtlas gera PNG com assinatura + IHDR válidos', () => {
     const { png } = renderAtlas();
-    expect(png.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a'); // \x89PNG
+    expect(png.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a');
     expect(png.subarray(12, 16).toString('ascii')).toBe('IHDR');
   });
 
-  it('encoder é determinístico (mesmos bytes a cada run)', () => {
-    expect(renderAtlas().png.equals(renderAtlas().png)).toBe(true);
-  });
-
-  it('JSON tem um frame por id de ATLAS_FRAMES com geometria válida', () => {
-    const { json } = renderAtlas();
-    for (const f of ATLAS_FRAMES) {
-      const frame = json.frames[f.id];
-      expect(frame, `frame ausente: ${f.id}`).toBeDefined();
-      if (frame) {
-        expect(frame.frame.w).toBeGreaterThan(0);
-        expect(frame.frame.h).toBeGreaterThan(0);
-      }
-    }
-  });
+  it(
+    'encoder é determinístico (mesmos bytes a cada run)',
+    () => {
+      // renderAtlas() decodifica ~10 PNGs grandes por pixel (~2-3s cada chamada) —
+      // timeout estendido p/ acomodar as 2 chamadas nesta asserção (default 5000ms é justo).
+      expect(renderAtlas().png.equals(renderAtlas().png)).toBe(true);
+    },
+    20000,
+  );
 
   it('COMPLETUDE: todo id sprite do manifesto tem frame no atlas', () => {
-    const frameIds = new Set(ATLAS_FRAMES.map((f) => f.id));
+    const { json } = renderAtlas();
     for (const [id, r] of Object.entries(ASSET_MANIFEST)) {
       if (r.kind === 'sprite') {
-        expect(frameIds.has(id), `manifesto sprite sem frame no atlas: ${id}`).toBe(true);
+        expect(json.frames[id], `manifesto sprite sem frame: ${id}`).toBeDefined();
       }
     }
   });
 
-  it('sem frame órfão: todo id de ATLAS_FRAMES existe no manifesto', () => {
-    for (const f of ATLAS_FRAMES) {
-      expect(ASSET_MANIFEST[f.id], `frame órfão no atlas: ${f.id}`).toBeDefined();
+  it('o dino tem 6 frames de flap + alias, cada um com geometria válida', () => {
+    const { json } = renderAtlas();
+    for (let i = 0; i < 6; i++) expect(json.frames[`dino.default.${i}`], `frame ${i}`).toBeDefined();
+    expect(json.frames['dino.default']).toEqual(json.frames['dino.default.0']);
+    for (const f of Object.values(json.frames)) {
+      expect(f.frame.w).toBeGreaterThan(0);
+      expect(f.frame.h).toBeGreaterThan(0);
+    }
+  });
+
+  it('sem frame órfão: todo id (sem sufixo .N de animação) existe no manifesto', () => {
+    const { json } = renderAtlas();
+    for (const name of Object.keys(json.frames)) {
+      const base = name.replace(/\.\d+$/, '');
+      expect(ASSET_MANIFEST[base], `frame órfão: ${name}`).toBeDefined();
     }
   });
 

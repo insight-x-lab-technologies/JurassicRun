@@ -1,189 +1,174 @@
 // scripts/gen-atlas.mjs
-// Gerador de atlas placeholder com shapes por célula. Encoder PNG puro — zero dep.
-// Rode `npm run gen:atlas`.
-
+// Empacota os PNGs reais de public/art/final/ num texture atlas (Phaser JSONHash).
+// Decoder PNG próprio + encodePng existente — zero dep. Rode `npm run gen:atlas`.
 import { encodePng } from './gen-icons.mjs';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import zlib from 'node:zlib';
 import path from 'node:path';
 
-export const CELL = 64;
-export const COLS = 4;
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
+const ART = path.join(ROOT, 'public/art/final');
 
-export const ATLAS_FRAMES = [
-  { id: 'dino.default', color: 0xcc5544, shape: 'triangle' },
-  { id: 'obstacle.tree', color: 0x6b4a2f, shape: 'rect' },
-  { id: 'obstacle.vine', color: 0x2f6b2f, shape: 'rect' },
-  { id: 'obstacle.boulder', color: 0x808896, shape: 'circle' },
-  { id: 'obstacle.stalactite', color: 0x9aa3b2, shape: 'triangle' },
-  { id: 'bird.coin', color: 0xffd54a, shape: 'circle' },
-  { id: 'powerup.shield', color: 0x4ac0ff, shape: 'circle' },
-  { id: 'powerup.extraLife', color: 0xff5a7a, shape: 'circle' },
-  { id: 'powerup.magnet', color: 0xc061ff, shape: 'circle' },
-  { id: 'powerup.doubleCoin', color: 0xffe14a, shape: 'circle' },
-  { id: 'powerup.slowMo', color: 0x66ffcc, shape: 'circle' },
+export const ATLAS_KEY = 'entities';
+const CELL_MAX = 128; // maior dimensão de um frame após downscale
+const ATLAS_WIDTH = 512; // largura fixa do atlas (shelf packing)
+const PAD = 2; // espaçamento entre frames (anti-bleeding)
+
+export const ATLAS_SOURCES = [
+  { id: 'dino.default', file: 'dinos/dino.default.flap.png', frames: 6 },
+  { id: 'obstacle.tree', file: 'obstacles/obstacle.tree.png', frames: 1 },
+  { id: 'obstacle.vine', file: 'obstacles/obstacle.vine.png', frames: 1 },
+  { id: 'obstacle.boulder', file: 'obstacles/obstacle.boulder.png', frames: 1 },
+  { id: 'obstacle.stalactite', file: 'obstacles/obstacle.stalactite.png', frames: 1 },
+  { id: 'bird.coin', file: 'collectibles/bird.coin.png', frames: 1 },
+  { id: 'powerup.shield', file: 'powerups/powerup.shield.png', frames: 1 },
+  { id: 'powerup.extraLife', file: 'powerups/powerup.extraLife.png', frames: 1 },
+  { id: 'powerup.magnet', file: 'powerups/powerup.magnet.png', frames: 1 },
+  { id: 'powerup.doubleCoin', file: 'powerups/powerup.doubleCoin.png', frames: 1 },
+  { id: 'powerup.slowMo', file: 'powerups/powerup.slowMo.png', frames: 1 },
 ];
 
-const ROWS = Math.ceil(ATLAS_FRAMES.length / COLS);
-const WIDTH = COLS * CELL;
-const HEIGHT = ROWS * CELL;
-const MARGIN = 8;
-
-function fillRect(rgba, w, cx, cy, x0, y0, x1, y1, color) {
-  const r = (color >> 16) & 255;
-  const g = (color >> 8) & 255;
-  const b = color & 255;
-  for (let y = Math.max(0, y0); y < Math.min(cy, y1); y++) {
-    for (let x = Math.max(0, x0); x < Math.min(w, x1); x++) {
-      const i = (y * w + x) * 4;
-      rgba[i] = r;
-      rgba[i + 1] = g;
-      rgba[i + 2] = b;
-      rgba[i + 3] = 255;
+/** Decodifica PNG 8-bit RGBA/RGB não entrelaçado. Retorna {w,h,rgba:Buffer(w*h*4)}. */
+function decodePng(buf) {
+  if (buf.readUInt32BE(0) !== 0x89504e47) throw new Error('não é PNG');
+  let off = 8, w, h, bitDepth, colorType, interlace;
+  const idat = [];
+  while (off < buf.length) {
+    const len = buf.readUInt32BE(off);
+    const type = buf.toString('ascii', off + 4, off + 8);
+    const data = buf.subarray(off + 8, off + 8 + len);
+    if (type === 'IHDR') { w = data.readUInt32BE(0); h = data.readUInt32BE(4); bitDepth = data[8]; colorType = data[9]; interlace = data[12]; }
+    else if (type === 'IDAT') idat.push(data);
+    else if (type === 'IEND') break;
+    off += 12 + len;
+  }
+  if (bitDepth !== 8 || interlace !== 0) throw new Error(`PNG não suportado (bd${bitDepth} il${interlace})`);
+  const channels = { 0: 1, 2: 3, 4: 2, 6: 4 }[colorType];
+  if (!channels) throw new Error(`colorType ${colorType} não suportado`);
+  const raw = zlib.inflateSync(Buffer.concat(idat));
+  const bpp = channels, stride = w * bpp;
+  const un = Buffer.alloc(h * stride);
+  let pos = 0;
+  for (let y = 0; y < h; y++) {
+    const filter = raw[pos++];
+    const o = y * stride;
+    for (let x = 0; x < stride; x++) {
+      const a = x >= bpp ? un[o + x - bpp] : 0;
+      const b = y > 0 ? un[o - stride + x] : 0;
+      const c = x >= bpp && y > 0 ? un[o - stride + x - bpp] : 0;
+      let v = raw[pos++];
+      if (filter === 1) v += a;
+      else if (filter === 2) v += b;
+      else if (filter === 3) v += (a + b) >> 1;
+      else if (filter === 4) { const p = a + b - c, pa = Math.abs(p - a), pb = Math.abs(p - b), pc = Math.abs(p - c); v += pa <= pb && pa <= pc ? a : pb <= pc ? b : c; }
+      un[o + x] = v & 255;
     }
   }
+  // expande para RGBA
+  const rgba = Buffer.alloc(w * h * 4);
+  for (let i = 0; i < w * h; i++) {
+    const s = i * bpp, d = i * 4;
+    if (channels === 4) { rgba[d] = un[s]; rgba[d+1] = un[s+1]; rgba[d+2] = un[s+2]; rgba[d+3] = un[s+3]; }
+    else if (channels === 3) { rgba[d] = un[s]; rgba[d+1] = un[s+1]; rgba[d+2] = un[s+2]; rgba[d+3] = 255; }
+    else if (channels === 2) { rgba[d] = rgba[d+1] = rgba[d+2] = un[s]; rgba[d+3] = un[s+1]; }
+    else { rgba[d] = rgba[d+1] = rgba[d+2] = un[s]; rgba[d+3] = 255; }
+  }
+  return { w, h, rgba };
 }
 
-function drawRect(rgba, w, cellX, cellY, color) {
-  const x0 = cellX + MARGIN;
-  const y0 = cellY + MARGIN;
-  const x1 = cellX + CELL - MARGIN;
-  const y1 = cellY + CELL - MARGIN;
-  fillRect(rgba, w, w, cellY + CELL, x0, y0, x1, y1, color);
-}
-
-function drawCircle(rgba, w, cellX, cellY, color) {
-  const cx = cellX + CELL / 2;
-  const cy = cellY + CELL / 2;
-  const radius = (CELL - 2 * MARGIN) / 2;
-  const r = (color >> 16) & 255;
-  const g = (color >> 8) & 255;
-  const b = color & 255;
-  for (let y = cellY; y < cellY + CELL; y++) {
-    for (let x = cellX; x < cellX + CELL; x++) {
-      const dx = x - cx + 0.5;
-      const dy = y - cy + 0.5;
-      if (dx * dx + dy * dy <= radius * radius) {
-        const i = (y * w + x) * 4;
-        rgba[i] = r;
-        rgba[i + 1] = g;
-        rgba[i + 2] = b;
-        rgba[i + 3] = 255;
-      }
+/** Bounding box do conteúdo com alpha>0 dentro do sub-retângulo [x0,x1)×[y0,y1). */
+function contentBounds(img, x0, y0, x1, y1) {
+  let minX = x1, minY = y1, maxX = x0, maxY = y0;
+  for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+    if (img.rgba[(y * img.w + x) * 4 + 3] > 0) {
+      if (x < minX) minX = x; if (x + 1 > maxX) maxX = x + 1;
+      if (y < minY) minY = y; if (y + 1 > maxY) maxY = y + 1;
     }
   }
+  if (maxX <= minX || maxY <= minY) return { minX: x0, minY: y0, maxX: x1, maxY: y1 }; // vazio: usa todo o rect
+  return { minX, minY, maxX, maxY };
 }
 
-function drawTriangle(rgba, w, cellX, cellY, color) {
-  // Right-pointing triangle: vertices at (x0, y0), (x1, y1), (x0, y2)
-  const x0 = cellX + MARGIN;
-  const y0 = cellY + MARGIN;
-  const x1 = cellX + CELL - MARGIN;
-  const y1 = cellY + CELL / 2;
-  const y2 = cellY + CELL - MARGIN;
-
-  const r = (color >> 16) & 255;
-  const g = (color >> 8) & 255;
-  const b = color & 255;
-
-  // Barycentric coordinates for triangle fill
-  const area = (x1 - x0) * (y2 - y0) - (x0 - x0) * (y1 - y0);
-
-  for (let py = cellY; py < cellY + CELL; py++) {
-    for (let px = cellX; px < cellX + CELL; px++) {
-      const x = px + 0.5;
-      const y = py + 0.5;
-
-      const w0 = ((x1 - x0) * (y - y0) - (x0 - x0) * (x - x0)) / area;
-      const w1 = ((x0 - x1) * (y - y1) - (y1 - y1) * (x - x1)) / area;
-      const w2 = 1 - w0 - w1;
-
-      if (w0 >= 0 && w1 >= 0 && w2 >= 0) {
-        const i = (py * w + px) * 4;
-        rgba[i] = r;
-        rgba[i + 1] = g;
-        rgba[i + 2] = b;
-        rgba[i + 3] = 255;
-      }
+/** Downscale box-average (peso por alpha ⇒ sem halo preto) do sub-rect origem para dw×dh RGBA. */
+function cropResize(img, sx, sy, sw, sh, dw, dh) {
+  const out = Buffer.alloc(dw * dh * 4);
+  for (let dy = 0; dy < dh; dy++) for (let dx = 0; dx < dw; dx++) {
+    const bx0 = sx + Math.floor((dx * sw) / dw), bx1 = sx + Math.max(Math.floor(((dx + 1) * sw) / dw), Math.floor((dx * sw) / dw) + 1);
+    const by0 = sy + Math.floor((dy * sh) / dh), by1 = sy + Math.max(Math.floor(((dy + 1) * sh) / dh), Math.floor((dy * sh) / dh) + 1);
+    let sumA = 0, sumR = 0, sumG = 0, sumB = 0, n = 0;
+    for (let y = by0; y < by1; y++) for (let x = bx0; x < bx1; x++) {
+      const i = (y * img.w + x) * 4, a = img.rgba[i + 3];
+      sumR += img.rgba[i] * a; sumG += img.rgba[i + 1] * a; sumB += img.rgba[i + 2] * a; sumA += a; n++;
     }
+    const d = (dy * dw + dx) * 4;
+    out[d + 3] = Math.round(sumA / n);
+    out[d] = sumA > 0 ? Math.round(sumR / sumA) : 0;
+    out[d + 1] = sumA > 0 ? Math.round(sumG / sumA) : 0;
+    out[d + 2] = sumA > 0 ? Math.round(sumB / sumA) : 0;
   }
+  return out;
+}
+
+function targetSize(sw, sh) {
+  const s = Math.min(1, CELL_MAX / Math.max(sw, sh));
+  return { dw: Math.max(1, Math.round(sw * s)), dh: Math.max(1, Math.round(sh * s)) };
 }
 
 export function renderAtlas() {
-  // Create transparent RGBA buffer
-  const rgba = Buffer.alloc(WIDTH * HEIGHT * 4);
-
-  // Fill all with transparent (alpha=0)
-  for (let i = 0; i < WIDTH * HEIGHT; i++) {
-    rgba[i * 4 + 3] = 0;
-  }
-
-  // Draw each frame
-  for (let idx = 0; idx < ATLAS_FRAMES.length; idx++) {
-    const frame = ATLAS_FRAMES[idx];
-    const col = idx % COLS;
-    const row = Math.floor(idx / COLS);
-    const cellX = col * CELL;
-    const cellY = row * CELL;
-
-    if (frame.shape === 'rect') {
-      drawRect(rgba, WIDTH, cellX, cellY, frame.color);
-    } else if (frame.shape === 'circle') {
-      drawCircle(rgba, WIDTH, cellX, cellY, frame.color);
-    } else if (frame.shape === 'triangle') {
-      drawTriangle(rgba, WIDTH, cellX, cellY, frame.color);
+  // 1. Monta os frames recortados/redimensionados: {name, dw, dh, pixels}.
+  const frames = [];
+  for (const src of ATLAS_SOURCES) {
+    const img = decodePng(readFileSync(path.join(ART, src.file)));
+    if (src.frames === 1) {
+      const b = contentBounds(img, 0, 0, img.w, img.h);
+      const sw = b.maxX - b.minX, sh = b.maxY - b.minY, { dw, dh } = targetSize(sw, sh);
+      frames.push({ name: src.id, dw, dh, pixels: cropResize(img, b.minX, b.minY, sw, sh, dw, dh) });
+    } else {
+      const fw = Math.floor(img.w / src.frames);
+      // bbox-união em coords relativas à fatia ⇒ registro estável entre frames.
+      let uMinX = fw, uMinY = img.h, uMaxX = 0, uMaxY = 0;
+      for (let i = 0; i < src.frames; i++) {
+        const b = contentBounds(img, i * fw, 0, i * fw + fw, img.h);
+        uMinX = Math.min(uMinX, b.minX - i * fw); uMaxX = Math.max(uMaxX, b.maxX - i * fw);
+        uMinY = Math.min(uMinY, b.minY); uMaxY = Math.max(uMaxY, b.maxY);
+      }
+      const sw = uMaxX - uMinX, sh = uMaxY - uMinY, { dw, dh } = targetSize(sw, sh);
+      for (let i = 0; i < src.frames; i++) {
+        frames.push({ name: `${src.id}.${i}`, dw, dh, pixels: cropResize(img, i * fw + uMinX, uMinY, sw, sh, dw, dh) });
+      }
     }
   }
-
-  // Encode PNG
-  const png = encodePng(WIDTH, HEIGHT, rgba);
-
-  // Build JSON metadata
-  const frames = {};
-  for (let idx = 0; idx < ATLAS_FRAMES.length; idx++) {
-    const frame = ATLAS_FRAMES[idx];
-    const col = idx % COLS;
-    const row = Math.floor(idx / COLS);
-    const x = col * CELL;
-    const y = row * CELL;
-
-    frames[frame.id] = {
-      frame: { x, y, w: CELL, h: CELL },
-      rotated: false,
-      trimmed: false,
-      sourceSize: { w: CELL, h: CELL },
-      spriteSourceSize: { x: 0, y: 0, w: CELL, h: CELL },
-    };
+  // 2. Shelf-packing em largura fixa.
+  let x = PAD, y = PAD, shelfH = 0, atlasH = 0;
+  const placed = [];
+  for (const f of frames) {
+    if (x + f.dw + PAD > ATLAS_WIDTH) { y += shelfH + PAD; x = PAD; shelfH = 0; }
+    placed.push({ ...f, x, y });
+    x += f.dw + PAD; if (f.dh > shelfH) shelfH = f.dh; if (y + shelfH + PAD > atlasH) atlasH = y + shelfH + PAD;
   }
-
-  const json = {
-    frames,
-    meta: {
-      image: 'entities.png',
-      size: { w: WIDTH, h: HEIGHT },
-      scale: '1',
-    },
-  };
-
+  // 3. Blit no buffer do atlas.
+  const rgba = Buffer.alloc(ATLAS_WIDTH * atlasH * 4);
+  for (const p of placed) for (let ry = 0; ry < p.dh; ry++) {
+    p.pixels.copy(rgba, ((p.y + ry) * ATLAS_WIDTH + p.x) * 4, ry * p.dw * 4, (ry * p.dw + p.dw) * 4);
+  }
+  const png = encodePng(ATLAS_WIDTH, atlasH, rgba);
+  // 4. JSON JSONHash + alias dino.default = dino.default.0.
+  const jf = {};
+  for (const p of placed) {
+    jf[p.name] = { frame: { x: p.x, y: p.y, w: p.dw, h: p.dh }, rotated: false, trimmed: false, sourceSize: { w: p.dw, h: p.dh }, spriteSourceSize: { x: 0, y: 0, w: p.dw, h: p.dh } };
+  }
+  jf['dino.default'] = { ...jf['dino.default.0'] };
+  const json = { frames: jf, meta: { image: 'entities.png', size: { w: ATLAS_WIDTH, h: atlasH }, scale: '1' } };
   return { png, json };
 }
 
 function main() {
-  const root = fileURLToPath(new URL('..', import.meta.url));
-  const dir = path.join(root, 'public/atlas');
+  const dir = path.join(ROOT, 'public/atlas');
   mkdirSync(dir, { recursive: true });
-
   const { png, json } = renderAtlas();
-
-  const pngPath = path.join(dir, 'entities.png');
-  const jsonPath = path.join(dir, 'entities.json');
-
-  writeFileSync(pngPath, png);
-  console.log(`escrito public/atlas/entities.png (${png.length} bytes)`);
-
-  writeFileSync(jsonPath, JSON.stringify(json, null, 2));
-  console.log(`escrito public/atlas/entities.json`);
+  writeFileSync(path.join(dir, 'entities.png'), png);
+  writeFileSync(path.join(dir, 'entities.json'), JSON.stringify(json, null, 2));
+  console.log(`atlas: ${png.length} bytes, ${Object.keys(json.frames).length} frames`);
 }
-
-// roda main() só quando executado como script (não no import do teste)
 if (process.argv[1] === fileURLToPath(import.meta.url)) main();
