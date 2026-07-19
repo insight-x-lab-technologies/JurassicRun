@@ -17,10 +17,11 @@ function DinoCard({
 }): VNode {
   return (
     <li class="dino-card" data-testid={`dino-card-${dino.id}`}>
-      <div
+      <img
         class="dino-card__avatar"
+        src={`${import.meta.env.BASE_URL}ui/dino.${dino.id}.png`}
+        alt=""
         aria-hidden="true"
-        style={{ backgroundColor: `hsl(${dino.hue}, 60%, 45%)` }}
       />
       <h2 class="dino-card__name">{i18n.t(dino.nameKey)}</h2>
       <p class="dino-card__trait">{i18n.t(`trait.${dino.traitKind}.desc`)}</p>

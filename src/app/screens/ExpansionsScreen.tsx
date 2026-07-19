@@ -23,10 +23,11 @@ function ExpansionCard({
 }): VNode {
   return (
     <li class="expansion-card" data-testid={`expansion-card-${exp.id}`}>
-      <div
+      <img
         class="expansion-card__avatar"
+        src={`${import.meta.env.BASE_URL}ui/cover.${exp.id}.png`}
+        alt=""
         aria-hidden="true"
-        style={{ backgroundColor: `hsl(${exp.hue}, 60%, 45%)` }}
       />
       <h2 class="expansion-card__name">{i18n.t(exp.nameKey)}</h2>
       <p class="expansion-card__desc">{i18n.t(exp.descKey)}</p>
