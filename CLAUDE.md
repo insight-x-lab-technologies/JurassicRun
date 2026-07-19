@@ -1415,5 +1415,25 @@ commita ⇒ controlador commita staged. **Adiado:** rodada **C** (`ui.remaining`
 via **rects não-uniformes** — grid uniforme não serve; + capas de expansão `expansion.covers` 3-col + arte dos 10
 dinos do Ninho como frame estático), **D** (parallax real `bg.layers.png`); Minor: `NAV_ICON: Record<string,string>`
 (podia ser `Partial<Record<Screen,...>>` p/ checagem em compilação); melhoria profunda de compressão PNG (filtragem
-de scanline no `encodePng`, mexe em gen-icons/atlas/pwa) segue backlog. **Fase 8: rodada Tier-1 (A+B feitas; faltam
-C/D).**
+de scanline no `encodePng`, mexe em gen-icons/atlas/pwa) segue backlog.
+
+8.1 (Tier-1 **rodada C**: medalhas + capas + arte dos dinos + statchip + emblema) — `src/core/` intocado ⇒
+**det 67** (spec/plano `.../2026-07-19-tier1-C-medals-covers-dinos*`). `gen-ui.mjs` ganhou **slice por regiões**
+(`regions:[{name,x,y,w,h,opaque?}]` com x/y/w/h em **frações [0,1]** da fonte + content-trim; 3ª via ao lado de
+grid/single): de `ui.remaining` (1024×1536, bandas com whitespace) extrai `emblem`/`statchip`/`medal.{gold,silver,
+bronze}` (nav-bar **pulada** — a shell é por telas, sem barra fixa), de `expansion.covers` (3 col opaco) as capas
+`cover.{classic,volcano,glacier}`, e o **frame-0** (1/6 da largura) dos 10 strips de dino → `dino.<id>` (roster
+starter…guardian) — 18 assets novos em `public/ui/`. `theme.ts` seta `--ui-statchip`; `.stat-chip` vira
+`border-image` 9-slice; wiring JSX: Leaderboard `rankBadge(i)` (i<3 ⇒ `<img class="medal" src=medal.<tier>>`,
+senão `i+1`, nos dois rows) substitui os emojis 🥇🥈🥉; `ExpansionCard`/`DinoCard` trocam o `<div>`-hue por
+`<img class="…-card__avatar" src=cover.<id>/dino.<id>>` (object-fit cover); `HomeScreen` ganha `<img
+class="home__emblem">` entre top-bar e menu. Execução SDD por subagentes (3 tasks + review por task + review
+final; T3 atualizou 1 asserção de teste do leaderboard emoji→img). Suíte verde (`check` limpo, **739 testes**,
+det **67**). Playwright (build prod 390×844, leaderboard semeado): Home com emblema-pterodáctilo + chips
+emoldurados + Best Lv 7; Ninho com **10 dinos distintos** (frame-0 extraído — Scout ciano/Lodestone roxo/Goldbeak
+dourado…); Expansões com 3 capas; Leaderboard com medalhas ouro/prata/bronze no top-3; sem scroll horizontal.
+**Adiado:** rodada **D** (parallax real `bg.layers.png` → far/mid/near no `GameScene`, ramo sprite do
+`ParallaxVisual`); Minor: `medal.*`/`statchip` grossos em elementos pequenos (tuning cosmético); **backlog
+recorrente:** compressão dos PNGs de `public/ui/` (precache ~7,6MB — filtragem de scanline no `encodePng`, mexe
+em gen-icons/atlas/pwa); arte de dino **dentro da partida** (skin in-game). **Fase 8: rodada Tier-1 (A+B+C feitas;
+falta D).**

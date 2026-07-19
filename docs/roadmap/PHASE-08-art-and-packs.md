@@ -51,6 +51,18 @@ performance, e habilitar packs cosméticos compráveis.
       @360px sem overflow** (Important do review refutado). **Resta rodada C** (`ui.remaining`=emblema/statchip/
       nav-bar/medalhas rects não-uniformes + capas + 10 dinos do Ninho) **e D** (parallax real)._
 
+      _**Tier-1 rodada C CONCLUÍDA** (medalhas + capas + arte dos dinos + statchip + emblema; `src/core/`
+      intocado, det 67; spec/plano `.../2026-07-19-tier1-C-medals-covers-dinos*`). `gen-ui.mjs` ganhou **slice
+      por regiões** (`regions:[{name,x,y,w,h,opaque?}]`, frações [0,1] + content-trim): de `ui.remaining`
+      extrai `emblem`/`statchip`/`medal.{gold,silver,bronze}` (nav-bar pulada), de `expansion.covers` as 3
+      capas, e o **frame-0** dos 10 strips de dino → `dino.<id>` (18 assets novos em `public/ui/`). Wiring:
+      Leaderboard `rankBadge` (top-3 = `<img class="medal">`), Expansões/Ninho trocam o avatar-hue por `<img>`
+      de capa/dino, Home ganha `<img class="home__emblem">` + moldura `--ui-statchip` nos chips. Playwright
+      (build prod, dados semeados): Home com emblema + statchip; Ninho com 10 dinos distintos; Expansões com 3
+      capas; Leaderboard com medalhas ouro/prata/bronze no top-3; sem scroll horizontal. **Resta rodada D**
+      (parallax real `bg.layers.png` → far/mid/near no `GameScene`). **Backlog:** compressão dos PNGs de
+      `public/ui/` (precache ~7,6MB — filtragem de scanline no `encodePng`); arte de dino dentro da partida._
+
       _Parte de especificação CONCLUÍDA (docs-only, `src/` intocado, determinismo 67):
       Style Bible `docs/assets/ART-DIRECTION.md` (paleta/materiais/tipografia/iconografia +
       regra dos dois tiers), catálogo de specs prontas-para-IA dos assets novos que os
