@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
+import { ATLAS_SOURCES } from '../../scripts/gen-atlas.mjs';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const ASSETS_DIR = join(ROOT, 'docs/assets');
@@ -46,5 +47,23 @@ describe('asset registry ↔ specs parity', () => {
       );
     });
     expect(missing).toEqual([]);
+  });
+});
+
+describe('entidades in-game: arte real presente', () => {
+  it('todo id de ATLAS_SOURCES tem o PNG-fonte em public/art/final/', () => {
+    const missing = ATLAS_SOURCES.filter(
+      (s) => !existsSync(join(ROOT, 'public/art/final', s.file)),
+    );
+    expect(missing).toEqual([]);
+  });
+
+  it('o registro marca as 11 entidades in-game como `art`', () => {
+    const md = readFileSync(REGISTRY, 'utf8');
+    for (const s of ATLAS_SOURCES) {
+      const row = md.split('\n').find((l) => l.includes(`\`${s.id}\``));
+      expect(row, `sem linha no registro: ${s.id}`).toBeDefined();
+      expect(row, `${s.id} não está \`art\``).toMatch(/\bart\b/);
+    }
   });
 });

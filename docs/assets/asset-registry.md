@@ -9,7 +9,7 @@ usada no manifesto de assets do render.
 ## Personagens (pterodáctilos)
 | id | descrição | status | spec |
 |----|-----------|--------|------|
-| `dino.default` | pterodáctilo inicial (render em jogo) | placeholder | `specs/dino.default.md` (exemplo) |
+| `dino.default` | pterodáctilo inicial (render em jogo) | art | `specs/dino.default.md` (exemplo) |
 | `dino.starter` | roster do Ninho (4.4): sem traço | spec | `specs/dino.starter.md` |
 | `dino.lodestone` | roster do Ninho (4.4): traço `magnet` | spec | `specs/dino.lodestone.md` |
 | `dino.goldbeak` | roster do Ninho (4.4): traço `doubleFood` | spec | `specs/dino.goldbeak.md` |
@@ -25,20 +25,20 @@ usada no manifesto de assets do render.
 | id | descrição | status | spec |
 |----|-----------|--------|------|
 | `obstacle.rock_arch` | arco de pedra | placeholder | — |
-| `obstacle.tree` | árvore | spec | `specs/obstacle.tree.md` |
-| `obstacle.vine` | cipó/coluna vegetal | spec | `specs/obstacle.vine.md` |
-| `obstacle.boulder` | pedregulho flutuante | spec | `specs/obstacle.boulder.md` |
-| `obstacle.stalactite` | estalactite | spec | `specs/obstacle.stalactite.md` |
+| `obstacle.tree` | árvore | art | `specs/obstacle.tree.md` |
+| `obstacle.vine` | cipó/coluna vegetal | art | `specs/obstacle.vine.md` |
+| `obstacle.boulder` | pedregulho flutuante | art | `specs/obstacle.boulder.md` |
+| `obstacle.stalactite` | estalactite | art | `specs/obstacle.stalactite.md` |
 
 ## Coletáveis / power-ups
 | id | descrição | status | spec |
 |----|-----------|--------|------|
-| `bird.coin` | pássaro-moeda (comida) | spec | `specs/bird.coin.md` |
-| `powerup.shield` | escudo (invulnerabilidade temporária) | spec | `specs/powerup.shield.md` |
-| `powerup.extraLife` | vida extra (carga que revive) | spec | `specs/powerup.extraLife.md` |
-| `powerup.magnet` | ímã (atrai coletáveis) | spec | `specs/powerup.magnet.md` |
-| `powerup.doubleCoin` | moeda dobrada (comida em dobro) | spec | `specs/powerup.doubleCoin.md` |
-| `powerup.slowMo` | câmera lenta (efeito temporário) | spec | `specs/powerup.slowMo.md` |
+| `bird.coin` | pássaro-moeda (comida) | art | `specs/bird.coin.md` |
+| `powerup.shield` | escudo (invulnerabilidade temporária) | art | `specs/powerup.shield.md` |
+| `powerup.extraLife` | vida extra (carga que revive) | art | `specs/powerup.extraLife.md` |
+| `powerup.magnet` | ímã (atrai coletáveis) | art | `specs/powerup.magnet.md` |
+| `powerup.doubleCoin` | moeda dobrada (comida em dobro) | art | `specs/powerup.doubleCoin.md` |
+| `powerup.slowMo` | câmera lenta (efeito temporário) | art | `specs/powerup.slowMo.md` |
 
 ## Fundos / parallax
 | id | descrição | status | spec |
