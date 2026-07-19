@@ -11,9 +11,9 @@ describe('packs', () => {
     expect(PACK_CLASSIC.entityTint).toBe(0xffffff);
     // cores de parallax na mesma ordem das camadas
     PARALLAX_LAYERS.forEach((layer, i) => {
-      if (layer.visual.kind === 'primitive') {
-        expect(PACK_CLASSIC.parallax[i]!.color).toBe(layer.visual.color);
-      }
+      expect(PACK_CLASSIC.parallax[i]!.color).toBe(
+        layer.visual.kind === 'primitive' ? layer.visual.color : 0xffffff,
+      );
     });
   });
 

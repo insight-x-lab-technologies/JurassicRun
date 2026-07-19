@@ -1,7 +1,9 @@
 /**
- * Camadas de parallax (REGRA 2): tipos lógicos trocáveis, geométricos agora (`primitive`),
- * sprite depois (Fase 8). Puramente visuais ⇒ não tocam `src/core/` (determinismo intacto).
- * Ordem do array = profundidade: índice 0 é a mais distante (menor scrollFactor).
+ * Camadas de parallax (REGRA 2): tipos lógicos trocáveis. `primitive` (geométrico) segue
+ * suportado no tipo p/ compatibilidade de packs; `PARALLAX_LAYERS` agora usa `sprite`
+ * (tiras `parallax.{far,mid,near}` — Fase 8.1). Puramente visuais ⇒ não tocam `src/core/`
+ * (determinismo intacto). Ordem do array = profundidade: índice 0 é a mais distante
+ * (menor scrollFactor).
  */
 export type ParallaxVisual =
   | {
@@ -11,7 +13,7 @@ export type ParallaxVisual =
       readonly peakHeight: number;
       readonly baseFromBottom: number;
     }
-  | { readonly kind: 'sprite'; readonly texture: string };
+  | { readonly kind: 'sprite'; readonly texture: string; readonly baseFromBottom: number; readonly dispHeight: number };
 
 export interface ParallaxLayer {
   readonly id: string;
@@ -25,17 +27,17 @@ export const PARALLAX_LAYERS: readonly ParallaxLayer[] = [
   {
     id: 'bg.layer.far',
     scrollFactor: 0.2,
-    visual: { kind: 'primitive', color: 0x6b7a8f, tileWidth: 160, peakHeight: 55, baseFromBottom: 40 },
+    visual: { kind: 'sprite', texture: 'parallax.far', baseFromBottom: 64, dispHeight: 52 },
   },
   {
     id: 'bg.layer.mid',
     scrollFactor: 0.4,
-    visual: { kind: 'primitive', color: 0x4f7a5a, tileWidth: 120, peakHeight: 35, baseFromBottom: 18 },
+    visual: { kind: 'sprite', texture: 'parallax.mid', baseFromBottom: 34, dispHeight: 44 },
   },
   {
     id: 'bg.layer.near',
     scrollFactor: 0.7,
-    visual: { kind: 'primitive', color: 0x2f5233, tileWidth: 64, peakHeight: 50, baseFromBottom: 6 },
+    visual: { kind: 'sprite', texture: 'parallax.near', baseFromBottom: 0, dispHeight: 56 },
   },
 ];
 

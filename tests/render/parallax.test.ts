@@ -25,13 +25,12 @@ describe('PARALLAX_LAYERS', () => {
     }
   });
 
-  it('toda camada tem um visual primitivo completo', () => {
+  it('toda camada tem um visual sprite completo', () => {
     for (const l of PARALLAX_LAYERS) {
-      expect(l.visual.kind).toBe('primitive');
-      if (l.visual.kind === 'primitive') {
-        expect(typeof l.visual.color).toBe('number');
-        expect(l.visual.tileWidth).toBeGreaterThan(0);
-        expect(l.visual.peakHeight).toBeGreaterThan(0);
+      expect(l.visual.kind).toBe('sprite');
+      if (l.visual.kind === 'sprite') {
+        expect(l.visual.texture).toMatch(/^parallax\./);
+        expect(l.visual.dispHeight).toBeGreaterThan(0);
         expect(l.visual.baseFromBottom).toBeGreaterThanOrEqual(0);
       }
     }
