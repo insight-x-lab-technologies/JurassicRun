@@ -17,6 +17,19 @@ const MENU: readonly Screen[] = [
   'settings',
 ];
 
+const NAV_ICON: Record<string, string> = {
+  daily: 'icon.daily',
+  weekly: 'icon.weekly',
+  nest: 'icon.nest',
+  shop: 'icon.shop',
+  expansions: 'icon.expansions',
+  leaderboard: 'icon.leaderboard',
+  settings: 'icon.settings',
+};
+function navIcon(id: string): string {
+  return `${import.meta.env.BASE_URL}ui/${id}.png`;
+}
+
 function Avatar({ profile }: { profile: Profile }): VNode {
   const { initial, hue } = avatarFor(profile);
   return (
@@ -80,6 +93,12 @@ export function HomeScreen(): VNode {
         <div class="home__grid">
           {MENU.map((screen) => (
             <button key={screen} class="btn btn--ghost" onClick={() => navigate(screen)}>
+              <img
+                class="nav-icon"
+                src={navIcon(NAV_ICON[screen] ?? 'icon.nest')}
+                alt=""
+                aria-hidden="true"
+              />
               {i18n.t(`nav.${screen}`)}
             </button>
           ))}
@@ -87,6 +106,7 @@ export function HomeScreen(): VNode {
 
         <div class="home__actions">
           <button class="btn btn--ghost" onClick={() => void shareGame(defaultShareDeps())}>
+            <img class="nav-icon" src={navIcon('icon.share')} alt="" aria-hidden="true" />
             {i18n.t('nav.share')}
           </button>
           <button
@@ -94,6 +114,7 @@ export function HomeScreen(): VNode {
             data-testid="home-donate"
             onClick={() => openDonation(defaultDonateDeps())}
           >
+            <img class="nav-icon" src={navIcon('icon.donate')} alt="" aria-hidden="true" />
             {i18n.t('nav.donate')}
           </button>
         </div>

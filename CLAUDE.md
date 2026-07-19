@@ -1395,5 +1395,25 @@ com centro escuro (menu legível) + fundo `bg.screen.classic`; **troca ao vivo**
 rodadas **B** (botões 9-slice/ícones de nav 10/statchip/emblema — grid-slice dos sheets `ui.buttons`/`ui.icons`/
 `ui.remaining`), **C** (medalhas no leaderboard/capas de expansão/arte dos 10 dinos do Ninho), **D** (parallax real
 `bg.layers.png` → far/mid/near no `GameScene`, ramo sprite do `ParallaxVisual`); **otimizar peso dos fundos**
-(precache 1,9→**8MB**, fundos RGBA uncompressed ~6MB — reduzir maxDim/comprimir/JPEG). **Fase 8: em andamento a
-rodada Tier-1 (A feita; faltam B/C/D).**
+(precache 1,9→**8MB**, fundos RGBA uncompressed ~6MB — reduzir maxDim/comprimir/JPEG).
+
+8.1 (Tier-1 **rodada B**: botões 9-slice + ícones de nav) — `src/core/` intocado ⇒ **det 67** (spec/plano
+`.../2026-07-19-tier1-B-buttons-and-icons*`). `gen-ui.mjs` ganhou **grid-slice uniforme** (`grid:{cols,rows,
+names}` em `UI_SOURCES`; corta célula row-major + content-trim + downscale): `ui.buttons`(1×2→`button.primary/
+secondary`), `ui.icons`(5×2→10 `icon.<rota>`: row1 daily/weekly/nest/shop/expansions, row2 leaderboard/settings/
+share/donate/back = ordem do spec `ui.icons.md`). `theme.ts` seta `--ui-button`/`--ui-button-ghost` (URLs
+BASE_URL); `.btn`(primary)/`.btn--ghost`(secondary) viram `border: 14px solid transparent; border-image:
+var(--ui-button[-ghost]) 30% fill / 14px / 0 stretch` (fundo transparente, box-shadow removido); `HomeScreen`
+ganha mapa `NAV_ICON` + `<img class="nav-icon" alt="" aria-hidden>` antes de cada rótulo do menu (New Game sem
+ícone). **Otimização:** fundos `bg.screen.*` maxDim 1280→900 ⇒ **precache 8→5,5MB** (apesar de +12 PNGs). Execução
+SDD por subagentes (3 tasks + review por task + review final; T3 review levantou **Important** de overflow em
+locale de palavra longa). Suíte verde (`check` limpo, **737 testes**, det **67**). Playwright (build prod 390×844):
+New Game azul brilhante 9-slice + botões ghost dourados + 9 ícones dourados corretos à esquerda dos rótulos;
+**Important REFUTADO** — alemão @360px (`Wöchentliche Herausforderung`/`Einstellungen`) `docScrollWidth==win`,
+zero botão em overflow (labels multi-palavra quebram no espaço). **Gotcha reconfirmado:** `coder` agente não
+commita ⇒ controlador commita staged. **Adiado:** rodada **C** (`ui.remaining` = emblema/statchip/nav-bar/medalhas
+via **rects não-uniformes** — grid uniforme não serve; + capas de expansão `expansion.covers` 3-col + arte dos 10
+dinos do Ninho como frame estático), **D** (parallax real `bg.layers.png`); Minor: `NAV_ICON: Record<string,string>`
+(podia ser `Partial<Record<Screen,...>>` p/ checagem em compilação); melhoria profunda de compressão PNG (filtragem
+de scanline no `encodePng`, mexe em gen-icons/atlas/pwa) segue backlog. **Fase 8: rodada Tier-1 (A+B feitas; faltam
+C/D).**
