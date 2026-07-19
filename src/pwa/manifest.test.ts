@@ -21,6 +21,10 @@ describe('pwaOptions', () => {
   it('desliga o SW em dev', () => {
     expect(pwaOptions.devOptions?.enabled).toBe(false);
   });
+
+  it('exclui a arte-fonte (public/art) do precache — só o atlas gerado é runtime (8.1)', () => {
+    expect(pwaOptions.workbox?.globIgnores).toContain('**/art/**');
+  });
 });
 
 describe('pwaOptions.manifest', () => {
