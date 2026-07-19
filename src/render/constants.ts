@@ -54,3 +54,6 @@ export const GAMEOVER_BUTTON_DISABLED_COLOR = '#777777'; // Sair (stub desabilit
 
 /** Teclas de confirmação que reiniciam quando em `dead` (conveniência desktop). */
 export const CONFIRM_KEYS: readonly string[] = ['Space', 'ArrowUp', 'Enter'];
+
+/** Frames por segundo da animação de flap do dino (8.1). */
+export const DINO_FLAP_FPS = 12;
