@@ -35,4 +35,6 @@
   /* Assets de UI Tier-1 (o theme.ts sobrescreve com BASE_URL correto por expansão). */
   --bg-screen: none;
   --ui-panel: none;
+  --ui-button: none;
+  --ui-button-ghost: none;
 }

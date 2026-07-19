@@ -35,4 +35,11 @@ describe('theme', () => {
     expect(bg).toContain('ui/bg.screen.volcano.png');
     expect(panel).toContain('ui/panel.png');
   });
+
+  it('applyPackTheme seta --ui-button/--ui-button-ghost', () => {
+    applyPackTheme(packForId('classic'));
+    const s = document.documentElement.style;
+    expect(s.getPropertyValue('--ui-button')).toContain('ui/button.primary.png');
+    expect(s.getPropertyValue('--ui-button-ghost')).toContain('ui/button.secondary.png');
+  });
 });
