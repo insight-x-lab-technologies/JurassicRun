@@ -1371,5 +1371,29 @@ os 10 dinos do Ninho + capas de expansão (rodada futura, arte já gerada em `pu
 arte-fonte p/ fora de `publicDir`** (ainda copiada pro `dist`, só não precacheada) antes da rodada
 Tier-1; fiar `ref.key` no pipeline de render (`acquireSprite`/`drawSpriteEntity`/dino usam `ATLAS_KEY`
 de módulo — inerte hoje, quebra se um pack tiver atlas próprio); Minors T1 (constraint 8-bit do decoder
-sem doc; teste de bbox-apertada; suíte +~19s por `renderAtlas` sem memoize). **Fase 8: resta a rodada
-Tier-1 do 8.1** (UI/fundos/dinos do Ninho).
+sem doc; teste de bbox-apertada; suíte +~19s por `renderAtlas` sem memoize).
+
+8.1 (Tier-1 **rodada A/D**: fundos de tela + painéis 9-slice + logo) — `src/core/` intocado ⇒ **det 67**
+(spec `docs/superpowers/specs/2026-07-19-tier1-A-backgrounds-and-panels-design.md`, plano `.../plans/2026-07-
+19-tier1-A-backgrounds-and-panels.md`). A rodada Tier-1 da arte AAA de UI foi decomposta em **A→B→C→D**
+(decisão do usuário: sequencial autônomo; menus legíveis por **painéis 9-slice**, não scrim). **Rodada A feita.**
+Peça-chave nova `scripts/gen-ui.mjs`: **processador** que lê a arte-fonte de `public/art/final/` e emite runtime
+PNGs pequenos (trim+downscale, reusa `decodePng`/`contentBounds`/`cropResize` de `gen-atlas`, exportados) em
+**`public/ui/`** (fora de `art/` ⇒ **precacheados**; separa insumo-de-build de asset-de-runtime — o fix do
+precache de PR #6). `UI_SOURCES` extensível (rodadas B/C adicionam grid-slice de sheets aqui). `LookPack.bgScreen`
++ `theme.ts` (`applyPackTheme` seta `--bg-screen`/`--ui-panel`, URLs com `import.meta.env.BASE_URL`) por expansão
+ativa ⇒ **fundo de tela pintado por bioma, troca AO VIVO** (reusa o effect `bindPackTheme` do 8.3). CSS:
+`.screen`/`.home` (NÃO `.play-screen`) sobre **painel 9-slice** (`border: 22px solid transparent; border-image:
+var(--ui-panel) 12% fill / 22px / 0 stretch` — o `fill` pinta o centro translúcido escuro ⇒ legibilidade sem
+scrim); `body` com `background-image: var(--bg-screen)` cover/fixed; **logo** `<img>` na Home (`public/ui/logo.png`,
+`alt=""`, título acessível segue na `h1.sr-only`); defaults `--bg-screen/--ui-panel: none` em `tokens.css`.
+Execução SDD por subagentes (3 tasks + review por task, 0 Critical/Important). Suíte verde (`check` limpo,
+**735 testes**, det **67**). Playwright (build prod 390×844 + 844×390): logo dourado + painel ornamentado 9-slice
+com centro escuro (menu legível) + fundo `bg.screen.classic`; **troca ao vivo** classic→volcano→glacier confirmada
+(`getComputedStyle(body).backgroundImage`); sem scroll horizontal; `.play-screen` sem painel (border-image none).
+**Gotcha:** o `coder` agente do projeto NÃO commita (regra) ⇒ controlador commita os arquivos staged. **Adiado:**
+rodadas **B** (botões 9-slice/ícones de nav 10/statchip/emblema — grid-slice dos sheets `ui.buttons`/`ui.icons`/
+`ui.remaining`), **C** (medalhas no leaderboard/capas de expansão/arte dos 10 dinos do Ninho), **D** (parallax real
+`bg.layers.png` → far/mid/near no `GameScene`, ramo sprite do `ParallaxVisual`); **otimizar peso dos fundos**
+(precache 1,9→**8MB**, fundos RGBA uncompressed ~6MB — reduzir maxDim/comprimir/JPEG). **Fase 8: em andamento a
+rodada Tier-1 (A feita; faltam B/C/D).**

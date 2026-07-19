@@ -28,6 +28,19 @@ performance, e habilitar packs cosméticos compráveis.
       Ninho; mover a arte-fonte p/ fora de `publicDir`; fiar `ref.key` no pipeline de render quando um
       pack tiver atlas próprio._
 
+      _**Tier-1 rodada A CONCLUÍDA** (fundos de tela + painéis 9-slice + logo; `src/core/` intocado, det 67;
+      spec `docs/superpowers/specs/2026-07-19-tier1-A-backgrounds-and-panels-design.md`, plano `.../plans/
+      2026-07-19-tier1-A-backgrounds-and-panels.md`). Novo `scripts/gen-ui.mjs` **processa** a arte-fonte
+      (`public/art/final`) em runtime PNGs pequenos em **`public/ui/`** (trim+downscale, reusa decoder/`cropResize`
+      de `gen-atlas`; precacheados, fora do `art/`). `LookPack.bgScreen` + `theme.ts` setam `--bg-screen`/`--ui-panel`
+      (URLs com `BASE_URL`) por expansão ativa ⇒ **fundo pintado por bioma, troca AO VIVO**; `.screen`/`.home` (não
+      `.play-screen`) sobre **painel 9-slice** (`border-image ... fill` = centro translúcido ⇒ menus legíveis);
+      **logo** na Home. Playwright (build prod, retrato+paisagem): logo + painel + fundo classic/volcano/glacier
+      com troca ao vivo, sem scroll horizontal, play sem painel. Execução SDD por subagentes (3 tasks + review por
+      task). **Resta:** rodadas **B** (botões 9-slice/ícones de nav/statchip/emblema), **C** (medalhas/capas/dinos
+      do Ninho), **D** (parallax real `bg.layers.png`); **otimizar peso** dos fundos (precache 1,9→8MB — RGBA
+      uncompressed ~6MB; reduzir maxDim/comprimir)._
+
       _Parte de especificação CONCLUÍDA (docs-only, `src/` intocado, determinismo 67):
       Style Bible `docs/assets/ART-DIRECTION.md` (paleta/materiais/tipografia/iconografia +
       regra dos dois tiers), catálogo de specs prontas-para-IA dos assets novos que os
