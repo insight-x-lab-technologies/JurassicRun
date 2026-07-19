@@ -63,6 +63,17 @@ performance, e habilitar packs cosméticos compráveis.
       (parallax real `bg.layers.png` → far/mid/near no `GameScene`). **Backlog:** compressão dos PNGs de
       `public/ui/` (precache ~7,6MB — filtragem de scanline no `encodePng`); arte de dino dentro da partida._
 
+      _**Tier-1 rodada D CONCLUÍDA — Tier-1 COMPLETO** (parallax real; `src/core/` intocado, det 67; spec/plano
+      `.../2026-07-19-tier1-D-parallax*`). `gen-ui.mjs` fatia `bg.layers.png` em 3 tiras (`regions` terços
+      verticais) → `public/ui/parallax.{far,mid,near}.png`. `ParallaxVisual` ganhou o ramo `sprite`
+      (`{texture,baseFromBottom,dispHeight}`, stub desde 2.3); `PARALLAX_LAYERS` viram sprite. `GameScene`
+      carrega as tiras no `preload`, `ensureLayerTexture` retorna a key p/ sprite, e cada `TileSprite` é
+      posicionado por `baseFromBottom`/`dispHeight` (tint dia/noite + scroll `tilePositionX` inalterados,
+      REGRA 3). Playwright (build prod, partida): 3 camadas de arte real (montanhas/colinas/selva) empilhadas
+      com profundidade + tint; **60fps, over50=0**. **FIM da rodada Tier-1 do 8.1** (A fundos+painéis+logo, B
+      botões+ícones, C medalhas+capas+dinos+emblema+statchip, D parallax). **Resta só backlog:** compressão dos
+      PNGs de `public/ui/`; a11y de rank top-3; arte de dino in-game; mover arte-fonte p/ fora de `publicDir`._
+
       _Parte de especificação CONCLUÍDA (docs-only, `src/` intocado, determinismo 67):
       Style Bible `docs/assets/ART-DIRECTION.md` (paleta/materiais/tipografia/iconografia +
       regra dos dois tiers), catálogo de specs prontas-para-IA dos assets novos que os

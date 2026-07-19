@@ -74,4 +74,15 @@ describe('processador de assets de UI (gen-ui)', () => {
     },
     20000,
   );
+
+  it(
+    'gera as 3 tiras de parallax',
+    () => {
+      const names = renderUi().map((o) => o.out);
+      for (const n of ['parallax.far', 'parallax.mid', 'parallax.near']) {
+        expect(names, n).toContain(n);
+      }
+    },
+    20000,
+  );
 });

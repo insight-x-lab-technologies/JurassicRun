@@ -79,6 +79,11 @@ export class GameScene extends Phaser.Scene {
     const base = import.meta.env.BASE_URL; // termina com '/'
     const ref = atlasRefFor(packForId(entitlementsService.activeExpansion.value.id));
     this.load.atlas(ref.key, base + ref.png, base + ref.json);
+    for (const layer of PARALLAX_LAYERS) {
+      if (layer.visual.kind === 'sprite') {
+        this.load.image(layer.visual.texture, base + 'ui/' + layer.visual.texture + '.png');
+      }
+    }
   }
 
   create(): void {
@@ -87,8 +92,11 @@ export class GameScene extends Phaser.Scene {
     const createPack = packForId(entitlementsService.activeExpansion.value.id);
     this.parallaxTiles = PARALLAX_LAYERS.map((layer, index) => {
       const key = this.ensureLayerTexture(layer, createPack.parallax[index]!.color, createPack.id);
+      const v = layer.visual;
+      const y = v.kind === 'sprite' ? VIEW_HEIGHT - v.baseFromBottom - v.dispHeight : 0;
+      const h = v.kind === 'sprite' ? v.dispHeight : VIEW_HEIGHT;
       const tile = this.add
-        .tileSprite(0, 0, VIEW_WIDTH, VIEW_HEIGHT, key)
+        .tileSprite(0, y, VIEW_WIDTH, h, key)
         .setOrigin(0, 0)
         .setScrollFactor(0)
         .setDepth(-(PARALLAX_LAYERS.length - index)); // far mais negativo, atrás de tudo
@@ -376,9 +384,9 @@ export class GameScene extends Phaser.Scene {
 
   /** Gera (1×) a textura de tile de uma camada: linha de triângulos como silhueta. Chave = id+pack. */
   private ensureLayerTexture(layer: ParallaxLayer, color: number, packId: string): string {
+    if (layer.visual.kind === 'sprite') return layer.visual.texture;
     const key = `parallax:${packId}:${layer.id}`;
     if (this.textures.exists(key)) return key;
-    if (layer.visual.kind !== 'primitive') return key; // sprite: arte real (fase posterior)
     const { tileWidth, peakHeight, baseFromBottom } = layer.visual;
     const baseY = VIEW_HEIGHT - baseFromBottom; // base da silhueta (px do topo)
     const topY = baseY - peakHeight; // ápice dos triângulos

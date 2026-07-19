@@ -1435,5 +1435,26 @@ dourado…); Expansões com 3 capas; Leaderboard com medalhas ouro/prata/bronze 
 **Adiado:** rodada **D** (parallax real `bg.layers.png` → far/mid/near no `GameScene`, ramo sprite do
 `ParallaxVisual`); Minor: `medal.*`/`statchip` grossos em elementos pequenos (tuning cosmético); **backlog
 recorrente:** compressão dos PNGs de `public/ui/` (precache ~7,6MB — filtragem de scanline no `encodePng`, mexe
-em gen-icons/atlas/pwa); arte de dino **dentro da partida** (skin in-game). **Fase 8: rodada Tier-1 (A+B+C feitas;
-falta D).**
+em gen-icons/atlas/pwa); arte de dino **dentro da partida** (skin in-game).
+
+8.1 (Tier-1 **rodada D**: parallax real) — **fecha a rodada Tier-1** (A+B+C+D). `src/core/` intocado ⇒ **det
+67** (spec/plano `.../2026-07-19-tier1-D-parallax*`). `gen-ui.mjs` fatia `bg.layers.png` (2172×724, 3 bandas
+empilhadas) em 3 terços verticais (`regions`) → `public/ui/parallax.{far,mid,near}.png`. `ParallaxVisual`
+ganhou o ramo **`sprite`** (`{texture,baseFromBottom,dispHeight}`) — o stub reservado desde 2.3; os 3
+`PARALLAX_LAYERS` viraram sprite (`parallax.far` bf64/h52, `mid` bf34/h44, `near` bf0/h56; scrollFactor
+0.2/0.4/0.7 mantidos). `packs.ts` `CLASSIC_PARALLAX` já tratava não-primitivo→0xffffff (o recolor por pack/dia
+vem do `parallaxTint` via `setTint`, como antes) ⇒ sem mudança; testes `parallax.test`/`packs.test`
+atualizados p/ sprite (não-vácuo). `GameScene`: `preload` carrega as 3 imagens; `ensureLayerTexture` retorna
+`layer.visual.texture` p/ sprite (ramo primitivo fica de fallback); `create()` posiciona cada `TileSprite` em
+`y=VIEW_HEIGHT-baseFromBottom-dispHeight`, `h=dispHeight`; `applyDayNight` só re-tinta (posição fixa do
+create); `update()` por frame **só** `tilePositionX` (REGRA 3 intacta). Execução SDD por subagentes (3 tasks +
+review por task + review final). Suíte verde (`check` limpo, **740 testes**, det **67**). Playwright (build prod
+390×844, partida): 3 camadas de arte real — montanhas azuis (far) / colinas verdes (mid) / selva+palmeiras
+(near) — empilhadas com profundidade + tint dia/noite; **60,1fps, over50=0, max 16,8ms** (parallax não adiciona
+custo por frame). Posições placeholder ficaram boas (sem tuning). **RODADA TIER-1 DO 8.1 COMPLETA (A→B→C→D).**
+**Backlog restante do 8.1/Fase 8:** compressão dos PNGs de `public/ui/` (precache ~7,7MB — filtragem de
+scanline no `encodePng`, mexe em gen-icons/atlas/pwa); a11y do rank top-3 (medal aria-hidden); arte de dino
+**in-game** (skin por dino na partida); mover arte-fonte p/ fora de `publicDir` (ainda copiada pro dist);
+fiar `ref.key` do atlas de entidades no pipeline de render (8.1 in-game); costura de tiling do parallax se a
+arte não for perfeitamente tileável (não observada). **Fase 8 essencialmente COMPLETA** (arte AAA integrada:
+entidades in-game + Tier-1 UI/fundos/parallax; packs 8.3; gateway 8.4).
