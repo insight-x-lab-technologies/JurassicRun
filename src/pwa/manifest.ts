@@ -31,6 +31,10 @@ export const pwaOptions: Partial<VitePWAOptions> = {
   },
   workbox: {
     globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2}'],
+    // A arte-fonte em public/art/ é INSUMO de build (o atlas de entidades é gerado a partir
+    // dela por scripts/gen-atlas.mjs); só o atlas gerado (public/atlas/) é asset de runtime.
+    // Sem isto o precache engoliria dezenas de MB de PNGs nunca referenciados (8.1).
+    globIgnores: ['**/art/**'],
     maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
     navigateFallback: 'index.html',
     cleanupOutdatedCaches: true,

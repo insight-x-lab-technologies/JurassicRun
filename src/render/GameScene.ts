@@ -7,7 +7,7 @@ import type { PauseController } from './input';
 import { PARALLAX_LAYERS, parallaxTileOffset } from './parallax';
 import type { ParallaxLayer } from './parallax';
 import { isHorizontallyVisible } from './culling';
-import { ATLAS_KEY, ATLAS_PNG, ATLAS_JSON, spriteSizeFor, frameFor } from './sprites';
+import { ATLAS_KEY, spriteSizeFor, frameFor, atlasRefFor } from './sprites';
 import { timeOfDayForSeed } from './daynight';
 import { packForId } from './packs';
 import { i18n } from '@services/i18n';
@@ -39,6 +39,7 @@ import {
   GAMEOVER_TEXT_COLOR,
   GAMEOVER_BUTTON_COLOR,
   GAMEOVER_BUTTON_DISABLED_COLOR,
+  DINO_FLAP_FPS,
 } from './constants';
 
 /** Renderiza o WorldState lido do core via MatchController. Não altera a simulação (REGRA 1). */
@@ -65,7 +66,7 @@ export class GameScene extends Phaser.Scene {
   private dinoBounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
   private spritePool: Phaser.GameObjects.Image[] = [];
   private spritePoolUsed = 0;
-  private dinoSprite!: Phaser.GameObjects.Image;
+  private dinoSprite!: Phaser.GameObjects.Sprite;
   private readonly sizeCache = new Map<string, { w: number; h: number }>();
 
   constructor(match: MatchController, pause: PauseController) {
@@ -76,7 +77,8 @@ export class GameScene extends Phaser.Scene {
 
   preload(): void {
     const base = import.meta.env.BASE_URL; // termina com '/'
-    this.load.atlas(ATLAS_KEY, base + ATLAS_PNG, base + ATLAS_JSON);
+    const ref = atlasRefFor(packForId(entitlementsService.activeExpansion.value.id));
+    this.load.atlas(ref.key, base + ref.png, base + ref.json);
   }
 
   create(): void {
@@ -103,10 +105,20 @@ export class GameScene extends Phaser.Scene {
     // Graphics do mundo (scrollFactor 1 ⇒ acompanha a câmera).
     this.gfx = this.add.graphics();
 
-    // Sprite do dino (8.2): sempre visível, posição interpolada, acima das outras entidades.
-    // Resolve o frame pela mesma abstração das demais entidades (frameFor) em vez do literal —
-    // evita render errado se o manifesto do dino apontar um frame != typeId. Fallback ao id.
-    this.dinoSprite = this.add.image(0, 0, ATLAS_KEY, frameFor(DINO_TYPE_ID) ?? DINO_TYPE_ID).setDepth(1);
+    // Dino (8.1): Sprite animado (flap de 6 frames do atlas). frameFor resolve o alias
+    // `dino.default` como textura inicial; a anim cicla dino.default.0..5.
+    this.dinoSprite = this.add
+      .sprite(0, 0, ATLAS_KEY, frameFor(DINO_TYPE_ID) ?? DINO_TYPE_ID)
+      .setDepth(1);
+    if (!this.anims.exists('dino.flap')) {
+      this.anims.create({
+        key: 'dino.flap',
+        frames: this.anims.generateFrameNames(ATLAS_KEY, { prefix: 'dino.default.', start: 0, end: 5 }),
+        frameRate: DINO_FLAP_FPS,
+        repeat: -1,
+      });
+    }
+    this.dinoSprite.play('dino.flap');
 
     // Overlay de pausa: retângulo semitransparente de tela cheia (scrollFactor 0, depth 1000).
     this.pauseOverlay = this.add.graphics().setScrollFactor(0);
