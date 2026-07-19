@@ -62,19 +62,19 @@ body {
   font: inherit;
   font-size: var(--font-size-md);
   color: var(--color-on-primary);
-  background: var(--color-primary);
-  border: none;
-  border-radius: var(--radius-md);
-  padding: var(--space-3) var(--space-5);
+  background: transparent;
+  border: 14px solid transparent;
+  border-image: var(--ui-button) 30% fill / 14px / 0 stretch;
+  border-radius: 0;
+  padding: var(--space-2) var(--space-5);
   min-width: 12rem;
   min-height: 44px; /* alvo de toque confortável */
   cursor: pointer;
-  box-shadow: var(--shadow-1);
 }
 
 .btn--ghost {
   color: var(--color-text);
-  background: var(--color-surface-2);
+  border-image: var(--ui-button-ghost) 30% fill / 14px / 0 stretch;
 }
 
 .btn:active {
@@ -708,4 +708,18 @@ body {
   width: min(80%, 22rem);
   height: auto;
   margin: 0 auto var(--space-2);
+}
+
+.nav-icon {
+  width: 1.4em;
+  height: 1.4em;
+  flex: none;
+  vertical-align: middle;
+}
+.home__grid .btn,
+.home__actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
 }
