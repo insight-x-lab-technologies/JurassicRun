@@ -8,13 +8,18 @@ import {
 } from '@services/leaderboard';
 
 const TABS: readonly LeaderboardMode[] = ['endless', 'daily', 'weekly'];
-const MEDALS: Record<number, string> = { 0: '🥇', 1: '🥈', 2: '🥉' };
-const rankGlyph = (i: number): string => MEDALS[i] ?? `${i + 1}`;
+const MEDAL_IMG: Record<number, string> = { 0: 'medal.gold', 1: 'medal.silver', 2: 'medal.bronze' };
+function rankBadge(index: number): VNode | number {
+  const m = MEDAL_IMG[index];
+  return m
+    ? <img class="medal" src={`${import.meta.env.BASE_URL}ui/${m}.png`} alt="" aria-hidden="true" />
+    : index + 1;
+}
 
 function LocalRow({ entry, index }: { entry: LeaderboardEntry; index: number }): VNode {
   return (
     <li class="leaderboard__row" data-testid={`leaderboard-row-${index}`}>
-      <span class="leaderboard__rank" aria-hidden={index < 3 ? 'true' : undefined}>{rankGlyph(index)}</span>
+      <span class="leaderboard__rank" aria-hidden={index < 3 ? 'true' : undefined}>{rankBadge(index)}</span>
       <span class="leaderboard__score" aria-label={i18n.t('leaderboard.score')}>{entry.score}</span>
       <span class="leaderboard__detail">
         {i18n.t('leaderboard.distance')}: {entry.distance} · {i18n.t('leaderboard.food')}: {entry.food} · {i18n.t('leaderboard.nearMisses')}: {entry.nearMisses}
@@ -28,7 +33,7 @@ function CentralRow({ entry, index, me }: { entry: CentralEntry; index: number; 
   const isMe = me !== null && entry.playerId === me;
   return (
     <li class={`leaderboard__row${isMe ? ' leaderboard__row--me' : ''}`} data-testid={`leaderboard-row-${index}`}>
-      <span class="leaderboard__rank" aria-hidden={index < 3 ? 'true' : undefined}>{rankGlyph(index)}</span>
+      <span class="leaderboard__rank" aria-hidden={index < 3 ? 'true' : undefined}>{rankBadge(index)}</span>
       <span class="leaderboard__score" aria-label={i18n.t('leaderboard.score')}>{entry.score}</span>
       <span class="leaderboard__player" aria-label={i18n.t('leaderboard.player')}>{entry.playerName}</span>
       {entry.verified && (

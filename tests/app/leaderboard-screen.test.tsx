@@ -40,7 +40,9 @@ describe('LeaderboardScreen', () => {
     render(<LeaderboardScreen />, container);
     expect(container.textContent).toContain('90');
     expect(container.textContent).toContain('40');
-    expect(container.textContent).toContain('🥇');
+    const medal = container.querySelector('img.medal') as HTMLImageElement | null;
+    expect(medal).not.toBeNull();
+    expect(medal?.getAttribute('src')).toContain('medal.gold.png');
   });
 
   it('switches tabs to show daily entries', async () => {
