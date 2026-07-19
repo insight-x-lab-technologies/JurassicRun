@@ -23,6 +23,20 @@ export const UI_SOURCES = [
     grid: { cols: 5, rows: 2, names: [
       'icon.daily', 'icon.weekly', 'icon.nest', 'icon.shop', 'icon.expansions',
       'icon.leaderboard', 'icon.settings', 'icon.share', 'icon.donate', 'icon.back'] } },
+  { out: 'remaining', file: 'ui/ui.remaining.png', maxDim: 512, regions: [
+    { name: 'emblem', x: 0.0, y: 0.05, w: 1.0, h: 0.28 },
+    { name: 'statchip', x: 0.12, y: 0.35, w: 0.76, h: 0.16 },
+    { name: 'medal.gold', x: 0.03, y: 0.71, w: 0.31, h: 0.27 },
+    { name: 'medal.silver', x: 0.34, y: 0.71, w: 0.31, h: 0.27 },
+    { name: 'medal.bronze', x: 0.65, y: 0.71, w: 0.31, h: 0.27 } ] },
+  { out: 'covers', file: 'expansions/expansion.covers.png', maxDim: 512, regions: [
+    { name: 'cover.classic', x: 0.0, y: 0, w: 0.3333, h: 1, opaque: true },
+    { name: 'cover.volcano', x: 0.3333, y: 0, w: 0.3333, h: 1, opaque: true },
+    { name: 'cover.glacier', x: 0.6667, y: 0, w: 0.3333, h: 1, opaque: true } ] },
+  ...['starter', 'lodestone', 'goldbeak', 'midas', 'nine-lives', 'aegis', 'prospector', 'harvester', 'phoenix', 'guardian'].map((id) => ({
+    out: `dino.${id}`, file: `dinos/dino.${id}.flap.png`, maxDim: 160,
+    regions: [{ name: `dino.${id}`, x: 0, y: 0, w: 0.1667, h: 1 }],
+  })),
 ];
 
 // Recorta a bbox de conteúdo dentro de [x0,x1)×[y0,y1), downscala por maxDim, devolve {w,h,pixels}.
@@ -46,6 +60,13 @@ export function renderUi() {
       for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
         const { w, h, pixels } = crop(img, c * cw, r * ch, c * cw + cw, r * ch + ch, src.maxDim, false);
         outs.push({ out: names[i++], png: encodePng(w, h, pixels) });
+      }
+    } else if (src.regions) {
+      for (const rg of src.regions) {
+        const x0 = Math.round(rg.x * img.w), y0 = Math.round(rg.y * img.h);
+        const x1 = Math.round((rg.x + rg.w) * img.w), y1 = Math.round((rg.y + rg.h) * img.h);
+        const { w, h, pixels } = crop(img, x0, y0, x1, y1, src.maxDim, rg.opaque);
+        outs.push({ out: rg.name, png: encodePng(w, h, pixels) });
       }
     } else {
       const { w, h, pixels } = crop(img, 0, 0, img.w, img.h, src.maxDim, src.opaque);
