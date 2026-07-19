@@ -12,6 +12,7 @@
     "build:edge": "node scripts/build-edge.mjs",
     "gen:icons": "node scripts/gen-icons.mjs",
     "gen:atlas": "node scripts/gen-atlas.mjs",
+    "gen:ui": "node scripts/gen-ui.mjs",
     "package:itch": "node scripts/package-itch.mjs"
   },
   "keywords": [],
