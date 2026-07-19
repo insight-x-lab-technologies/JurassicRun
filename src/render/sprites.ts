@@ -1,9 +1,19 @@
 import type { Hitbox } from '@core/sim';
 import { renderableFor } from './manifest';
 
-export const ATLAS_KEY = 'entities';
-export const ATLAS_PNG = 'atlas/entities.png';
-export const ATLAS_JSON = 'atlas/entities.json';
+export type AtlasRef = { readonly key: string; readonly png: string; readonly json: string };
+
+/** Atlas de entidades default (tema classic). Paths relativos ao BASE_URL. */
+export const DEFAULT_ATLAS: AtlasRef = { key: 'entities', png: 'atlas/entities.png', json: 'atlas/entities.json' };
+
+/** Atlas ativo = o do pack, senão o default. Seam para sets de arte por tema. */
+export function atlasRefFor(pack: { readonly atlas?: AtlasRef }): AtlasRef {
+  return pack.atlas ?? DEFAULT_ATLAS;
+}
+
+export const ATLAS_KEY = DEFAULT_ATLAS.key;
+export const ATLAS_PNG = DEFAULT_ATLAS.png;
+export const ATLAS_JSON = DEFAULT_ATLAS.json;
 
 /** Tamanho do sprite = bounding box da hitbox (hitboxes são aleatórias por instância; o
  *  sprite cobre a hitbox). Escalares apenas — sem alocação intermediária além do retorno. */

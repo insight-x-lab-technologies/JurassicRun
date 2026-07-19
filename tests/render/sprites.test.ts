@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { spriteSizeFor, frameFor } from '@render/sprites';
+import { spriteSizeFor, frameFor, atlasRefFor, DEFAULT_ATLAS } from '@render/sprites';
 import { aabb, circle, polygon } from '@core/sim/hitbox';
 import { DINO_TYPE_ID } from '@render/manifest';
+import { PACK_CLASSIC, packForId } from '@render/packs';
 
 describe('helpers de sprite', () => {
   it('spriteSizeFor: aabb = 2·half', () => {
@@ -19,5 +20,18 @@ describe('helpers de sprite', () => {
   });
   it('frameFor: id desconhecido (fallback primitivo) devolve null', () => {
     expect(frameFor('nao.existe')).toBeNull();
+  });
+});
+
+describe('seam de atlas por tema', () => {
+  it('DEFAULT_ATLAS aponta para o atlas de entidades', () => {
+    expect(DEFAULT_ATLAS).toEqual({ key: 'entities', png: 'atlas/entities.png', json: 'atlas/entities.json' });
+  });
+  it('atlasRefFor: classic usa seu próprio atlas', () => {
+    expect(atlasRefFor(PACK_CLASSIC)).toEqual(DEFAULT_ATLAS);
+  });
+  it('atlasRefFor: pack sem atlas cai no default', () => {
+    expect(atlasRefFor(packForId('volcano'))).toEqual(DEFAULT_ATLAS);
+    expect(atlasRefFor(packForId('glacier'))).toEqual(DEFAULT_ATLAS);
   });
 });

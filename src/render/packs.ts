@@ -6,6 +6,7 @@
  */
 import { DAY_NIGHT_PALETTES, type TimeOfDay, type DayNightPalette } from './daynight';
 import { PARALLAX_LAYERS } from './parallax';
+import { DEFAULT_ATLAS, type AtlasRef } from './sprites';
 
 export interface ParallaxPaint {
   readonly color: number;
@@ -21,6 +22,8 @@ export interface LookPack {
   readonly parallax: readonly ParallaxPaint[];
   /** Tint multiplicativo dos sprites de entidade; 0xffffff = sem alteração. */
   readonly entityTint: number;
+  /** Atlas de entidades do tema; ausente ⇒ reusa o default (seam para arte alternativa, 8.1). */
+  readonly atlas?: AtlasRef;
 }
 
 /** Cores de parallax atuais, extraídas das camadas primitivas (classic). */
@@ -44,6 +47,7 @@ export const PACK_CLASSIC: LookPack = {
   dayNight: DAY_NIGHT_PALETTES,
   parallax: CLASSIC_PARALLAX,
   entityTint: 0xffffff,
+  atlas: DEFAULT_ATLAS,
 };
 
 /** Vulcão — quente/basalto. Placeholders coerentes com o Style Bible (8.1); tuning na arte. */
