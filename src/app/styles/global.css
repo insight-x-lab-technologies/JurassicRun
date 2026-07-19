@@ -723,3 +723,31 @@ body {
   justify-content: center;
   gap: var(--space-2);
 }
+
+/* Tier-1 C: moldura do stat-chip, medalhas, arte de card, emblema. */
+.stat-chip {
+  background: transparent;
+  border: 10px solid transparent;
+  border-image: var(--ui-statchip) 34% fill / 10px / 0 stretch;
+}
+.medal {
+  width: 1.6em;
+  height: 1.6em;
+  vertical-align: middle;
+}
+.home__emblem {
+  display: block;
+  width: min(70%, 18rem);
+  height: auto;
+  margin: 0 auto;
+}
+/* dino/expansão: o avatar vira <img> — object-fit cobre o quadro. */
+img.dino-card__avatar,
+img.expansion-card__avatar {
+  object-fit: cover;
+}
+img.expansion-card__avatar {
+  width: 4rem;
+  height: 5rem;
+  border-radius: var(--radius-sm);
+}

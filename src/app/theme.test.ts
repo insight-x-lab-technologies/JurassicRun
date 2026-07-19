@@ -42,4 +42,9 @@ describe('theme', () => {
     expect(s.getPropertyValue('--ui-button')).toContain('ui/button.primary.png');
     expect(s.getPropertyValue('--ui-button-ghost')).toContain('ui/button.secondary.png');
   });
+
+  it('applyPackTheme seta --ui-statchip', () => {
+    applyPackTheme(packForId('classic'));
+    expect(document.documentElement.style.getPropertyValue('--ui-statchip')).toContain('ui/statchip.png');
+  });
 });
