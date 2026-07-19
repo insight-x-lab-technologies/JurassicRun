@@ -41,6 +41,16 @@ performance, e habilitar packs cosméticos compráveis.
       do Ninho), **D** (parallax real `bg.layers.png`); **otimizar peso** dos fundos (precache 1,9→8MB — RGBA
       uncompressed ~6MB; reduzir maxDim/comprimir)._
 
+      _**Tier-1 rodada B CONCLUÍDA** (botões 9-slice + ícones de nav; `src/core/` intocado, det 67; spec
+      `docs/superpowers/specs/2026-07-19-tier1-B-buttons-and-icons-design.md`, plano `.../plans/2026-07-19-
+      tier1-B-buttons-and-icons.md`). `gen-ui.mjs` ganhou **grid-slice uniforme** (`grid:{cols,rows,names}`):
+      `ui.buttons`(1×2→`button.primary/secondary`) e `ui.icons`(5×2→10 `icon.<rota>`, row-major = spec).
+      `theme.ts` seta `--ui-button`/`--ui-button-ghost`; `.btn`/`.btn--ghost` viram `border-image ... fill`;
+      cada item do menu na Home ganha `<img class="nav-icon">` (decorativo). Fundos maxDim 1280→900 ⇒
+      **precache 8→5,5MB**. Playwright: New Game azul + botões ghost dourados + 9 ícones corretos; **alemão
+      @360px sem overflow** (Important do review refutado). **Resta rodada C** (`ui.remaining`=emblema/statchip/
+      nav-bar/medalhas rects não-uniformes + capas + 10 dinos do Ninho) **e D** (parallax real)._
+
       _Parte de especificação CONCLUÍDA (docs-only, `src/` intocado, determinismo 67):
       Style Bible `docs/assets/ART-DIRECTION.md` (paleta/materiais/tipografia/iconografia +
       regra dos dois tiers), catálogo de specs prontas-para-IA dos assets novos que os
