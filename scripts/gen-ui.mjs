@@ -33,6 +33,10 @@ export const UI_SOURCES = [
     { name: 'cover.classic', x: 0.0, y: 0, w: 0.3333, h: 1, opaque: true },
     { name: 'cover.volcano', x: 0.3333, y: 0, w: 0.3333, h: 1, opaque: true },
     { name: 'cover.glacier', x: 0.6667, y: 0, w: 0.3333, h: 1, opaque: true } ] },
+  { out: 'parallax', file: 'parallax/bg.layers.png', maxDim: 720, regions: [
+    { name: 'parallax.far', x: 0, y: 0.0, w: 1, h: 0.34 },
+    { name: 'parallax.mid', x: 0, y: 0.34, w: 1, h: 0.34 },
+    { name: 'parallax.near', x: 0, y: 0.66, w: 1, h: 0.34 } ] },
   ...['starter', 'lodestone', 'goldbeak', 'midas', 'nine-lives', 'aegis', 'prospector', 'harvester', 'phoenix', 'guardian'].map((id) => ({
     out: `dino.${id}`, file: `dinos/dino.${id}.flap.png`, maxDim: 160,
     regions: [{ name: `dino.${id}`, x: 0, y: 0, w: 0.1667, h: 1 }],
