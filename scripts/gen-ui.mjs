@@ -33,9 +33,13 @@ export const UI_SOURCES = [
     { name: 'cover.classic', x: 0.0, y: 0, w: 0.3333, h: 1, opaque: true },
     { name: 'cover.volcano', x: 0.3333, y: 0, w: 0.3333, h: 1, opaque: true },
     { name: 'cover.glacier', x: 0.6667, y: 0, w: 0.3333, h: 1, opaque: true } ] },
+  // `padBottomTo`: altura final em px. A base de cada tira é 100% opaca, então replicar a
+  // última linha estende a silhueta até o chão como uma "saia" sólida. Sem isso a TileSprite
+  // repetia a textura na vertical (o topo transparente da repetição virava um corte reto no
+  // meio do céu) e a camada `near` era cortada embaixo. Ver PARALLAX_LAYERS em constants.
   { out: 'parallax', file: 'parallax/bg.layers.png', maxDim: 2172, regions: [
-    { name: 'parallax.far', x: 0, y: 0.0, w: 1, h: 0.34 },
-    { name: 'parallax.mid', x: 0, y: 0.34, w: 1, h: 0.34 },
+    { name: 'parallax.far', x: 0, y: 0.0, w: 1, h: 0.34, padBottomTo: 350 },
+    { name: 'parallax.mid', x: 0, y: 0.34, w: 1, h: 0.34, padBottomTo: 235 },
     { name: 'parallax.near', x: 0, y: 0.66, w: 1, h: 0.34 } ] },
   ...['starter', 'lodestone', 'goldbeak', 'midas', 'nine-lives', 'aegis', 'prospector', 'harvester', 'phoenix', 'guardian'].map((id) => ({
     out: `dino.${id}`, file: `dinos/dino.${id}.flap.png`, maxDim: 256,
@@ -50,6 +54,31 @@ function crop(img, x0, y0, x1, y1, maxDim, opaque) {
   const s = Math.min(1, maxDim / Math.max(sw, sh));
   const dw = Math.max(1, Math.round(sw * s)), dh = Math.max(1, Math.round(sh * s));
   return { w: dw, h: dh, pixels: cropResize(img, x0, y0, sw, sh, dw, dh) };
+}
+
+/**
+ * Estende a imagem para baixo replicando a última linha SÓLIDA.
+ *
+ * Replicar literalmente a última linha não serve: o recorte/redimensionamento deixa 1–2 linhas
+ * de franja quase transparente no rodapé (o `far` termina com alpha médio 17), e a saia saía
+ * como um véu translúcido em vez da silhueta. Procura-se a última linha cheia e a franja abaixo
+ * dela é descartada.
+ */
+function padBottom(w, h, pixels, targetH) {
+  const meanAlpha = (y) => {
+    let sum = 0;
+    for (let x = 0; x < w; x++) sum += pixels[(y * w + x) * 4 + 3];
+    return sum / w;
+  };
+  let src = h - 1;
+  for (let y = h - 1; y >= 0; y--) {
+    if (meanAlpha(y) >= 250) { src = y; break; }
+  }
+  const out = Buffer.alloc(w * targetH * 4);
+  pixels.copy(out, 0, 0, (src + 1) * w * 4); // descarta a franja abaixo de `src`
+  const solid = pixels.subarray(src * w * 4, (src + 1) * w * 4);
+  for (let y = src + 1; y < targetH; y++) solid.copy(out, y * w * 4);
+  return out;
 }
 
 export function renderUi() {
@@ -69,7 +98,11 @@ export function renderUi() {
       for (const rg of src.regions) {
         const x0 = Math.round(rg.x * img.w), y0 = Math.round(rg.y * img.h);
         const x1 = Math.round((rg.x + rg.w) * img.w), y1 = Math.round((rg.y + rg.h) * img.h);
-        const { w, h, pixels } = crop(img, x0, y0, x1, y1, src.maxDim, rg.opaque);
+        let { w, h, pixels } = crop(img, x0, y0, x1, y1, src.maxDim, rg.opaque);
+        if (rg.padBottomTo !== undefined && rg.padBottomTo > h) {
+          pixels = padBottom(w, h, pixels, rg.padBottomTo);
+          h = rg.padBottomTo;
+        }
         outs.push({ out: rg.name, png: encodePng(w, h, pixels) });
       }
     } else {
