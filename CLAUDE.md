@@ -1473,3 +1473,26 @@ final). Suíte verde (`check` limpo, **742 testes**, det **67**). Playwright: re
 default ⇒ roteamento por pack ativo provado ponta-a-ponta, depois revertido. **Backlog:** flakiness de timeout dos
 testes pesados `atlas.test`/`gen-ui.test` sob workers paralelos (memoizar `renderAtlas`/`renderUi` por arquivo);
 UI chrome/parallax/medalhas por-tema seguem compartilhados (mesmo padrão de extensão se desejado).
+
+**Redesign de UI p/ o conceito AAA (ref/) — EM ANDAMENTO (W1 feita).** Comparação conceito×atual
+(`ref/ref_*.png` widescreen × `ref/print_*.png`) mostrou que a **arte estava boa mas a composição/
+layout longe**: a Rodada Tier-1 A envolveu `.screen`/`.home` num **painel 9-slice de tela inteira**
+que **tapava o fundo pintado**, os **botões** transbordavam/sobrepunham o rótulo, e havia **scroll**
+em widescreen. Conceito = fundo full-bleed + widgets emoldurados flutuando + barra de nav inferior +
+títulos ornamentados + Game Over como diálogo rico. **Decisão do usuário: widescreen casando o
+conceito + adapta mobile; execução autônoma em 4 frentes W1→W4.** **W1 (fundação) CONCLUÍDA**
+(`src/core/` intocado, det 67; spec/plano `.../2026-07-20-ui-w1-layout-foundation*`): removido o
+painel de tela inteira (`.screen`/`.home` — o `body{background-image:var(--bg-screen)}` aparece
+full-bleed); `.btn` 9-slice refeito (bordas topo/base finas `6px 22px` + `inline-flex` centrado +
+`min-height` + `overflow-wrap:anywhere` ⇒ rótulo cabe, "Novo Jogo"/"Adicionar"/"Comprar" corrigidos);
+legibilidade (text-shadow em títulos/notas + vinheta `#app::after`); Home footprint reduzido (logo
+menor, emblema-divisor removido, grade mais larga) ⇒ **cabe sem scroll**. Playwright (build prod):
+**1366×768** fundo pintado visível, "New Game" sem overflow, sem scroll V/H; Loja 0 botão em overflow;
+**390×844** sem regressão. **Também corrigido um teste vermelho no main** (PR #12 tinha deixado
+`registry-specs.test.ts` quebrado — o how-to de atlas por-tema citava `specs/<file>.md` sob
+docs/superpowers que o regex procurava sob docs/assets/specs; reformulado). **Resta W2** (chrome:
+barra de nav inferior, títulos ornamentados, stat-chips no topo, Voltar emoldurado, cards/rows
+emoldurados, painel de dino ativo, portraits grandes), **W3** (Game Over/ready/pause como overlay
+**DOM** — hoje é texto no canvas Phaser 320×180), **W4** (HUD limpo, personagem, transições).
+**Backlog persistente:** flakiness de timeout dos testes pesados `atlas.test`/`gen-ui.test` sob
+workers paralelos (memoizar `renderAtlas`/`renderUi` — cada vez mais relevante p/ CI).
