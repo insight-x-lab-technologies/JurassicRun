@@ -4,6 +4,7 @@ import {
   isSupportedLanguage,
   type SettingsState,
 } from './store';
+import { isFontChoice } from './fonts';
 
 export interface SettingsStorage {
   load(): SettingsState;
@@ -33,7 +34,8 @@ export function parseState(raw: string): SettingsState {
     const gameplayMusic = typeof d.gameplayMusic === 'boolean' ? d.gameplayMusic : base.gameplayMusic;
     const language =
       typeof d.language === 'string' && isSupportedLanguage(d.language) ? d.language : base.language;
-    return { volume, menuMusic, gameplayMusic, language };
+    const font = typeof d.font === 'string' && isFontChoice(d.font) ? d.font : base.font;
+    return { volume, menuMusic, gameplayMusic, language, font };
   } catch {
     return base;
   }

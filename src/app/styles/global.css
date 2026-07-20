@@ -54,8 +54,10 @@ body {
 }
 
 .screen__title {
-  font-size: var(--font-size-xl);
-  font-weight: 800;
+  font-family: var(--font-display);
+  /* Itens 2.1/3.2: título maior, com mais presença — o conceito usa um cabeçalho dominante. */
+  font-size: clamp(2.4rem, 1.6rem + 3.4vw, 4.2rem);
+  font-weight: 700;
   letter-spacing: 0.02em;
   margin: 0;
   color: var(--color-gold); /* fallback */
@@ -67,7 +69,10 @@ body {
 
 .btn {
   font: inherit;
-  font-size: var(--font-size-md);
+  font-family: var(--font-display);
+  /* Corpo menor: rótulo em UMA linha nos 10 idiomas (itens 1.1/2.2/3.1 da revisão). */
+  font-size: var(--font-size-btn);
+  font-weight: 600;
   color: var(--color-on-primary);
   background: transparent;
   border-style: solid;
@@ -83,8 +88,19 @@ body {
   gap: var(--space-2);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
   cursor: pointer;
-  overflow-wrap: anywhere; /* palavra longa (ex.: "Leaderboard") quebra em vez de transbordar o botão */
+  /* `break-word` quebra ENTRE palavras primeiro e só parte a palavra se ela sozinha não
+     couber — `anywhere` produzia "EXPANSIO/NS" e "CHALLEN/GE". */
+  overflow-wrap: break-word;
   text-align: center;
+}
+
+/* Item 1.2: o ícone fica à esquerda dentro do botão e o rótulo ocupa o resto centrado. */
+.btn .nav-icon {
+  margin-inline-end: auto;
+}
+
+.btn .nav-icon + * {
+  margin-inline-end: auto;
 }
 
 .btn--ghost {
@@ -275,21 +291,30 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
-  padding: var(--space-4);
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   min-height: 0;
   overflow-y: auto;
 }
 
 .home__topbar {
+  /* Itens 1.5 (desktop) e mobile 1.1: perfil + moedas + troféus + nível máx na MESMA linha,
+     no topo. Sem flex-wrap: em telas estreitas a faixa rola em x em vez de quebrar. */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: var(--space-3);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.home__topbar::-webkit-scrollbar {
+  display: none;
 }
 
 .home__identity {
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: var(--space-3);
@@ -311,10 +336,12 @@ body {
 .home__stats {
   display: flex;
   gap: var(--space-2);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .stat-chip {
+  flex: 0 0 auto;
+  white-space: nowrap;
   display: flex;
   align-items: baseline;
   gap: var(--space-1);
@@ -345,20 +372,25 @@ body {
 }
 
 .home__primary {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   min-width: min(100%, 20rem);
-  min-height: 3.6rem;
+  min-height: 3.2rem;
 }
 
 .home__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  /* Item 1.3: linhas de altura idêntica ⇒ todos os botões saem do mesmo tamanho, mesmo com
+     rótulos de comprimentos diferentes. */
+  grid-auto-rows: 1fr;
   gap: var(--space-3);
-  width: min(100%, 44rem);
+  width: min(100%, 54rem);
 }
 
 .home__grid .btn {
   min-width: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .home__actions {
@@ -383,7 +415,11 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
-  max-width: 40rem;
+  /* Item 2.3: 5 colunas em widescreen. O que limitava a 3 era ESTE teto (40rem), não o
+     minmax: 5 trilhas de 11rem + 4 gaps ≈ 58rem. Abaixo disso o auto-fit degrada sozinho
+     para 4/3/2. */
+  max-width: 58rem;
+  margin-inline: auto;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
   gap: var(--space-3);
@@ -423,9 +459,17 @@ body {
   font-weight: 600;
 }
 
-.dino-card .btn {
+.dino-card .btn,
+.expansion-card .btn {
+  /* Card estreito: "Buy · 250 coins" quebrava em 3 linhas. Corpo menor + bordas laterais
+     mais finas dão largura útil suficiente para uma ou duas linhas. */
   min-width: 0;
   width: 100%;
+  font-size: clamp(0.66rem, 0.58rem + 0.25vw, 0.8rem);
+  border-width: 6px 14px;
+  border-image-width: 6px 14px;
+  padding: var(--space-1) var(--space-2);
+  min-height: 2.6rem;
 }
 
 /* Expansões (grid de temas) — item 4.6 */
@@ -439,7 +483,9 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
-  max-width: 40rem;
+  /* Mesmo teto do Ninho: acompanha as capas maiores do item 3.2 sem esticar demais. */
+  max-width: 58rem;
+  margin-inline: auto;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
   gap: var(--space-3);
@@ -636,61 +682,109 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
-  max-width: 30rem;
+  max-width: 44rem;
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
+/* Item 5.1: linha estruturada em colunas fixas (posição · quem/o quê · score) em vez de
+   texto corrido. Antes player/seed/verified dividiam a MESMA grid-area e se amontoavam. */
 .leaderboard__row {
   display: grid;
-  grid-template-columns: auto auto 1fr;
-  grid-template-areas: 'rank score detail' 'rank seed seed';
+  grid-template-columns: 3rem 1fr auto;
   align-items: center;
-  gap: var(--space-1) var(--space-2);
-  padding: var(--space-3);
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
   background: var(--color-surface);
   text-align: left;
 }
 
+/* Zebra: ajuda a varrer a lista com o olho. */
+.leaderboard__row:nth-child(even) {
+  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+}
+
 .leaderboard__rank {
-  grid-area: rank;
+  font-family: var(--font-display);
   font-size: var(--font-size-lg);
-  min-width: 1.6em;
-  text-align: center;
-}
-
-.leaderboard__score {
-  grid-area: score;
   font-weight: 700;
-  font-size: var(--font-size-md);
+  text-align: center;
+  color: var(--color-text-muted);
 }
 
-.leaderboard__detail {
-  grid-area: detail;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+.leaderboard__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
-.leaderboard__seed {
-  grid-area: seed;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  opacity: 0.7;
+.leaderboard__who {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
 }
 
 .leaderboard__player {
-  grid-area: seed;
   font-weight: 600;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .leaderboard__verified {
-  grid-area: seed;
-  justify-self: end;
   color: var(--color-accent);
   font-weight: 700;
+  flex: none;
+}
+
+.leaderboard__seed {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Métricas com rótulo próprio, alinhadas — não uma frase separada por pontos. */
+.leaderboard__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.leaderboard__stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.leaderboard__stat-label {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  opacity: 0.8;
+}
+
+.leaderboard__stat-value {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+/* O score é a métrica de rank: maior, dourado e alinhado à direita em coluna própria. */
+.leaderboard__score {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--font-size-lg);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-gold);
+  text-align: right;
+  justify-self: end;
 }
 
 .leaderboard__source {
@@ -710,11 +804,12 @@ body {
 }
 
 .home__logo {
+  /* Item 1.4: bem maior que antes (era min(48%, 16rem)), sem empurrar o menu para fora. */
   display: block;
   align-self: center;
-  width: min(48%, 16rem);
+  width: min(62%, 26rem);
   height: auto;
-  margin: 0 auto var(--space-2);
+  margin: 0 auto;
 }
 
 .nav-icon {
@@ -738,12 +833,13 @@ body {
   border-image: var(--ui-statchip) 34% fill / 10px / 0 stretch;
 }
 .medal {
-  width: 1.6em;
-  height: 1.6em;
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
   vertical-align: middle;
 }
-/* dino/expansão: o avatar vira <img> — object-fit cobre o quadro. */
-img.dino-card__avatar,
+/* Capa de expansão preenche o quadro; o retrato do dino usa `contain` (mobile 2.1) e a
+   regra dele fica na seção de cards — não sobrescrever aqui. */
 img.expansion-card__avatar {
   object-fit: cover;
 }
@@ -782,9 +878,15 @@ img.expansion-card__avatar {
   right: 0;
   bottom: 0;
   z-index: 50;
-  display: flex;
-  justify-content: center;
-  gap: var(--space-1);
+  /* Item 2.5: itens EQUIDISTANTES. Antes eram inline-flex com largura própria, então
+     rótulos curtos se agrupavam e longos afastavam os vizinhos. Grid de colunas iguais
+     desacopla o espaçamento do comprimento do rótulo. */
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  justify-content: stretch;
+  align-items: stretch;
+  gap: 0;
   padding: var(--space-2) var(--space-3);
   padding-bottom: max(var(--space-2), env(safe-area-inset-bottom));
   border-style: solid;
@@ -794,20 +896,28 @@ img.expansion-card__avatar {
   overflow-x: auto;
 }
 .navbar__item {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 2px;
-  min-width: 3.5rem;
+  min-width: 0;
   min-height: 44px;
   background: none;
   border: none;
   cursor: pointer;
   color: var(--color-text-muted);
   font: inherit;
-  font-size: var(--font-size-sm);
-  padding: var(--space-1) var(--space-2);
+  /* Item 2.5: corpo menor; o rótulo pode usar duas linhas em vez de empurrar os vizinhos. */
+  font-size: var(--font-size-btn);
+  line-height: 1.15;
+  padding: var(--space-1) var(--space-1);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Item 2.5: delimitador vertical entre ícone+rótulo. */
+.navbar__item + .navbar__item {
+  border-left: 1px solid rgba(201, 162, 39, 0.28);
 }
 .navbar__item--active {
   color: var(--color-accent);
@@ -818,7 +928,10 @@ img.expansion-card__avatar {
   flex: none;
 }
 .navbar__label {
-  white-space: nowrap;
+  /* Duas linhas permitidas (item 2.5): nome longo quebra em vez de alargar a coluna. */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
 /* conteúdo das sub-telas não fica sob a barra fixa */
 .screen {
@@ -841,13 +954,26 @@ img.expansion-card__avatar {
   border-image: var(--ui-panel) 30% fill / 14px / 0 stretch;
   border-radius: 0;
 }
-img.dino-card__avatar,
-img.expansion-card__avatar {
+img.dino-card__avatar {
+  /* Mobile 2.1: com `cover` num card full-width o retrato era cortado e o que aparecia era
+     um zoom na ponta da asa — o dino "sumia". `contain` numa caixa de proporção fixa mostra
+     o bicho inteiro em qualquer largura de card. */
   width: 100%;
-  height: 8rem;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+  object-position: center;
+}
+
+img.expansion-card__avatar {
+  /* Item 3.2: capa maior, para valorizar a expansão. */
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  height: auto;
   border-radius: var(--radius-sm);
   object-fit: cover;
-  object-position: center top;
+  object-position: center;
 }
 .nest__grid,
 .expansions__grid {
@@ -964,4 +1090,169 @@ img.expansion-card__avatar {
   margin: 0;
   color: var(--color-text-muted);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+/* ---- Perfil em duas colunas (item 6.1) ---- */
+.profile__grid {
+  display: grid;
+  grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
+  gap: var(--space-5);
+  width: min(100%, 60rem);
+  margin-inline: auto;
+  align-items: start;
+  text-align: left;
+}
+
+/* Uma coluna quando não há largura para duas (mobile/paisagem curta). */
+@media (max-width: 720px) {
+  .profile__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profile__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.profile__heading {
+  font-family: var(--font-display);
+  font-size: var(--font-size-md);
+  color: var(--color-gold);
+  margin: 0;
+}
+
+/* Cartão de identidade: avatar grande, nome e agregados do jogador. */
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-4);
+  border-style: solid;
+  border-color: transparent;
+  border-width: 22px;
+  border-image: var(--ui-panel) 12% fill / 22px / 0 stretch;
+  text-align: center;
+}
+
+.profile-card__avatar .avatar {
+  width: 5.5rem;
+  height: 5.5rem;
+  font-size: 2.4rem;
+}
+
+.profile-card__name {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin: 0;
+}
+
+.profile-card__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  width: 100%;
+  margin: 0;
+}
+
+.profile-card__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.profile-card__stat dt {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.profile-card__stat dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Estado online: cor conta a história sem depender só do texto. */
+.online-status__value--online {
+  color: #6ee7a8;
+}
+.online-status__value--error {
+  color: #ff8a8a;
+}
+
+.profile-list__name {
+  font-weight: 600;
+}
+
+/* Números em fonte de sistema: Cinzel/Marcellus têm algarismos de estilo antigo (o "1" sai
+   parecendo "I"), ruim para placar/saldo. As palavras seguem na fonte de identidade. */
+.leaderboard__score,
+.leaderboard__stat-value,
+.stat-chip__value,
+.profile-card__stat dd,
+.hud__value {
+  font-family: var(--font-fallback);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* ---- Mobile: caber sem rolagem lateral nem pilha alta (itens mobile 1.1 e 1.3) ---- */
+@media (max-width: 640px) {
+  /* Os 4 indicadores precisam CABER na linha, não só compartilhar a linha: o rótulo sai e
+     fica glifo + número, que é o que se lê de relance. */
+  .stat-chip__label {
+    display: none;
+  }
+
+  .stat-chip {
+    padding: var(--space-1) var(--space-2);
+    border-width: 8px;
+    border-image-width: 8px;
+  }
+
+  .home__identity {
+    padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
+  }
+
+  .home__name {
+    font-size: var(--font-size-sm);
+    max-width: 6.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Duas colunas: metade da altura da pilha, botões menores. */
+  .home__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+
+  .home__grid .btn {
+    min-height: 3rem;
+    border-width: 6px 14px;
+    border-image-width: 6px 14px;
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .home__primary {
+    min-height: 2.8rem;
+  }
+
+  .home__logo {
+    width: min(72%, 15rem);
+  }
+
+  /* Ninho/Expansões em 2 colunas no celular (o card full-width era o que forçava o crop). */
+  .nest__grid,
+  .expansions__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

@@ -14,6 +14,7 @@ describe('SettingsService', () => {
       volume: 30,
       menuMusic: false,
       gameplayMusic: true,
+      font: 'cinzel' as const,
       language: 'pt-BR',
     });
     await settingsService.init(storage);

@@ -20,11 +20,20 @@
   --space-6: 32px;
 
   /* Tipografia fluida (escala com a viewport) */
-  --font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Pilha de fallback: os locales ja/zh/ko/hi não têm glifos nas famílias latinas e caem aqui
+     por cascata natural do CSS. --font-display/-body são trocados ao vivo pelo seletor de
+     Configurações (W6); os valores abaixo são o default (Cinzel). */
+  --font-fallback: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Cinzel Decorative', 'Cinzel', var(--font-fallback);
+  --font-body: 'Cinzel', var(--font-fallback);
+  --font-family: var(--font-body);
   --font-size-sm: clamp(0.8rem, 0.75rem + 0.3vw, 0.95rem);
   --font-size-md: clamp(1rem, 0.9rem + 0.5vw, 1.2rem);
   --font-size-lg: clamp(1.4rem, 1.1rem + 1.2vw, 2rem);
   --font-size-xl: clamp(2rem, 1.4rem + 2.5vw, 3.2rem);
+  /* Corpo dos botões: menor que o texto normal para o rótulo caber em UMA linha nos 10
+     idiomas (o alemão é o pior caso). Itens 1.1/2.2/3.1 da revisão. */
+  --font-size-btn: clamp(0.72rem, 0.62rem + 0.34vw, 0.92rem);
 
   /* Superfícies */
   --radius-sm: 6px;
