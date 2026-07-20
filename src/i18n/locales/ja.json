@@ -116,9 +116,18 @@
     "back": "戻る"
   },
   "expansion": {
-    "classic": { "name": "クラシック", "desc": "オリジナルの見た目。" },
-    "volcano": { "name": "ボルケーノ", "desc": "燃え盛る火山のテーマ。" },
-    "glacier": { "name": "グレイシャー", "desc": "凍てつく氷河のテーマ。" }
+    "classic": {
+      "name": "クラシック",
+      "desc": "オリジナルの見た目。"
+    },
+    "volcano": {
+      "name": "ボルケーノ",
+      "desc": "燃え盛る火山のテーマ。"
+    },
+    "glacier": {
+      "name": "グレイシャー",
+      "desc": "凍てつく氷河のテーマ。"
+    }
   },
   "trophies": {
     "title": "トロフィー",
@@ -126,36 +135,101 @@
     "empty": "プレイして最初のトロフィーを獲得しよう！"
   },
   "trophy": {
-    "firstFlight": { "name": "初飛行", "desc": "初めてのゲームをプレイする。" },
-    "centurion": { "name": "センチュリオン", "desc": "1回のプレイで距離1000に到達する。" },
-    "forager": { "name": "採集者", "desc": "合計50個のエサを集める。" },
-    "daredevil": { "name": "命知らず", "desc": "1回のプレイで10回のニアミスを達成する。" },
-    "marathoner": { "name": "マラソンランナー", "desc": "合計10,000の距離を移動する。" },
-    "highRoller": { "name": "ハイローラー", "desc": "1回のプレイで5000点を獲得する。" },
-    "persistent": { "name": "粘り強い", "desc": "25回プレイする。" },
-    "dailyPodium": { "name": "デイリー表彰台", "desc": "デイリーチャレンジでトップ3に入る。" }
+    "firstFlight": {
+      "name": "初飛行",
+      "desc": "初めてのゲームをプレイする。"
+    },
+    "centurion": {
+      "name": "センチュリオン",
+      "desc": "1回のプレイで距離1000に到達する。"
+    },
+    "forager": {
+      "name": "採集者",
+      "desc": "合計50個のエサを集める。"
+    },
+    "daredevil": {
+      "name": "命知らず",
+      "desc": "1回のプレイで10回のニアミスを達成する。"
+    },
+    "marathoner": {
+      "name": "マラソンランナー",
+      "desc": "合計10,000の距離を移動する。"
+    },
+    "highRoller": {
+      "name": "ハイローラー",
+      "desc": "1回のプレイで5000点を獲得する。"
+    },
+    "persistent": {
+      "name": "粘り強い",
+      "desc": "25回プレイする。"
+    },
+    "dailyPodium": {
+      "name": "デイリー表彰台",
+      "desc": "デイリーチャレンジでトップ3に入る。"
+    }
   },
   "dino": {
-    "starter": { "name": "スカウト" },
-    "lodestone": { "name": "ロードストーン" },
-    "goldbeak": { "name": "ゴールドビーク" },
-    "midas": { "name": "ミダス" },
-    "nine-lives": { "name": "ナインライブズ" },
-    "aegis": { "name": "イージス" },
-    "prospector": { "name": "プロスペクター" },
-    "harvester": { "name": "ハーベスター" },
-    "guardian": { "name": "ガーディアン" },
-    "phoenix": { "name": "フェニックス" }
+    "starter": {
+      "name": "スカウト"
+    },
+    "lodestone": {
+      "name": "ロードストーン"
+    },
+    "goldbeak": {
+      "name": "ゴールドビーク"
+    },
+    "midas": {
+      "name": "ミダス"
+    },
+    "nine-lives": {
+      "name": "ナインライブズ"
+    },
+    "aegis": {
+      "name": "イージス"
+    },
+    "prospector": {
+      "name": "プロスペクター"
+    },
+    "harvester": {
+      "name": "ハーベスター"
+    },
+    "guardian": {
+      "name": "ガーディアン"
+    },
+    "phoenix": {
+      "name": "フェニックス"
+    }
   },
   "trait": {
-    "none": { "desc": "特別な特性なし。" },
-    "magnet": { "desc": "常時コインマグネット。" },
-    "doubleFood": { "desc": "エサの価値が2倍。" },
-    "tripleFood": { "desc": "エサの価値が3倍。" },
-    "startLife": { "desc": "追加ライフを持って開始。" },
-    "headStart": { "desc": "防御シールドを持って開始。" }
+    "none": {
+      "desc": "特別な特性なし。"
+    },
+    "magnet": {
+      "desc": "常時コインマグネット。"
+    },
+    "doubleFood": {
+      "desc": "エサの価値が2倍。"
+    },
+    "tripleFood": {
+      "desc": "エサの価値が3倍。"
+    },
+    "startLife": {
+      "desc": "追加ライフを持って開始。"
+    },
+    "headStart": {
+      "desc": "防御シールドを持って開始。"
+    }
   },
-  "settings": { "title": "設定", "volume": "音量", "menuMusic": "メニュー音楽", "gameplayMusic": "ゲーム音楽", "language": "言語", "on": "オン", "off": "オフ", "back": "戻る" },
+  "settings": {
+    "title": "設定",
+    "volume": "音量",
+    "menuMusic": "メニュー音楽",
+    "gameplayMusic": "ゲーム音楽",
+    "language": "言語",
+    "on": "オン",
+    "off": "オフ",
+    "back": "戻る"
+  },
   "leaderboard": {
     "title": "ランキング",
     "empty": "まだ記録がありません。プレイして記録を作ろう！",
@@ -165,8 +239,15 @@
     "nearMisses": "ニアミス",
     "player": "プレイヤー",
     "verified": "確認済み",
-    "source": { "global": "グローバル", "local": "ローカル" },
-    "tab": { "endless": "エンドレス", "daily": "デイリー", "weekly": "ウィークリー" }
+    "source": {
+      "global": "グローバル",
+      "local": "ローカル"
+    },
+    "tab": {
+      "endless": "エンドレス",
+      "daily": "デイリー",
+      "weekly": "ウィークリー"
+    }
   },
   "online": {
     "title": "オンライン",
@@ -193,5 +274,9 @@
   },
   "rotateHint": {
     "message": "最適な操作のために端末を横向きにしてください。"
+  },
+  "pause": {
+    "title": "一時停止",
+    "resume": "タップで再開"
   }
 }

@@ -116,9 +116,18 @@
     "back": "返回"
   },
   "expansion": {
-    "classic": { "name": "经典", "desc": "原始外观。" },
-    "volcano": { "name": "火山", "desc": "炽热的火山主题。" },
-    "glacier": { "name": "冰川", "desc": "冰冷的冰川主题。" }
+    "classic": {
+      "name": "经典",
+      "desc": "原始外观。"
+    },
+    "volcano": {
+      "name": "火山",
+      "desc": "炽热的火山主题。"
+    },
+    "glacier": {
+      "name": "冰川",
+      "desc": "冰冷的冰川主题。"
+    }
   },
   "trophies": {
     "title": "奖杯",
@@ -126,36 +135,101 @@
     "empty": "开始游戏，赢得你的第一个奖杯！"
   },
   "trophy": {
-    "firstFlight": { "name": "首次飞行", "desc": "进行你的第一局游戏。" },
-    "centurion": { "name": "百夫长", "desc": "在一局中达到1000距离。" },
-    "forager": { "name": "采集者", "desc": "总共收集50个食物。" },
-    "daredevil": { "name": "冒险家", "desc": "在一局中获得10次擦身而过。" },
-    "marathoner": { "name": "马拉松选手", "desc": "累计行进10,000距离。" },
-    "highRoller": { "name": "豪客", "desc": "在一局中得到5000分。" },
-    "persistent": { "name": "坚持不懈", "desc": "游玩25局。" },
-    "dailyPodium": { "name": "每日领奖台", "desc": "在每日挑战中进入前三名。" }
+    "firstFlight": {
+      "name": "首次飞行",
+      "desc": "进行你的第一局游戏。"
+    },
+    "centurion": {
+      "name": "百夫长",
+      "desc": "在一局中达到1000距离。"
+    },
+    "forager": {
+      "name": "采集者",
+      "desc": "总共收集50个食物。"
+    },
+    "daredevil": {
+      "name": "冒险家",
+      "desc": "在一局中获得10次擦身而过。"
+    },
+    "marathoner": {
+      "name": "马拉松选手",
+      "desc": "累计行进10,000距离。"
+    },
+    "highRoller": {
+      "name": "豪客",
+      "desc": "在一局中得到5000分。"
+    },
+    "persistent": {
+      "name": "坚持不懈",
+      "desc": "游玩25局。"
+    },
+    "dailyPodium": {
+      "name": "每日领奖台",
+      "desc": "在每日挑战中进入前三名。"
+    }
   },
   "dino": {
-    "starter": { "name": "侦察兵" },
-    "lodestone": { "name": "磁石龙" },
-    "goldbeak": { "name": "金喙龙" },
-    "midas": { "name": "迈达斯" },
-    "nine-lives": { "name": "九命" },
-    "aegis": { "name": "神盾" },
-    "prospector": { "name": "淘金者" },
-    "harvester": { "name": "收割者" },
-    "guardian": { "name": "守护者" },
-    "phoenix": { "name": "凤凰" }
+    "starter": {
+      "name": "侦察兵"
+    },
+    "lodestone": {
+      "name": "磁石龙"
+    },
+    "goldbeak": {
+      "name": "金喙龙"
+    },
+    "midas": {
+      "name": "迈达斯"
+    },
+    "nine-lives": {
+      "name": "九命"
+    },
+    "aegis": {
+      "name": "神盾"
+    },
+    "prospector": {
+      "name": "淘金者"
+    },
+    "harvester": {
+      "name": "收割者"
+    },
+    "guardian": {
+      "name": "守护者"
+    },
+    "phoenix": {
+      "name": "凤凰"
+    }
   },
   "trait": {
-    "none": { "desc": "无特殊特性。" },
-    "magnet": { "desc": "永久金币磁铁。" },
-    "doubleFood": { "desc": "食物价值翻倍。" },
-    "tripleFood": { "desc": "食物价值三倍。" },
-    "startLife": { "desc": "开局附带一条额外生命。" },
-    "headStart": { "desc": "开局附带护盾。" }
+    "none": {
+      "desc": "无特殊特性。"
+    },
+    "magnet": {
+      "desc": "永久金币磁铁。"
+    },
+    "doubleFood": {
+      "desc": "食物价值翻倍。"
+    },
+    "tripleFood": {
+      "desc": "食物价值三倍。"
+    },
+    "startLife": {
+      "desc": "开局附带一条额外生命。"
+    },
+    "headStart": {
+      "desc": "开局附带护盾。"
+    }
   },
-  "settings": { "title": "设置", "volume": "音量", "menuMusic": "菜单音乐", "gameplayMusic": "游戏音乐", "language": "语言", "on": "开", "off": "关", "back": "返回" },
+  "settings": {
+    "title": "设置",
+    "volume": "音量",
+    "menuMusic": "菜单音乐",
+    "gameplayMusic": "游戏音乐",
+    "language": "语言",
+    "on": "开",
+    "off": "关",
+    "back": "返回"
+  },
   "leaderboard": {
     "title": "排行榜",
     "empty": "还没有记录，快去创造一个吧！",
@@ -165,8 +239,15 @@
     "nearMisses": "险些相撞",
     "player": "玩家",
     "verified": "已验证",
-    "source": { "global": "全球", "local": "本地" },
-    "tab": { "endless": "无尽", "daily": "每日", "weekly": "每周" }
+    "source": {
+      "global": "全球",
+      "local": "本地"
+    },
+    "tab": {
+      "endless": "无尽",
+      "daily": "每日",
+      "weekly": "每周"
+    }
   },
   "online": {
     "title": "在线",
@@ -193,5 +274,9 @@
   },
   "rotateHint": {
     "message": "请将设备旋转为横屏以获得最佳体验。"
+  },
+  "pause": {
+    "title": "已暂停",
+    "resume": "点按继续"
   }
 }

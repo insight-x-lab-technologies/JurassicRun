@@ -116,9 +116,18 @@
     "back": "뒤로"
   },
   "expansion": {
-    "classic": { "name": "클래식", "desc": "원래의 모습." },
-    "volcano": { "name": "화산", "desc": "불타는 화산 테마." },
-    "glacier": { "name": "빙하", "desc": "차가운 빙하 테마." }
+    "classic": {
+      "name": "클래식",
+      "desc": "원래의 모습."
+    },
+    "volcano": {
+      "name": "화산",
+      "desc": "불타는 화산 테마."
+    },
+    "glacier": {
+      "name": "빙하",
+      "desc": "차가운 빙하 테마."
+    }
   },
   "trophies": {
     "title": "트로피",
@@ -126,36 +135,101 @@
     "empty": "게임을 플레이해 첫 트로피를 획득하세요!"
   },
   "trophy": {
-    "firstFlight": { "name": "첫 비행", "desc": "첫 게임을 플레이하세요." },
-    "centurion": { "name": "백부장", "desc": "한 판에서 거리 1000에 도달하세요." },
-    "forager": { "name": "채집가", "desc": "총 50개의 먹이를 모으세요." },
-    "daredevil": { "name": "무모한 도전자", "desc": "한 판에서 아슬아슬한 회피를 10번 달성하세요." },
-    "marathoner": { "name": "마라토너", "desc": "총 10,000 거리를 이동하세요." },
-    "highRoller": { "name": "큰손", "desc": "한 판에서 5000점을 획득하세요." },
-    "persistent": { "name": "끈기", "desc": "25판을 플레이하세요." },
-    "dailyPodium": { "name": "일일 시상대", "desc": "일일 도전에서 3위 안에 들기." }
+    "firstFlight": {
+      "name": "첫 비행",
+      "desc": "첫 게임을 플레이하세요."
+    },
+    "centurion": {
+      "name": "백부장",
+      "desc": "한 판에서 거리 1000에 도달하세요."
+    },
+    "forager": {
+      "name": "채집가",
+      "desc": "총 50개의 먹이를 모으세요."
+    },
+    "daredevil": {
+      "name": "무모한 도전자",
+      "desc": "한 판에서 아슬아슬한 회피를 10번 달성하세요."
+    },
+    "marathoner": {
+      "name": "마라토너",
+      "desc": "총 10,000 거리를 이동하세요."
+    },
+    "highRoller": {
+      "name": "큰손",
+      "desc": "한 판에서 5000점을 획득하세요."
+    },
+    "persistent": {
+      "name": "끈기",
+      "desc": "25판을 플레이하세요."
+    },
+    "dailyPodium": {
+      "name": "일일 시상대",
+      "desc": "일일 도전에서 3위 안에 들기."
+    }
   },
   "dino": {
-    "starter": { "name": "스카우트" },
-    "lodestone": { "name": "로드스톤" },
-    "goldbeak": { "name": "골드빅" },
-    "midas": { "name": "미다스" },
-    "nine-lives": { "name": "나인 라이브즈" },
-    "aegis": { "name": "이지스" },
-    "prospector": { "name": "프로스펙터" },
-    "harvester": { "name": "하베스터" },
-    "guardian": { "name": "가디언" },
-    "phoenix": { "name": "피닉스" }
+    "starter": {
+      "name": "스카우트"
+    },
+    "lodestone": {
+      "name": "로드스톤"
+    },
+    "goldbeak": {
+      "name": "골드빅"
+    },
+    "midas": {
+      "name": "미다스"
+    },
+    "nine-lives": {
+      "name": "나인 라이브즈"
+    },
+    "aegis": {
+      "name": "이지스"
+    },
+    "prospector": {
+      "name": "프로스펙터"
+    },
+    "harvester": {
+      "name": "하베스터"
+    },
+    "guardian": {
+      "name": "가디언"
+    },
+    "phoenix": {
+      "name": "피닉스"
+    }
   },
   "trait": {
-    "none": { "desc": "특별한 특성 없음." },
-    "magnet": { "desc": "영구 코인 자석." },
-    "doubleFood": { "desc": "먹이 가치 2배." },
-    "tripleFood": { "desc": "먹이 가치 3배." },
-    "startLife": { "desc": "여분의 생명으로 시작." },
-    "headStart": { "desc": "보호막을 갖고 시작." }
+    "none": {
+      "desc": "특별한 특성 없음."
+    },
+    "magnet": {
+      "desc": "영구 코인 자석."
+    },
+    "doubleFood": {
+      "desc": "먹이 가치 2배."
+    },
+    "tripleFood": {
+      "desc": "먹이 가치 3배."
+    },
+    "startLife": {
+      "desc": "여분의 생명으로 시작."
+    },
+    "headStart": {
+      "desc": "보호막을 갖고 시작."
+    }
   },
-  "settings": { "title": "설정", "volume": "볼륨", "menuMusic": "메뉴 음악", "gameplayMusic": "게임 음악", "language": "언어", "on": "켜짐", "off": "꺼짐", "back": "뒤로" },
+  "settings": {
+    "title": "설정",
+    "volume": "볼륨",
+    "menuMusic": "메뉴 음악",
+    "gameplayMusic": "게임 음악",
+    "language": "언어",
+    "on": "켜짐",
+    "off": "꺼짐",
+    "back": "뒤로"
+  },
   "leaderboard": {
     "title": "리더보드",
     "empty": "아직 기록이 없어요. 플레이해서 기록을 세워보세요!",
@@ -165,8 +239,15 @@
     "nearMisses": "아슬아슬",
     "player": "플레이어",
     "verified": "검증됨",
-    "source": { "global": "글로벌", "local": "로컬" },
-    "tab": { "endless": "무한", "daily": "일일", "weekly": "주간" }
+    "source": {
+      "global": "글로벌",
+      "local": "로컬"
+    },
+    "tab": {
+      "endless": "무한",
+      "daily": "일일",
+      "weekly": "주간"
+    }
   },
   "online": {
     "title": "온라인",
@@ -193,5 +274,9 @@
   },
   "rotateHint": {
     "message": "최적의 환경을 위해 기기를 가로로 돌려 주세요."
+  },
+  "pause": {
+    "title": "일시정지",
+    "resume": "탭하여 재개"
   }
 }

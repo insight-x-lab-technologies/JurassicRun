@@ -22,10 +22,21 @@ export interface GameOverStats {
   readonly newRecord: boolean;
 }
 
+/** Stats vivos do mundo para o HUD DOM (W4). Lidos do WorldState corrente. */
+export interface HudLive {
+  readonly distance: number;
+  readonly food: number;
+  readonly level: number;
+  readonly speed: number;
+  readonly weather: string;
+  readonly seed: string;
+}
+
 export interface MatchSnapshot {
   readonly phase: MatchPhase;
   readonly paused: boolean;
   readonly gameOver: GameOverStats | null;
+  readonly hud: HudLive | null;
 }
 
 export interface GameHandle {
@@ -141,9 +152,21 @@ export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): 
     cleanupControls();
     game.destroy(true);
   };
+  const hudLive = (): HudLive => {
+    const w = match.world;
+    return {
+      distance: w.distance, food: w.food, level: w.level,
+      speed: w.scrollSpeed, weather: w.weather, seed: match.seedLabel,
+    };
+  };
   return {
     stop,
-    snapshot: () => ({ phase: match.phase, paused: pause.paused, gameOver: lastGameOver }),
+    snapshot: () => ({
+      phase: match.phase,
+      paused: pause.paused,
+      gameOver: lastGameOver,
+      hud: match.phase === 'playing' ? hudLive() : null,
+    }),
     restart: () => match.restart(),
   };
 }
