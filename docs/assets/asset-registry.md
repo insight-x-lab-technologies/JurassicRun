@@ -129,4 +129,5 @@ os MESMOS ids do manifesto (`dino.default` 6 frames, `obstacle.*`, `bird.coin`, 
 Pack **sem** `atlas` ⇒ reusa o atlas `entities` + `entityTint` (recolor). O `GameScene` resolve a
 key pelo pack ativo (`atlasRefFor`); a animação do dino é **por-atlas** (evita reuso da anim global
 do Phaser). Provado ponta-a-ponta (Playwright: volcano apontando um atlas próprio carrega-o em vez
-do default). Habilitado por `docs/superpowers/specs/2026-07-19-per-theme-entity-atlas-design.md`.
+do default). Habilitado pela feature "atlas de entidades por-tema" (design 2026-07-19, em
+`docs/superpowers/`).
