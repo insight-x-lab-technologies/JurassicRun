@@ -14,7 +14,7 @@ export function PlayScreen({ mode = 'endless' }: { mode?: MatchMode }) {
     void import('../game/startGame').then(({ startGame }) => {
       const el = containerRef.current;
       if (cancelled || el === null) return;
-      stop = startGame(el, mode);
+      stop = startGame(el, mode).stop;
     });
     return () => {
       cancelled = true;

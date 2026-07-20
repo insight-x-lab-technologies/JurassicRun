@@ -1,7 +1,7 @@
 import { createWorld } from '@core/sim';
 import { createGame } from '@render/game';
 import { FlapInputSource, PauseController } from '@render/input';
-import { MatchController } from '@render/match';
+import { MatchController, type MatchPhase } from '@render/match';
 import { createMatchFactory, type MatchMode } from '@render/matchFactory';
 import { randomEndlessSeed, dailyChallengeSeed, weeklyChallengeSeed } from '@render/seedSource';
 import { bindGameControls } from '@render/controls';
@@ -13,14 +13,37 @@ import { replayService } from '@services/replay';
 import { onlineService } from '@services/online';
 import { buildReplayPayload } from './replayPayload';
 
+export interface GameOverStats {
+  readonly distance: number;
+  readonly food: number;
+  readonly nearMisses: number;
+  readonly score: number;
+  readonly coins: number;
+  readonly newRecord: boolean;
+}
+
+export interface MatchSnapshot {
+  readonly phase: MatchPhase;
+  readonly paused: boolean;
+  readonly gameOver: GameOverStats | null;
+}
+
+export interface GameHandle {
+  readonly stop: () => void;
+  readonly snapshot: () => MatchSnapshot;
+  readonly restart: () => void;
+}
+
 /**
  * Monta o jogo Phaser no `container` no `mode` dado (endless por default) e devolve um
- * `stop()` que o destrói e remove os listeners.
+ * `GameHandle` ({stop, snapshot, restart}) que a casca Preact usa para controlar/ler a partida.
  */
-export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): () => void {
+export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): GameHandle {
   const flap = new FlapInputSource();
   const pause = new PauseController();
   pause.onPause = () => flap.reset();
+
+  let lastGameOver: GameOverStats | null = null;
 
   const factory = createMatchFactory(mode, {
     randomEndlessSeed,
@@ -31,8 +54,25 @@ export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): 
   });
 
   const match = new MatchController(flap, factory, {
-    onNewMatch: () => flap.reset(),
+    onNewMatch: () => {
+      flap.reset();
+      lastGameOver = null;
+    },
     onGameOver: (w) => {
+      const listFor =
+        mode === 'daily' ? leaderboardService.daily
+        : mode === 'weekly' ? leaderboardService.weekly
+        : leaderboardService.endless;
+      const prevBest = listFor.value[0]?.score ?? -1;
+      lastGameOver = {
+        distance: w.distance,
+        food: w.food,
+        nearMisses: w.nearMisses,
+        score: w.score,
+        coins: coinsForFood(w.food),
+        newRecord: w.score > prevBest,
+      };
+
       walletService.earn(coinsForFood(w.food));
 
       const result = {
@@ -97,8 +137,13 @@ export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): 
     isDead: () => match.phase === 'dead',
   });
 
-  return () => {
+  const stop = () => {
     cleanupControls();
     game.destroy(true);
+  };
+  return {
+    stop,
+    snapshot: () => ({ phase: match.phase, paused: pause.paused, gameOver: lastGameOver }),
+    restart: () => match.restart(),
   };
 }

@@ -20,6 +20,8 @@
     "distance": "दूरी: {{value}} मी",
     "food": "भोजन: {{value}}",
     "nearMisses": "करीबी टक्कर: {{value}}",
+    "newRecord": "नया रिकॉर्ड!",
+    "coinsEarned": "+{{value}} सिक्के",
     "restart": "फिर से शुरू करें",
     "quit": "बाहर निकलें"
   },
