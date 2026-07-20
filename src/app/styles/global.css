@@ -924,8 +924,10 @@ img.expansion-card__avatar {
 .hud {
   position: absolute;
   top: max(var(--space-2), env(safe-area-inset-top));
-  left: max(var(--space-2), env(safe-area-inset-left));
+  /* canto superior DIREITO: o botão "Voltar" fica no topo-esquerdo (sem sobreposição). */
+  right: max(var(--space-2), env(safe-area-inset-right));
   z-index: 12;
+  text-align: right;
   display: flex;
   flex-direction: column;
   gap: 1px;
