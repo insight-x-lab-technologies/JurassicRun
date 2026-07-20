@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { renderAtlas } from '../../scripts/gen-atlas.mjs';
+import { renderAtlas, ATLAS_SOURCES, ATLAS_VARIANTS } from '../../scripts/gen-atlas.mjs';
 import { ASSET_MANIFEST } from '@render/manifest';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
@@ -54,5 +54,16 @@ describe('atlas de entidades (arte real)', () => {
   it('os arquivos commitados existem e o PNG bate com o gerado', () => {
     const png = readFileSync(path.join(root, 'public/atlas/entities.png'));
     expect(png.equals(renderAtlas().png)).toBe(true);
+  });
+
+  it('ATLAS_VARIANTS inclui o atlas default entities', () => {
+    expect(ATLAS_VARIANTS.some((v) => v.key === 'entities')).toBe(true);
+  });
+
+  it('renderAtlas aceita uma lista de fontes (multi-atlas)', () => {
+    const subset = ATLAS_SOURCES.filter((s) => s.frames === 1).slice(0, 3);
+    const { png, json } = renderAtlas(subset);
+    expect(png.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a');
+    for (const s of subset) expect(json.frames[s.id], s.id).toBeDefined();
   });
 });
