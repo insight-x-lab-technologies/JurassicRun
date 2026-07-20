@@ -1,4 +1,5 @@
 import { render } from 'preact';
+import './styles/fonts.css';
 import './styles/tokens.css';
 import './styles/global.css';
 import { i18n } from '@services/i18n';

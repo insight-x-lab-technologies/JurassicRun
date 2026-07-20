@@ -10,12 +10,13 @@ import {
 } from '@services/settings/store';
 
 describe('settings/store', () => {
-  it('estado inicial: volume 80, músicas on, idioma en', () => {
+  it('estado inicial: volume 80, músicas on, idioma en, fonte Cinzel', () => {
     expect(initialSettingsState()).toEqual({
       volume: 80,
       menuMusic: true,
       gameplayMusic: true,
       language: 'en',
+      font: 'cinzel',
     });
   });
 

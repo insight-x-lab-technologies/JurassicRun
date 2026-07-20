@@ -16,15 +16,37 @@ function rankBadge(index: number): VNode | number {
     : index + 1;
 }
 
+/** Trio de métricas da corrida, cada uma com rótulo próprio — em vez de uma frase corrida. */
+function RowStats({ distance, food, nearMisses }: {
+  distance: number; food: number; nearMisses: number;
+}): VNode {
+  return (
+    <span class="leaderboard__stats">
+      <span class="leaderboard__stat">
+        <span class="leaderboard__stat-label">{i18n.t('leaderboard.distance')}</span>
+        <span class="leaderboard__stat-value">{distance}</span>
+      </span>
+      <span class="leaderboard__stat">
+        <span class="leaderboard__stat-label">{i18n.t('leaderboard.food')}</span>
+        <span class="leaderboard__stat-value">{food}</span>
+      </span>
+      <span class="leaderboard__stat">
+        <span class="leaderboard__stat-label">{i18n.t('leaderboard.nearMisses')}</span>
+        <span class="leaderboard__stat-value">{nearMisses}</span>
+      </span>
+    </span>
+  );
+}
+
 function LocalRow({ entry, index }: { entry: LeaderboardEntry; index: number }): VNode {
   return (
     <li class="leaderboard__row" data-testid={`leaderboard-row-${index}`}>
       <span class="leaderboard__rank" aria-hidden={index < 3 ? 'true' : undefined}>{rankBadge(index)}</span>
-      <span class="leaderboard__score" aria-label={i18n.t('leaderboard.score')}>{entry.score}</span>
-      <span class="leaderboard__detail">
-        {i18n.t('leaderboard.distance')}: {entry.distance} · {i18n.t('leaderboard.food')}: {entry.food} · {i18n.t('leaderboard.nearMisses')}: {entry.nearMisses}
+      <span class="leaderboard__main">
+        <span class="leaderboard__seed">{entry.seed}</span>
+        <RowStats distance={entry.distance} food={entry.food} nearMisses={entry.nearMisses} />
       </span>
-      <span class="leaderboard__seed">{entry.seed}</span>
+      <span class="leaderboard__score" aria-label={i18n.t('leaderboard.score')}>{entry.score}</span>
     </li>
   );
 }
@@ -34,14 +56,16 @@ function CentralRow({ entry, index, me }: { entry: CentralEntry; index: number; 
   return (
     <li class={`leaderboard__row${isMe ? ' leaderboard__row--me' : ''}`} data-testid={`leaderboard-row-${index}`}>
       <span class="leaderboard__rank" aria-hidden={index < 3 ? 'true' : undefined}>{rankBadge(index)}</span>
-      <span class="leaderboard__score" aria-label={i18n.t('leaderboard.score')}>{entry.score}</span>
-      <span class="leaderboard__player" aria-label={i18n.t('leaderboard.player')}>{entry.playerName}</span>
-      {entry.verified && (
-        <span class="leaderboard__verified" title={i18n.t('leaderboard.verified')} aria-label={i18n.t('leaderboard.verified')}>✓</span>
-      )}
-      <span class="leaderboard__detail">
-        {i18n.t('leaderboard.distance')}: {entry.distance} · {i18n.t('leaderboard.food')}: {entry.food} · {i18n.t('leaderboard.nearMisses')}: {entry.nearMisses}
+      <span class="leaderboard__main">
+        <span class="leaderboard__who">
+          <span class="leaderboard__player" aria-label={i18n.t('leaderboard.player')}>{entry.playerName}</span>
+          {entry.verified && (
+            <span class="leaderboard__verified" title={i18n.t('leaderboard.verified')} aria-label={i18n.t('leaderboard.verified')}>✓</span>
+          )}
+        </span>
+        <RowStats distance={entry.distance} food={entry.food} nearMisses={entry.nearMisses} />
       </span>
+      <span class="leaderboard__score" aria-label={i18n.t('leaderboard.score')}>{entry.score}</span>
     </li>
   );
 }

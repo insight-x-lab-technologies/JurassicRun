@@ -3,12 +3,14 @@ import { back } from '../router';
 import { i18n } from '@services/i18n';
 import { settingsService } from '@services/settings';
 import { SUPPORTED_LANGUAGES, LANGUAGE_NATIVE_NAMES } from '@i18n/locales/index';
+import { FONT_CHOICES, fontStackFor } from '@services/settings/fonts';
 
 export function SettingsScreen(): VNode {
   const volume = settingsService.volume.value;
   const menuMusic = settingsService.menuMusic.value;
   const gameplayMusic = settingsService.gameplayMusic.value;
   const language = settingsService.language.value;
+  const font = settingsService.font.value;
 
   return (
     <div class="screen settings">
@@ -71,6 +73,24 @@ export function SettingsScreen(): VNode {
           {SUPPORTED_LANGUAGES.map((lng) => (
             <option key={lng} value={lng}>
               {LANGUAGE_NATIVE_NAMES[lng]}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label class="settings__row" for="settings-font">
+        <span class="settings__label">{i18n.t('settings.font')}</span>
+        <select
+          id="settings-font"
+          data-testid="settings-font"
+          class="settings__select"
+          value={font}
+          onChange={(e) => settingsService.setFont((e.currentTarget as HTMLSelectElement).value)}
+        >
+          {FONT_CHOICES.map((choice) => (
+            <option key={choice} value={choice}>
+              {/* Nome próprio da família ⇒ não passa por i18n (como LANGUAGE_NATIVE_NAMES). */}
+              {fontStackFor(choice).label}
             </option>
           ))}
         </select>
