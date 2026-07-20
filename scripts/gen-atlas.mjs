@@ -162,7 +162,7 @@ export function renderAtlas(sources = ATLAS_SOURCES) {
   for (const p of placed) {
     jf[p.name] = { frame: { x: p.x, y: p.y, w: p.dw, h: p.dh }, rotated: false, trimmed: false, sourceSize: { w: p.dw, h: p.dh }, spriteSourceSize: { x: 0, y: 0, w: p.dw, h: p.dh } };
   }
-  jf['dino.default'] = { ...jf['dino.default.0'] };
+  if (jf['dino.default.0']) jf['dino.default'] = { ...jf['dino.default.0'] };
   const json = { frames: jf, meta: { image: 'entities.png', size: { w: ATLAS_WIDTH, h: atlasH }, scale: '1' } };
   return { png, json };
 }
@@ -172,6 +172,7 @@ function main() {
   mkdirSync(dir, { recursive: true });
   for (const v of ATLAS_VARIANTS) {
     const { png, json } = renderAtlas(v.sources);
+    json.meta.image = `${v.key}.png`; // por variante (byte-idêntico p/ 'entities')
     writeFileSync(path.join(dir, `${v.key}.png`), png);
     writeFileSync(path.join(dir, `${v.key}.json`), JSON.stringify(json, null, 2));
     console.log(`atlas ${v.key}: ${png.length} bytes, ${Object.keys(json.frames).length} frames`);
