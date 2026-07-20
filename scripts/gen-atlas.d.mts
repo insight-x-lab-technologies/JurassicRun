@@ -1,6 +1,7 @@
 export const ATLAS_KEY: string;
 export const ATLAS_SOURCES: readonly { id: string; file: string; frames: number }[];
-export function renderAtlas(): {
+export const ATLAS_VARIANTS: readonly { key: string; sources: typeof ATLAS_SOURCES }[];
+export function renderAtlas(sources?: typeof ATLAS_SOURCES): {
   png: Buffer;
   json: {
     frames: Record<string, {

@@ -29,6 +29,10 @@ export const ATLAS_SOURCES = [
   { id: 'powerup.slowMo', file: 'powerups/powerup.slowMo.png', frames: 1 },
 ];
 
+// Variantes de atlas (multi-atlas). Um atlas de tema entra aqui: { key, sources } com os MESMOS
+// ids do manifesto e arquivos-fonte diferentes; depois `npm run gen:atlas` + `pack.atlas`.
+export const ATLAS_VARIANTS = [{ key: ATLAS_KEY, sources: ATLAS_SOURCES }];
+
 /** Decodifica PNG 8-bit RGBA/RGB não entrelaçado. Retorna {w,h,rgba:Buffer(w*h*4)}. */
 export function decodePng(buf) {
   if (buf.readUInt32BE(0) !== 0x89504e47) throw new Error('não é PNG');
@@ -115,10 +119,10 @@ function targetSize(sw, sh) {
   return { dw: Math.max(1, Math.round(sw * s)), dh: Math.max(1, Math.round(sh * s)) };
 }
 
-export function renderAtlas() {
+export function renderAtlas(sources = ATLAS_SOURCES) {
   // 1. Monta os frames recortados/redimensionados: {name, dw, dh, pixels}.
   const frames = [];
-  for (const src of ATLAS_SOURCES) {
+  for (const src of sources) {
     const img = decodePng(readFileSync(path.join(ART, src.file)));
     if (src.frames === 1) {
       const b = contentBounds(img, 0, 0, img.w, img.h);
@@ -158,7 +162,7 @@ export function renderAtlas() {
   for (const p of placed) {
     jf[p.name] = { frame: { x: p.x, y: p.y, w: p.dw, h: p.dh }, rotated: false, trimmed: false, sourceSize: { w: p.dw, h: p.dh }, spriteSourceSize: { x: 0, y: 0, w: p.dw, h: p.dh } };
   }
-  jf['dino.default'] = { ...jf['dino.default.0'] };
+  if (jf['dino.default.0']) jf['dino.default'] = { ...jf['dino.default.0'] };
   const json = { frames: jf, meta: { image: 'entities.png', size: { w: ATLAS_WIDTH, h: atlasH }, scale: '1' } };
   return { png, json };
 }
@@ -166,9 +170,12 @@ export function renderAtlas() {
 function main() {
   const dir = path.join(ROOT, 'public/atlas');
   mkdirSync(dir, { recursive: true });
-  const { png, json } = renderAtlas();
-  writeFileSync(path.join(dir, 'entities.png'), png);
-  writeFileSync(path.join(dir, 'entities.json'), JSON.stringify(json, null, 2));
-  console.log(`atlas: ${png.length} bytes, ${Object.keys(json.frames).length} frames`);
+  for (const v of ATLAS_VARIANTS) {
+    const { png, json } = renderAtlas(v.sources);
+    json.meta.image = `${v.key}.png`; // por variante (byte-idêntico p/ 'entities')
+    writeFileSync(path.join(dir, `${v.key}.png`), png);
+    writeFileSync(path.join(dir, `${v.key}.json`), JSON.stringify(json, null, 2));
+    console.log(`atlas ${v.key}: ${png.length} bytes, ${Object.keys(json.frames).length} frames`);
+  }
 }
 if (process.argv[1] === fileURLToPath(import.meta.url)) main();

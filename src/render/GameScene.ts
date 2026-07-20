@@ -7,7 +7,7 @@ import type { PauseController } from './input';
 import { PARALLAX_LAYERS, parallaxTileOffset } from './parallax';
 import type { ParallaxLayer } from './parallax';
 import { isHorizontallyVisible } from './culling';
-import { ATLAS_KEY, spriteSizeFor, frameFor, atlasRefFor } from './sprites';
+import { spriteSizeFor, frameFor, atlasRefFor } from './sprites';
 import { timeOfDayForSeed } from './daynight';
 import { packForId } from './packs';
 import { i18n } from '@services/i18n';
@@ -68,6 +68,7 @@ export class GameScene extends Phaser.Scene {
   private spritePoolUsed = 0;
   private dinoSprite!: Phaser.GameObjects.Sprite;
   private readonly sizeCache = new Map<string, { w: number; h: number }>();
+  private atlasKey = 'entities';
 
   constructor(match: MatchController, pause: PauseController) {
     super('GameScene');
@@ -78,6 +79,7 @@ export class GameScene extends Phaser.Scene {
   preload(): void {
     const base = import.meta.env.BASE_URL; // termina com '/'
     const ref = atlasRefFor(packForId(entitlementsService.activeExpansion.value.id));
+    this.atlasKey = ref.key;
     this.load.atlas(ref.key, base + ref.png, base + ref.json);
     for (const layer of PARALLAX_LAYERS) {
       if (layer.visual.kind === 'sprite') {
@@ -116,17 +118,18 @@ export class GameScene extends Phaser.Scene {
     // Dino (8.1): Sprite animado (flap de 6 frames do atlas). frameFor resolve o alias
     // `dino.default` como textura inicial; a anim cicla dino.default.0..5.
     this.dinoSprite = this.add
-      .sprite(0, 0, ATLAS_KEY, frameFor(DINO_TYPE_ID) ?? DINO_TYPE_ID)
+      .sprite(0, 0, this.atlasKey, frameFor(DINO_TYPE_ID) ?? DINO_TYPE_ID)
       .setDepth(1);
-    if (!this.anims.exists('dino.flap')) {
+    const animKey = 'dino.flap.' + this.atlasKey;
+    if (!this.anims.exists(animKey)) {
       this.anims.create({
-        key: 'dino.flap',
-        frames: this.anims.generateFrameNames(ATLAS_KEY, { prefix: 'dino.default.', start: 0, end: 5 }),
+        key: animKey,
+        frames: this.anims.generateFrameNames(this.atlasKey, { prefix: 'dino.default.', start: 0, end: 5 }),
         frameRate: DINO_FLAP_FPS,
         repeat: -1,
       });
     }
-    this.dinoSprite.play('dino.flap');
+    this.dinoSprite.play(animKey);
 
     // Overlay de pausa: retângulo semitransparente de tela cheia (scrollFactor 0, depth 1000).
     this.pauseOverlay = this.add.graphics().setScrollFactor(0);
@@ -317,7 +320,7 @@ export class GameScene extends Phaser.Scene {
   private acquireSprite(): Phaser.GameObjects.Image {
     let img = this.spritePool[this.spritePoolUsed];
     if (img === undefined) {
-      img = this.add.image(0, 0, ATLAS_KEY).setDepth(0);
+      img = this.add.image(0, 0, this.atlasKey).setDepth(0);
       this.spritePool.push(img);
     }
     this.spritePoolUsed += 1;
@@ -347,7 +350,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     const img = this.acquireSprite();
-    img.setTexture(ATLAS_KEY, frame);
+    img.setTexture(this.atlasKey, frame);
     img.setTint(entityTint);
     const s = this.sizeFor(typeId, e.hitbox);
     img.setDisplaySize(s.w, s.h);

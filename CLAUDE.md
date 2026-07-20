@@ -1458,3 +1458,18 @@ scanline no `encodePng`, mexe em gen-icons/atlas/pwa); a11y do rank top-3 (medal
 fiar `ref.key` do atlas de entidades no pipeline de render (8.1 in-game); costura de tiling do parallax se a
 arte não for perfeitamente tileável (não observada). **Fase 8 essencialmente COMPLETA** (arte AAA integrada:
 entidades in-game + Tier-1 UI/fundos/parallax; packs 8.3; gateway 8.4).
+
+**Atlas de entidades por-tema (habilitado)** — fecha a lacuna do `ref.key` que o 8.1 in-game deixou.
+`src/core/` intocado ⇒ **det 67** (spec/plano `.../2026-07-19-per-theme-entity-atlas*`). `gen-atlas.mjs` virou
+**multi-atlas**: `renderAtlas(sources=ATLAS_SOURCES)` parametrizado + `ATLAS_VARIANTS` (default só `entities`,
+byte-idêntico); `main` escreve um atlas por variante. `GameScene` guarda `this.atlasKey = atlasRefFor(pack
+ativo).key` no `preload` e desenha TODAS as entidades (dino/pool/setTexture) com ela; **anim `dino.flap.<atlasKey>`
+por-atlas** (o `AnimationManager` do Phaser é global — key fixa faria a 2ª sessão reusar os frames da 1ª; bug
+sutil corrigido). **Como adicionar um atlas de tema:** arte com os mesmos ids do manifesto em `public/art/final/
+<tema>/` → variante em `ATLAS_VARIANTS` → `npm run gen:atlas` → `pack.atlas={key,png,json}` (ver `asset-registry.md`).
+Pack sem `atlas` ⇒ reusa `entities`+`entityTint`. Execução SDD por subagentes (2 tasks + review por task + review
+final). Suíte verde (`check` limpo, **742 testes**, det **67**). Playwright: regressão classic carrega `entities.png`;
+**prova throwaway** (volcano apontando `entities.demo` gerado on-the-fly) carrega `entities.demo.png` em vez do
+default ⇒ roteamento por pack ativo provado ponta-a-ponta, depois revertido. **Backlog:** flakiness de timeout dos
+testes pesados `atlas.test`/`gen-ui.test` sob workers paralelos (memoizar `renderAtlas`/`renderUi` por arquivo);
+UI chrome/parallax/medalhas por-tema seguem compartilhados (mesmo padrão de extensão se desejado).
