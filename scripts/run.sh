@@ -2,10 +2,14 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 PID_FILE=".devserver.pid"
+PORT="${PORT:-8080}"
 if [[ -f "$PID_FILE" ]] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
-  echo "Dev server já rodando (PID $(cat "$PID_FILE"))."
+  echo "Aplicação já rodando (PID $(cat "$PID_FILE")) na porta $PORT."
   exit 0
 fi
-npm run dev >/tmp/jurassicrun-dev.log 2>&1 &
+echo "Compilando (npm run build)..."
+npm run build
+echo "Subindo a aplicação na porta $PORT..."
+npx vite preview --port "$PORT" --strictPort >/tmp/jurassicrun-dev.log 2>&1 &
 echo $! > "$PID_FILE"
-echo "Dev server iniciado (PID $(cat "$PID_FILE")). Log: /tmp/jurassicrun-dev.log"
+echo "Aplicação iniciada (PID $(cat "$PID_FILE")) em http://localhost:$PORT. Log: /tmp/jurassicrun-dev.log"
