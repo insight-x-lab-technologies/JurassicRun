@@ -47,4 +47,9 @@ describe('theme', () => {
     applyPackTheme(packForId('classic'));
     expect(document.documentElement.style.getPropertyValue('--ui-statchip')).toContain('ui/statchip.png');
   });
+
+  it('applyPackTheme seta --ui-navbar', () => {
+    applyPackTheme(packForId('classic'));
+    expect(document.documentElement.style.getPropertyValue('--ui-navbar')).toContain('ui/nav.bar.png');
+  });
 });

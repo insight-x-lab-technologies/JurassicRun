@@ -9,9 +9,15 @@ import { ExpansionsScreen } from './screens/ExpansionsScreen';
 import { TrophiesScreen } from './screens/TrophiesScreen';
 import { LeaderboardScreen } from './screens/LeaderboardScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
+import { NavBar } from './components/NavBar';
 import { profileService } from '@services/profile';
 import { settingsService } from '@services/settings';
 import type { VNode } from 'preact';
+
+/** Sub-telas DOM que exibem a barra de navegação inferior (não home/play/daily/weekly/onboarding). */
+const NAV_SCREENS: ReadonlySet<Screen> = new Set<Screen>([
+  'nest', 'shop', 'expansions', 'leaderboard', 'settings', 'trophies', 'profile',
+]);
 
 function screenFor(screen: Screen): VNode {
   switch (screen) {
@@ -50,5 +56,11 @@ export function App(): VNode {
   if (profileService.activeProfile.value === null) {
     return <OnboardingScreen />;
   }
-  return screenFor(route.value);
+  const screen = route.value;
+  return (
+    <>
+      {screenFor(screen)}
+      {NAV_SCREENS.has(screen) && <NavBar current={screen} />}
+    </>
+  );
 }

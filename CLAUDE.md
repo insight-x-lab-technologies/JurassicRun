@@ -1496,3 +1496,25 @@ emoldurados, painel de dino ativo, portraits grandes), **W3** (Game Over/ready/p
 **DOM** — hoje é texto no canvas Phaser 320×180), **W4** (HUD limpo, personagem, transições).
 **Backlog persistente:** flakiness de timeout dos testes pesados `atlas.test`/`gen-ui.test` sob
 workers paralelos (memoizar `renderAtlas`/`renderUi` — cada vez mais relevante p/ CI).
+
+**W2 (chrome) CONCLUÍDA** (`src/core/` intocado, det 67; spec/plano `.../2026-07-20-ui-w2-chrome*`).
+`gen-ui.mjs` extraiu `nav.bar` de `ui.remaining` (região `y0.55/h0.14`; a Rodada C tinha pulado) +
+regenerou os 10 portraits de dino maiores (`maxDim 160→256`). Novo **componente `NavBar`**
+(`src/app/components/NavBar.tsx`): 7 destinos (daily/weekly/nest/shop/expansions/leaderboard/settings)
+com ícone (`icon.<rota>`) + rótulo (`nav.<rota>`, sem i18n novo), emoldurado por `--ui-navbar`
+(nav.bar 9-slice); `App.tsx` renderiza `<NavBar current>` **só nas sub-telas DOM** (`NAV_SCREENS` =
+nest/shop/expansions/leaderboard/settings/trophies/profile — **NÃO** home/play/onboarding nem
+daily/weekly que são `<PlayScreen>` = jogo). CSS: **títulos dourados** (`.screen__title` gradiente
+`#f2d878→#a07d1e` + `background-clip:text`), **cards emoldurados** (`.dino-card`/`.expansion-card`/
+`.trophy-card` = painel `--ui-panel` 9-slice, o painel enfim no seu propósito real após o W1 tirá-lo
+da tela toda) + **portrait grande** (`img.*-card__avatar` `width:100% height:8rem object-fit:cover`),
+grade `minmax(11rem)`. `.navbar__label` some `<640px` (mobile só-ícones, `overflow-x:auto`); `.screen`
+ganhou `padding-bottom` p/ não ficar sob a barra fixa. **Task 2 finalizada INLINE** (subagente caiu por
+limite de sessão; precedente 4.3/4.7/etc). Suíte verde (`check` limpo, **746 testes** [+ theme
+--ui-navbar + navbar.test], det **67**). Playwright (build prod): **1366×768** Ninho com barra de nav
+(Nest destacado dourado) + título dourado + cards emoldurados + portraits grandes (Scout/Lodestone/
+Goldbeak/…), sem scroll H; **390×844** navbar compacta só-ícones sem scroll H. **Resta W3** (Game Over/
+ready/pause como overlay **DOM** — hoje texto no canvas Phaser 320×180), **W4** (HUD limpo, personagem,
+transições). **Adiado p/ W2b** (se desejado): painel de "dino ativo" à esquerda no Ninho + stat-chips no
+topo das sub-telas + emblema-flourish acima dos títulos (o conceito tem; W2 entregou o chrome de maior
+impacto). **Backlog:** botões "Buy · N coins" quebram em 3 linhas em card estreito (tuning).
