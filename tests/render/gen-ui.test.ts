@@ -85,4 +85,12 @@ describe('processador de assets de UI (gen-ui)', () => {
     },
     20000,
   );
+
+  it(
+    'gera a barra de navegação (nav.bar)',
+    () => {
+      expect(renderUi().map((o) => o.out)).toContain('nav.bar');
+    },
+    20000,
+  );
 });

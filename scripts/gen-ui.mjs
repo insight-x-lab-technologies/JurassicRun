@@ -26,6 +26,7 @@ export const UI_SOURCES = [
   { out: 'remaining', file: 'ui/ui.remaining.png', maxDim: 512, regions: [
     { name: 'emblem', x: 0.0, y: 0.05, w: 1.0, h: 0.28 },
     { name: 'statchip', x: 0.12, y: 0.35, w: 0.76, h: 0.16 },
+    { name: 'nav.bar', x: 0.03, y: 0.55, w: 0.94, h: 0.14 },
     { name: 'medal.gold', x: 0.03, y: 0.71, w: 0.31, h: 0.27 },
     { name: 'medal.silver', x: 0.34, y: 0.71, w: 0.31, h: 0.27 },
     { name: 'medal.bronze', x: 0.65, y: 0.71, w: 0.31, h: 0.27 } ] },
@@ -38,7 +39,7 @@ export const UI_SOURCES = [
     { name: 'parallax.mid', x: 0, y: 0.34, w: 1, h: 0.34 },
     { name: 'parallax.near', x: 0, y: 0.66, w: 1, h: 0.34 } ] },
   ...['starter', 'lodestone', 'goldbeak', 'midas', 'nine-lives', 'aegis', 'prospector', 'harvester', 'phoenix', 'guardian'].map((id) => ({
-    out: `dino.${id}`, file: `dinos/dino.${id}.flap.png`, maxDim: 160,
+    out: `dino.${id}`, file: `dinos/dino.${id}.flap.png`, maxDim: 256,
     regions: [{ name: `dino.${id}`, x: 0, y: 0, w: 0.1667, h: 1 }],
   })),
 ];
