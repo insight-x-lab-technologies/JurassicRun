@@ -145,7 +145,8 @@ export class GameScene extends Phaser.Scene {
     this.hudText = this.add
       .text(HUD_TEXT_X, HUD_TEXT_Y, '', { fontSize: HUD_FONT_SIZE, color: HUD_TEXT_COLOR })
       .setScrollFactor(0)
-      .setDepth(HUD_DEPTH);
+      .setDepth(HUD_DEPTH)
+      .setVisible(!this.domOverlays); // W4: o HUD vive em DOM; esconde o in-canvas
     this.refreshHud(0);
 
     // Prompt de início (2.5): visível só no estado `ready`.
@@ -270,6 +271,7 @@ export class GameScene extends Phaser.Scene {
 
   /** Reconstrói o texto do HUD (só no refresh throttled ⇒ fora do hot path por frame). */
   private refreshHud(fps: number): void {
+    if (this.domOverlays) return; // W4: HUD em DOM
     const world = this.match.world;
     const v = formatHudValues({
       distance: world.distance,

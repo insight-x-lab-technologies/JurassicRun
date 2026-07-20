@@ -116,9 +116,18 @@
     "back": "Zurück"
   },
   "expansion": {
-    "classic": { "name": "Klassisch", "desc": "Der ursprüngliche Look." },
-    "volcano": { "name": "Vulkan", "desc": "Ein feuriges Vulkan-Thema." },
-    "glacier": { "name": "Gletscher", "desc": "Ein eisiges Gletscher-Thema." }
+    "classic": {
+      "name": "Klassisch",
+      "desc": "Der ursprüngliche Look."
+    },
+    "volcano": {
+      "name": "Vulkan",
+      "desc": "Ein feuriges Vulkan-Thema."
+    },
+    "glacier": {
+      "name": "Gletscher",
+      "desc": "Ein eisiges Gletscher-Thema."
+    }
   },
   "trophies": {
     "title": "Trophäen",
@@ -126,36 +135,101 @@
     "empty": "Spiele, um deine erste Trophäe zu gewinnen!"
   },
   "trophy": {
-    "firstFlight": { "name": "Erster Flug", "desc": "Spiele dein erstes Spiel." },
-    "centurion": { "name": "Zenturio", "desc": "Erreiche 1000 Distanz in einem Lauf." },
-    "forager": { "name": "Sammler", "desc": "Sammle insgesamt 50 Nahrung." },
-    "daredevil": { "name": "Draufgänger", "desc": "Erziele 10 Beinahe-Zusammenstöße in einem Lauf." },
-    "marathoner": { "name": "Marathonläufer", "desc": "Lege insgesamt 10.000 Distanz zurück." },
-    "highRoller": { "name": "Großer Spieler", "desc": "Erziele 5000 Punkte in einem Lauf." },
-    "persistent": { "name": "Beharrlich", "desc": "Spiele 25 Spiele." },
-    "dailyPodium": { "name": "Tages-Podium", "desc": "Erreiche die Top 3 in der Täglichen Herausforderung." }
+    "firstFlight": {
+      "name": "Erster Flug",
+      "desc": "Spiele dein erstes Spiel."
+    },
+    "centurion": {
+      "name": "Zenturio",
+      "desc": "Erreiche 1000 Distanz in einem Lauf."
+    },
+    "forager": {
+      "name": "Sammler",
+      "desc": "Sammle insgesamt 50 Nahrung."
+    },
+    "daredevil": {
+      "name": "Draufgänger",
+      "desc": "Erziele 10 Beinahe-Zusammenstöße in einem Lauf."
+    },
+    "marathoner": {
+      "name": "Marathonläufer",
+      "desc": "Lege insgesamt 10.000 Distanz zurück."
+    },
+    "highRoller": {
+      "name": "Großer Spieler",
+      "desc": "Erziele 5000 Punkte in einem Lauf."
+    },
+    "persistent": {
+      "name": "Beharrlich",
+      "desc": "Spiele 25 Spiele."
+    },
+    "dailyPodium": {
+      "name": "Tages-Podium",
+      "desc": "Erreiche die Top 3 in der Täglichen Herausforderung."
+    }
   },
   "dino": {
-    "starter": { "name": "Späher" },
-    "lodestone": { "name": "Magnetstein" },
-    "goldbeak": { "name": "Goldschnabel" },
-    "midas": { "name": "Midas" },
-    "nine-lives": { "name": "Neun Leben" },
-    "aegis": { "name": "Ägide" },
-    "prospector": { "name": "Schürfer" },
-    "harvester": { "name": "Erntehelfer" },
-    "guardian": { "name": "Wächter" },
-    "phoenix": { "name": "Phönix" }
+    "starter": {
+      "name": "Späher"
+    },
+    "lodestone": {
+      "name": "Magnetstein"
+    },
+    "goldbeak": {
+      "name": "Goldschnabel"
+    },
+    "midas": {
+      "name": "Midas"
+    },
+    "nine-lives": {
+      "name": "Neun Leben"
+    },
+    "aegis": {
+      "name": "Ägide"
+    },
+    "prospector": {
+      "name": "Schürfer"
+    },
+    "harvester": {
+      "name": "Erntehelfer"
+    },
+    "guardian": {
+      "name": "Wächter"
+    },
+    "phoenix": {
+      "name": "Phönix"
+    }
   },
   "trait": {
-    "none": { "desc": "Keine besondere Fähigkeit." },
-    "magnet": { "desc": "Dauerhafter Münzmagnet." },
-    "doubleFood": { "desc": "Futter zählt doppelt." },
-    "tripleFood": { "desc": "Futter zählt dreifach." },
-    "startLife": { "desc": "Startet mit einem Extraleben." },
-    "headStart": { "desc": "Startet mit einem Schutzschild." }
+    "none": {
+      "desc": "Keine besondere Fähigkeit."
+    },
+    "magnet": {
+      "desc": "Dauerhafter Münzmagnet."
+    },
+    "doubleFood": {
+      "desc": "Futter zählt doppelt."
+    },
+    "tripleFood": {
+      "desc": "Futter zählt dreifach."
+    },
+    "startLife": {
+      "desc": "Startet mit einem Extraleben."
+    },
+    "headStart": {
+      "desc": "Startet mit einem Schutzschild."
+    }
   },
-  "settings": { "title": "Einstellungen", "volume": "Lautstärke", "menuMusic": "Menümusik", "gameplayMusic": "Spielmusik", "language": "Sprache", "on": "An", "off": "Aus", "back": "Zurück" },
+  "settings": {
+    "title": "Einstellungen",
+    "volume": "Lautstärke",
+    "menuMusic": "Menümusik",
+    "gameplayMusic": "Spielmusik",
+    "language": "Sprache",
+    "on": "An",
+    "off": "Aus",
+    "back": "Zurück"
+  },
   "leaderboard": {
     "title": "Bestenliste",
     "empty": "Noch keine Rekorde — spiele, um einen aufzustellen!",
@@ -165,8 +239,15 @@
     "nearMisses": "Beinahe-Kollisionen",
     "player": "Spieler",
     "verified": "Verifiziert",
-    "source": { "global": "Weltweit", "local": "Lokal" },
-    "tab": { "endless": "Endlos", "daily": "Täglich", "weekly": "Wöchentlich" }
+    "source": {
+      "global": "Weltweit",
+      "local": "Lokal"
+    },
+    "tab": {
+      "endless": "Endlos",
+      "daily": "Täglich",
+      "weekly": "Wöchentlich"
+    }
   },
   "online": {
     "title": "Online",
@@ -193,5 +274,9 @@
   },
   "rotateHint": {
     "message": "Drehe dein Gerät ins Querformat für das beste Erlebnis."
+  },
+  "pause": {
+    "title": "Pausiert",
+    "resume": "Zum Fortsetzen tippen"
   }
 }

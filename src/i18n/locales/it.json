@@ -116,9 +116,18 @@
     "back": "Indietro"
   },
   "expansion": {
-    "classic": { "name": "Classica", "desc": "L'aspetto originale." },
-    "volcano": { "name": "Vulcano", "desc": "Un tema vulcanico infuocato." },
-    "glacier": { "name": "Ghiacciaio", "desc": "Un tema glaciale gelido." }
+    "classic": {
+      "name": "Classica",
+      "desc": "L'aspetto originale."
+    },
+    "volcano": {
+      "name": "Vulcano",
+      "desc": "Un tema vulcanico infuocato."
+    },
+    "glacier": {
+      "name": "Ghiacciaio",
+      "desc": "Un tema glaciale gelido."
+    }
   },
   "trophies": {
     "title": "Trofei",
@@ -126,36 +135,101 @@
     "empty": "Gioca per vincere il tuo primo trofeo!"
   },
   "trophy": {
-    "firstFlight": { "name": "Primo Volo", "desc": "Gioca la tua prima partita." },
-    "centurion": { "name": "Centurione", "desc": "Raggiungi 1000 di distanza in una partita." },
-    "forager": { "name": "Raccoglitore", "desc": "Raccogli 50 di cibo in totale." },
-    "daredevil": { "name": "Temerario", "desc": "Ottieni 10 quasi-collisioni in una partita." },
-    "marathoner": { "name": "Maratoneta", "desc": "Percorri 10.000 di distanza totale." },
-    "highRoller": { "name": "Grande Scommettitore", "desc": "Fai 5000 punti in una partita." },
-    "persistent": { "name": "Persistente", "desc": "Gioca 25 partite." },
-    "dailyPodium": { "name": "Podio Giornaliero", "desc": "Finisci tra i primi 3 nella Sfida Giornaliera." }
+    "firstFlight": {
+      "name": "Primo Volo",
+      "desc": "Gioca la tua prima partita."
+    },
+    "centurion": {
+      "name": "Centurione",
+      "desc": "Raggiungi 1000 di distanza in una partita."
+    },
+    "forager": {
+      "name": "Raccoglitore",
+      "desc": "Raccogli 50 di cibo in totale."
+    },
+    "daredevil": {
+      "name": "Temerario",
+      "desc": "Ottieni 10 quasi-collisioni in una partita."
+    },
+    "marathoner": {
+      "name": "Maratoneta",
+      "desc": "Percorri 10.000 di distanza totale."
+    },
+    "highRoller": {
+      "name": "Grande Scommettitore",
+      "desc": "Fai 5000 punti in una partita."
+    },
+    "persistent": {
+      "name": "Persistente",
+      "desc": "Gioca 25 partite."
+    },
+    "dailyPodium": {
+      "name": "Podio Giornaliero",
+      "desc": "Finisci tra i primi 3 nella Sfida Giornaliera."
+    }
   },
   "dino": {
-    "starter": { "name": "Esploratore" },
-    "lodestone": { "name": "Magnetite" },
-    "goldbeak": { "name": "Beccodoro" },
-    "midas": { "name": "Mida" },
-    "nine-lives": { "name": "Nove Vite" },
-    "aegis": { "name": "Egida" },
-    "prospector": { "name": "Cercatore" },
-    "harvester": { "name": "Mietitore" },
-    "guardian": { "name": "Guardiano" },
-    "phoenix": { "name": "Fenice" }
+    "starter": {
+      "name": "Esploratore"
+    },
+    "lodestone": {
+      "name": "Magnetite"
+    },
+    "goldbeak": {
+      "name": "Beccodoro"
+    },
+    "midas": {
+      "name": "Mida"
+    },
+    "nine-lives": {
+      "name": "Nove Vite"
+    },
+    "aegis": {
+      "name": "Egida"
+    },
+    "prospector": {
+      "name": "Cercatore"
+    },
+    "harvester": {
+      "name": "Mietitore"
+    },
+    "guardian": {
+      "name": "Guardiano"
+    },
+    "phoenix": {
+      "name": "Fenice"
+    }
   },
   "trait": {
-    "none": { "desc": "Nessun tratto speciale." },
-    "magnet": { "desc": "Calamita per monete permanente." },
-    "doubleFood": { "desc": "Il cibo vale il doppio." },
-    "tripleFood": { "desc": "Il cibo vale il triplo." },
-    "startLife": { "desc": "Inizia con una vita extra." },
-    "headStart": { "desc": "Inizia con uno scudo protettivo." }
+    "none": {
+      "desc": "Nessun tratto speciale."
+    },
+    "magnet": {
+      "desc": "Calamita per monete permanente."
+    },
+    "doubleFood": {
+      "desc": "Il cibo vale il doppio."
+    },
+    "tripleFood": {
+      "desc": "Il cibo vale il triplo."
+    },
+    "startLife": {
+      "desc": "Inizia con una vita extra."
+    },
+    "headStart": {
+      "desc": "Inizia con uno scudo protettivo."
+    }
   },
-  "settings": { "title": "Impostazioni", "volume": "Volume", "menuMusic": "Musica del menu", "gameplayMusic": "Musica di gioco", "language": "Lingua", "on": "Sì", "off": "No", "back": "Indietro" },
+  "settings": {
+    "title": "Impostazioni",
+    "volume": "Volume",
+    "menuMusic": "Musica del menu",
+    "gameplayMusic": "Musica di gioco",
+    "language": "Lingua",
+    "on": "Sì",
+    "off": "No",
+    "back": "Indietro"
+  },
   "leaderboard": {
     "title": "Classifica",
     "empty": "Nessun record ancora — gioca per stabilirne uno!",
@@ -165,8 +239,15 @@
     "nearMisses": "Quasi collisioni",
     "player": "Giocatore",
     "verified": "Verificato",
-    "source": { "global": "Globale", "local": "Locale" },
-    "tab": { "endless": "Infinito", "daily": "Giornaliera", "weekly": "Settimanale" }
+    "source": {
+      "global": "Globale",
+      "local": "Locale"
+    },
+    "tab": {
+      "endless": "Infinito",
+      "daily": "Giornaliera",
+      "weekly": "Settimanale"
+    }
   },
   "online": {
     "title": "Online",
@@ -193,5 +274,9 @@
   },
   "rotateHint": {
     "message": "Ruota il dispositivo in orizzontale per un'esperienza migliore."
+  },
+  "pause": {
+    "title": "In pausa",
+    "resume": "Tocca per riprendere"
   }
 }
