@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -7,6 +7,13 @@ import { UI_SOURCES, renderUi } from '../../scripts/gen-ui.mjs';
 const root = fileURLToPath(new URL('../..', import.meta.url));
 
 describe('processador de assets de UI (gen-ui)', () => {
+  // Aquece o decode memoizado das artes-fonte fora dos testes (mesmo padrão de atlas.test):
+  // a primeira chamada paga o decode de todas as fontes e estourava o timeout de quem
+  // calhasse de rodar primeiro.
+  beforeAll(() => {
+    renderUi();
+  }, 120000);
+
   it(
     'renderUi produz um PNG válido por fonte (uma célula por asset, achatando grids)',
     () => {

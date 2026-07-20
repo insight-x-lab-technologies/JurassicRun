@@ -27,17 +27,21 @@ export const PARALLAX_LAYERS: readonly ParallaxLayer[] = [
   {
     id: 'bg.layer.far',
     scrollFactor: 0.2,
-    visual: { kind: 'sprite', texture: 'parallax.far', baseFromBottom: 64, dispHeight: 52 },
+    // W5+: dispHeight = altura NATURAL da textura em unidades de mundo (px ÷ densidade
+    // 2172/720). Valor menor fazia a TileSprite repetir na vertical e o topo transparente da
+    // repetição virava um corte reto no céu; maior cortava a arte. baseFromBottom 0: a tira
+    // já vem estendida até o chão pelo gen-ui (saia opaca), então a base nunca "flutua".
+    visual: { kind: 'sprite', texture: 'parallax.far', baseFromBottom: 0, dispHeight: 116 },
   },
   {
     id: 'bg.layer.mid',
     scrollFactor: 0.4,
-    visual: { kind: 'sprite', texture: 'parallax.mid', baseFromBottom: 34, dispHeight: 44 },
+    visual: { kind: 'sprite', texture: 'parallax.mid', baseFromBottom: 0, dispHeight: 78 },
   },
   {
     id: 'bg.layer.near',
     scrollFactor: 0.7,
-    visual: { kind: 'sprite', texture: 'parallax.near', baseFromBottom: 0, dispHeight: 56 },
+    visual: { kind: 'sprite', texture: 'parallax.near', baseFromBottom: 0, dispHeight: 81.5 },
   },
 ];
 
