@@ -11,8 +11,8 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const ART = path.join(ROOT, 'public/art/final');
 
 export const ATLAS_KEY = 'entities';
-const CELL_MAX = 128; // maior dimensão de um frame após downscale
-const ATLAS_WIDTH = 512; // largura fixa do atlas (shelf packing)
+const CELL_MAX = 256; // maior dimensão de um frame após downscale
+const ATLAS_WIDTH = 1024; // largura fixa do atlas (shelf packing)
 const PAD = 2; // espaçamento entre frames (anti-bleeding)
 
 export const ATLAS_SOURCES = [
@@ -119,11 +119,33 @@ function targetSize(sw, sh) {
   return { dw: Math.max(1, Math.round(sw * s)), dh: Math.max(1, Math.round(sh * s)) };
 }
 
+/**
+ * Decode memoizado de uma arte-fonte, por caminho absoluto.
+ *
+ * Decodificar os PNGs de origem (dezenas de MB) domina o custo de renderAtlas/renderUi, e as
+ * fontes são entradas de build IMUTÁVEIS — decodificar a mesma duas vezes no mesmo processo é
+ * desperdício puro. O cache fica aqui, e NÃO no nível de renderAtlas: os testes de determinismo
+ * comparam duas renderizações completas, então o empacotamento e a codificação precisam mesmo
+ * rodar de novo — memoizar o resultado final tornaria essas asserções vazias.
+ *
+ * Consumidores tratam a imagem como somente-leitura (contentBounds/cropResize só leem).
+ */
+const artCache = new Map();
+export function loadArt(file) {
+  const abs = path.join(ART, file);
+  let img = artCache.get(abs);
+  if (img === undefined) {
+    img = decodePng(readFileSync(abs));
+    artCache.set(abs, img);
+  }
+  return img;
+}
+
 export function renderAtlas(sources = ATLAS_SOURCES) {
   // 1. Monta os frames recortados/redimensionados: {name, dw, dh, pixels}.
   const frames = [];
   for (const src of sources) {
-    const img = decodePng(readFileSync(path.join(ART, src.file)));
+    const img = loadArt(src.file);
     if (src.frames === 1) {
       const b = contentBounds(img, 0, 0, img.w, img.h);
       const sw = b.maxX - b.minX, sh = b.maxY - b.minY, { dw, dh } = targetSize(sw, sh);

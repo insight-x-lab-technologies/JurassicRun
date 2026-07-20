@@ -4,348 +4,348 @@
       "frame": {
         "x": 2,
         "y": 2,
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       }
     },
     "dino.default.1": {
       "frame": {
-        "x": 124,
+        "x": 243,
         "y": 2,
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       }
     },
     "dino.default.2": {
       "frame": {
-        "x": 246,
+        "x": 484,
         "y": 2,
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       }
     },
     "dino.default.3": {
       "frame": {
-        "x": 368,
+        "x": 725,
         "y": 2,
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       }
     },
     "dino.default.4": {
       "frame": {
         "x": 2,
-        "y": 132,
-        "w": 120,
-        "h": 128
+        "y": 260,
+        "w": 239,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       }
     },
     "dino.default.5": {
       "frame": {
-        "x": 124,
-        "y": 132,
-        "w": 120,
-        "h": 128
+        "x": 243,
+        "y": 260,
+        "w": 239,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       }
     },
     "obstacle.tree": {
       "frame": {
-        "x": 246,
-        "y": 132,
-        "w": 42,
-        "h": 128
+        "x": 484,
+        "y": 260,
+        "w": 83,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 42,
-        "h": 128
+        "w": 83,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 42,
-        "h": 128
+        "w": 83,
+        "h": 256
       }
     },
     "obstacle.vine": {
       "frame": {
-        "x": 290,
-        "y": 132,
-        "w": 11,
-        "h": 128
+        "x": 569,
+        "y": 260,
+        "w": 21,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 11,
-        "h": 128
+        "w": 21,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 11,
-        "h": 128
+        "w": 21,
+        "h": 256
       }
     },
     "obstacle.boulder": {
       "frame": {
-        "x": 303,
-        "y": 132,
-        "w": 128,
-        "h": 127
+        "x": 592,
+        "y": 260,
+        "w": 256,
+        "h": 254
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 128,
-        "h": 127
+        "w": 256,
+        "h": 254
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 128,
-        "h": 127
+        "w": 256,
+        "h": 254
       }
     },
     "obstacle.stalactite": {
       "frame": {
         "x": 2,
-        "y": 262,
-        "w": 98,
-        "h": 128
+        "y": 518,
+        "w": 196,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 98,
-        "h": 128
+        "w": 196,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 98,
-        "h": 128
+        "w": 196,
+        "h": 256
       }
     },
     "bird.coin": {
       "frame": {
-        "x": 102,
-        "y": 262,
-        "w": 128,
-        "h": 79
+        "x": 200,
+        "y": 518,
+        "w": 256,
+        "h": 157
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 128,
-        "h": 79
+        "w": 256,
+        "h": 157
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 128,
-        "h": 79
+        "w": 256,
+        "h": 157
       }
     },
     "powerup.shield": {
       "frame": {
-        "x": 232,
-        "y": 262,
-        "w": 127,
-        "h": 128
+        "x": 458,
+        "y": 518,
+        "w": 255,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 127,
-        "h": 128
+        "w": 255,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 127,
-        "h": 128
+        "w": 255,
+        "h": 256
       }
     },
     "powerup.extraLife": {
       "frame": {
-        "x": 361,
-        "y": 262,
-        "w": 128,
-        "h": 121
+        "x": 715,
+        "y": 518,
+        "w": 256,
+        "h": 243
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 128,
-        "h": 121
+        "w": 256,
+        "h": 243
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 128,
-        "h": 121
+        "w": 256,
+        "h": 243
       }
     },
     "powerup.magnet": {
       "frame": {
         "x": 2,
-        "y": 392,
-        "w": 122,
-        "h": 128
+        "y": 776,
+        "w": 243,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 122,
-        "h": 128
+        "w": 243,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 122,
-        "h": 128
+        "w": 243,
+        "h": 256
       }
     },
     "powerup.doubleCoin": {
       "frame": {
-        "x": 126,
-        "y": 392,
-        "w": 128,
-        "h": 113
+        "x": 247,
+        "y": 776,
+        "w": 256,
+        "h": 226
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 128,
-        "h": 113
+        "w": 256,
+        "h": 226
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 128,
-        "h": 113
+        "w": 256,
+        "h": 226
       }
     },
     "powerup.slowMo": {
       "frame": {
-        "x": 256,
-        "y": 392,
-        "w": 121,
-        "h": 128
+        "x": 505,
+        "y": 776,
+        "w": 242,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 121,
-        "h": 128
+        "w": 242,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 121,
-        "h": 128
+        "w": 242,
+        "h": 256
       }
     },
     "dino.default": {
       "frame": {
         "x": 2,
         "y": 2,
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 120,
-        "h": 128
+        "w": 239,
+        "h": 256
       }
     }
   },
   "meta": {
     "image": "entities.png",
     "size": {
-      "w": 512,
-      "h": 522
+      "w": 1024,
+      "h": 1034
     },
     "scale": "1"
   }

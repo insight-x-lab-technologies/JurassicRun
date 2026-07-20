@@ -41,6 +41,7 @@ import {
   GAMEOVER_BUTTON_DISABLED_COLOR,
   DINO_FLAP_FPS,
 } from './constants';
+import { toRenderPx, parallaxTileScale } from './resolution';
 
 /** Renderiza o WorldState lido do core via MatchController. Não altera a simulação (REGRA 1). */
 export class GameScene extends Phaser.Scene {
@@ -72,10 +73,19 @@ export class GameScene extends Phaser.Scene {
   private readonly sizeCache = new Map<string, { w: number; h: number }>();
   private atlasKey = 'entities';
 
-  constructor(match: MatchController, pause: PauseController) {
+  /** Px de render por unidade de mundo (W5). Fixo durante a vida da cena; ver resolution.ts. */
+  private readonly renderScale: number;
+
+  constructor(match: MatchController, pause: PauseController, renderScale: number) {
     super('GameScene');
     this.match = match;
     this.pause = pause;
+    this.renderScale = renderScale;
+  }
+
+  /** Atalho: unidade de mundo → px de render. */
+  private px(worldValue: number): number {
+    return toRenderPx(worldValue, this.renderScale);
   }
 
   preload(): void {
@@ -99,23 +109,29 @@ export class GameScene extends Phaser.Scene {
       const v = layer.visual;
       const y = v.kind === 'sprite' ? VIEW_HEIGHT - v.baseFromBottom - v.dispHeight : 0;
       const h = v.kind === 'sprite' ? v.dispHeight : VIEW_HEIGHT;
+      // W5: o tile vive em px de render; tileScale compensa a densidade da textura de origem
+      // (ver resolution.ts) ⇒ mesmo enquadramento de antes, com a nitidez que a arte permitir.
       const tile = this.add
-        .tileSprite(0, y, VIEW_WIDTH, h, key)
+        .tileSprite(0, this.px(y), this.px(VIEW_WIDTH), this.px(h), key)
         .setOrigin(0, 0)
         .setScrollFactor(0)
         .setDepth(-(PARALLAX_LAYERS.length - index)); // far mais negativo, atrás de tudo
+      const scale = parallaxTileScale(this.textures.get(key).getSourceImage().width, this.renderScale);
+      tile.setTileScale(scale, scale);
       return tile;
     });
 
     // Cenário fixo (scrollFactor 0): faixas de teto e chão. Cores vêm da paleta de tempo do dia
     // (3.3), aplicada aqui e no restart via applyDayNight — desenho só na transição (REGRA 3).
-    this.bandsGfx = this.add.graphics().setScrollFactor(0);
+    // W5: os Graphics desenham em unidades de mundo e a ESCALA do objeto converte para px de
+    // render ⇒ o código de desenho (applyDayNight, drawPrimitive) fica intocado.
+    this.bandsGfx = this.add.graphics().setScrollFactor(0).setScale(this.renderScale);
 
     // Tempo do dia (3.3): paleta derivada da seed da partida. Céu + faixas + tint de parallax.
     this.applyDayNight(this.match.seedLabel);
 
     // Graphics do mundo (scrollFactor 1 ⇒ acompanha a câmera).
-    this.gfx = this.add.graphics();
+    this.gfx = this.add.graphics().setScale(this.renderScale);
 
     // Dino (8.1): Sprite animado (flap de 6 frames do atlas). frameFor resolve o alias
     // `dino.default` como textura inicial; a anim cicla dino.default.0..5.
@@ -134,7 +150,7 @@ export class GameScene extends Phaser.Scene {
     this.dinoSprite.play(animKey);
 
     // Overlay de pausa: retângulo semitransparente de tela cheia (scrollFactor 0, depth 1000).
-    this.pauseOverlay = this.add.graphics().setScrollFactor(0);
+    this.pauseOverlay = this.add.graphics().setScrollFactor(0).setScale(this.renderScale);
     this.pauseOverlay.fillStyle(PAUSE_OVERLAY_COLOR, PAUSE_OVERLAY_ALPHA);
     this.pauseOverlay.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
     this.pauseOverlay.setDepth(1000);
@@ -142,8 +158,14 @@ export class GameScene extends Phaser.Scene {
 
     // HUD (2.4): texto de leitura throttled. Depth abaixo do overlay de pausa.
     this.hudTicker = new HudTicker();
+    // Os textos in-canvas abaixo são o caminho LEGADO (W3/W4 moveram tudo para overlays DOM e
+    // os deixam invisíveis). Seguem escalados para continuarem corretos se forem reativados.
     this.hudText = this.add
-      .text(HUD_TEXT_X, HUD_TEXT_Y, '', { fontSize: HUD_FONT_SIZE, color: HUD_TEXT_COLOR })
+      .text(this.px(HUD_TEXT_X), this.px(HUD_TEXT_Y), '', {
+        fontSize: HUD_FONT_SIZE,
+        color: HUD_TEXT_COLOR,
+      })
+      .setScale(this.renderScale)
       .setScrollFactor(0)
       .setDepth(HUD_DEPTH)
       .setVisible(!this.domOverlays); // W4: o HUD vive em DOM; esconde o in-canvas
@@ -151,46 +173,54 @@ export class GameScene extends Phaser.Scene {
 
     // Prompt de início (2.5): visível só no estado `ready`.
     this.readyPrompt = this.add
-      .text(VIEW_WIDTH / 2, VIEW_HEIGHT / 2, i18n.t('match.tapToStart'), {
+      .text(this.px(VIEW_WIDTH / 2), this.px(VIEW_HEIGHT / 2), i18n.t('match.tapToStart'), {
         fontSize: READY_PROMPT_FONT_SIZE,
         color: READY_PROMPT_COLOR,
       })
+      .setScale(this.renderScale)
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(READY_PROMPT_DEPTH);
 
     // Game Over (2.6): overlay no estado `dead`. Criado 1×, escondido por default.
-    this.gameOverBg = this.add.graphics().setScrollFactor(0).setDepth(GAMEOVER_OVERLAY_DEPTH);
+    this.gameOverBg = this.add
+      .graphics()
+      .setScrollFactor(0)
+      .setScale(this.renderScale)
+      .setDepth(GAMEOVER_OVERLAY_DEPTH);
     this.gameOverBg.fillStyle(PAUSE_OVERLAY_COLOR, GAMEOVER_OVERLAY_ALPHA);
     this.gameOverBg.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
     this.gameOverBg.setVisible(false);
 
     this.gameOverTitle = this.add
-      .text(VIEW_WIDTH / 2, 36, i18n.t('gameover.title'), {
+      .text(this.px(VIEW_WIDTH / 2), this.px(36), i18n.t('gameover.title'), {
         fontSize: GAMEOVER_TITLE_FONT_SIZE,
         color: GAMEOVER_TEXT_COLOR,
       })
+      .setScale(this.renderScale)
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(GAMEOVER_CONTENT_DEPTH)
       .setVisible(false);
 
     this.gameOverStats = this.add
-      .text(VIEW_WIDTH / 2, 78, '', {
+      .text(this.px(VIEW_WIDTH / 2), this.px(78), '', {
         fontSize: GAMEOVER_STAT_FONT_SIZE,
         color: GAMEOVER_TEXT_COLOR,
         align: 'center',
       })
+      .setScale(this.renderScale)
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(GAMEOVER_CONTENT_DEPTH)
       .setVisible(false);
 
     this.gameOverRestart = this.add
-      .text(VIEW_WIDTH / 2 - 44, 130, i18n.t('gameover.restart'), {
+      .text(this.px(VIEW_WIDTH / 2 - 44), this.px(130), i18n.t('gameover.restart'), {
         fontSize: GAMEOVER_BUTTON_FONT_SIZE,
         color: GAMEOVER_BUTTON_COLOR,
       })
+      .setScale(this.renderScale)
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(GAMEOVER_CONTENT_DEPTH)
@@ -199,10 +229,11 @@ export class GameScene extends Phaser.Scene {
     this.gameOverRestart.on('pointerdown', () => this.match.restart());
 
     this.gameOverQuit = this.add
-      .text(VIEW_WIDTH / 2 + 44, 130, i18n.t('gameover.quit'), {
+      .text(this.px(VIEW_WIDTH / 2 + 44), this.px(130), i18n.t('gameover.quit'), {
         fontSize: GAMEOVER_BUTTON_FONT_SIZE,
         color: GAMEOVER_BUTTON_DISABLED_COLOR,
       })
+      .setScale(this.renderScale)
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(GAMEOVER_CONTENT_DEPTH)
@@ -235,11 +266,18 @@ export class GameScene extends Phaser.Scene {
     const world = match.world;
 
     // Câmera segue o dino interpolado; vertical não scrolla (o mundo cabe na altura).
-    this.cameras.main.scrollX = loop.renderX - DINO_SCREEN_X;
+    // W5: o scroll da CÂMERA é em px de render; o scroll de MUNDO (abaixo) é o que alimenta
+    // culling e parallax, que raciocinam em unidades de mundo.
+    const scrollX = loop.renderX - DINO_SCREEN_X;
+    this.cameras.main.scrollX = this.px(scrollX);
 
-    const scrollX = this.cameras.main.scrollX;
     for (let i = 0; i < this.parallaxTiles.length; i++) {
-      this.parallaxTiles[i]!.tilePositionX = parallaxTileOffset(scrollX, PARALLAX_LAYERS[i]!.scrollFactor);
+      const tile = this.parallaxTiles[i]!;
+      // tilePositionX é em px de textura; tileScale já converte textura→render, então o offset
+      // de mundo é dividido por ele para o deslocamento aparente casar com o scroll.
+      tile.tilePositionX =
+        parallaxTileOffset(scrollX, PARALLAX_LAYERS[i]!.scrollFactor) *
+        (this.renderScale / tile.tileScaleX);
     }
 
     const entityTint = this.appliedEntityTint;
@@ -252,10 +290,10 @@ export class GameScene extends Phaser.Scene {
     this.drawVisibleSprites(world.powerups, scrollX, entityTint);
     // Dino: sprite se o manifesto for sprite; senão primitivo (fallback de segurança).
     if (frameFor(DINO_TYPE_ID) !== null) {
-      this.dinoSprite.setVisible(true).setPosition(loop.renderX, loop.renderY);
+      this.dinoSprite.setVisible(true).setPosition(this.px(loop.renderX), this.px(loop.renderY));
       this.dinoSprite.setTint(entityTint);
       const ds = this.sizeFor(DINO_TYPE_ID, world.pterodactyl.hitbox);
-      this.dinoSprite.setDisplaySize(ds.w, ds.h);
+      this.dinoSprite.setDisplaySize(this.px(ds.w), this.px(ds.h));
     } else {
       this.dinoSprite.setVisible(false);
       this.drawPrimitive(g, DINO_TYPE_ID, world.pterodactyl.hitbox, loop.renderX, loop.renderY);
@@ -366,8 +404,8 @@ export class GameScene extends Phaser.Scene {
     img.setTexture(this.atlasKey, frame);
     img.setTint(entityTint);
     const s = this.sizeFor(typeId, e.hitbox);
-    img.setDisplaySize(s.w, s.h);
-    img.setPosition(x, e.transform.position.y);
+    img.setDisplaySize(this.px(s.w), this.px(s.h)); // W5: mundo → px de render
+    img.setPosition(this.px(x), this.px(e.transform.position.y));
   }
 
   private drawVisibleSprites(entities: readonly Entity[], scrollX: number, entityTint: number): void {

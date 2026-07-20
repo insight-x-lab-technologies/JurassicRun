@@ -2,13 +2,12 @@
 // Processa a arte-fonte Tier-1 (public/art/final) em assets de runtime pequenos (public/ui).
 // Reusa o decoder/cropResize de gen-atlas + encodePng. Zero dep. Rode `npm run gen:ui`.
 import { encodePng } from './gen-icons.mjs';
-import { decodePng, contentBounds, cropResize } from './gen-atlas.mjs';
-import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { contentBounds, cropResize, loadArt } from './gen-atlas.mjs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const ART = path.join(ROOT, 'public/art/final');
 
 // Rodada A + B. Rodada C estende esta lista (mais grid-slices de sheets entram aqui).
 export const UI_SOURCES = [
@@ -34,7 +33,7 @@ export const UI_SOURCES = [
     { name: 'cover.classic', x: 0.0, y: 0, w: 0.3333, h: 1, opaque: true },
     { name: 'cover.volcano', x: 0.3333, y: 0, w: 0.3333, h: 1, opaque: true },
     { name: 'cover.glacier', x: 0.6667, y: 0, w: 0.3333, h: 1, opaque: true } ] },
-  { out: 'parallax', file: 'parallax/bg.layers.png', maxDim: 720, regions: [
+  { out: 'parallax', file: 'parallax/bg.layers.png', maxDim: 2172, regions: [
     { name: 'parallax.far', x: 0, y: 0.0, w: 1, h: 0.34 },
     { name: 'parallax.mid', x: 0, y: 0.34, w: 1, h: 0.34 },
     { name: 'parallax.near', x: 0, y: 0.66, w: 1, h: 0.34 } ] },
@@ -56,7 +55,7 @@ function crop(img, x0, y0, x1, y1, maxDim, opaque) {
 export function renderUi() {
   const outs = [];
   for (const src of UI_SOURCES) {
-    const img = decodePng(readFileSync(path.join(ART, src.file)));
+    const img = loadArt(src.file);
     if (src.grid) {
       const { cols, rows, names } = src.grid;
       if (names.length !== cols * rows) throw new Error(`grid ${src.out}: names ${names.length} != ${cols * rows}`);

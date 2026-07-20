@@ -1,6 +1,18 @@
-/** Tamanho lógico do canvas (px). VIEW_HEIGHT = WORLD_HEIGHT default ⇒ 1 unidade de mundo = 1px. */
+/** Campo lógico do jogo em UNIDADES DE MUNDO. VIEW_HEIGHT = WORLD_HEIGHT default.
+ *  TRAVADO: determinismo + justiça de leaderboard (todo mundo joga o mesmo campo). */
 export const VIEW_WIDTH = 320;
 export const VIEW_HEIGHT = 180;
+
+/** Limites da escala de render (px de render por unidade de mundo, W5) — a escala em si é
+ *  ADAPTATIVA ao display (ver resolution.ts). Antes o canvas era 320×180 px REAIS e o Scale.FIT
+ *  esticava 4,27× a 1366×768: a causa raiz da baixa qualidade de imagem. O teto evita renderizar
+ *  4K/8K por fill-rate; 6 já cobre 1080p com folga (320×6 = 1920). */
+export const MIN_RENDER_SCALE = 1;
+export const MAX_RENDER_SCALE = 6;
+
+/** Largura, em unidades de mundo, coberta por uma tira de parallax — independente da resolução
+ *  em px da arte. Preserva o enquadramento do parallax ao mudar a densidade da textura. */
+export const PARALLAX_SOURCE_WORLD_WIDTH = 720;
 
 /** x de tela fixo do pterodáctilo (≈¼ da largura); a câmera scrolla em x para segui-lo. */
 export const DINO_SCREEN_X = 80;
