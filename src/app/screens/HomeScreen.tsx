@@ -85,8 +85,6 @@ export function HomeScreen(): VNode {
         </div>
       </header>
 
-      <img class="home__emblem" src={`${import.meta.env.BASE_URL}ui/emblem.png`} alt="" aria-hidden="true" />
-
       <main class="home__menu">
         <button class="btn home__primary" onClick={() => navigate('play')}>
           {i18n.t('home.newGame')}
