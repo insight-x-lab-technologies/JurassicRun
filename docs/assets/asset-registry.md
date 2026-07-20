@@ -112,3 +112,21 @@ usada no manifesto de assets do render.
 > locale JSON) e apontando o pack para eles, sem tocar consumidores. Sem código morto até lá.
 
 > Mantenha esta tabela em dia a cada novo asset (a skill `create-asset-spec` faz isso).
+
+
+## Atlas de entidades por tema (multi-atlas)
+
+Um pack/tema pode ter seu **próprio atlas de entidades** (arte de gameplay redesenhada), mantendo
+os MESMOS ids do manifesto (`dino.default` 6 frames, `obstacle.*`, `bird.coin`, `powerup.*`):
+
+1. Desenhe o set do tema com os mesmos ids em `public/art/final/<tema>/` (specs em `docs/assets/specs/`).
+2. `scripts/gen-atlas.mjs` → adicione uma variante a `ATLAS_VARIANTS`:
+   `{ key: '<tema>', sources: [ { id:'dino.default', file:'<tema>/dino.default.flap.png', frames:6 }, ... ] }`.
+3. `npm run gen:atlas` → gera `public/atlas/<tema>.{png,json}` (commite-os).
+4. Em `src/render/packs.ts`, o pack do tema recebe
+   `atlas: { key:'<tema>', png:'atlas/<tema>.png', json:'atlas/<tema>.json' }`.
+
+Pack **sem** `atlas` ⇒ reusa o atlas `entities` + `entityTint` (recolor). O `GameScene` resolve a
+key pelo pack ativo (`atlasRefFor`); a animação do dino é **por-atlas** (evita reuso da anim global
+do Phaser). Provado ponta-a-ponta (Playwright: volcano apontando um atlas próprio carrega-o em vez
+do default). Habilitado por `docs/superpowers/specs/2026-07-19-per-theme-entity-atlas-design.md`.
