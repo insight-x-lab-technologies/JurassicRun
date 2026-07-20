@@ -18,6 +18,7 @@ export function applyPackTheme(pack: LookPack, root: HTMLElement = document.docu
   root.style.setProperty('--ui-button', `url(${base}ui/button.primary.png)`);
   root.style.setProperty('--ui-button-ghost', `url(${base}ui/button.secondary.png)`);
   root.style.setProperty('--ui-statchip', `url(${base}ui/statchip.png)`);
+  root.style.setProperty('--ui-navbar', `url(${base}ui/nav.bar.png)`);
 }
 
 /** Liga a reatividade tema↔expansão ativa. Retorna cleanup do effect. */
