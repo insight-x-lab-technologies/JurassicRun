@@ -62,6 +62,8 @@ export class GameScene extends Phaser.Scene {
   private appliedPackId: string | null = null;
   private appliedEntityTint = 0xffffff;
   private wasDead = false;
+  /** W3: Game Over/ready vivem em overlays DOM; o in-canvas fica escondido. */
+  private readonly domOverlays = true;
   private dinoBoundsHitbox: Hitbox | null = null;
   private dinoBounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
   private spritePool: Phaser.GameObjects.Image[] = [];
@@ -225,7 +227,7 @@ export class GameScene extends Phaser.Scene {
 
     const match = this.match;
     match.advance(deltaMs / 1000); // no-op fora de `playing`
-    this.readyPrompt.setVisible(match.phase === 'ready');
+    this.readyPrompt.setVisible(!this.domOverlays && match.phase === 'ready');
     this.syncGameOver(); // reflete morte ocorrida neste frame
 
     const loop = match.loop;
@@ -291,6 +293,15 @@ export class GameScene extends Phaser.Scene {
 
   /** Mostra/esconde o overlay de Game Over; refaz as estatísticas 1× ao ENTRAR em `dead`. */
   private syncGameOver(): void {
+    // W3: o Game Over vive num overlay DOM (GameOverOverlay). O in-canvas fica escondido.
+    if (this.domOverlays) {
+      this.gameOverBg.setVisible(false);
+      this.gameOverTitle.setVisible(false);
+      this.gameOverStats.setVisible(false);
+      this.gameOverRestart.setVisible(false);
+      this.gameOverQuit.setVisible(false);
+      return;
+    }
     const dead = this.match.phase === 'dead';
     this.gameOverBg.setVisible(dead);
     this.gameOverTitle.setVisible(dead);
