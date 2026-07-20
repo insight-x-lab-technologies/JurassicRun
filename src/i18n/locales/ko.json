@@ -20,6 +20,8 @@
     "distance": "거리: {{value}}m",
     "food": "먹이: {{value}}",
     "nearMisses": "아슬아슬: {{value}}",
+    "newRecord": "신기록!",
+    "coinsEarned": "+{{value}} 코인",
     "restart": "다시 시작",
     "quit": "나가기"
   },

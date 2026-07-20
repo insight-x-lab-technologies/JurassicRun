@@ -20,6 +20,8 @@
     "distance": "Distance: {{value}}m",
     "food": "Food: {{value}}",
     "nearMisses": "Near misses: {{value}}",
+    "newRecord": "New record!",
+    "coinsEarned": "+{{value}} coins",
     "restart": "Restart",
     "quit": "Quit"
   },

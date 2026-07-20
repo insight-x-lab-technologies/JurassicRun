@@ -6,7 +6,14 @@ import { navigate, resetToHome } from '@app/router';
 import { profileService } from '@services/profile';
 
 // startGame é dinâmico e monta Phaser; interceptamos para o smoke não subir WebGL.
-vi.mock('@app/game/startGame', () => ({ startGame: vi.fn(() => () => {}) }));
+// Retorna o shape GameHandle {stop,snapshot,restart} (contrato do W3), não só `stop`.
+vi.mock('@app/game/startGame', () => ({
+  startGame: vi.fn(() => ({
+    stop: () => {},
+    snapshot: () => ({ phase: 'ready', paused: false, gameOver: null }),
+    restart: () => {},
+  })),
+}));
 
 describe('App — rotas de desafio', () => {
   beforeEach(() => {

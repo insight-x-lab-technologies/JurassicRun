@@ -20,6 +20,8 @@
     "distance": "距离：{{value}} 米",
     "food": "食物：{{value}}",
     "nearMisses": "险些相撞：{{value}}",
+    "newRecord": "新纪录！",
+    "coinsEarned": "+{{value}} 金币",
     "restart": "重新开始",
     "quit": "退出"
   },

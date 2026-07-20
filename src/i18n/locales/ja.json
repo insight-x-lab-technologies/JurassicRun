@@ -20,6 +20,8 @@
     "distance": "距離: {{value}}m",
     "food": "エサ: {{value}}",
     "nearMisses": "ニアミス: {{value}}",
+    "newRecord": "新記録！",
+    "coinsEarned": "+{{value}} コイン",
     "restart": "リスタート",
     "quit": "やめる"
   },

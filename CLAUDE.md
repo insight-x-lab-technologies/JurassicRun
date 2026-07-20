@@ -1518,3 +1518,25 @@ ready/pause como overlay **DOM** — hoje texto no canvas Phaser 320×180), **W4
 transições). **Adiado p/ W2b** (se desejado): painel de "dino ativo" à esquerda no Ninho + stat-chips no
 topo das sub-telas + emblema-flourish acima dos títulos (o conceito tem; W2 entregou o chrome de maior
 impacto). **Backlog:** botões "Buy · N coins" quebram em 3 linhas em card estreito (tuning).
+
+**W3 (Game Over DOM) CONCLUÍDA** (`src/core/` intocado, det 67; spec/plano `.../2026-07-20-ui-w3-
+gameover-dom*`). O Game Over era **texto cru no canvas Phaser 320×180**; agora é um **overlay DOM**
+rico. **Ponte Phaser→React:** `startGame` passou a retornar **`{stop, snapshot, restart}`** (`GameHandle`)
+— `snapshot()` lê `match.phase`/`pause.paused`/`lastGameOver`; `lastGameOver` (distance/food/nearMisses/
+score/**coins**=`coinsForFood`/**newRecord**=`score>melhor local do modo`) é guardado no `onGameOver`
+ANTES do `recordMatch` (compara com o best pré-partida). `PlayScreen` faz **rAF-poll** do `snapshot` →
+`useState` → renderiza `<ReadyPrompt/>` (fase ready, `pointer-events:none` ⇒ tap passa ao canvas) e
+`<GameOverOverlay/>` (fase dead): diálogo emoldurado (`--ui-panel` 9-slice via `::before` + scrim
+`rgba(0,0,0,.4)`), título dourado (`.screen__title`), 3 stats com emoji (📍🍖⚠️ via `formatGameOverStats`
+reusado), badge **NOVO RECORDE** condicional (`gameover.newRecord`), badge 🪙 moedas (`gameover.coinsEarned`),
+botões **Reiniciar** (`restart()`) / **Sair** (`back()`). `GameScene` **esconde** o Game Over/ready
+in-canvas (flag `domOverlays=true`, `syncGameOver` early-return + `readyPrompt` guardado — sem remover a
+lógica de 2.6, baixo risco); o restart por teclado (`bindGameControls`) e o dim de pausa in-canvas
+permanecem. 2 chaves i18n novas (`gameover.newRecord`/`coinsEarned`) nos 10 locales (traduções nativas,
+0 allowlist). **Task 2/3 finalizadas INLINE** (subagentes vinham caindo por limite de sessão; precedente).
+Suíte verde (`check` limpo, **748 testes** [+ gameover-overlay.test], det **67**). Playwright (build prod
+1366×768): ready-prompt DOM no início; morrer ⇒ diálogo DOM (título dourado + stats-ícones + moedas +
+"New record!" + Reiniciar/Sair); **Reiniciar** → volta a ready (canvas ativo); texto pixelado in-canvas
+sumiu. **Resta W4** (HUD in-game limpo — ainda é monospace sobreposto; pausa como overlay DOM; personagem
+pterodáctilo; transições). **Backlog:** ícones de stat dourados do conceito (hoje emoji); `newRecord`
+só-local (não online-aware).
