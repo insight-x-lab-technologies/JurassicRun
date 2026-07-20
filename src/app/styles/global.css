@@ -55,7 +55,14 @@ body {
 
 .screen__title {
   font-size: var(--font-size-xl);
+  font-weight: 800;
+  letter-spacing: 0.02em;
   margin: 0;
+  color: var(--color-gold); /* fallback */
+  background: linear-gradient(180deg, #f2d878 0%, #c9a227 55%, #a07d1e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .btn {
@@ -821,4 +828,28 @@ img.expansion-card__avatar {
   .navbar__label {
     display: none;
   } /* estreito: só ícones */
+}
+
+/* UI W2: cards como painel 9-slice + portrait grande no topo (Ninho/Expansões/Troféus). */
+.dino-card,
+.expansion-card,
+.trophy-card {
+  background: transparent;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 14px;
+  border-image: var(--ui-panel) 30% fill / 14px / 0 stretch;
+  border-radius: 0;
+}
+img.dino-card__avatar,
+img.expansion-card__avatar {
+  width: 100%;
+  height: 8rem;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  object-position: center top;
+}
+.nest__grid,
+.expansions__grid {
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
 }
