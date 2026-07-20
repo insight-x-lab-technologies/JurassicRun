@@ -1540,3 +1540,22 @@ Suíte verde (`check` limpo, **748 testes** [+ gameover-overlay.test], det **67*
 sumiu. **Resta W4** (HUD in-game limpo — ainda é monospace sobreposto; pausa como overlay DOM; personagem
 pterodáctilo; transições). **Backlog:** ícones de stat dourados do conceito (hoje emoji); `newRecord`
 só-local (não online-aware).
+
+**W4 (HUD DOM + pausa DOM) CONCLUÍDA — REDESIGN DE UI (W1→W4) COMPLETO** (`src/core/` intocado, det 67;
+spec/plano `.../2026-07-20-ui-w4-hud-pause-dom*`). Saíram os 2 últimos textos monospace pixelados do
+canvas. `MatchSnapshot` ganhou `hud: HudLive|null` (`{distance,food,level,speed,weather,seed}` de
+`match.world`+seedLabel, só na fase playing). `PlayScreen`: mede **fps** no próprio rAF (delta), atualiza
+o estado do HUD a **~5 Hz** e o `snap` (overlays) **só na mudança** de fase/pausa/gameover (**gate — fecha
+o Minor do W3** de re-render 60 Hz); renderiza `<Hud>` (playing, `formatHudValues`+`hud.*` reusados,
+painel discreto top-left `pointer-events:none` crisp) e `<PauseOverlay>` (`snap.paused`, dim + `pause.title`/
+`pause.resume` novos nos 10 locales). `GameScene` esconde o **HUD in-canvas** (`hudText.setVisible(!domOverlays)`
++ `refreshHud` early-return sob a flag do W3). **Implementação INLINE** (subagentes vinham caindo por limite).
+Suíte verde (`check` limpo, **750 testes** [+ hud.test], det **67**). Playwright (build prod 1366×768): em
+partida, **HUD DOM** crisp (Dist/Food/Lv/Weather/Speed/Seed/FPS), não o monospace; pausar (P) ⇒ **overlay DOM
+"Paused"/"Tap to resume"**; texto pixelado in-canvas sumiu. **Redesign de UI para o conceito AAA (`ref/`)
+concluído em 4 frentes:** W1 fundação (fundo full-bleed + botões + responsivo), W2 chrome (nav inferior +
+títulos dourados + cards+portraits), W3 Game Over DOM, W4 HUD+pausa DOM. **Backlog remanescente (menor/
+art-dependente):** personagem pterodáctilo nas telas + transições de tela (W4 os adiou); painel de dino ativo
+à esquerda no Ninho + stat-chips no topo das sub-telas (W2b); ícones de stat dourados no Game Over (hoje
+emoji); "Buy · N coins" quebra em card estreito; flakiness de timeout dos testes pesados de asset (memoizar
+`renderAtlas`/`renderUi`).
