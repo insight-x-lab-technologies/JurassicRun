@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -8,6 +8,13 @@ import { ASSET_MANIFEST } from '@render/manifest';
 const root = fileURLToPath(new URL('../..', import.meta.url));
 
 describe('atlas de entidades (arte real)', () => {
+  // O decode das artes-fonte é memoizado por arquivo em gen-atlas (loadArt), mas a PRIMEIRA
+  // chamada paga tudo. Aquecer aqui, com timeout próprio, evita que o custo caia num teste
+  // qualquer e o estoure — a flakiness sob workers paralelos que já assombrava esta suíte.
+  beforeAll(() => {
+    renderAtlas();
+  }, 60000);
+
   it('renderAtlas gera PNG com assinatura + IHDR válidos', () => {
     const { png } = renderAtlas();
     expect(png.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a');
