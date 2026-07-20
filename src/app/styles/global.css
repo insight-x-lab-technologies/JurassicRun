@@ -878,6 +878,7 @@ img.expansion-card__avatar {
   gap: var(--space-3);
   padding: var(--space-5);
   text-align: center;
+  background: rgba(0, 0, 0, 0.4); /* scrim: foca o diálogo, escurece o jogo atrás (conceito) */
 }
 .gameover > * {
   position: relative;
