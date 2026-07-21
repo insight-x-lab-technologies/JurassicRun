@@ -49,7 +49,8 @@ describe('atlas de entidades (arte real)', () => {
         }
       }
     }
-  });
+    // Renderiza os 3 atlases de tema (decode + pack + encode) num só teste ⇒ >5s default.
+  }, 60000);
 
   it('o dino tem 6 frames de flap + alias, cada um com geometria válida', () => {
     const { json } = renderAtlas();

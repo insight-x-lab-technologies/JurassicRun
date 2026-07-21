@@ -47,25 +47,27 @@ export const UI_SOURCES = [
   // parallax.chromakey.png` (1536×1024) tem uma ilustração grande no topo (não usada) + a banda
   // de 3 sub-camadas no terço inferior. `classic`/`volcano` têm linhas de chroma separando
   // far/mid/near; `glacier` é uma cena contínua sem linha (dividida em terços iguais). Frações
-  // calibradas por inspeção de pixel (linha a linha, ver relatório da Task 5) — cada folha tem
-  // um layout ligeiramente diferente, não são uniformes entre temas. `padBottomTo` (mesma lógica
-  // do `parallax` acima) garante altura >= dispHeight_mundo/PARALLAX_SOURCE_WORLD_WIDTH ×
-  // texWidth, senão a TileSprite repete verticalmente (ver PARALLAX_LAYERS em render/parallax.ts).
+  // calibradas por detecção de chroma-separador + verificação visual (Playwright) por tema.
+  // Tiras OPACAS (cena fotorreal completa, não silhueta) — SEM padBottomTo: a base fotorreal não
+  // tem linha 100% opaca full-width, então o skirt replicava a franja de chroma como streaks
+  // verticais. `chroma:true` + `hardAlpha:true` removem o separador e a franja feather (o chroma
+  // default só zera o separador puro; hardAlpha corta o anel semi-transparente e re-apara). No
+  // GameScene: bg.screen entra como backdrop de tela cheia e estas tiras ficam por cima (bandas).
   { out: 'parallax.theme.classic', file: 'ui/classic_ui-parallax.chromakey.png',
-    root: 'public/art/themes/classic', maxDim: 2172, chroma: true, regions: [
-      { name: 'parallax.far.classic', x: 0, y: 0.6270, w: 1, h: 0.1118, padBottomTo: 260 },
-      { name: 'parallax.mid.classic', x: 0, y: 0.7388, w: 1, h: 0.1157, padBottomTo: 175 },
-      { name: 'parallax.near.classic', x: 0, y: 0.8545, w: 1, h: 0.1455, padBottomTo: 183 } ] },
+    root: 'public/art/themes/classic', maxDim: 2172, chroma: true, hardAlpha: true, regions: [
+      { name: 'parallax.far.classic', x: 0, y: 0.6377, w: 1, h: 0.0996 },
+      { name: 'parallax.mid.classic', x: 0, y: 0.7412, w: 1, h: 0.1113 },
+      { name: 'parallax.near.classic', x: 0, y: 0.8574, w: 1, h: 0.1045 } ] },
   { out: 'parallax.theme.volcano', file: 'ui/volcano_ui-parallax.chromakey.png',
-    root: 'public/art/themes/volcano', maxDim: 2172, chroma: true, regions: [
-      { name: 'parallax.far.volcano', x: 0, y: 0.6553, w: 1, h: 0.1158, padBottomTo: 260 },
-      { name: 'parallax.mid.volcano', x: 0, y: 0.7710, w: 1, h: 0.1060, padBottomTo: 175 },
-      { name: 'parallax.near.volcano', x: 0, y: 0.8770, w: 1, h: 0.1230, padBottomTo: 183 } ] },
+    root: 'public/art/themes/volcano', maxDim: 2172, chroma: true, hardAlpha: true, regions: [
+      { name: 'parallax.far.volcano', x: 0, y: 0.6689, w: 1, h: 0.0977 },
+      { name: 'parallax.mid.volcano', x: 0, y: 0.7764, w: 1, h: 0.0957 },
+      { name: 'parallax.near.volcano', x: 0, y: 0.8828, w: 1, h: 0.0900 } ] },
   { out: 'parallax.theme.glacier', file: 'ui/glacier_ui-parallax.chromakey.png',
-    root: 'public/art/themes/glacier', maxDim: 2172, chroma: true, regions: [
-      { name: 'parallax.far.glacier', x: 0, y: 0.6924, w: 1, h: 0.0960, padBottomTo: 260 },
-      { name: 'parallax.mid.glacier', x: 0, y: 0.7884, w: 1, h: 0.0960, padBottomTo: 175 },
-      { name: 'parallax.near.glacier', x: 0, y: 0.8845, w: 1, h: 0.0960, padBottomTo: 183 } ] },
+    root: 'public/art/themes/glacier', maxDim: 2172, chroma: true, hardAlpha: true, regions: [
+      { name: 'parallax.far.glacier', x: 0, y: 0.6985, w: 1, h: 0.0899 },
+      { name: 'parallax.mid.glacier', x: 0, y: 0.7884, w: 1, h: 0.0960 },
+      { name: 'parallax.near.glacier', x: 0, y: 0.8845, w: 1, h: 0.0880 } ] },
   ...['starter', 'lodestone', 'goldbeak', 'midas', 'nine-lives', 'aegis', 'prospector', 'harvester', 'phoenix', 'guardian'].map((id) => ({
     out: `dino.${id}`, file: `dinos/dino.${id}.flap.png`, maxDim: 256,
     regions: [{ name: `dino.${id}`, x: 0, y: 0, w: 0.1667, h: 1 }],
@@ -106,11 +108,23 @@ function padBottom(w, h, pixels, targetH) {
   return out;
 }
 
+/** Corta a franja feather de tiras opacas: alpha<thresh → 0, depois re-apara a bbox de conteúdo.
+ * O chroma default deixa um anel de pixels semi-transparentes (borda do separador) que sobra como
+ * franja colorida; tiras fotorreais são opacas no interior, então qualquer alpha<thresh é franja. */
+function hardCutAlpha(w, h, pixels, thresh) {
+  for (let i = 0; i < w * h; i++) if (pixels[i * 4 + 3] < thresh) pixels[i * 4 + 3] = 0;
+  const b = contentBounds({ w, h, rgba: pixels }, 0, 0, w, h);
+  const nw = b.maxX - b.minX, nh = b.maxY - b.minY;
+  const out = Buffer.alloc(nw * nh * 4);
+  for (let y = 0; y < nh; y++) pixels.copy(out, y * nw * 4, ((b.minY + y) * w + b.minX) * 4, ((b.minY + y) * w + b.minX + nw) * 4);
+  return { w: nw, h: nh, pixels: out };
+}
+
 export function renderUi() {
   const outs = [];
   for (const src of UI_SOURCES) {
     let img = loadArt(src.file, src.root);
-    if (src.chroma) img = chromaKeyToAlpha(img);
+    if (src.chroma) img = chromaKeyToAlpha(img, src.chromaOpts);
     if (src.grid) {
       const { cols, rows, names } = src.grid;
       if (names.length !== cols * rows) throw new Error(`grid ${src.out}: names ${names.length} != ${cols * rows}`);
@@ -125,6 +139,7 @@ export function renderUi() {
         const x0 = Math.round(rg.x * img.w), y0 = Math.round(rg.y * img.h);
         const x1 = Math.round((rg.x + rg.w) * img.w), y1 = Math.round((rg.y + rg.h) * img.h);
         let { w, h, pixels } = crop(img, x0, y0, x1, y1, src.maxDim, rg.opaque);
+        if (src.hardAlpha) ({ w, h, pixels } = hardCutAlpha(w, h, pixels, 245));
         if (rg.padBottomTo !== undefined && rg.padBottomTo > h) {
           pixels = padBottom(w, h, pixels, rg.padBottomTo);
           h = rg.padBottomTo;

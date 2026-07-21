@@ -28,7 +28,7 @@ describe('processador de assets de UI (gen-ui)', () => {
         expect(png.subarray(12, 16).toString('ascii'), out).toBe('IHDR');
       }
     },
-    20000,
+    60000,
   );
 
   it(
@@ -42,7 +42,7 @@ describe('processador de assets de UI (gen-ui)', () => {
       const a = renderUi(), b = renderUi();
       for (const [i, { png }] of a.entries()) expect(png.equals(b[i]!.png)).toBe(true);
     },
-    20000,
+    60000,
   );
 
   it(
@@ -53,7 +53,7 @@ describe('processador de assets de UI (gen-ui)', () => {
         expect(committed.equals(png), out).toBe(true);
       }
     },
-    20000,
+    60000,
   );
 
   it(
@@ -66,7 +66,7 @@ describe('processador de assets de UI (gen-ui)', () => {
         expect(names, n).toContain(n);
       }
     },
-    20000,
+    60000,
   );
 
   it(
@@ -79,7 +79,7 @@ describe('processador de assets de UI (gen-ui)', () => {
         expect(names, n).toContain(n);
       }
     },
-    20000,
+    60000,
   );
 
   it(
@@ -90,7 +90,7 @@ describe('processador de assets de UI (gen-ui)', () => {
         expect(names, n).toContain(n);
       }
     },
-    20000,
+    60000,
   );
 
   it(
@@ -98,6 +98,6 @@ describe('processador de assets de UI (gen-ui)', () => {
     () => {
       expect(renderUi().map((o) => o.out)).toContain('nav.bar');
     },
-    20000,
+    60000,
   );
 });

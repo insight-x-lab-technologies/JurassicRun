@@ -47,6 +47,7 @@ export class GameScene extends Phaser.Scene {
   private readonly match: MatchController;
   private readonly pause: PauseController;
   private parallaxTiles: Phaser.GameObjects.TileSprite[] = [];
+  private bgImage!: Phaser.GameObjects.Image;
   private gfx!: Phaser.GameObjects.Graphics;
   private pauseOverlay!: Phaser.GameObjects.Graphics;
   private hudText!: Phaser.GameObjects.Text;
@@ -99,12 +100,25 @@ export class GameScene extends Phaser.Scene {
     for (const tex of pack.parallaxTextures) {
       this.load.image(tex, base + 'ui/' + tex + '.png');
     }
+    // Backdrop fotorrealista de tela cheia (bg.screen do pack ativo): cena completa
+    // (céu+montanhas+selva) atrás de todo o parallax ⇒ substitui o céu sólido chapado.
+    this.load.image(pack.bgScreen, base + 'ui/' + pack.bgScreen + '.png');
   }
 
   create(): void {
     // Parallax (2.3): camadas de silhueta atrás do mundo. Texturas geradas 1×; por frame só
     // ajusta tilePositionX (zero alocação — REGRA 3). scrollFactor(0) prende à câmera.
     const createPack = packForId(entitlementsService.activeExpansion.value.id);
+
+    // Backdrop de tela cheia atrás do parallax (depth mais negativo). Estático (scrollFactor 0);
+    // tint de dia/noite aplicado em applyDayNight. setDisplaySize em px de render (W5).
+    this.bgImage = this.add
+      .image(0, 0, createPack.bgScreen)
+      .setOrigin(0, 0)
+      .setScrollFactor(0)
+      .setDepth(-(PARALLAX_LAYERS.length + 1));
+    this.bgImage.setDisplaySize(this.px(VIEW_WIDTH), this.px(VIEW_HEIGHT));
+
     this.parallaxTiles = PARALLAX_LAYERS.map((layer, index) => {
       const key = createPack.parallaxTextures[index]!;
       const v = layer.visual;
@@ -420,6 +434,9 @@ export class GameScene extends Phaser.Scene {
     const p = pack.dayNight[timeOfDayForSeed(seed)];
     // sky < 0x1000000 ⇒ Phaser trata como RGB opaco (alpha 255). Cobre o backgroundColor do jogo.
     this.cameras.main.setBackgroundColor(p.sky);
+    // Backdrop recebe o mesmo tint de dia/noite do parallax (coeso com a hora do dia da seed).
+    this.bgImage?.setTexture(pack.bgScreen);
+    this.bgImage?.setTint(p.parallaxTint);
     const g = this.bandsGfx;
     g.clear();
     g.fillStyle(p.ceiling, 1);
