@@ -1628,3 +1628,32 @@ cache** — só peguei conferindo `getComputedStyle`+hash do CSS carregado (semp
 **Backlog:** FPS desktop sob GPU real; "Buy · N coins" fica em 2 linhas em card estreito (deixado — `nowrap`
 estouraria alemão/hindi); personagem pterodáctilo + transições; painel de dino ativo + stat-chips no topo
 das sub-telas (W2b); ícones dourados de stat no Game Over.
+
+**Flap mais suave + arte realista in-game por tema (2026-07-21; `src/core/` intocado exceto
+`FLAP_SPEED`, det 67).** Dois ajustes de gameplay pedidos pelo usuário. Spec/plano
+`docs/superpowers/{specs,plans}/2026-07-21-gameplay-tuning-and-realistic-theme-art*`; execução SDD
+por subagentes (7 tasks + review por task) com calibração visual e fix de Critical **inline** pelo
+controlador (subagentes de review caíram por limite de sessão — precedente). **(1) Flap:**
+`FLAP_SPEED` 240→170 (~29% menos impulso). Os goldens de replay fixam `flapSpeed:350` explícito ⇒
+**0 re-pin**; efeito colateral: `economy.determinism.test` fixou `flapSpeed:240` no cenário empírico
+(preserva `nearMisses>0`) e o bundle `_verify.bundle.js` foi regenerado (`build:edge`). **(2) Arte
+realista por tema:** os sets AAA do usuário em `public/art/themes/{classic,volcano,glacier}/`
+(**chroma-key** magenta/verde auto-detectado pelo pixel de canto) substituíram a arte cartoon/flat
+in-game. Peças: `chromaKeyToAlpha` no pipeline (feather + descontaminação); **atlas de entidades por
+tema** via `ATLAS_VARIANTS` (dino 6-frames + tree + coin + powerups da folha 3×2; vine/boulder/
+stalactite seguem cartoon — mix temporário aceito); **parallax fotorreal por tema** (`gen-ui` fatia a
+banda da folha `ui-parallax` em 3 tiras OPACAS, `LookPack.parallaxTextures`; recolor zerado, tint
+day-night por cima); **backdrop `bg.screen` de tela cheia** no `GameScene` atrás do parallax (tint
+day-night) ⇒ fim do céu sólido chapado. **Gotcha crítico (Critical de review):** as tiras fotorreais
+são retângulos OPACOS (não silhuetas) — (a) o skirt `padBottomTo` da abordagem antiga replicava a
+franja de chroma como streaks verticais ⇒ removido; (b) a descontaminação do chroma deixava um
+roxo/verde muddy OPACO (alpha 255) nas bordas do slice, invisível no frame inicial mas visível como
+linha vertical na **costura de tiling** durante o scroll ⇒ `trimChromaEdges` mascara a margem externa
+(5% dos 4 lados) + guarda de regressão `tests/render/parallax-chroma.test.ts` (testada-com-dente).
+Verificação Playwright nos 3 temas (classic pôr-do-sol / volcano lava / glacier aurora): entidades
+realistas, sem franja de chroma nem na costura, 60fps. Suíte **785 testes** verdes, `check` limpo, det
+**67**. **Backlog:** `PARALLAX_SOURCE_WORLD_WIDTH` não recalibrado p/ a arte nova (tuning); camada
+`mid` ocluída pela `near` (strips opacos — cena boa com backdrop+far+near; empilhar opaco criaria
+seams); sets realistas de vine/boulder/stalactite e dos 10 dinos nomeados; fringing sutil de chroma em
+pontas finas das entidades (subpixel in-game); flakiness de timeout dos testes de asset (bump p/ 60s,
+memoização segue backlog); tuning fino do flap se o usuário quiser.

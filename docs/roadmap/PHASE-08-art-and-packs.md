@@ -99,7 +99,24 @@ performance, e habilitar packs cosméticos compráveis.
       minimapa/objetivos) REJEITADO por violar o flap-only determinístico. Nome mantido
       "JurassicRun". **Resta:** gerar as imagens (usuário, IA externa) + empacotar em atlases._
 
-### 8.2 Trocar manifesto geométrico → sprite
+#      _**Arte realista in-game por tema + flap mais suave (2026-07-21):** `src/core/` intocado
+      exceto `FLAP_SPEED` (240→170, tuning pedido pelo usuário; goldens de replay já fixam
+      `flapSpeed` explícito ⇒ 0 re-pin; determinismo **67**). Os novos sets fotorreais AAA por tema
+      (`public/art/themes/{classic,volcano,glacier}/`, chroma-key magenta/verde auto-detectado)
+      foram integrados: (1) `chromaKeyToAlpha` no pipeline (auto-detecta a chave, feather +
+      descontaminação); (2) **atlas de entidades por tema** (dino 6-frames + tree + coin + powerups
+      da folha 3×2; vine/boulder/stalactite seguem cartoon — mix temporário); (3) **parallax
+      fotorreal por tema** (tiras opacas fatiadas da folha `ui-parallax`, sem skirt; `trimChromaEdges`
+      remove a franja de chroma da costura de tiling — Critical de review corrigido + guarda
+      `parallax-chroma.test`); (4) **backdrop `bg.screen` de tela cheia** atrás do parallax (tint
+      dia/noite) ⇒ fim do céu sólido chapado. Verificação Playwright nos 3 temas: cenas realistas
+      (classic pôr-do-sol, volcano lava, glacier aurora), sem franja de chroma, 60fps. Spec/plano
+      `docs/superpowers/{specs,plans}/2026-07-21-gameplay-tuning-and-realistic-theme-art*`. **Backlog:**
+      `PARALLAX_SOURCE_WORLD_WIDTH` não recalibrado p/ a nova arte; camada `mid` ocluída pela `near`
+      (strips opacos; cena boa com backdrop+far+near); sets realistas de vine/boulder/stalactite e
+      dos 10 dinos nomeados._
+
+## 8.2 Trocar manifesto geométrico → sprite
 - [x] Atualizar entradas do manifesto para `kind: "sprite"`. **Sem** tocar core/hitboxes.
 - [x] Validar 60fps com atlases (budget de draw calls, culling, pooling).
       _CONCLUÍDO (`src/core/` intocado, determinismo 67; spec `docs/superpowers/specs/2026-07-17-
