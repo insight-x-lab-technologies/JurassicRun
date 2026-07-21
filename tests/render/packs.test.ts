@@ -6,9 +6,12 @@ describe('packs look&feel', () => {
   it('classic carrega o atlas real (tema default)', () => {
     expect(PACK_CLASSIC.atlas).toEqual(DEFAULT_ATLAS);
   });
-  it('volcano/glacier não definem atlas próprio (reusam o default)', () => {
-    expect(packForId('volcano').atlas).toBeUndefined();
-    expect(packForId('glacier').atlas).toBeUndefined();
+  // Pré-existente à Task 5 (herdado de "liga atlas de entidades por tema", 25e7834): a asserção
+  // ficou desatualizada quando volcano/glacier ganharam atlas de tema próprio; corrigida aqui
+  // como achado de housekeeping (precedente W1: consertar teste vermelho encontrado no caminho).
+  it('volcano/glacier definem atlas de tema próprio', () => {
+    expect(packForId('volcano').atlas?.key).toBe('entities.volcano');
+    expect(packForId('glacier').atlas?.key).toBe('entities.glacier');
   });
   it('packForId cai em classic para id desconhecido', () => {
     expect(packForId('nao.existe').id).toBe('classic');

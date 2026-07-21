@@ -20,6 +20,11 @@ export interface LookPack {
   readonly dayNight: Readonly<Record<TimeOfDay, DayNightPalette>>;
   /** Cor de cada camada de parallax, na ordem de PARALLAX_LAYERS. */
   readonly parallax: readonly ParallaxPaint[];
+  /** Nome (em public/ui/, sem extensão) da textura de parallax por camada [far,mid,near], na
+   *  ordem de PARALLAX_LAYERS. Arte fotorrealista por tema (Task 5) ⇒ substitui as texturas
+   *  fixas `layer.visual.texture`; o recolor por `parallax[i].color` fica zerado (0xffffff)
+   *  porque a arte já é a cor certa — o tint de dia/noite (`parallaxTint`) continua por cima. */
+  readonly parallaxTextures: readonly [string, string, string];
   /** Tint multiplicativo dos sprites de entidade; 0xffffff = sem alteração. */
   readonly entityTint: number;
   /** Atlas de entidades do tema; ausente ⇒ reusa o default (seam para arte alternativa, 8.1). */
@@ -48,6 +53,7 @@ export const PACK_CLASSIC: LookPack = {
   theme: CLASSIC_THEME,
   dayNight: DAY_NIGHT_PALETTES,
   parallax: CLASSIC_PARALLAX,
+  parallaxTextures: ['parallax.far.classic', 'parallax.mid.classic', 'parallax.near.classic'],
   entityTint: 0xffffff,
   atlas: DEFAULT_ATLAS,
   bgScreen: 'bg.screen.classic',
@@ -70,7 +76,9 @@ const PACK_VOLCANO: LookPack = {
     dusk: { sky: 0xd8542f, ground: 0x4a241a, ceiling: 0x42202a, parallaxTint: 0xff9060 },
     night: { sky: 0x2a1218, ground: 0x2a150f, ceiling: 0x22101a, parallaxTint: 0xaa5544 },
   },
-  parallax: [{ color: 0x7a4a4a }, { color: 0x8a3f2a }, { color: 0x532f24 }],
+  // Recolor zerado (Task 5): a arte de parallax agora é fotorrealista por tema, já na cor certa.
+  parallax: [{ color: 0xffffff }, { color: 0xffffff }, { color: 0xffffff }],
+  parallaxTextures: ['parallax.far.volcano', 'parallax.mid.volcano', 'parallax.near.volcano'],
   entityTint: 0xffd9c8,
   atlas: { key: 'entities.volcano', png: 'atlas/entities.volcano.png', json: 'atlas/entities.volcano.json' },
   bgScreen: 'bg.screen.volcano',
@@ -93,7 +101,9 @@ const PACK_GLACIER: LookPack = {
     dusk: { sky: 0x9ab8d8, ground: 0x6f8a9a, ceiling: 0x42506a, parallaxTint: 0xc0d8f0 },
     night: { sky: 0x18243a, ground: 0x24333f, ceiling: 0x1e2838, parallaxTint: 0x6688cc },
   },
-  parallax: [{ color: 0x9fb8cc }, { color: 0x7fa8c0 }, { color: 0x5f88a0 }],
+  // Recolor zerado (Task 5): a arte de parallax agora é fotorrealista por tema, já na cor certa.
+  parallax: [{ color: 0xffffff }, { color: 0xffffff }, { color: 0xffffff }],
+  parallaxTextures: ['parallax.far.glacier', 'parallax.mid.glacier', 'parallax.near.glacier'],
   entityTint: 0xd8ecff,
   atlas: { key: 'entities.glacier', png: 'atlas/entities.glacier.png', json: 'atlas/entities.glacier.json' },
   bgScreen: 'bg.screen.glacier',

@@ -2,7 +2,7 @@
 // Processa a arte-fonte Tier-1 (public/art/final) em assets de runtime pequenos (public/ui).
 // Reusa o decoder/cropResize de gen-atlas + encodePng. Zero dep. Rode `npm run gen:ui`.
 import { encodePng } from './gen-icons.mjs';
-import { contentBounds, cropResize, loadArt } from './gen-atlas.mjs';
+import { contentBounds, cropResize, loadArt, chromaKeyToAlpha } from './gen-atlas.mjs';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -41,6 +41,31 @@ export const UI_SOURCES = [
     { name: 'parallax.far', x: 0, y: 0.0, w: 1, h: 0.34, padBottomTo: 350 },
     { name: 'parallax.mid', x: 0, y: 0.34, w: 1, h: 0.34, padBottomTo: 235 },
     { name: 'parallax.near', x: 0, y: 0.66, w: 1, h: 0.34 } ] },
+  // Parallax FOTORREALISTA por tema (Task 5, substitui `parallax.*` acima para packs volcano/
+  // glacier/classic no runtime — os 3 arquivos sem sufixo continuam gerados/commitados pois um
+  // teste ainda os referencia, mas nada mais os consome). Cada folha `ui/<tema>_ui-
+  // parallax.chromakey.png` (1536×1024) tem uma ilustração grande no topo (não usada) + a banda
+  // de 3 sub-camadas no terço inferior. `classic`/`volcano` têm linhas de chroma separando
+  // far/mid/near; `glacier` é uma cena contínua sem linha (dividida em terços iguais). Frações
+  // calibradas por inspeção de pixel (linha a linha, ver relatório da Task 5) — cada folha tem
+  // um layout ligeiramente diferente, não são uniformes entre temas. `padBottomTo` (mesma lógica
+  // do `parallax` acima) garante altura >= dispHeight_mundo/PARALLAX_SOURCE_WORLD_WIDTH ×
+  // texWidth, senão a TileSprite repete verticalmente (ver PARALLAX_LAYERS em render/parallax.ts).
+  { out: 'parallax.theme.classic', file: 'ui/classic_ui-parallax.chromakey.png',
+    root: 'public/art/themes/classic', maxDim: 2172, chroma: true, regions: [
+      { name: 'parallax.far.classic', x: 0, y: 0.6270, w: 1, h: 0.1118, padBottomTo: 260 },
+      { name: 'parallax.mid.classic', x: 0, y: 0.7388, w: 1, h: 0.1157, padBottomTo: 175 },
+      { name: 'parallax.near.classic', x: 0, y: 0.8545, w: 1, h: 0.1455, padBottomTo: 183 } ] },
+  { out: 'parallax.theme.volcano', file: 'ui/volcano_ui-parallax.chromakey.png',
+    root: 'public/art/themes/volcano', maxDim: 2172, chroma: true, regions: [
+      { name: 'parallax.far.volcano', x: 0, y: 0.6553, w: 1, h: 0.1158, padBottomTo: 260 },
+      { name: 'parallax.mid.volcano', x: 0, y: 0.7710, w: 1, h: 0.1060, padBottomTo: 175 },
+      { name: 'parallax.near.volcano', x: 0, y: 0.8770, w: 1, h: 0.1230, padBottomTo: 183 } ] },
+  { out: 'parallax.theme.glacier', file: 'ui/glacier_ui-parallax.chromakey.png',
+    root: 'public/art/themes/glacier', maxDim: 2172, chroma: true, regions: [
+      { name: 'parallax.far.glacier', x: 0, y: 0.6924, w: 1, h: 0.0960, padBottomTo: 260 },
+      { name: 'parallax.mid.glacier', x: 0, y: 0.7884, w: 1, h: 0.0960, padBottomTo: 175 },
+      { name: 'parallax.near.glacier', x: 0, y: 0.8845, w: 1, h: 0.0960, padBottomTo: 183 } ] },
   ...['starter', 'lodestone', 'goldbeak', 'midas', 'nine-lives', 'aegis', 'prospector', 'harvester', 'phoenix', 'guardian'].map((id) => ({
     out: `dino.${id}`, file: `dinos/dino.${id}.flap.png`, maxDim: 256,
     regions: [{ name: `dino.${id}`, x: 0, y: 0, w: 0.1667, h: 1 }],
@@ -84,7 +109,8 @@ function padBottom(w, h, pixels, targetH) {
 export function renderUi() {
   const outs = [];
   for (const src of UI_SOURCES) {
-    const img = loadArt(src.file);
+    let img = loadArt(src.file, src.root);
+    if (src.chroma) img = chromaKeyToAlpha(img);
     if (src.grid) {
       const { cols, rows, names } = src.grid;
       if (names.length !== cols * rows) throw new Error(`grid ${src.out}: names ${names.length} != ${cols * rows}`);

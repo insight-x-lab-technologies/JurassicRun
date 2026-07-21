@@ -30,8 +30,15 @@ describe('seam de atlas por tema', () => {
   it('atlasRefFor: classic usa seu próprio atlas', () => {
     expect(atlasRefFor(PACK_CLASSIC)).toEqual(DEFAULT_ATLAS);
   });
-  it('atlasRefFor: pack sem atlas cai no default', () => {
-    expect(atlasRefFor(packForId('volcano'))).toEqual(DEFAULT_ATLAS);
-    expect(atlasRefFor(packForId('glacier'))).toEqual(DEFAULT_ATLAS);
+  // Pré-existente à Task 5 (herdado de "liga atlas de entidades por tema", 25e7834): a asserção
+  // ficou desatualizada quando volcano/glacier ganharam atlas de tema próprio; corrigida aqui
+  // como achado de housekeeping (precedente W1: consertar teste vermelho encontrado no caminho).
+  it('atlasRefFor: volcano/glacier usam seus próprios atlas de tema', () => {
+    expect(atlasRefFor(packForId('volcano'))).toEqual({
+      key: 'entities.volcano', png: 'atlas/entities.volcano.png', json: 'atlas/entities.volcano.json',
+    });
+    expect(atlasRefFor(packForId('glacier'))).toEqual({
+      key: 'entities.glacier', png: 'atlas/entities.glacier.png', json: 'atlas/entities.glacier.json',
+    });
   });
 });
