@@ -8,7 +8,11 @@ import { FOOD_SCORE_VALUE, NEAR_MISS_SCORE_VALUE, DISTANCE_SCORE_WEIGHT } from '
 // SpawnGenerator; seed 'endless:GAME1' com flapEvery=25 produz a trajetória que intercepta
 // coletáveis e passa perto de obstáculos. Valores medidos: food=2, nearMisses=1,
 // score≈690.14, distance≈665.14 (dino morre antes de 2000 steps; estado congela).
-const SEEDED: WorldConfig = { worldHeight: 180, startY: 90, seed: 'endless:GAME1' };
+// flapSpeed fixado explicitamente em 240 (valor do FLAP_SPEED anterior ao tuning de gameplay)
+// porque este cenário é uma trajetória empiricamente calibrada, não um teste do valor de
+// FLAP_SPEED em si — desacopla o guard da constante de produção para não exigir recalibração
+// a cada ajuste de tuning de flap.
+const SEEDED: WorldConfig = { worldHeight: 180, startY: 90, seed: 'endless:GAME1', flapSpeed: 240 };
 const STEPS = 2000;
 
 function makeTimeline(n: number): InputFrame[] {

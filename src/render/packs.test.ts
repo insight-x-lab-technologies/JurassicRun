@@ -36,4 +36,10 @@ describe('packs', () => {
       expect(p.dayNight).not.toEqual(DAY_NIGHT_PALETTES);
     }
   });
+
+  it('volcano e glacier apontam atlas de tema próprios', () => {
+    expect(packForId('volcano').atlas?.key).toBe('entities.volcano');
+    expect(packForId('glacier').atlas?.key).toBe('entities.glacier');
+    expect(packForId('classic').atlas).toBeDefined();
+  });
 });

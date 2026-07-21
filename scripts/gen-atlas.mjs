@@ -29,9 +29,38 @@ export const ATLAS_SOURCES = [
   { id: 'powerup.slowMo', file: 'powerups/powerup.slowMo.png', frames: 1 },
 ];
 
-// Variantes de atlas (multi-atlas). Um atlas de tema entra aqui: { key, sources } com os MESMOS
-// ids do manifesto e arquivos-fonte diferentes; depois `npm run gen:atlas` + `pack.atlas`.
-export const ATLAS_VARIANTS = [{ key: ATLAS_KEY, sources: ATLAS_SOURCES }];
+/**
+ * Fontes por tema (arte realista, chroma-keyed) para uma variante de atlas. Os 3 obstáculos sem
+ * arte-tema ainda (vine/boulder/stalactite) reusam public/art/final/ (já alpha, sem chroma) —
+ * mix temporário aceito por decisão de produto até essas peças ganharem arte real por tema.
+ */
+function themeSources(theme) {
+  const R = `public/art/themes/${theme}`;
+  return [
+    { id: 'dino.default', root: R, file: `dinos/${theme}_dino.default.flap.chromakey.png`, frames: 6, chroma: true },
+    { id: 'obstacle.tree', root: R, file: `obstacles/${theme}_obstacle.tree.chromakey.png`, frames: 1, chroma: true },
+    { id: 'bird.coin', root: R, file: `collectibles/${theme}_bird.coin.chromakey.png`, frames: 1, chroma: true },
+    {
+      id: 'powerups', root: R, file: `powerups/${theme}_powerups.chromakey.png`, chroma: true,
+      grid: {
+        cols: 3, rows: 2,
+        names: ['powerup.shield', 'powerup.extraLife', 'powerup.magnet', 'powerup.doubleCoin', 'powerup.slowMo', null],
+      },
+    },
+    // 3 obstáculos ainda cartoon: reusa final/ (já alpha, sem chroma).
+    { id: 'obstacle.vine', file: 'obstacles/obstacle.vine.png', frames: 1 },
+    { id: 'obstacle.boulder', file: 'obstacles/obstacle.boulder.png', frames: 1 },
+    { id: 'obstacle.stalactite', file: 'obstacles/obstacle.stalactite.png', frames: 1 },
+  ];
+}
+
+// Variantes de atlas (multi-atlas): uma por tema, com os MESMOS ids do manifesto e arte-fonte
+// diferente. `entities` (classic) é a default consumida quando o pack não define `atlas` próprio.
+export const ATLAS_VARIANTS = [
+  { key: ATLAS_KEY, sources: themeSources('classic') },
+  { key: 'entities.volcano', sources: themeSources('volcano') },
+  { key: 'entities.glacier', sources: themeSources('glacier') },
+];
 
 /** Decodifica PNG 8-bit RGBA/RGB não entrelaçado. Retorna {w,h,rgba:Buffer(w*h*4)}. */
 export function decodePng(buf) {
@@ -114,6 +143,36 @@ export function cropResize(img, sx, sy, sw, sh, dw, dh) {
   return out;
 }
 
+/**
+ * Converte o fundo-chave (chroma) em alpha. Auto-detecta a cor-chave pelo pixel (0,0) — os cantos
+ * são sempre fundo. Para cada pixel: distância euclidiana RGB até a chave; dist<inner ⇒ alpha 0,
+ * dist>outer ⇒ alpha inalterado, entre os dois ⇒ rampa linear (feather anti-franja). Também
+ * descontamina a cor de pixels semi-transparentes (remove o tingido da chave) para evitar halo.
+ * Retorna um NOVO buffer; não muta a entrada (loadArt é memoizado).
+ */
+export function chromaKeyToAlpha(img, opts = {}) {
+  const inner = opts.inner ?? 60, outer = opts.outer ?? 120;
+  const kR = img.rgba[0], kG = img.rgba[1], kB = img.rgba[2];
+  const out = Buffer.from(img.rgba); // cópia
+  for (let i = 0; i < img.w * img.h; i++) {
+    const d = i * 4, r = out[d], g = out[d + 1], b = out[d + 2];
+    const dist = Math.sqrt((r - kR) ** 2 + (g - kG) ** 2 + (b - kB) ** 2);
+    let a;
+    if (dist <= inner) a = 0;
+    else if (dist >= outer) a = out[d + 3];
+    else a = Math.round(out[d + 3] * ((dist - inner) / (outer - inner)));
+    // descontaminação: puxa a cor para longe da chave proporcional à transparência ganha
+    if (a < out[d + 3] && a > 0) {
+      const t = 1 - a / 255; // quanto de chave remover
+      out[d] = Math.max(0, Math.min(255, Math.round((r - kR * t) / (1 - t + 1e-6))));
+      out[d + 1] = Math.max(0, Math.min(255, Math.round((g - kG * t) / (1 - t + 1e-6))));
+      out[d + 2] = Math.max(0, Math.min(255, Math.round((b - kB * t) / (1 - t + 1e-6))));
+    }
+    out[d + 3] = a;
+  }
+  return { w: img.w, h: img.h, rgba: out };
+}
+
 function targetSize(sw, sh) {
   const s = Math.min(1, CELL_MAX / Math.max(sw, sh));
   return { dw: Math.max(1, Math.round(sw * s)), dh: Math.max(1, Math.round(sh * s)) };
@@ -131,8 +190,8 @@ function targetSize(sw, sh) {
  * Consumidores tratam a imagem como somente-leitura (contentBounds/cropResize só leem).
  */
 const artCache = new Map();
-export function loadArt(file) {
-  const abs = path.join(ART, file);
+export function loadArt(file, root = ART) {
+  const abs = path.isAbsolute(root) ? path.join(root, file) : path.join(ROOT, root, file);
   let img = artCache.get(abs);
   if (img === undefined) {
     img = decodePng(readFileSync(abs));
@@ -145,8 +204,24 @@ export function renderAtlas(sources = ATLAS_SOURCES) {
   // 1. Monta os frames recortados/redimensionados: {name, dw, dh, pixels}.
   const frames = [];
   for (const src of sources) {
-    const img = loadArt(src.file);
-    if (src.frames === 1) {
+    let img = loadArt(src.file, src.root ?? ART);
+    if (src.chroma) img = chromaKeyToAlpha(img);
+    if (src.grid) {
+      // Fatia uma folha cols×rows (espelha o `grid` de gen-ui); `names[i]===null` ⇒ slot spare,
+      // não emite frame.
+      const { cols, rows, names } = src.grid;
+      if (names.length !== cols * rows) throw new Error(`grid ${src.id}: names ${names.length} != ${cols * rows}`);
+      const cw = Math.floor(img.w / cols), ch = Math.floor(img.h / rows);
+      let i = 0;
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        const name = names[i++];
+        if (name === null) continue;
+        const x0 = c * cw, y0 = r * ch, x1 = x0 + cw, y1 = y0 + ch;
+        const b = contentBounds(img, x0, y0, x1, y1);
+        const sw = b.maxX - b.minX, sh = b.maxY - b.minY, { dw, dh } = targetSize(sw, sh);
+        frames.push({ name, dw, dh, pixels: cropResize(img, b.minX, b.minY, sw, sh, dw, dh) });
+      }
+    } else if (src.frames === 1) {
       const b = contentBounds(img, 0, 0, img.w, img.h);
       const sw = b.maxX - b.minX, sh = b.maxY - b.minY, { dw, dh } = targetSize(sw, sh);
       frames.push({ name: src.id, dw, dh, pixels: cropResize(img, b.minX, b.minY, sw, sh, dw, dh) });

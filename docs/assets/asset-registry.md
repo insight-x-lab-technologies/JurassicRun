@@ -131,3 +131,29 @@ key pelo pack ativo (`atlasRefFor`); a animação do dino é **por-atlas** (evit
 do Phaser). Provado ponta-a-ponta (Playwright: volcano apontando um atlas próprio carrega-o em vez
 do default). Habilitado pela feature "atlas de entidades por-tema" (design 2026-07-19, em
 `docs/superpowers/`).
+
+## Arte realista in-game por tema (2026-07-21)
+
+Set fotorrealista AAA gerado pelo usuário em `public/art/themes/<tema>/` (classic/volcano/glacier),
+**chroma-key** (fundo magenta OU verde por asset; auto-detectado pelo pixel de canto). Integrado
+como render/asset (core intocado ⇒ determinismo 67). Spec/plano:
+`docs/superpowers/{specs,plans}/2026-07-21-gameplay-tuning-and-realistic-theme-art*`.
+
+- **Entidades** (`gen-atlas.mjs`, 1 atlas por tema): `dino.default` (strip 6 frames),
+  `obstacle.tree`, `bird.coin`, folha de powerups 3×2 (shield/extraLife/magnet/doubleCoin/slowMo,
+  6º slot ignorado). `vine`/`boulder`/`stalactite` reusam a arte cartoon de `public/art/final/`
+  (mix temporário até gerar o set realista). Chroma via `chromaKeyToAlpha` (auto-detecta a chave,
+  feather + descontaminação).
+- **Parallax** (`gen-ui.mjs`): 3 tiras OPACAS por tema fatiadas da banda inferior da folha
+  `ui/<tema>_ui-parallax.chromakey.png` → `public/ui/parallax.{far,mid,near}.<tema>.png`. Tiras
+  fotorreais não são silhuetas ⇒ **sem** skirt `padBottomTo`; `hardAlpha` corta a franja feather do
+  separador e `trimChromaEdges` mascara a margem externa (evita a franja de chroma na costura de
+  tiling). Guarda: `tests/render/parallax-chroma.test.ts`.
+- **Backdrop** (`GameScene`): `bg.screen.<tema>` (já em `public/ui/`) entra como imagem de tela
+  cheia atrás do parallax, com tint de dia/noite ⇒ substitui o céu sólido chapado.
+- **Wiring**: `LookPack.atlas` (volcano/glacier) + `LookPack.parallaxTextures` (3 por pack) +
+  `LookPack.bgScreen`. Trocam pelo pack/expansão ativa.
+
+Para adicionar um tema novo: arte com os mesmos ids em `public/art/themes/<tema>/` → variante em
+`ATLAS_VARIANTS` (gen-atlas) + fonte de parallax em `UI_SOURCES` (gen-ui) → `npm run gen:atlas` +
+`npm run gen:ui` → preencher `atlas`/`parallaxTextures`/`bgScreen` no pack.

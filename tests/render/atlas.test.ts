@@ -40,6 +40,18 @@ describe('atlas de entidades (arte real)', () => {
     }
   });
 
+  it('COMPLETUDE POR VARIANTE: todo id sprite do manifesto tem frame em CADA atlas de tema', () => {
+    for (const v of ATLAS_VARIANTS) {
+      const { json } = renderAtlas(v.sources);
+      for (const [id, r] of Object.entries(ASSET_MANIFEST)) {
+        if (r.kind === 'sprite') {
+          expect(json.frames[id], `${v.key}: manifesto sprite sem frame: ${id}`).toBeDefined();
+        }
+      }
+    }
+    // Renderiza os 3 atlases de tema (decode + pack + encode) num só teste ⇒ >5s default.
+  }, 60000);
+
   it('o dino tem 6 frames de flap + alias, cada um com geometria válida', () => {
     const { json } = renderAtlas();
     for (let i = 0; i < 6; i++) expect(json.frames[`dino.default.${i}`], `frame ${i}`).toBeDefined();
@@ -58,13 +70,18 @@ describe('atlas de entidades (arte real)', () => {
     }
   });
 
-  it('os arquivos commitados existem e o PNG bate com o gerado', () => {
-    const png = readFileSync(path.join(root, 'public/atlas/entities.png'));
-    expect(png.equals(renderAtlas().png)).toBe(true);
+  it('os 3 atlas de tema commitados existem e batem byte-a-byte com o gerado (entities = classic)', () => {
+    for (const v of ATLAS_VARIANTS) {
+      const png = readFileSync(path.join(root, `public/atlas/${v.key}.png`));
+      expect(png.equals(renderAtlas(v.sources).png), v.key).toBe(true);
+    }
   });
 
-  it('ATLAS_VARIANTS inclui o atlas default entities', () => {
-    expect(ATLAS_VARIANTS.some((v) => v.key === 'entities')).toBe(true);
+  it('ATLAS_VARIANTS inclui o atlas default entities e os temas volcano/glacier', () => {
+    const keys = ATLAS_VARIANTS.map((v) => v.key);
+    expect(keys).toContain('entities');
+    expect(keys).toContain('entities.volcano');
+    expect(keys).toContain('entities.glacier');
   });
 
   it('renderAtlas aceita uma lista de fontes (multi-atlas)', () => {

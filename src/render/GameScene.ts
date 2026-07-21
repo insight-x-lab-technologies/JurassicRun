@@ -5,7 +5,6 @@ import { renderableFor, DINO_TYPE_ID } from './manifest';
 import type { MatchController } from './match';
 import type { PauseController } from './input';
 import { PARALLAX_LAYERS, parallaxTileOffset } from './parallax';
-import type { ParallaxLayer } from './parallax';
 import { isHorizontallyVisible } from './culling';
 import { spriteSizeFor, frameFor, atlasRefFor } from './sprites';
 import { timeOfDayForSeed } from './daynight';
@@ -48,6 +47,7 @@ export class GameScene extends Phaser.Scene {
   private readonly match: MatchController;
   private readonly pause: PauseController;
   private parallaxTiles: Phaser.GameObjects.TileSprite[] = [];
+  private bgImage!: Phaser.GameObjects.Image;
   private gfx!: Phaser.GameObjects.Graphics;
   private pauseOverlay!: Phaser.GameObjects.Graphics;
   private hudText!: Phaser.GameObjects.Text;
@@ -90,22 +90,37 @@ export class GameScene extends Phaser.Scene {
 
   preload(): void {
     const base = import.meta.env.BASE_URL; // termina com '/'
-    const ref = atlasRefFor(packForId(entitlementsService.activeExpansion.value.id));
+    const pack = packForId(entitlementsService.activeExpansion.value.id);
+    const ref = atlasRefFor(pack);
     this.atlasKey = ref.key;
     this.load.atlas(ref.key, base + ref.png, base + ref.json);
-    for (const layer of PARALLAX_LAYERS) {
-      if (layer.visual.kind === 'sprite') {
-        this.load.image(layer.visual.texture, base + 'ui/' + layer.visual.texture + '.png');
-      }
+    // Parallax fotorrealista por tema (Task 5): as 3 texturas do pack ATIVO no momento do
+    // preload (mesma limitação já aceita para o atlas por-tema — troca de pack não recarrega
+    // uma sessão já em curso, só a próxima montagem do Phaser via PlayScreen).
+    for (const tex of pack.parallaxTextures) {
+      this.load.image(tex, base + 'ui/' + tex + '.png');
     }
+    // Backdrop fotorrealista de tela cheia (bg.screen do pack ativo): cena completa
+    // (céu+montanhas+selva) atrás de todo o parallax ⇒ substitui o céu sólido chapado.
+    this.load.image(pack.bgScreen, base + 'ui/' + pack.bgScreen + '.png');
   }
 
   create(): void {
     // Parallax (2.3): camadas de silhueta atrás do mundo. Texturas geradas 1×; por frame só
     // ajusta tilePositionX (zero alocação — REGRA 3). scrollFactor(0) prende à câmera.
     const createPack = packForId(entitlementsService.activeExpansion.value.id);
+
+    // Backdrop de tela cheia atrás do parallax (depth mais negativo). Estático (scrollFactor 0);
+    // tint de dia/noite aplicado em applyDayNight. setDisplaySize em px de render (W5).
+    this.bgImage = this.add
+      .image(0, 0, createPack.bgScreen)
+      .setOrigin(0, 0)
+      .setScrollFactor(0)
+      .setDepth(-(PARALLAX_LAYERS.length + 1));
+    this.bgImage.setDisplaySize(this.px(VIEW_WIDTH), this.px(VIEW_HEIGHT));
+
     this.parallaxTiles = PARALLAX_LAYERS.map((layer, index) => {
-      const key = this.ensureLayerTexture(layer, createPack.parallax[index]!.color, createPack.id);
+      const key = createPack.parallaxTextures[index]!;
       const v = layer.visual;
       const y = v.kind === 'sprite' ? VIEW_HEIGHT - v.baseFromBottom - v.dispHeight : 0;
       const h = v.kind === 'sprite' ? v.dispHeight : VIEW_HEIGHT;
@@ -419,41 +434,29 @@ export class GameScene extends Phaser.Scene {
     const p = pack.dayNight[timeOfDayForSeed(seed)];
     // sky < 0x1000000 ⇒ Phaser trata como RGB opaco (alpha 255). Cobre o backgroundColor do jogo.
     this.cameras.main.setBackgroundColor(p.sky);
+    // Backdrop recebe o mesmo tint de dia/noite do parallax (coeso com a hora do dia da seed).
+    this.bgImage?.setTexture(pack.bgScreen);
+    this.bgImage?.setTint(p.parallaxTint);
     const g = this.bandsGfx;
     g.clear();
     g.fillStyle(p.ceiling, 1);
     g.fillRect(0, 0, VIEW_WIDTH, GROUND_THICKNESS);
     g.fillStyle(p.ground, 1);
     g.fillRect(0, VIEW_HEIGHT - GROUND_THICKNESS, VIEW_WIDTH, GROUND_THICKNESS);
-    // Regenera as texturas de silhueta do pack (chave inclui packId) e re-tinta.
+    // Troca para a textura de parallax do pack ativo e re-tinta (dia/noite por cima da arte).
+    // Recalcula o tileScale: cada tema tem uma densidade de pixel própria (Task 5), e essa é a
+    // única passagem que roda fora do hot path (REGRA 3 — só em criação/restart/troca de pack).
     for (let i = 0; i < this.parallaxTiles.length; i++) {
-      const key = this.ensureLayerTexture(PARALLAX_LAYERS[i]!, pack.parallax[i]!.color, pack.id);
-      this.parallaxTiles[i]!.setTexture(key);
-      this.parallaxTiles[i]!.setTint(p.parallaxTint);
+      const key = pack.parallaxTextures[i]!;
+      const tile = this.parallaxTiles[i]!;
+      tile.setTexture(key);
+      tile.setTint(p.parallaxTint);
+      const scale = parallaxTileScale(this.textures.get(key).getSourceImage().width, this.renderScale);
+      tile.setTileScale(scale, scale);
     }
     this.appliedDayNightSeed = seed;
     this.appliedPackId = pack.id;
     this.appliedEntityTint = pack.entityTint;
-  }
-
-  /** Gera (1×) a textura de tile de uma camada: linha de triângulos como silhueta. Chave = id+pack. */
-  private ensureLayerTexture(layer: ParallaxLayer, color: number, packId: string): string {
-    if (layer.visual.kind === 'sprite') return layer.visual.texture;
-    const key = `parallax:${packId}:${layer.id}`;
-    if (this.textures.exists(key)) return key;
-    const { tileWidth, peakHeight, baseFromBottom } = layer.visual;
-    const baseY = VIEW_HEIGHT - baseFromBottom; // base da silhueta (px do topo)
-    const topY = baseY - peakHeight; // ápice dos triângulos
-    const g = this.make.graphics({ x: 0, y: 0 }, false);
-    g.fillStyle(color, 1);
-    // Dois triângulos por tile garantem casamento nas bordas ao tilear.
-    const half = tileWidth / 2;
-    for (let x = 0; x < tileWidth; x += half) {
-      g.fillTriangle(x, baseY, x + half / 2, topY, x + half, baseY);
-    }
-    g.generateTexture(key, tileWidth, VIEW_HEIGHT);
-    g.destroy();
-    return key;
   }
 
   /** Desenha a geometria da hitbox (ou triângulo cosmético) na cor do manifesto. */

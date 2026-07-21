@@ -4,266 +4,266 @@
       "frame": {
         "x": 2,
         "y": 2,
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       }
     },
     "dino.default.1": {
       "frame": {
-        "x": 195,
+        "x": 260,
         "y": 2,
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       }
     },
     "dino.default.2": {
       "frame": {
-        "x": 388,
+        "x": 518,
         "y": 2,
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       }
     },
     "dino.default.3": {
       "frame": {
-        "x": 581,
-        "y": 2,
-        "w": 191,
-        "h": 256
+        "x": 2,
+        "y": 244,
+        "w": 256,
+        "h": 240
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       }
     },
     "dino.default.4": {
       "frame": {
-        "x": 774,
-        "y": 2,
-        "w": 191,
-        "h": 256
+        "x": 260,
+        "y": 244,
+        "w": 256,
+        "h": 240
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       }
     },
     "dino.default.5": {
       "frame": {
-        "x": 2,
-        "y": 260,
-        "w": 191,
-        "h": 256
+        "x": 518,
+        "y": 244,
+        "w": 256,
+        "h": 240
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       }
     },
     "obstacle.tree": {
       "frame": {
-        "x": 195,
-        "y": 260,
-        "w": 82,
+        "x": 776,
+        "y": 244,
+        "w": 60,
         "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 82,
+        "w": 60,
         "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 82,
+        "w": 60,
         "h": 256
       }
     },
     "bird.coin": {
       "frame": {
-        "x": 279,
-        "y": 260,
+        "x": 2,
+        "y": 502,
         "w": 256,
-        "h": 219
+        "h": 184
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
         "w": 256,
-        "h": 219
+        "h": 184
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
         "w": 256,
-        "h": 219
+        "h": 184
       }
     },
     "powerup.shield": {
       "frame": {
-        "x": 537,
-        "y": 260,
-        "w": 214,
+        "x": 260,
+        "y": 502,
+        "w": 203,
         "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 214,
+        "w": 203,
         "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 214,
+        "w": 203,
         "h": 256
       }
     },
     "powerup.extraLife": {
       "frame": {
-        "x": 753,
-        "y": 260,
-        "w": 238,
+        "x": 465,
+        "y": 502,
+        "w": 236,
         "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 238,
+        "w": 236,
         "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 238,
+        "w": 236,
         "h": 256
       }
     },
     "powerup.magnet": {
       "frame": {
-        "x": 2,
-        "y": 518,
-        "w": 230,
+        "x": 703,
+        "y": 502,
+        "w": 224,
         "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 230,
+        "w": 224,
         "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 230,
+        "w": 224,
         "h": 256
       }
     },
     "powerup.doubleCoin": {
       "frame": {
-        "x": 234,
-        "y": 518,
+        "x": 2,
+        "y": 760,
         "w": 256,
-        "h": 207
+        "h": 208
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
         "w": 256,
-        "h": 207
+        "h": 208
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
         "w": 256,
-        "h": 207
+        "h": 208
       }
     },
     "powerup.slowMo": {
       "frame": {
-        "x": 492,
-        "y": 518,
-        "w": 171,
+        "x": 260,
+        "y": 760,
+        "w": 238,
         "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 171,
+        "w": 238,
         "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 171,
+        "w": 238,
         "h": 256
       }
     },
     "obstacle.vine": {
       "frame": {
-        "x": 665,
-        "y": 518,
+        "x": 500,
+        "y": 760,
         "w": 21,
         "h": 256
       },
@@ -282,8 +282,8 @@
     },
     "obstacle.boulder": {
       "frame": {
-        "x": 688,
-        "y": 518,
+        "x": 523,
+        "y": 760,
         "w": 256,
         "h": 254
       },
@@ -302,8 +302,8 @@
     },
     "obstacle.stalactite": {
       "frame": {
-        "x": 2,
-        "y": 776,
+        "x": 781,
+        "y": 760,
         "w": 196,
         "h": 256
       },
@@ -324,28 +324,28 @@
       "frame": {
         "x": 2,
         "y": 2,
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 191,
-        "h": 256
+        "w": 256,
+        "h": 240
       }
     }
   },
   "meta": {
-    "image": "entities.png",
+    "image": "entities.volcano.png",
     "size": {
       "w": 1024,
-      "h": 1034
+      "h": 1018
     },
     "scale": "1"
   }

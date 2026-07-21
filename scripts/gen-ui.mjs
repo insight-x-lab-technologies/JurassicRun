@@ -2,7 +2,7 @@
 // Processa a arte-fonte Tier-1 (public/art/final) em assets de runtime pequenos (public/ui).
 // Reusa o decoder/cropResize de gen-atlas + encodePng. Zero dep. Rode `npm run gen:ui`.
 import { encodePng } from './gen-icons.mjs';
-import { contentBounds, cropResize, loadArt } from './gen-atlas.mjs';
+import { contentBounds, cropResize, loadArt, chromaKeyToAlpha } from './gen-atlas.mjs';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -41,6 +41,33 @@ export const UI_SOURCES = [
     { name: 'parallax.far', x: 0, y: 0.0, w: 1, h: 0.34, padBottomTo: 350 },
     { name: 'parallax.mid', x: 0, y: 0.34, w: 1, h: 0.34, padBottomTo: 235 },
     { name: 'parallax.near', x: 0, y: 0.66, w: 1, h: 0.34 } ] },
+  // Parallax FOTORREALISTA por tema (Task 5, substitui `parallax.*` acima para packs volcano/
+  // glacier/classic no runtime — os 3 arquivos sem sufixo continuam gerados/commitados pois um
+  // teste ainda os referencia, mas nada mais os consome). Cada folha `ui/<tema>_ui-
+  // parallax.chromakey.png` (1536×1024) tem uma ilustração grande no topo (não usada) + a banda
+  // de 3 sub-camadas no terço inferior. `classic`/`volcano` têm linhas de chroma separando
+  // far/mid/near; `glacier` é uma cena contínua sem linha (dividida em terços iguais). Frações
+  // calibradas por detecção de chroma-separador + verificação visual (Playwright) por tema.
+  // Tiras OPACAS (cena fotorreal completa, não silhueta) — SEM padBottomTo: a base fotorreal não
+  // tem linha 100% opaca full-width, então o skirt replicava a franja de chroma como streaks
+  // verticais. `chroma:true` + `hardAlpha:true` removem o separador e a franja feather (o chroma
+  // default só zera o separador puro; hardAlpha corta o anel semi-transparente e re-apara). No
+  // GameScene: bg.screen entra como backdrop de tela cheia e estas tiras ficam por cima (bandas).
+  { out: 'parallax.theme.classic', file: 'ui/classic_ui-parallax.chromakey.png',
+    root: 'public/art/themes/classic', maxDim: 2172, chroma: true, hardAlpha: true, regions: [
+      { name: 'parallax.far.classic', x: 0, y: 0.6377, w: 1, h: 0.0996 },
+      { name: 'parallax.mid.classic', x: 0, y: 0.7412, w: 1, h: 0.1113 },
+      { name: 'parallax.near.classic', x: 0, y: 0.8574, w: 1, h: 0.1045 } ] },
+  { out: 'parallax.theme.volcano', file: 'ui/volcano_ui-parallax.chromakey.png',
+    root: 'public/art/themes/volcano', maxDim: 2172, chroma: true, hardAlpha: true, regions: [
+      { name: 'parallax.far.volcano', x: 0, y: 0.6689, w: 1, h: 0.0977 },
+      { name: 'parallax.mid.volcano', x: 0, y: 0.7764, w: 1, h: 0.0957 },
+      { name: 'parallax.near.volcano', x: 0, y: 0.8828, w: 1, h: 0.0900 } ] },
+  { out: 'parallax.theme.glacier', file: 'ui/glacier_ui-parallax.chromakey.png',
+    root: 'public/art/themes/glacier', maxDim: 2172, chroma: true, hardAlpha: true, regions: [
+      { name: 'parallax.far.glacier', x: 0, y: 0.6985, w: 1, h: 0.0899 },
+      { name: 'parallax.mid.glacier', x: 0, y: 0.7884, w: 1, h: 0.0960 },
+      { name: 'parallax.near.glacier', x: 0, y: 0.8845, w: 1, h: 0.0880 } ] },
   ...['starter', 'lodestone', 'goldbeak', 'midas', 'nine-lives', 'aegis', 'prospector', 'harvester', 'phoenix', 'guardian'].map((id) => ({
     out: `dino.${id}`, file: `dinos/dino.${id}.flap.png`, maxDim: 256,
     regions: [{ name: `dino.${id}`, x: 0, y: 0, w: 0.1667, h: 1 }],
@@ -81,10 +108,45 @@ function padBottom(w, h, pixels, targetH) {
   return out;
 }
 
+/** True se o pixel é chroma-ish OPACO (magenta OU verde) — resíduo do separador/margem. A
+ * descontaminação do chroma pode deixar um roxo/verde MUDDY opaco (alpha 255) na borda que o
+ * keying por distância não zera; ele só aparece na costura de tiling (bordas justapostas). */
+function isChromaish(r, g, b, a) {
+  return a > 128 && ((r > 110 && g < 90 && b > 100) || (r < 90 && g > 140 && b < 90));
+}
+
+/** Zera o alpha de qualquer pixel chroma-ish opaco na MARGEM externa (5% de cada borda, 4 lados).
+ * A contaminação (roxo/verde muddy) vive só nas bordas do slice; mascarar a margem pega inclusive
+ * cantos parciais (que uma erosão por-coluna com threshold deixaria passar), sem tocar a folhagem
+ * do interior. hardCutAlpha (a seguir) re-apara as bordas totalmente zeradas via contentBounds. */
+function trimChromaEdges(w, h, pixels) {
+  const mx = Math.max(1, Math.round(w * 0.05));
+  const my = Math.max(1, Math.round(h * 0.05));
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    if (x >= mx && x < w - mx && y >= my && y < h - my) continue; // interior: intocado
+    const i = (y * w + x) * 4;
+    if (isChromaish(pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3])) pixels[i + 3] = 0;
+  }
+  return pixels;
+}
+
+/** Corta a franja feather de tiras opacas: alpha<thresh → 0, depois re-apara a bbox de conteúdo.
+ * O chroma default deixa um anel de pixels semi-transparentes (borda do separador) que sobra como
+ * franja colorida; tiras fotorreais são opacas no interior, então qualquer alpha<thresh é franja. */
+function hardCutAlpha(w, h, pixels, thresh) {
+  for (let i = 0; i < w * h; i++) if (pixels[i * 4 + 3] < thresh) pixels[i * 4 + 3] = 0;
+  const b = contentBounds({ w, h, rgba: pixels }, 0, 0, w, h);
+  const nw = b.maxX - b.minX, nh = b.maxY - b.minY;
+  const out = Buffer.alloc(nw * nh * 4);
+  for (let y = 0; y < nh; y++) pixels.copy(out, y * nw * 4, ((b.minY + y) * w + b.minX) * 4, ((b.minY + y) * w + b.minX + nw) * 4);
+  return { w: nw, h: nh, pixels: out };
+}
+
 export function renderUi() {
   const outs = [];
   for (const src of UI_SOURCES) {
-    const img = loadArt(src.file);
+    let img = loadArt(src.file, src.root);
+    if (src.chroma) img = chromaKeyToAlpha(img, src.chromaOpts);
     if (src.grid) {
       const { cols, rows, names } = src.grid;
       if (names.length !== cols * rows) throw new Error(`grid ${src.out}: names ${names.length} != ${cols * rows}`);
@@ -99,6 +161,10 @@ export function renderUi() {
         const x0 = Math.round(rg.x * img.w), y0 = Math.round(rg.y * img.h);
         const x1 = Math.round((rg.x + rg.w) * img.w), y1 = Math.round((rg.y + rg.h) * img.h);
         let { w, h, pixels } = crop(img, x0, y0, x1, y1, src.maxDim, rg.opaque);
+        if (src.hardAlpha) {
+          trimChromaEdges(w, h, pixels); // erode colunas de borda contaminadas (costura de tiling)
+          ({ w, h, pixels } = hardCutAlpha(w, h, pixels, 245));
+        }
         if (rg.padBottomTo !== undefined && rg.padBottomTo > h) {
           pixels = padBottom(w, h, pixels, rg.padBottomTo);
           h = rg.padBottomTo;
