@@ -72,6 +72,7 @@ const PACK_VOLCANO: LookPack = {
   },
   parallax: [{ color: 0x7a4a4a }, { color: 0x8a3f2a }, { color: 0x532f24 }],
   entityTint: 0xffd9c8,
+  atlas: { key: 'entities.volcano', png: 'atlas/entities.volcano.png', json: 'atlas/entities.volcano.json' },
   bgScreen: 'bg.screen.volcano',
 };
 
@@ -94,6 +95,7 @@ const PACK_GLACIER: LookPack = {
   },
   parallax: [{ color: 0x9fb8cc }, { color: 0x7fa8c0 }, { color: 0x5f88a0 }],
   entityTint: 0xd8ecff,
+  atlas: { key: 'entities.glacier', png: 'atlas/entities.glacier.png', json: 'atlas/entities.glacier.json' },
   bgScreen: 'bg.screen.glacier',
 };
 
