@@ -114,6 +114,36 @@ export function cropResize(img, sx, sy, sw, sh, dw, dh) {
   return out;
 }
 
+/**
+ * Converte o fundo-chave (chroma) em alpha. Auto-detecta a cor-chave pelo pixel (0,0) — os cantos
+ * são sempre fundo. Para cada pixel: distância euclidiana RGB até a chave; dist<inner ⇒ alpha 0,
+ * dist>outer ⇒ alpha inalterado, entre os dois ⇒ rampa linear (feather anti-franja). Também
+ * descontamina a cor de pixels semi-transparentes (remove o tingido da chave) para evitar halo.
+ * Retorna um NOVO buffer; não muta a entrada (loadArt é memoizado).
+ */
+export function chromaKeyToAlpha(img, opts = {}) {
+  const inner = opts.inner ?? 60, outer = opts.outer ?? 120;
+  const kR = img.rgba[0], kG = img.rgba[1], kB = img.rgba[2];
+  const out = Buffer.from(img.rgba); // cópia
+  for (let i = 0; i < img.w * img.h; i++) {
+    const d = i * 4, r = out[d], g = out[d + 1], b = out[d + 2];
+    const dist = Math.sqrt((r - kR) ** 2 + (g - kG) ** 2 + (b - kB) ** 2);
+    let a;
+    if (dist <= inner) a = 0;
+    else if (dist >= outer) a = out[d + 3];
+    else a = Math.round(out[d + 3] * ((dist - inner) / (outer - inner)));
+    // descontaminação: puxa a cor para longe da chave proporcional à transparência ganha
+    if (a < out[d + 3] && a > 0) {
+      const t = 1 - a / 255; // quanto de chave remover
+      out[d] = Math.max(0, Math.min(255, Math.round((r - kR * t) / (1 - t + 1e-6))));
+      out[d + 1] = Math.max(0, Math.min(255, Math.round((g - kG * t) / (1 - t + 1e-6))));
+      out[d + 2] = Math.max(0, Math.min(255, Math.round((b - kB * t) / (1 - t + 1e-6))));
+    }
+    out[d + 3] = a;
+  }
+  return { w: img.w, h: img.h, rgba: out };
+}
+
 function targetSize(sw, sh) {
   const s = Math.min(1, CELL_MAX / Math.max(sw, sh));
   return { dw: Math.max(1, Math.round(sw * s)), dh: Math.max(1, Math.round(sh * s)) };
