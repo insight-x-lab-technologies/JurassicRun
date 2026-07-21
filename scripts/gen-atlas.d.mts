@@ -1,7 +1,16 @@
+export interface AtlasGrid { cols: number; rows: number; names: readonly (string | null)[]; }
+export interface AtlasSource {
+  id: string;
+  file: string;
+  frames?: number;
+  root?: string;
+  chroma?: boolean;
+  grid?: AtlasGrid;
+}
 export const ATLAS_KEY: string;
-export const ATLAS_SOURCES: readonly { id: string; file: string; frames: number }[];
-export const ATLAS_VARIANTS: readonly { key: string; sources: typeof ATLAS_SOURCES }[];
-export function renderAtlas(sources?: typeof ATLAS_SOURCES): {
+export const ATLAS_SOURCES: readonly AtlasSource[];
+export const ATLAS_VARIANTS: readonly { key: string; sources: readonly AtlasSource[] }[];
+export function renderAtlas(sources?: readonly AtlasSource[]): {
   png: Buffer;
   json: {
     frames: Record<string, {
