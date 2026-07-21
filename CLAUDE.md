@@ -1559,3 +1559,72 @@ art-dependente):** personagem pterodáctilo nas telas + transições de tela (W4
 à esquerda no Ninho + stat-chips no topo das sub-telas (W2b); ícones de stat dourados no Game Over (hoje
 emoji); "Buy · N coins" quebra em card estreito; flakiness de timeout dos testes pesados de asset (memoizar
 `renderAtlas`/`renderUi`).
+
+**Rodada 2 do redesign — polish W5→W9 (CONCLUÍDA).** Revisão do usuário sobre `ref/print_*.png` (desktop
+1366×768 + mobile). `src/core/` intocado ⇒ **det 67**, suíte **771**. Merges no `main` (push
+`525b95f..593df8a`): W5=`93c8391`, W6–W9=`15dd59d`, parallax+PNG=`593df8a`. Spec `docs/superpowers/specs/
+2026-07-20-ui-w5-w9-polish-design.md`.
+
+W5 (resolução de render — item 4.1, "o mais importante"): a **baixa qualidade de imagem NÃO era a arte.**
+Medido em runtime: `canvas.width/height=320×180` (backing store) esticado para 1365×768 = **upscale 4,27×**
+— o jogo desenhava num framebuffer 320×180 px REAIS e o browser esticava (os frames do atlas já tinham até
+128px de fonte jogados fora). `src/render/resolution.ts` PURO: `resolveRenderScale(cssW,cssH,dpr)` dá ao
+canvas os px que o display REALMENTE mostra (1:1 sem reamostragem, medido `1365×768==1365×768`), piso 1 /
+**teto 6** (1920 de largura, limita fill-rate em 4K). `GameScene` multiplica pela escala ao ESCREVER em
+objetos Phaser via `this.px()`; Graphics/overlays usam `setScale(renderScale)` ⇒ código de desenho segue
+em unidades de mundo (320×180 TRAVADO por determinismo/justiça). **NÃO `camera.setZoom`:** com zoom≠1 o
+Phaser escala objetos `scrollFactor(0)` em torno do centro da câmera ⇒ parallax/faixas/overlays sairiam do
+lugar. Culling continua em unidades de mundo. Densidade de origem subida p/ acompanhar: atlas `CELL_MAX`
+128→256 + largura 512→1024; parallax `maxDim` 720→2172. **FPS de desktop NÃO provado** (ambiente
+**SwiftShader/sem GPU** ⇒ custo linear com pixels = fill-rate de software; a 85k px=17ms/0jank, a 1M
+px=147ms — precisa de GPU real p/ confirmar 60fps). **Bônus:** memoizei o decode das artes-fonte (`loadArt`
+em gen-atlas/gen-ui — cache no DECODE, não em `renderAtlas`, senão os testes de determinismo do encoder
+viram tautologia); resolveu a flakiness de timeout catalogada (main estava com 6 testes vermelhos).
+
+W6 (tipografia e fonte configurável): **decisão do usuário — as 3 famílias no seletor** (Cinzel padrão +
+Cinzel Decorative nos títulos, Marcellus, Exo 2) + Sistema, afetando TODA a UI. 4 famílias OFL self-hosted
+em `public/fonts` (432KB; `scripts/fetch-fonts.mjs` reproduz a busca; self-host e não CDN porque a PWA roda
+offline). **Gotcha:** `@font-face` com caminho RELATIVO (`../fonts/x`) — absoluto daria 404 sob
+`/JurassicRun/` no Pages. Toda pilha termina no fallback de sistema (ja/zh/ko/hi sem glifos latinos —
+coberto por teste). `SettingsState.font` no molde EXATO de `language` (4.8): sinal reativo, saneado por
+campo, troca **AO VIVO** via custom properties `--font-display/--font-body` em `:root`. Chave i18n
+`settings.font` nos 10 locales. Corpo dos botões menor (`--font-size-btn`) + `overflow-wrap:break-word`
+(o `anywhere` do W1 produzia "EXPANSIO/NS"/"CHALLEN/GE").
+
+W7 (layout desktop widescreen): Home — logo maior, chips no topo em linha, botões de altura uniforme
+(`grid-auto-rows:1fr`, medido 66px), ícone à esquerda. Ninho **5 colunas** — o que travava em 3 era o TETO
+de largura do grid (40rem), NÃO o minmax. Títulos de tela maiores; capa de expansão maior (aspect-ratio
+4/3). NavBar virou grid de colunas iguais (era inline-flex ⇒ rótulo curto agrupava), com delimitador
+vertical e rótulo em até 2 linhas.
+
+W8 (Leaderboard/Perfil): o leaderboard parecia texto corrido porque `player`/`seed`/`verified` dividiam a
+MESMA grid-area; agora colunas fixas (posição · quem/métricas · score), métricas rotuladas, zebra, medalhas
+maiores, score dourado à direita. Perfil em duas colunas (cartão de identidade emoldurado + coluna de ações;
+estado online colorido). **Gotcha:** Cinzel/Marcellus têm algarismos de estilo antigo ("1840"→"I840") ⇒
+números em `--font-fallback` com `lining-nums tabular-nums`.
+
+W9 (mobile): os 4 indicadores agora CABEM na linha (some o rótulo do chip, fica glifo+número); botões em 2
+colunas e menores; logo maior. **Bug do Ninho ("dinos não aparecem"):** era `object-fit:cover` num card
+full-width ⇒ zoom na ponta da asa; virou `contain` em caixa 1:1, grade a 2 colunas.
+
+Parallax até o chão (não eram "3 números"): a `dispHeight` de cada camada não batia com a altura NATURAL da
+textura (px÷densidade 2172/720) ⇒ `far` reservava 52 unidades p/ arte de 35,8 e a TileSprite REPETIA na
+vertical (o topo transparente da repetição = o "corte reto" no céu); `near` era cortada embaixo. Fix no
+pipeline: `gen-ui` `padBottomTo` estende a tira replicando a última linha SÓLIDA. **Gotcha:** replicar a
+última linha literal deu um véu — o recorte deixa 1–2 linhas de franja quase transparente (far termina
+alpha médio **17**, não 255) ⇒ descartar a franja. `PARALLAX_LAYERS`: baseFromBottom 0, dispHeight = altura
+natural (far 116/mid 78/near 81,5).
+
+Compressão de PNG (backlog recorrente fechado): `encodePng` (gen-icons) emitia sempre filtro 0; agora
+filtragem adaptativa (5 filtros/scanline, menor soma abs com sinal — heurística da spec; determinístico;
+decoder já suportava). **Gotcha:** 1ª versão alocava 5 buffers/linha ⇒ estourou o timeout dos testes de
+asset; reescrita reaproveitando buffers. `ui` 6,8→5,5M, `atlas` 832→704K, `icons` 20→16K. Precache do SW
+**8,2MB** (seria ~9,6 sem filtro) ⇒ absorve os 432KB de fontes. `atlas.test`/`gen-ui.test` ganharam
+`beforeAll` de aquecimento do decode.
+
+**Meta-gotchas (verificar por NÚMERO, não screenshot):** quase reportei layout corrigido medindo **CSS em
+cache** — só peguei conferindo `getComputedStyle`+hash do CSS carregado (sempre unregister SW + clear caches
++ `?nocache`); e a 1ª versão do encoder **passou nos testes mas estourou timeout** (custo, não asserção).
+**Backlog:** FPS desktop sob GPU real; "Buy · N coins" fica em 2 linhas em card estreito (deixado — `nowrap`
+estouraria alemão/hindi); personagem pterodáctilo + transições; painel de dino ativo + stat-chips no topo
+das sub-telas (W2b); ícones dourados de stat no Game Over.

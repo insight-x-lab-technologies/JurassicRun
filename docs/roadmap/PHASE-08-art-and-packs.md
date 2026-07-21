@@ -74,6 +74,18 @@ performance, e habilitar packs cosméticos compráveis.
       botões+ícones, C medalhas+capas+dinos+emblema+statchip, D parallax). **Resta só backlog:** compressão dos
       PNGs de `public/ui/`; a11y de rank top-3; arte de dino in-game; mover arte-fonte p/ fora de `publicDir`._
 
+      _**Backlog fechado na rodada de polish de UI (W5–W9, merge `593df8a`; `src/core/` intocado, det 67):**
+      (1) **resolução de render** — o canvas era um framebuffer de 320×180 px REAIS esticado 4,27× (a "baixa
+      qualidade" que parecia arte era o motor). `src/render/resolution.ts` PURO dá ao canvas os px que o
+      display mostra (1:1, teto 6=1920), `GameScene` multiplica pela escala; unidade de mundo 320×180
+      TRAVADA. (2) **parallax até o chão** — a `dispHeight` das camadas não batia com a altura natural da
+      textura ⇒ a `TileSprite` repetia na vertical (corte reto no céu); corrigido com `padBottomTo` no
+      `gen-ui` (estende a tira replicando a última linha SÓLIDA) + `dispHeight`/`baseFromBottom` reais em
+      `PARALLAX_LAYERS`. (3) **compressão de PNG** — `encodePng` (gen-icons) ganhou filtragem adaptativa de
+      scanline (5 filtros, heurística da spec, determinístico): `public/ui` 6,8→5,5M, atlas 832→704K,
+      precache do SW 8,2MB. **FPS de desktop segue não-medido** (ambiente SwiftShader/sem GPU). Detalhes em
+      CLAUDE.md (rodada 2 do redesign) e spec `docs/superpowers/specs/2026-07-20-ui-w5-w9-polish-design.md`._
+
       _Parte de especificação CONCLUÍDA (docs-only, `src/` intocado, determinismo 67):
       Style Bible `docs/assets/ART-DIRECTION.md` (paleta/materiais/tipografia/iconografia +
       regra dos dois tiers), catálogo de specs prontas-para-IA dos assets novos que os
