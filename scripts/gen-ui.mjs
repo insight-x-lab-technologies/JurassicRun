@@ -108,6 +108,28 @@ function padBottom(w, h, pixels, targetH) {
   return out;
 }
 
+/** True se o pixel é chroma-ish OPACO (magenta OU verde) — resíduo do separador/margem. A
+ * descontaminação do chroma pode deixar um roxo/verde MUDDY opaco (alpha 255) na borda que o
+ * keying por distância não zera; ele só aparece na costura de tiling (bordas justapostas). */
+function isChromaish(r, g, b, a) {
+  return a > 128 && ((r > 110 && g < 90 && b > 100) || (r < 90 && g > 140 && b < 90));
+}
+
+/** Zera o alpha de qualquer pixel chroma-ish opaco na MARGEM externa (5% de cada borda, 4 lados).
+ * A contaminação (roxo/verde muddy) vive só nas bordas do slice; mascarar a margem pega inclusive
+ * cantos parciais (que uma erosão por-coluna com threshold deixaria passar), sem tocar a folhagem
+ * do interior. hardCutAlpha (a seguir) re-apara as bordas totalmente zeradas via contentBounds. */
+function trimChromaEdges(w, h, pixels) {
+  const mx = Math.max(1, Math.round(w * 0.05));
+  const my = Math.max(1, Math.round(h * 0.05));
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    if (x >= mx && x < w - mx && y >= my && y < h - my) continue; // interior: intocado
+    const i = (y * w + x) * 4;
+    if (isChromaish(pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3])) pixels[i + 3] = 0;
+  }
+  return pixels;
+}
+
 /** Corta a franja feather de tiras opacas: alpha<thresh → 0, depois re-apara a bbox de conteúdo.
  * O chroma default deixa um anel de pixels semi-transparentes (borda do separador) que sobra como
  * franja colorida; tiras fotorreais são opacas no interior, então qualquer alpha<thresh é franja. */
@@ -139,7 +161,10 @@ export function renderUi() {
         const x0 = Math.round(rg.x * img.w), y0 = Math.round(rg.y * img.h);
         const x1 = Math.round((rg.x + rg.w) * img.w), y1 = Math.round((rg.y + rg.h) * img.h);
         let { w, h, pixels } = crop(img, x0, y0, x1, y1, src.maxDim, rg.opaque);
-        if (src.hardAlpha) ({ w, h, pixels } = hardCutAlpha(w, h, pixels, 245));
+        if (src.hardAlpha) {
+          trimChromaEdges(w, h, pixels); // erode colunas de borda contaminadas (costura de tiling)
+          ({ w, h, pixels } = hardCutAlpha(w, h, pixels, 245));
+        }
         if (rg.padBottomTo !== undefined && rg.padBottomTo > h) {
           pixels = padBottom(w, h, pixels, rg.padBottomTo);
           h = rg.padBottomTo;
