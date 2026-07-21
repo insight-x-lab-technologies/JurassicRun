@@ -8,7 +8,7 @@ export const FIXED_DT = 1 / 60;
 export const WORLD_HEIGHT = 180;
 export const START_Y = WORLD_HEIGHT / 2;
 export const GRAVITY = 540; // unidades/s² (para baixo)
-export const FLAP_SPEED = 240; // unidades/s (impulso para cima)
+export const FLAP_SPEED = 170; // unidades/s (impulso para cima)
 export const SCROLL_SPEED = 120; // unidades/s (avanço em +x)
 export const PTERODACTYL_HITBOX: Hitbox = aabb(10, 8);
 
