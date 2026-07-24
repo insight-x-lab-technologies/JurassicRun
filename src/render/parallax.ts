@@ -1,9 +1,9 @@
 /**
  * Camadas de parallax (REGRA 2): tipos lógicos trocáveis. `primitive` (geométrico) segue
  * suportado no tipo p/ compatibilidade de packs; `PARALLAX_LAYERS` agora usa `sprite`
- * (tiras `parallax.{far,mid,near}` — Fase 8.1). Puramente visuais ⇒ não tocam `src/core/`
+ * (tiras `parallax.{far,mid,near,impact}` — Fase 9.1). Puramente visuais ⇒ não tocam `src/core/`
  * (determinismo intacto). Ordem do array = profundidade: índice 0 é a mais distante
- * (menor scrollFactor).
+ * (menor scrollFactor). 4 camadas alpha com scrollFactor crescente (0.15/0.35/0.6/0.85).
  */
 export type ParallaxVisual =
   | {
@@ -26,22 +26,23 @@ export interface ParallaxLayer {
 export const PARALLAX_LAYERS: readonly ParallaxLayer[] = [
   {
     id: 'bg.layer.far',
-    scrollFactor: 0.2,
-    // W5+: dispHeight = altura NATURAL da textura em unidades de mundo (px ÷ densidade
-    // 2172/720). Valor menor fazia a TileSprite repetir na vertical e o topo transparente da
-    // repetição virava um corte reto no céu; maior cortava a arte. baseFromBottom 0: a tira
-    // já vem estendida até o chão pelo gen-ui (saia opaca), então a base nunca "flutua".
-    visual: { kind: 'sprite', texture: 'parallax.far', baseFromBottom: 0, dispHeight: 116 },
+    scrollFactor: 0.15,
+    visual: { kind: 'sprite', texture: 'parallax.far', baseFromBottom: 0, dispHeight: 110 },
   },
   {
     id: 'bg.layer.mid',
-    scrollFactor: 0.4,
-    visual: { kind: 'sprite', texture: 'parallax.mid', baseFromBottom: 0, dispHeight: 78 },
+    scrollFactor: 0.35,
+    visual: { kind: 'sprite', texture: 'parallax.mid', baseFromBottom: 0, dispHeight: 95 },
   },
   {
     id: 'bg.layer.near',
-    scrollFactor: 0.7,
-    visual: { kind: 'sprite', texture: 'parallax.near', baseFromBottom: 0, dispHeight: 81.5 },
+    scrollFactor: 0.6,
+    visual: { kind: 'sprite', texture: 'parallax.near', baseFromBottom: 0, dispHeight: 90 },
+  },
+  {
+    id: 'bg.layer.impact',
+    scrollFactor: 0.85,
+    visual: { kind: 'sprite', texture: 'parallax.impact', baseFromBottom: 0, dispHeight: 80 },
   },
 ];
 
