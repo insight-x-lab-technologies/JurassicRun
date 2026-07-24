@@ -12,18 +12,25 @@ const THEMES = ['classic', 'volcano', 'glacier'];
 const W = 2048;
 
 // Dims por camada (Apêndice A.1). far/mid 384, near 448, impact 512.
+// `fill`/`amp` (em px de fonte) são calibrados para SILHUETAS BAIXAS aterradas no chão: como o
+// render mostra a textura em altura NATURAL (texH/2 unidades de mundo, ver PARALLAX_LAYERS), a
+// altura da silhueta na tela = fill·(texH/2) ± amp/2. Mantidos baixos e crescentes far<mid<near
+// (profundidade legível de ~30/50/75 unidades num campo de 180) para não virar parede opaca; o
+// backdrop `bg.screen` vaza acima. `impact` é esparso (só ~30% das colunas ⇒ ~70% transparente).
 const LAYERS = {
-  far:    { h: 384, fill: 0.36, amp: 46,  sparse: false },
-  mid:    { h: 384, fill: 0.52, amp: 74,  sparse: false },
-  near:   { h: 448, fill: 0.66, amp: 104, sparse: false },
-  impact: { h: 512, fill: 0.55, amp: 150, sparse: true  },
+  far:    { h: 384, fill: 0.15, amp: 34, sparse: false },
+  mid:    { h: 384, fill: 0.24, amp: 46, sparse: false },
+  near:   { h: 448, fill: 0.33, amp: 60, sparse: false },
+  impact: { h: 512, fill: 0.22, amp: 70, sparse: true  },
 };
 
-// [r,g,b] por tema × camada (silhueta). Paleta coerente com o Style Bible; placeholder.
+// [r,g,b] por tema × camada (silhueta). Placeholder com PERSPECTIVA ATMOSFÉRICA: far mais claro/
+// dessaturado (hazy, ao longe) → near mais escuro/saturado (perto) ⇒ profundidade legível mesmo
+// com silhuetas simples. Paleta coerente com o Style Bible; a arte real substitui.
 const COLOR = {
-  classic: { far: [74, 107, 58],  mid: [58, 93, 46],  near: [47, 107, 47], impact: [36, 64, 26] },
-  volcano: { far: [90, 58, 52],   mid: [74, 42, 36],  near: [58, 32, 28],  impact: [255, 90, 30] },
-  glacier: { far: [188, 214, 230], mid: [168, 196, 214], near: [144, 176, 192], impact: [111, 138, 154] },
+  classic: { far: [96, 120, 84],  mid: [70, 102, 58],  near: [46, 84, 44],   impact: [30, 54, 24]  },
+  volcano: { far: [120, 80, 70],  mid: [92, 54, 46],   near: [64, 34, 30],   impact: [44, 26, 24]  },
+  glacier: { far: [205, 224, 236], mid: [172, 198, 216], near: [130, 164, 184], impact: [96, 124, 144] },
 };
 
 // Harmônicos periódicos sobre W ⇒ borda esquerda casa com a direita (tileável). Fases fixas por

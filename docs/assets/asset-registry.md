@@ -41,11 +41,19 @@ usada no manifesto de assets do render.
 | `powerup.slowMo` | câmera lenta (efeito temporário) | art | `specs/powerup.slowMo.md` |
 
 ## Fundos / parallax
+> **Fase 9.1 — 4 camadas alpha por tema.** Cada camada é uma faixa tileável horizontalmente com
+> **topo transparente** (o backdrop `bg.screen` vaza por cima); fonte
+> `public/art/themes/<tema>/parallax/<layer>.png` (classic/volcano/glacier) → runtime
+> `public/ui/parallax.<layer>.<tema>.png`. Aposentado o modelo antigo opaco/chroma
+> (`ui.<tema>_ui-parallax.chromakey.png`, 3 camadas). Status atual: **placeholder** (silhueta alpha
+> gerada proceduralmente); vira `art` quando a arte real do usuário substituir os PNGs-fonte.
+
 | id | descrição | status | spec |
 |----|-----------|--------|------|
-| `bg.layer.far` | montanhas distantes (parallax) | spec | `specs/bg.layer.far.md` |
-| `bg.layer.mid` | colinas médias (parallax) | spec | `specs/bg.layer.mid.md` |
-| `bg.layer.near` | samambaias próximas (parallax) | spec | `specs/bg.layer.near.md` |
+| `bg.layer.far` | montanhas/horizonte distante (parallax, scrollFactor 0.15) | placeholder | `specs/bg.layer.far.md` |
+| `bg.layer.mid` | colinas/rochas médias (parallax, scrollFactor 0.35) | placeholder | `specs/bg.layer.mid.md` |
+| `bg.layer.near` | vegetação próxima (parallax, scrollFactor 0.6) | placeholder | `specs/bg.layer.near.md` |
+| `bg.layer.impact` | objetos de destaque esparsos em 1º plano de fundo (parallax, scrollFactor 0.85) | placeholder | `specs/bg.layer.impact.md` |
 
 ## Clima / tempo do dia (overlays)
 | id | descrição | status | spec |
@@ -144,15 +152,18 @@ como render/asset (core intocado ⇒ determinismo 67). Spec/plano:
   6º slot ignorado). `vine`/`boulder`/`stalactite` reusam a arte cartoon de `public/art/final/`
   (mix temporário até gerar o set realista). Chroma via `chromaKeyToAlpha` (auto-detecta a chave,
   feather + descontaminação).
-- **Parallax** (`gen-ui.mjs`): 3 tiras OPACAS por tema fatiadas da banda inferior da folha
-  `ui/<tema>_ui-parallax.chromakey.png` → `public/ui/parallax.{far,mid,near}.<tema>.png`. Tiras
-  fotorreais não são silhuetas ⇒ **sem** skirt `padBottomTo`; `hardAlpha` corta a franja feather do
-  separador e `trimChromaEdges` mascara a margem externa (evita a franja de chroma na costura de
-  tiling). Guarda: `tests/render/parallax-chroma.test.ts`.
+- **Parallax — SUPERSEDED pela Fase 9.1** (ver seção "Fundos / parallax" acima e
+  `specs/bg.layer.{far,mid,near,impact}.md`): este parágrafo descreve o modelo antigo,
+  aposentado — 3 tiras OPACAS por tema fatiadas da banda inferior da folha
+  `ui/<tema>_ui-parallax.chromakey.png`. A 9.1 substituiu por **4 camadas alpha nativas**
+  (`far`/`mid`/`near`/`impact`) por tema em `public/art/themes/<tema>/parallax/<layer>.png`, sem
+  chroma-key/`padBottomTo`/`hardAlpha` — o pipeline de `gen-ui.mjs` para essa lista de fontes só
+  faz trim de conteúdo + downscale, preservando o alpha do PNG-fonte. Guarda de regressão de
+  costura mantida (agora sobre o alpha real): `tests/render/parallax-chroma.test.ts`.
 - **Backdrop** (`GameScene`): `bg.screen.<tema>` (já em `public/ui/`) entra como imagem de tela
   cheia atrás do parallax, com tint de dia/noite ⇒ substitui o céu sólido chapado.
-- **Wiring**: `LookPack.atlas` (volcano/glacier) + `LookPack.parallaxTextures` (3 por pack) +
-  `LookPack.bgScreen`. Trocam pelo pack/expansão ativa.
+- **Wiring**: `LookPack.atlas` (volcano/glacier) + `LookPack.parallaxTextures` (**4 por pack**,
+  Fase 9.1: far/mid/near/impact) + `LookPack.bgScreen`. Trocam pelo pack/expansão ativa.
 
 Para adicionar um tema novo: arte com os mesmos ids em `public/art/themes/<tema>/` → variante em
 `ATLAS_VARIANTS` (gen-atlas) + fonte de parallax em `UI_SOURCES` (gen-ui) → `npm run gen:atlas` +

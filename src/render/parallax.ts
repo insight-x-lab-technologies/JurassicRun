@@ -22,27 +22,37 @@ export interface ParallaxLayer {
   readonly visual: ParallaxVisual;
 }
 
-/** Trás→frente. ids batem com os reservados em docs/assets/asset-registry.md. */
+/**
+ * Trás→frente. ids batem com os reservados em docs/assets/asset-registry.md.
+ *
+ * 9.1: 4 camadas ALPHA (topo transparente ⇒ o backdrop `bg.screen` vaza). `dispHeight` = altura
+ * NATURAL da textura em unidades de mundo = `texH / (texW / PARALLAX_SOURCE_WORLD_WIDTH)`. As tiras
+ * placeholder são 2048×{384,384,448,512} e a densidade é 2048/1024 = 2, então a altura natural é
+ * texH/2 = {192,192,224,256}. Com `baseFromBottom: 0` a box fica aterrada no chão e mostra a
+ * textura INTEIRA (o conteúdo da silhueta vive no rodapé; o topo transparente sobe além do teto de
+ * 180 sem custo). dispHeight MENOR que a natural cortava o rodapé (a TileSprite mostra o topo em
+ * tilePositionY=0) ⇒ silhueta sumia. A arte real recalibra estes valores conforme suas dims.
+ */
 export const PARALLAX_LAYERS: readonly ParallaxLayer[] = [
   {
     id: 'bg.layer.far',
     scrollFactor: 0.15,
-    visual: { kind: 'sprite', texture: 'parallax.far', baseFromBottom: 0, dispHeight: 110 },
+    visual: { kind: 'sprite', texture: 'parallax.far', baseFromBottom: 0, dispHeight: 192 },
   },
   {
     id: 'bg.layer.mid',
     scrollFactor: 0.35,
-    visual: { kind: 'sprite', texture: 'parallax.mid', baseFromBottom: 0, dispHeight: 95 },
+    visual: { kind: 'sprite', texture: 'parallax.mid', baseFromBottom: 0, dispHeight: 192 },
   },
   {
     id: 'bg.layer.near',
     scrollFactor: 0.6,
-    visual: { kind: 'sprite', texture: 'parallax.near', baseFromBottom: 0, dispHeight: 90 },
+    visual: { kind: 'sprite', texture: 'parallax.near', baseFromBottom: 0, dispHeight: 224 },
   },
   {
     id: 'bg.layer.impact',
     scrollFactor: 0.85,
-    visual: { kind: 'sprite', texture: 'parallax.impact', baseFromBottom: 0, dispHeight: 80 },
+    visual: { kind: 'sprite', texture: 'parallax.impact', baseFromBottom: 0, dispHeight: 256 },
   },
 ];
 
