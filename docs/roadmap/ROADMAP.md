@@ -14,6 +14,7 @@ Regra: uma fase deve deixar o jogo num estado coerente e testado antes da próxi
 | 6 | Online (Supabase) | `PHASE-06-online-supabase.md` |
 | 7 | PWA, responsividade & deploy | `PHASE-07-pwa-and-deploy.md` |
 | 8 | Arte AAA & packs look&feel | `PHASE-08-art-and-packs.md` |
+| 9 | Melhorias estruturais (parallax, feedback, áudio, desafios) | `PHASE-09-structural-improvements.md` |
 
 ## Rastreabilidade: requisito → fase
 
@@ -53,6 +54,9 @@ Garante que **nada** do escopo ficou de fora.
 | Doação (Ko-Fi/BuyMeACoffee) | 4 |
 | Asset-specs para geração por IA | 0 (template+registro), contínuo |
 | Entitlements (honor-system agora, gateway depois) | 4 (abstração), 8 (gateway real) |
+| Parallax em camadas com transparência; obstáculos cobrindo hitbox; animação de morte/obstáculos | 9 |
+| Indicador de power-up/traço ativo; áudio rico + toggle de SFX | 9 |
+| Briefing de desafio + modificadores por seed; novos obstáculos | 9 |
 
 ## Definição de "pronto" por fase
 
