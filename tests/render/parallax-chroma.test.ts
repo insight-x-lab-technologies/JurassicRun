@@ -18,7 +18,7 @@ function isChromaish(r: number, g: number, b: number, a: number): boolean {
 }
 
 describe('parallax por tema — bordas sem chroma (regressão da costura de tiling)', () => {
-  const layers = ['far', 'mid', 'near'] as const;
+  const layers = ['far', 'mid', 'near', 'impact'] as const;
   const themes = ['classic', 'volcano', 'glacier'] as const;
   for (const layer of layers) {
     for (const theme of themes) {

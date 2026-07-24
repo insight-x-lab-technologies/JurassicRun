@@ -83,11 +83,13 @@ describe('processador de assets de UI (gen-ui)', () => {
   );
 
   it(
-    'gera as 3 tiras de parallax',
+    'gera as 4 tiras de parallax por tema (far/mid/near/impact × 3 temas)',
     () => {
       const names = renderUi().map((o) => o.out);
-      for (const n of ['parallax.far', 'parallax.mid', 'parallax.near']) {
-        expect(names, n).toContain(n);
+      for (const theme of ['classic', 'volcano', 'glacier']) {
+        for (const layer of ['far', 'mid', 'near', 'impact']) {
+          expect(names, `parallax.${layer}.${theme}`).toContain(`parallax.${layer}.${theme}`);
+        }
       }
     },
     60000,

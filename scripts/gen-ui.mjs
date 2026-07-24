@@ -33,41 +33,18 @@ export const UI_SOURCES = [
     { name: 'cover.classic', x: 0.0, y: 0, w: 0.3333, h: 1, opaque: true },
     { name: 'cover.volcano', x: 0.3333, y: 0, w: 0.3333, h: 1, opaque: true },
     { name: 'cover.glacier', x: 0.6667, y: 0, w: 0.3333, h: 1, opaque: true } ] },
-  // `padBottomTo`: altura final em px. A base de cada tira é 100% opaca, então replicar a
-  // última linha estende a silhueta até o chão como uma "saia" sólida. Sem isso a TileSprite
-  // repetia a textura na vertical (o topo transparente da repetição virava um corte reto no
-  // meio do céu) e a camada `near` era cortada embaixo. Ver PARALLAX_LAYERS em constants.
-  { out: 'parallax', file: 'parallax/bg.layers.png', maxDim: 2172, regions: [
-    { name: 'parallax.far', x: 0, y: 0.0, w: 1, h: 0.34, padBottomTo: 350 },
-    { name: 'parallax.mid', x: 0, y: 0.34, w: 1, h: 0.34, padBottomTo: 235 },
-    { name: 'parallax.near', x: 0, y: 0.66, w: 1, h: 0.34 } ] },
-  // Parallax FOTORREALISTA por tema (Task 5, substitui `parallax.*` acima para packs volcano/
-  // glacier/classic no runtime — os 3 arquivos sem sufixo continuam gerados/commitados pois um
-  // teste ainda os referencia, mas nada mais os consome). Cada folha `ui/<tema>_ui-
-  // parallax.chromakey.png` (1536×1024) tem uma ilustração grande no topo (não usada) + a banda
-  // de 3 sub-camadas no terço inferior. `classic`/`volcano` têm linhas de chroma separando
-  // far/mid/near; `glacier` é uma cena contínua sem linha (dividida em terços iguais). Frações
-  // calibradas por detecção de chroma-separador + verificação visual (Playwright) por tema.
-  // Tiras OPACAS (cena fotorreal completa, não silhueta) — SEM padBottomTo: a base fotorreal não
-  // tem linha 100% opaca full-width, então o skirt replicava a franja de chroma como streaks
-  // verticais. `chroma:true` + `hardAlpha:true` removem o separador e a franja feather (o chroma
-  // default só zera o separador puro; hardAlpha corta o anel semi-transparente e re-apara). No
-  // GameScene: bg.screen entra como backdrop de tela cheia e estas tiras ficam por cima (bandas).
-  { out: 'parallax.theme.classic', file: 'ui/classic_ui-parallax.chromakey.png',
-    root: 'public/art/themes/classic', maxDim: 2172, chroma: true, hardAlpha: true, regions: [
-      { name: 'parallax.far.classic', x: 0, y: 0.6377, w: 1, h: 0.0996 },
-      { name: 'parallax.mid.classic', x: 0, y: 0.7412, w: 1, h: 0.1113 },
-      { name: 'parallax.near.classic', x: 0, y: 0.8574, w: 1, h: 0.1045 } ] },
-  { out: 'parallax.theme.volcano', file: 'ui/volcano_ui-parallax.chromakey.png',
-    root: 'public/art/themes/volcano', maxDim: 2172, chroma: true, hardAlpha: true, regions: [
-      { name: 'parallax.far.volcano', x: 0, y: 0.6689, w: 1, h: 0.0977 },
-      { name: 'parallax.mid.volcano', x: 0, y: 0.7764, w: 1, h: 0.0957 },
-      { name: 'parallax.near.volcano', x: 0, y: 0.8828, w: 1, h: 0.0900 } ] },
-  { out: 'parallax.theme.glacier', file: 'ui/glacier_ui-parallax.chromakey.png',
-    root: 'public/art/themes/glacier', maxDim: 2172, chroma: true, hardAlpha: true, regions: [
-      { name: 'parallax.far.glacier', x: 0, y: 0.6985, w: 1, h: 0.0899 },
-      { name: 'parallax.mid.glacier', x: 0, y: 0.7884, w: 1, h: 0.0960 },
-      { name: 'parallax.near.glacier', x: 0, y: 0.8845, w: 1, h: 0.0880 } ] },
+  // Parallax alpha por tema (9.1): silhuetas com canal alpha. Modo single com `opaque:true` =
+  // SEM content-trim (preserva o frame tileável inteiro; cropResize preserva o alpha). SEM
+  // chroma/hardAlpha/padBottomTo — a transparência já vem do PNG-fonte.
+  ...['classic', 'volcano', 'glacier'].flatMap((theme) =>
+    ['far', 'mid', 'near', 'impact'].map((layer) => ({
+      out: `parallax.${layer}.${theme}`,
+      file: `parallax/${layer}.png`,
+      root: `public/art/themes/${theme}`,
+      maxDim: 2048,
+      opaque: true,
+    })),
+  ),
   ...['starter', 'lodestone', 'goldbeak', 'midas', 'nine-lives', 'aegis', 'prospector', 'harvester', 'phoenix', 'guardian'].map((id) => ({
     out: `dino.${id}`, file: `dinos/dino.${id}.flap.png`, maxDim: 256,
     regions: [{ name: `dino.${id}`, x: 0, y: 0, w: 0.1667, h: 1 }],
