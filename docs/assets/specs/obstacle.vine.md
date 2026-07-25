@@ -10,6 +10,7 @@
 - **Pivô / âncora:** topo centralizado (prende no teto)
 - **Hitbox lógica associada:** aabb fina — halfW ≈ 4, halfH 20–34 (variável por instância). Definida no core (`OBSTACLE_CATALOG`); a arte NUNCA a altera.
 - **Animação:** estático (1 frame); opcional leve balanço orgânico (cosmético)
+- **Composição:** SEGMENTADO (9.2) — 3 frames `cap`/`body`/`base` (tira horizontal); o render monta `cap + N×body + base` para cobrir qualquer altura da hitbox aabb sem distorção nem vazio. `body` é tileável na vertical. Fonte placeholder: `public/art/themes/<tema>/obstacles/<tema>_obstacle.vine.segments.png` (empacotada via modo `parts` do `gen-atlas`). Arte AAA real: prompts A.2 do PHASE-09.
 - **Atlas de destino:** `obstacles`
 - **Formato de exportação:** PNG com alpha, @1x e @2x
 - **Margens/padding seguros:** 4px

@@ -6,7 +6,8 @@ import type { MatchController } from './match';
 import type { PauseController } from './input';
 import { PARALLAX_LAYERS, parallaxTileOffset } from './parallax';
 import { isHorizontallyVisible } from './culling';
-import { spriteSizeFor, frameFor, atlasRefFor } from './sprites';
+import { spriteSizeFor, frameFor, atlasRefFor, segmentFramesFor, layoutSegments } from './sprites';
+import type { SegmentFrames, SegmentLayout } from './sprites';
 import { timeOfDayForSeed } from './daynight';
 import { packForId } from './packs';
 import { i18n } from '@services/i18n';
@@ -71,6 +72,8 @@ export class GameScene extends Phaser.Scene {
   private spritePoolUsed = 0;
   private dinoSprite!: Phaser.GameObjects.Sprite;
   private readonly sizeCache = new Map<string, { w: number; h: number }>();
+  private readonly segScratch: SegmentLayout = { capH: 0, baseH: 0, bodyH: 0, bodyN: 0 };
+  private readonly segDimCache = new Map<string, { partW: number; capH: number; bodyH: number; baseH: number }>();
   private atlasKey = 'entities';
 
   /** Px de render por unidade de mundo (W5). Fixo durante a vida da cena; ver resolution.ts. */
@@ -405,11 +408,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   private drawSpriteEntity(e: Entity, scrollX: number, entityTint: number): void {
+    const typeId = e.tags[0] ?? '';
+    const seg = segmentFramesFor(typeId);
+    if (seg !== null) { this.drawSegmentedEntity(e, seg, scrollX, entityTint); return; }
     const x = e.transform.position.x;
     if (!isHorizontallyVisible(x, leftExtent(e.hitbox), rightExtent(e.hitbox), scrollX, VIEW_WIDTH, CULL_MARGIN)) {
       return;
     }
-    const typeId = e.tags[0] ?? '';
     const frame = frameFor(typeId);
     if (frame === null) { // fallback primitivo (id desconhecido)
       this.drawEntity(this.gfx, e);
@@ -421,6 +426,49 @@ export class GameScene extends Phaser.Scene {
     const s = this.sizeFor(typeId, e.hitbox);
     img.setDisplaySize(this.px(s.w), this.px(s.h)); // W5: mundo → px de render
     img.setPosition(this.px(x), this.px(e.transform.position.y));
+  }
+
+  /** Dims (largura da parte + alturas cap/body/base) do atlas, cacheadas por atlas+body. */
+  private segDims(frames: SegmentFrames): { partW: number; capH: number; bodyH: number; baseH: number } {
+    const key = this.atlasKey + '|' + frames.body;
+    let d = this.segDimCache.get(key);
+    if (d === undefined) {
+      const tex = this.textures.get(this.atlasKey);
+      const cf = tex.get(frames.cap), bf = tex.get(frames.body), sf = tex.get(frames.base);
+      d = { partW: bf.width, capH: cf.height, bodyH: bf.height, baseH: sf.height };
+      this.segDimCache.set(key, d);
+    }
+    return d;
+  }
+
+  /** Monta cap(topo)+N×body+base(fundo) cobrindo a hitbox aabb (REGRA 2). Alocação-zero:
+   *  scratch de layout reusado + pool de Image (REGRA 3). */
+  private drawSegmentedEntity(e: Entity, frames: SegmentFrames, scrollX: number, tint: number): void {
+    const hb = e.hitbox;
+    if (hb.kind !== 'aabb') return; // segmentação só p/ aabb (garantido pelo catálogo)
+    const x = e.transform.position.x;
+    if (!isHorizontallyVisible(x, leftExtent(hb), rightExtent(hb), scrollX, VIEW_WIDTH, CULL_MARGIN)) return;
+    const W = hb.halfW * 2, H = hb.halfH * 2;
+    const cy = e.transform.position.y, top = cy - hb.halfH, bottom = cy + hb.halfH;
+    const d = this.segDims(frames);
+    const widthScale = W / d.partW;
+    const L = layoutSegments(H, d.capH * widthScale, d.bodyH * widthScale, d.baseH * widthScale, this.segScratch);
+    this.placeSeg(frames.cap, x, top + L.capH / 2, W, L.capH, tint);
+    let y = top + L.capH;
+    for (let i = 0; i < L.bodyN; i++) {
+      this.placeSeg(frames.body, x, y + L.bodyH / 2, W, L.bodyH, tint);
+      y += L.bodyH;
+    }
+    this.placeSeg(frames.base, x, bottom - L.baseH / 2, W, L.baseH, tint);
+  }
+
+  /** Posiciona 1 Image do pool numa faixa (cx,cy centro; w×h em unidades de mundo). */
+  private placeSeg(frame: string, cx: number, cy: number, w: number, h: number, tint: number): void {
+    const img = this.acquireSprite();
+    img.setTexture(this.atlasKey, frame);
+    img.setTint(tint);
+    img.setDisplaySize(this.px(w), this.px(h));
+    img.setPosition(this.px(cx), this.px(cy));
   }
 
   private drawVisibleSprites(entities: readonly Entity[], scrollX: number, entityTint: number): void {
