@@ -81,13 +81,37 @@ depth da 4ª camada), `docs/assets/specs/bg.layer.*.md`. **Core intocado.** Prom
 **Aceite:** 3–4 camadas visíveis com profundidade e alpha (fundo vaza), sem costura de tiling
 visível no scroll, tint de daynight preservado, 60fps.
 
-### 9.2 Obstáculos cobrem a hitbox — composição por segmentos (#3)
-- [ ] Trocar o "esticar 1 PNG para o bbox" por **montagem por segmentos** (9-slice / tiling
+### 9.2 Obstáculos cobrem a hitbox — composição por segmentos (#3) — CONCLUÍDA
+- [x] Trocar o "esticar 1 PNG para o bbox" por **montagem por segmentos** (9-slice / tiling
       vertical) que preenche exatamente qualquer altura aleatória da hitbox.
-- [ ] Arte nova por obstáculo em **3 partes**: `base` (encosta no chão/teto), `body` (segmento
+- [x] Arte nova por obstáculo em **3 partes**: `base` (encosta no chão/teto), `body` (segmento
       repetível), `cap` (ponta). Atlas `obstacles` ganha os frames `<id>.{base,body,cap}`.
-- [ ] Render monta `cap + N×body + base` cobrindo a hitbox (N = ceil((altura − base − cap) /
+- [x] Render monta `cap + N×body + base` cobrindo a hitbox (N = ceil((altura − base − cap) /
       body), alocação-zero via pool de `Image` já existente).
+
+> **CONCLUÍDA** (`src/core/` intocado, determinismo **67**; spec/plano `docs/superpowers/{specs,
+> plans}/2026-07-24-segmented-obstacles*`). **Escopo:** só obstáculos de hitbox **`aabb`**
+> (`obstacle.tree`/`obstacle.vine`) são segmentados — é neles que o retângulo alto e fino de altura
+> variável distorcia o sprite único. `obstacle.stalactite` (polygon/triângulo) e `obstacle.boulder`
+> (circle) seguem **1 sprite** (a forma da arte casa a forma da hitbox, sem o problema). **Pipeline
+> contra PLACEHOLDER procedural** (precedente 9.1/8.2): `scripts/gen-obstacle-placeholder.mjs` gera
+> as 6 tiras `[cap|body|base]` por tema (full-bleed opaco, `body` tileável); a arte AAA real dropa
+> só trocando os PNG-fonte (prompts A.2). Peças: modo `parts` no `gen-atlas.mjs` (fatia a tira,
+> largura consistente via união do X-bbox + escala única ⇒ `dw` idêntico entre partes, altura
+> própria; emite `<id>.{cap,body,base}` nos 3 atlas de tema); helpers PUROS `sprites.ts`
+> (`segmentFramesFor` memoizado + `layoutSegments` alocação-zero via scratch); casca `GameScene`
+> (`drawSegmentedEntity` monta cap+N×body+base pelo pool de `Image`, `segDimCache` chaveado por
+> frame ⇒ zero alocação por frame — REGRA 3); guardas de atlas exigem as 3 partes por id segmentado.
+> Execução SDD por subagentes (4 tasks + review por task + review final opus): Task 1 fix inline
+> (implementador apagara 8 testes de sprite ⇒ restaurados), Task 4 finalizada INLINE (subagente caiu
+> por limite de sessão), review final **1 Important REGRA 3** (alocação por frame em
+> `segmentFramesFor`/`segDims`) CORRIGIDO inline (memoização; precedente de bloqueio 8.3 T3).
+> **Validação Playwright** (exposição TEMP `window.__jrGame` revertida): árvore aabb `halfH≈33` →
+> `cap + 4×body + base`, largura constante 15px, cobertura contígua 81px = `H×renderScale` sem vão
+> nem distorção; stalactite/boulder = 1 sprite. FPS não-medido sob GPU real (SwiftShader headless);
+> composição sem custo/alocação por frame. Suíte **802/802**, `check` limpo. **Backlog:** arte AAA
+> real segmentada (prompts A.2); animação idle cosmética por parte (9.4); segmentar stalactite se a
+> arte triangular real exigir.
 
 **Estado atual (causa):** hitbox de altura aleatória por instância (`aabb(6, rng.range(24,40))`);
 o render só faz `setDisplaySize(bbox)` de um sprite único ⇒ distorce/deixa vazios, criando a

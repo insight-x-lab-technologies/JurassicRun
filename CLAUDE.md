@@ -1658,7 +1658,7 @@ seams); sets realistas de vine/boulder/stalactite e dos 10 dinos nomeados; fring
 pontas finas das entidades (subpixel in-game); flakiness de timeout dos testes de asset (bump p/ 60s,
 memoização segue backlog); tuning fino do flap se o usuário quiser.
 
-**Fase 9 (Melhorias estruturais) — EM ANDAMENTO.** Item 9.1 concluído.
+**Fase 9 (Melhorias estruturais) — EM ANDAMENTO.** Itens 9.1 e 9.2 concluídos.
 
 9.1 (Parallax em camadas com transparência): as 3 bandas OPACAS de parallax (fatiadas da folha
 fotorreal via chroma ⇒ costura de tiling visível = o bug #1 do usuário) viraram **4 camadas ALPHA**
@@ -1691,3 +1691,39 @@ placeholder low-contrast ⇒ arte real coese fixa); helpers `padBottom`/`trimChr
 ora mortos em `gen-ui.mjs` (deixados p/ não tocar código não-relacionado); FPS não-medido sob GPU real
 (SwiftShader headless; parallax sem custo/frame, só `tilePositionX`); `PARALLAX_SOURCE_WORLD_WIDTH`/
 `dispHeight` recalibram com as dims da arte real.
+
+9.2 (Obstáculos cobrem a hitbox — composição por segmentos): obstáculos de hitbox `aabb`
+(`obstacle.tree`/`obstacle.vine`) tinham altura aleatória por instância (`aabb(6,rng.range(24,40))`)
+e o render esticava **1 sprite** ao bbox ⇒ distorção + pixels transparentes dentro da caixa =
+"colisão no vazio" (bug #3 do usuário). Agora o render **monta `cap + N×body + base`** cobrindo
+exatamente a altura da hitbox. **`src/core/` intocado ⇒ det 67** (spec/plano
+`docs/superpowers/{specs,plans}/2026-07-24-segmented-obstacles*`). **Escopo travado: só `aabb`** —
+`obstacle.stalactite` (polygon/triângulo) e `obstacle.boulder` (circle) seguem **1 sprite** (a forma
+da arte casa a forma da hitbox, sem o problema de esticar retângulo alto/fino). **Pipeline contra
+PLACEHOLDER procedural** (precedente 9.1/8.2/4.10; arte AAA real dropa só trocando os PNG-fonte,
+prompts A.2 do PHASE-09): novo `scripts/gen-obstacle-placeholder.mjs` gera 6 tiras `[cap|body|base]`
+por tema (`public/art/themes/<tema>/obstacles/<tema>_obstacle.{tree,vine}.segments.png`, full-bleed
+opaco, `body` cor sólida ⇒ tileável). Peças: (1) modo **`parts`** no `gen-atlas.mjs` — fatia a tira
+horizontal em 3 células, **largura consistente** via união do X-bbox + escala ÚNICA (⇒ `dw` idêntico
+entre partes ⇒ empilham alinhadas), **altura própria** por parte; emite `<id>.{cap,body,base}` nos 3
+atlas de tema; `ATLAS_SOURCES=themeSources('classic')` (removeu a divergência final/×themes/). (2)
+helpers PUROS `sprites.ts`: `segmentFramesFor(typeId)` (memoizado ⇒ identidade estável, zero alloc)
++ `layoutSegments(H, capUnitH, bodyUnitH, baseUnitH, out)` (alocação-zero via scratch reusado;
+`bodyN=ceil(bodySpace/bodyUnitH)`, `bodyH=bodySpace/bodyN` preenchimento exato; curtíssimo encolhe
+cap/base). (3) casca `GameScene`: `drawSegmentedEntity` monta cap(topo)+N×body+base(fundo) pelo pool
+de `Image` existente; `segScratch` reusado + `segDimCache` chaveado por `frames.body` (atlasKey é
+fixo na cena) ⇒ **zero alocação por frame (REGRA 3)**; roteamento em `drawSpriteEntity`
+(`segmentFramesFor!==null`⇒segmentado). Guardas de atlas exigem as 3 partes por id segmentado (sem
+afrouxar); manifesto ganhou flag `segmented?:boolean` (tree/vine, `frame`→`<id>.body`). Execução SDD
+por subagentes (4 tasks + review por task + review final opus): **Task 1** fix inline (implementador
+substituiu `sprites.test.ts` apagando 8 testes ⇒ restaurados), **Task 4 finalizada INLINE**
+(subagente coder caiu por limite de sessão; precedente 4.3/4.7/6.5), **review final NOT READY** com
+**1 Important REGRA 3** (`segmentFramesFor` alocava objeto+3 strings/frame; `segDims` concatenava
+chave; precedente de bloqueio 8.3 T3) **CORRIGIDO inline** (memoização, commit 8b1805a) + 2 Minors
+(frame do manifesto→`<id>.body`; culling — dissolvido pelo lookup memoizado). **Validação Playwright**
+(build prod 390×844, exposição TEMP `window.__jrGame` revertida): árvore aabb `halfH≈33` renderiza
+`cap + 4×body + base`, **largura constante 15px**, cobertura contígua 81px = `H×renderScale(1.25)`
+sem vão nem distorção; stalactite/boulder = 1 sprite. FPS não-medido sob GPU real (SwiftShader
+headless; composição sem custo/alocação por frame, 1 atlas ⇒ batching). Suíte **802/802**, `check`
+limpo, det **67**. **Backlog:** arte AAA real segmentada (prompts A.2, usuário); animação idle
+cosmética por parte (9.4); segmentar stalactite se a arte triangular real exigir.
