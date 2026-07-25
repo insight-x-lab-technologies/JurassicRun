@@ -36,15 +36,34 @@ por seed, novos obstáculos e animação cosmética de obstáculo.
 
 ## Frente A — Arte / render (determinismo intocado)
 
-### 9.1 Parallax em camadas com transparência (#1)
-- [ ] Regerar as camadas de parallax como **PNGs recortados com canal alpha** (silhuetas, não
+### 9.1 Parallax em camadas com transparência (#1) — CONCLUÍDA
+- [x] Regerar as camadas de parallax como **PNGs recortados com canal alpha** (silhuetas, não
       retângulos opacos), permitindo que as camadas se intercalem para dar profundidade.
-- [ ] Adicionar uma 4ª camada de **objetos de impacto** (foreground) à frente do `near`.
-- [ ] Ajustar `scripts/gen-ui.mjs` para fatiar/exportar **preservando alpha** (modo single por
+- [x] Adicionar uma 4ª camada de **objetos de impacto** (foreground) à frente do `near`.
+- [x] Ajustar `scripts/gen-ui.mjs` para fatiar/exportar **preservando alpha** (modo single por
       arquivo; sem `chroma`/`hardAlpha`/`padBottomTo`/`trimChromaEdges` — a transparência já vem
       do PNG-fonte).
-- [ ] Recalibrar `PARALLAX_LAYERS` (`dispHeight`/`baseFromBottom`/`scrollFactor`) e
+- [x] Recalibrar `PARALLAX_LAYERS` (`dispHeight`/`baseFromBottom`/`scrollFactor`) e
       `PARALLAX_SOURCE_WORLD_WIDTH` para a arte nova.
+
+> **CONCLUÍDA** (`src/core/` intocado, determinismo **67**; spec/plano `docs/superpowers/{specs,
+> plans}/2026-07-24-parallax-alpha-layers*`). **Construída contra PLACEHOLDER alpha procedural**
+> (decisão do usuário: pipeline agora, arte AAA real dropa depois só trocando os 12 PNG-fonte —
+> REGRA 2; precedente do atlas 8.2/áudio 4.10). Novo `scripts/gen-parallax-placeholder.mjs` gera 12
+> silhuetas tileáveis (topo transparente, perspectiva atmosférica far→near, `impact` esparso com
+> gating por cossenos SEM fase ⇒ tileável sem costura no wrap); `gen-ui.mjs` processa em **modo
+> single alpha** (`opaque:true`=sem trim, sem chroma) e o pipeline opaco legado (chroma + bandas
+> `bg.layers`) foi aposentado. `PARALLAX_LAYERS` = 4 camadas (`bg.layer.impact`, scrollFactor
+> 0.15/0.35/0.6/0.85); `impact` fica **atrás do mundo** (depth negativo — justiça/legibilidade
+> travadas ⇒ não oclui obstáculos), honrando "à frente do near" como a camada de fundo mais
+> próxima. **Calibração-chave:** `dispHeight` = altura NATURAL da textura (texH/densidade = texH/2 =
+> 192/192/224/256) ⇒ box aterrada no chão mostra a textura inteira (dispHeight menor cortava o
+> rodapé/silhueta). Verificação Playwright (build prod, 3 temas): backdrop `bg.screen` VAZA pelos
+> topos transparentes (classic golden-hour, volcano lava, glacier aurora), tint daynight preservado,
+> sem costura de chroma. Review final opus **"READY TO MERGE"** (0 Critical/Important). Suíte
+> **793/154**, check limpo. **Backlog:** arte AAA real (12 paths do Apêndice A.1); profundidade
+> sutil (silhuetas placeholder low-contrast; arte real coese fixa); FPS não-medido sob GPU real
+> (SwiftShader headless); `PARALLAX_SOURCE_WORLD_WIDTH`/dispHeight recalibram com dims da arte real.
 
 **Estado atual (causa):** as 3 tiras (`parallax.far/mid/near`) são bandas **opacas** fatiadas de
 uma folha fotorreal (`<theme>_ui-parallax.chromakey.png`), então empilham como 4 planos isolados

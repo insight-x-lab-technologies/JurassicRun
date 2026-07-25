@@ -1657,3 +1657,37 @@ realistas, sem franja de chroma nem na costura, 60fps. Suíte **785 testes** ver
 seams); sets realistas de vine/boulder/stalactite e dos 10 dinos nomeados; fringing sutil de chroma em
 pontas finas das entidades (subpixel in-game); flakiness de timeout dos testes de asset (bump p/ 60s,
 memoização segue backlog); tuning fino do flap se o usuário quiser.
+
+**Fase 9 (Melhorias estruturais) — EM ANDAMENTO.** Item 9.1 concluído.
+
+9.1 (Parallax em camadas com transparência): as 3 bandas OPACAS de parallax (fatiadas da folha
+fotorreal via chroma ⇒ costura de tiling visível = o bug #1 do usuário) viraram **4 camadas ALPHA**
+(far/mid/near/impact) que deixam o backdrop `bg.screen` vazar pelos topos transparentes ⇒
+profundidade real. **`src/core/` intocado ⇒ det 67** (spec/plano `docs/superpowers/{specs,plans}/
+2026-07-24-parallax-alpha-layers*`). **Decisão do usuário: construir o pipeline agora contra
+PLACEHOLDER alpha procedural** (arte AAA real dropa depois só trocando os 12 PNG-fonte em
+`public/art/themes/<tema>/parallax/{far,mid,near,impact}.png` — REGRA 2; precedente atlas 8.2/áudio
+4.10). Peças: novo `scripts/gen-parallax-placeholder.mjs` (gera 12 silhuetas tileáveis, topo
+transparente, perspectiva atmosférica far→near; `impact` esparso com gating por **cossenos SEM
+fase** ⇒ x=0 no máximo global ⇒ bordas do wrap no mesmo estado, tileável sem costura); `gen-ui.mjs`
+processa em **modo single alpha** (`opaque:true`=sem content-trim, sem chroma/hardAlpha/padBottomTo)
+e o pipeline opaco legado (chroma per-tema + bandas `bg.layers`) foi APOSENTADO; `PARALLAX_LAYERS`=4
+(`bg.layer.impact` novo, scrollFactor 0.15/0.35/0.6/0.85); `LookPack.parallaxTextures` virou 4-tupla
+por tema. **`impact` fica ATRÁS do mundo** (depth negativo `-(len-index)` ⇒ nunca oclui obstáculos —
+justiça/legibilidade TRAVADAS; honra "à frente do near" como a camada de fundo mais próxima, não
+foreground-na-frente). **Calibração-chave (bug achado no Playwright):** `dispHeight` = altura NATURAL
+da textura (texH/densidade, densidade=texW/`PARALLAX_SOURCE_WORLD_WIDTH`=2048/1024=2 ⇒ 192/192/224/
+256) ⇒ box aterrada no chão mostra a textura inteira; `dispHeight` menor mostrava o topo transparente
+(tilePositionY=0) e cortava a silhueta do rodapé. `GameScene` já era data-driven (0 mudança). Guarda
+`parallax-chroma.test` estendida a 12 arquivos (4 camadas); tileabilidade do `impact` testada por
+altura-de-preenchimento das bordas. Execução SDD por subagentes (4 tasks + review por task + review
+final opus **"READY TO MERGE"**, 0 Critical/Important); Task 1 Critical [falta `.d.mts` ⇒ check
+vermelho] corrigido inline; calibração + hardening do gating (observação do review final) inline pelo
+controlador. Verificação Playwright (build prod, 3 temas): backdrop VAZA pelos topos transparentes
+(classic golden-hour / volcano lava / glacier aurora), tint daynight preservado, sem costura de
+chroma, silhuetas aterradas com profundidade. Suíte **793 testes**/154, `check` limpo, det **67**.
+**Backlog:** arte AAA real (12 paths, Apêndice A.1 da Fase 9); profundidade sutil (silhuetas
+placeholder low-contrast ⇒ arte real coese fixa); helpers `padBottom`/`trimChromaEdges`/`hardCutAlpha`
+ora mortos em `gen-ui.mjs` (deixados p/ não tocar código não-relacionado); FPS não-medido sob GPU real
+(SwiftShader headless; parallax sem custo/frame, só `tilePositionX`); `PARALLAX_SOURCE_WORLD_WIDTH`/
+`dispHeight` recalibram com as dims da arte real.

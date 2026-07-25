@@ -11,8 +11,9 @@ export const MIN_RENDER_SCALE = 1;
 export const MAX_RENDER_SCALE = 6;
 
 /** Largura, em unidades de mundo, coberta por uma tira de parallax — independente da resolução
- *  em px da arte. Preserva o enquadramento do parallax ao mudar a densidade da textura. */
-export const PARALLAX_SOURCE_WORLD_WIDTH = 720;
+ *  em px da arte. Preserva o enquadramento do parallax ao mudar a densidade da textura. Fonte 9.1:
+ *  2048px de largura na arte; a Task 4 calibra por verificação visual da frequência de emenda. */
+export const PARALLAX_SOURCE_WORLD_WIDTH = 1024;
 
 /** x de tela fixo do pterodáctilo (≈¼ da largura); a câmera scrolla em x para segui-lo. */
 export const DINO_SCREEN_X = 80;

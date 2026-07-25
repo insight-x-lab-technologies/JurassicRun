@@ -8,7 +8,7 @@ describe('PARALLAX_LAYERS', () => {
 
   it('usa os ids reservados no registry, únicos', () => {
     const ids = PARALLAX_LAYERS.map((l) => l.id);
-    expect(ids).toEqual(['bg.layer.far', 'bg.layer.mid', 'bg.layer.near']);
+    expect(ids).toEqual(['bg.layer.far', 'bg.layer.mid', 'bg.layer.near', 'bg.layer.impact']);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
