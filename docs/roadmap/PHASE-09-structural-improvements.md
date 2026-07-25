@@ -125,11 +125,44 @@ obstáculo). **Core intocado.** Prompt de geração: [Apêndice A.2](#a2-obst%C3
 **Aceite:** obstáculos de qualquer altura preenchidos sem distorção nem vazio; a borda visível
 coincide com a hitbox (validação Playwright sobrepondo hitbox×sprite); 60fps.
 
-### 9.3 Animação de morte do dino (#4)
-- [ ] Fase cosmética **`dying`** no render entre `world.alive → false` e o overlay DOM de Game
-      Over: frames de impacto/queda do dino + partículas (penas/poeira) + screen-shake curto.
-- [ ] Só então revelar `<GameOverOverlay>` (atrasar o `snapshot.phase==='dead'` visível por
+### 9.3 Animação de morte do dino (#4) — CONCLUÍDA
+- [x] Fase cosmética **`dying`** no render entre `world.alive → false` e o overlay DOM de Game
+      Over: impacto/queda do dino + partículas (penas/poeira) + screen-shake curto.
+- [x] Só então revelar `<GameOverOverlay>` (atrasar o `snapshot.phase==='dead'` visível por
       ~0.6–0.9s de animação, sem tocar o core que já congela na morte).
+
+> **CONCLUÍDA** (`src/core/` intocado, determinismo **67**; spec/plano `docs/superpowers/{specs,
+> plans}/2026-07-25-dino-death-animation*`). **Duração 0,75 s.** Puro×casca: `src/render/death.ts`
+> (curvas puras — `deathVisual(elapsed, out)`: rotação `2π·1,25·p²`, `dropFactor = −0,5p + 1,5p²`
+> (pop para cima → queda que chega exatamente ao chão em p=1), shake amortecido `(1−p)²` a 18/23,4 Hz,
+> flash de impacto 0,12 s) + `src/render/particles.ts` (14 partículas **stateless**: o estado da
+> partícula `i` no tempo `t` é função fechada, ângulo áureo no lugar de RNG) + relógio cosmético no
+> `MatchController` (`deathElapsed`/`dying`; `advance` acumula tempo REAL em `dead` sem rodar steps
+> nem redisparar `onGameOver`). Casca: `GameScene` (transições 1×: congela o flap, memoriza o ponto
+> de impacto, aplica rotação/queda clampada ao chão/tint/partículas no `Graphics` já existente/shake
+> só na câmera — o `scrollX` de mundo de parallax e culling **não** leva shake; na saída repõe
+> rotação, tint, `scrollY` e religa a anim) + `startGame` (`MatchSnapshot.dying`, `isDead` do
+> restart exige `!dying`) + `PlayScreen` (gate de re-render com `prevDying`).
+> **Decisões:** (a) `dying` é **booleano**, não um membro novo de `MatchPhase` — `phase==='dead'`
+> segue significando "partida acabou" para hooks/HUD/controles, zero churn de tipos; (b) os efeitos
+> de fim de partida (moedas, leaderboard, troféus, replay, submissão online) continuam disparando no
+> **instante da morte** — sair da tela durante a animação não perde progresso; (c) restart bloqueado
+> durante o `dying` (o toque residual do flap fatal não pula a cena); (d) **os frames `dino.hit.*`
+> do Apêndice A.3 ficaram FORA** — a animação é procedural sobre o frame de flap congelado; sem arte
+> real, um placeholder derivado só acrescentaria 5 frames × 3 atlas com ganho ~nulo. O asset-spec
+> ficou documentado (`docs/assets/specs/dino.hit.md`, com o how-to de 4 passos para plugar a arte
+> real depois) — REGRA 5 honrada sem branch morto no código.
+> **Validação Playwright** (build de produção, exposição TEMP `window.__jr` revertida): morte no
+> chão e morte no teto; overlay revelado **exatamente** quando `deathElapsed` satura em 0,75 e
+> `dying` vira false (`revealedWhileDying: false`); durante a fase, rotação evoluindo, tint saindo do
+> vermelho de impacto, `camera.scrollY` oscilando (shake) e — na morte no teto — o dino caindo de
+> y=3 para y≈115 unidades de mundo; após o fim, rotação 0/`scrollY` 0/anim de flap religada e
+> restart voltando a `ready` com `deathElapsed` 0. Nota de ambiente: o relógio usa o `delta` do
+> Phaser (mesma base de tempo do resto do jogo), que é suavizado/limitado — sob GPU headless
+> (SwiftShader, ~4–9 fps) a animação estica em tempo de parede; a 60 fps são os 0,75 s nominais.
+> Suíte **823/157**, `check` limpo, determinismo **67**. **Backlog:** arte real `dino.hit` (A.3);
+> amplitude do shake (1,6 unidade de mundo) é conservadora porque as faixas de chão/teto têm
+> `scrollFactor 0` e não tremem junto — revisitar junto com 9.4.
 
 **Toca:** `src/render/GameScene.ts` (estado dying + tween/partículas), `src/render/match.ts` ou a
 ponte `startGame`→snapshot (flag de "morte em animação"), atlas `dino.hit.*` (frames). **Core

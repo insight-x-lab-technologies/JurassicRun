@@ -20,6 +20,7 @@ usada no manifesto de assets do render.
 | `dino.harvester` | roster do Ninho (4.4): traço `doubleFood` | spec | `specs/dino.harvester.md` |
 | `dino.phoenix` | roster do Ninho (4.4): traço `startLife` | spec | `specs/dino.phoenix.md` |
 | `dino.guardian` | roster do Ninho (4.4): traço `headStart` | spec | `specs/dino.guardian.md` |
+| `dino.hit` | frames de morte (9.3) — opcional: a animação atual é procedural | spec | `specs/dino.hit.md` |
 
 ## Obstáculos (formatos variados)
 | id | descrição | status | spec |
