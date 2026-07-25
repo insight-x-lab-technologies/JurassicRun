@@ -157,7 +157,11 @@ coincide com a hitbox (validação Playwright sobrepondo hitbox×sprite); 60fps.
 > `dying` vira false (`revealedWhileDying: false`); durante a fase, rotação evoluindo, tint saindo do
 > vermelho de impacto, `camera.scrollY` oscilando (shake) e — na morte no teto — o dino caindo de
 > y=3 para y≈115 unidades de mundo; após o fim, rotação 0/`scrollY` 0/anim de flap religada e
-> restart voltando a `ready` com `deathElapsed` 0. Nota de ambiente: o relógio usa o `delta` do
+> restart voltando a `ready` com `deathElapsed` 0. **Review final: NOT READY → 1 Important**
+> (o "pop" inicial, `dropFactor` negativo ≈ −4% de `maxDrop`, podia levar o sprite acima de `y=0`
+> numa morte colada no teto) **corrigido inline** — clamp nas duas pontas e nunca acima do próprio
+> ponto de impacto; revalidado (morte no teto: `deathY=14`, `minY=14` ⇒ o pop não sobe mais, queda
+> até `y≈120`). Nota de ambiente: o relógio usa o `delta` do
 > Phaser (mesma base de tempo do resto do jogo), que é suavizado/limitado — sob GPU headless
 > (SwiftShader, ~4–9 fps) a animação estica em tempo de parede; a 60 fps são os 0,75 s nominais.
 > Suíte **823/157**, `check` limpo, determinismo **67**. **Backlog:** arte real `dino.hit` (A.3);
