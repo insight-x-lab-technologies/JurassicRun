@@ -45,3 +45,45 @@ export function frameFor(typeId: string): string | null {
   const r = renderableFor(typeId);
   return r.kind === 'sprite' ? (r.frame ?? typeId) : null;
 }
+
+/** Partes de um obstáculo segmentado (aabb): empilhadas cap(topo)→body(repete)→base(fundo). */
+export interface SegmentFrames { readonly cap: string; readonly body: string; readonly base: string; }
+
+/** Frames das partes se o typeId for segmentado no manifesto, senão null. Convenção de nome:
+ *  `<id>.cap` / `<id>.body` / `<id>.base` (o gen-atlas empacota com esses sufixos). */
+export function segmentFramesFor(typeId: string): SegmentFrames | null {
+  const r = renderableFor(typeId);
+  if (r.kind !== 'sprite' || r.segmented !== true) return null;
+  return { cap: `${typeId}.cap`, body: `${typeId}.body`, base: `${typeId}.base` };
+}
+
+/** Layout vertical dos segmentos para cobrir uma hitbox aabb de altura `height` (unidades de
+ *  mundo). `*UnitH` = altura de exibição de cada parte já escalada pela largura da hitbox.
+ *  Alocação-zero: muta e devolve `out` (scratch reusável no hot path — REGRA 3). */
+export interface SegmentLayout { capH: number; baseH: number; bodyH: number; bodyN: number; }
+
+export function layoutSegments(
+  height: number,
+  capUnitH: number,
+  bodyUnitH: number,
+  baseUnitH: number,
+  out: SegmentLayout,
+): SegmentLayout {
+  if (height <= 0) {
+    out.capH = 0; out.baseH = 0; out.bodyH = 0; out.bodyN = 0;
+    return out;
+  }
+  const fixed = capUnitH + baseUnitH;
+  if (fixed >= height) {
+    // Obstáculo curtíssimo: encolhe cap/base proporcionalmente; sem corpo.
+    const k = height / fixed;
+    out.capH = capUnitH * k; out.baseH = baseUnitH * k; out.bodyH = 0; out.bodyN = 0;
+    return out;
+  }
+  const bodySpace = height - fixed;
+  const bodyN = Math.max(1, Math.ceil(bodySpace / bodyUnitH));
+  out.capH = capUnitH; out.baseH = baseUnitH;
+  out.bodyN = bodyN;
+  out.bodyH = bodySpace / bodyN; // preenchimento exato (sem vão nem sobreposição)
+  return out;
+}

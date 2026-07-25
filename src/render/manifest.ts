@@ -5,7 +5,7 @@
  */
 export type Renderable =
   | { readonly kind: 'primitive'; readonly color: number; readonly shape?: 'hitbox' | 'triangle' }
-  | { readonly kind: 'sprite'; readonly atlas: string; readonly frame?: string; readonly animation?: string };
+  | { readonly kind: 'sprite'; readonly atlas: string; readonly frame?: string; readonly animation?: string; readonly segmented?: boolean };
 
 /** Chave do pterodáctilo do jogador (não é um Entity com tags). */
 export const DINO_TYPE_ID = 'dino.default';
@@ -16,8 +16,8 @@ const FALLBACK: Renderable = { kind: 'primitive', color: 0xff00ff };
 /** Mapa id lógico → visual. Todos os sprites vêm do atlas 'entities'. */
 export const ASSET_MANIFEST: Readonly<Record<string, Renderable>> = {
   [DINO_TYPE_ID]: { kind: 'sprite', atlas: 'entities', frame: 'dino.default' },
-  'obstacle.tree': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.tree' },
-  'obstacle.vine': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.vine' },
+  'obstacle.tree': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.tree', segmented: true },
+  'obstacle.vine': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.vine', segmented: true },
   'obstacle.boulder': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.boulder' },
   'obstacle.stalactite': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.stalactite' },
   'bird.coin': { kind: 'sprite', atlas: 'entities', frame: 'bird.coin' },
