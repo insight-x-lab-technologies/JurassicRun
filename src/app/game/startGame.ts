@@ -37,6 +37,8 @@ export interface MatchSnapshot {
   readonly paused: boolean;
   readonly gameOver: GameOverStats | null;
   readonly hud: HudLive | null;
+  /** 9.3: true durante a animação cosmética de morte — o overlay de Game Over espera ela acabar. */
+  readonly dying: boolean;
 }
 
 export interface GameHandle {
@@ -145,7 +147,8 @@ export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): 
     pause,
     onFlap: () => match.notifyFlap(),
     onRestart: () => match.restart(),
-    isDead: () => match.phase === 'dead',
+    // 9.3: durante `dying` o restart de teclado/toque não deve pular a animação de impacto.
+    isDead: () => match.phase === 'dead' && !match.dying,
   });
 
   const stop = () => {
@@ -166,6 +169,7 @@ export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): 
       paused: pause.paused,
       gameOver: lastGameOver,
       hud: match.phase === 'playing' ? hudLive() : null,
+      dying: match.dying,
     }),
     restart: () => match.restart(),
   };

@@ -5,6 +5,7 @@ import type { MatchInit } from '@render/match';
 import type { InputTimeline } from '@core/replay';
 import { createWorld } from '@core/sim';
 import { NullInputSource } from '@render/input';
+import { DEATH_ANIM_SECONDS } from '@render/death';
 
 // Factory determinística: seeds numeradas + mundo com seed real (dino cai e morre sem flap).
 function makeFactory(): () => MatchInit {
@@ -84,6 +85,7 @@ describe('MatchController', () => {
     m.notifyFlap();
     advanceUntilDead(m);
     expect(m.phase).toBe('dead');
+    m.advance(DEATH_ANIM_SECONDS); // 9.3: espera a fase cosmética `dying` acabar (restart é bloqueado durante ela)
 
     m.restart();
     expect(m.phase).toBe('ready');
@@ -108,6 +110,7 @@ describe('MatchController', () => {
     const m = new MatchController(new NullInputSource(), makeFactory());
     m.notifyFlap();
     advanceUntilDead(m);
+    m.advance(DEATH_ANIM_SECONDS); // 9.3: espera `dying` acabar antes de reiniciar
     m.restart(); // → ready, world novo
     expect(m.loop.world).toBe(m.world);
   });
@@ -152,7 +155,83 @@ describe('MatchController', () => {
     m.notifyFlap();
     advanceUntilDead(m);
     expect(m.recordedTimeline().length).toBeGreaterThan(0);
+    m.advance(DEATH_ANIM_SECONDS); // 9.3: espera `dying` acabar antes de reiniciar
     m.restart(); // nova partida
     expect(m.recordedTimeline()).toEqual([]);
+  });
+
+  // --- 9.3: relógio cosmético de morte (deathElapsed/dying) ---------------------------------
+
+  it('ao morrer, entra em dying com deathElapsed zerado', () => {
+    const m = new MatchController(new NullInputSource(), makeFactory());
+    m.notifyFlap();
+    advanceUntilDead(m);
+    expect(m.phase).toBe('dead');
+    expect(m.dying).toBe(true);
+    expect(m.deathElapsed).toBe(0);
+  });
+
+  it('advance em dead acumula deathElapsed (tempo real) sem rodar steps nem redisparar onGameOver', () => {
+    const deaths: number[] = [];
+    const m = new MatchController(new NullInputSource(), makeFactory(), {
+      onGameOver: () => { deaths.push(1); },
+    });
+    m.notifyFlap();
+    advanceUntilDead(m);
+    expect(deaths.length).toBe(1);
+    const tickAtDeath = m.world.tick;
+
+    m.advance(0.1);
+    expect(m.deathElapsed).toBeCloseTo(0.1, 9);
+    expect(m.world.tick).toBe(tickAtDeath); // sim continua congelada
+    expect(deaths.length).toBe(1); // hook não redispara
+
+    m.advance(0.2);
+    expect(m.deathElapsed).toBeCloseTo(0.3, 9);
+    expect(m.world.tick).toBe(tickAtDeath);
+    expect(deaths.length).toBe(1);
+  });
+
+  it('deathElapsed satura em DEATH_ANIM_SECONDS e dying vira false', () => {
+    const m = new MatchController(new NullInputSource(), makeFactory());
+    m.notifyFlap();
+    advanceUntilDead(m);
+
+    m.advance(DEATH_ANIM_SECONDS * 10); // bem além da duração
+    expect(m.deathElapsed).toBe(DEATH_ANIM_SECONDS);
+    expect(m.dying).toBe(false);
+    expect(m.phase).toBe('dead'); // continua "morto" — só a fase cosmética terminou
+  });
+
+  it('restart() durante dying é no-op; depois que dying acaba, restart() funciona', () => {
+    const m = new MatchController(new NullInputSource(), makeFactory());
+    m.notifyFlap();
+    advanceUntilDead(m);
+    const seedBefore = m.seedLabel;
+    expect(m.dying).toBe(true);
+
+    m.restart(); // ainda dying: no-op
+    expect(m.phase).toBe('dead');
+    expect(m.seedLabel).toBe(seedBefore);
+    expect(m.dying).toBe(true);
+
+    m.advance(DEATH_ANIM_SECONDS); // dying termina
+    expect(m.dying).toBe(false);
+
+    m.restart(); // agora funciona como antes
+    expect(m.phase).toBe('ready');
+    expect(m.seedLabel).not.toBe(seedBefore);
+  });
+
+  it('nova partida (após restart) zera deathElapsed e dying', () => {
+    const m = new MatchController(new NullInputSource(), makeFactory());
+    m.notifyFlap();
+    advanceUntilDead(m);
+    m.advance(DEATH_ANIM_SECONDS);
+    m.restart();
+
+    expect(m.phase).toBe('ready');
+    expect(m.deathElapsed).toBe(0);
+    expect(m.dying).toBe(false);
   });
 });

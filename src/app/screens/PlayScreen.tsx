@@ -9,7 +9,7 @@ import { ReadyPrompt } from '../game/ReadyPrompt';
 import { Hud } from '../game/Hud';
 import { PauseOverlay } from '../game/PauseOverlay';
 
-const INITIAL: MatchSnapshot = { phase: 'ready', paused: false, gameOver: null, hud: null };
+const INITIAL: MatchSnapshot = { phase: 'ready', paused: false, gameOver: null, hud: null, dying: false };
 const HUD_INTERVAL_MS = 200; // ~5 Hz
 
 export function PlayScreen({ mode = 'endless' }: { mode?: MatchMode }) {
@@ -28,6 +28,7 @@ export function PlayScreen({ mode = 'endless' }: { mode?: MatchMode }) {
     let prevPhase = INITIAL.phase;
     let prevPaused = INITIAL.paused;
     let prevGameOver = INITIAL.gameOver;
+    let prevDying = INITIAL.dying;
     let lastHud = 0;
     let frames = 0;
     let accumMs = 0;
@@ -41,12 +42,19 @@ export function PlayScreen({ mode = 'endless' }: { mode?: MatchMode }) {
       stop = handle.stop;
       const tick = (t: number): void => {
         const s = handle.snapshot();
-        // Overlays: só re-renderiza quando fase/pausa/gameover mudam.
-        if (s.phase !== prevPhase || s.paused !== prevPaused || s.gameOver !== prevGameOver) {
+        // Overlays: só re-renderiza quando fase/pausa/gameover/dying mudam. `prevDying` é
+        // necessário p/ a revelação do overlay (dying true→false com a mesma `phase`) disparar.
+        if (
+          s.phase !== prevPhase ||
+          s.paused !== prevPaused ||
+          s.gameOver !== prevGameOver ||
+          s.dying !== prevDying
+        ) {
           setSnap(s);
           prevPhase = s.phase;
           prevPaused = s.paused;
           prevGameOver = s.gameOver;
+          prevDying = s.dying;
         }
         // FPS por delta de rAF + HUD throttled a ~5 Hz.
         accumMs += t - lastT;
@@ -80,7 +88,7 @@ export function PlayScreen({ mode = 'endless' }: { mode?: MatchMode }) {
       {snap.phase === 'playing' && !snap.paused && hud !== null && <Hud hud={hud.hud} fps={hud.fps} />}
       {snap.phase === 'ready' && !snap.paused && <ReadyPrompt />}
       {snap.paused && <PauseOverlay />}
-      {snap.phase === 'dead' && snap.gameOver !== null && (
+      {snap.phase === 'dead' && !snap.dying && snap.gameOver !== null && (
         <GameOverOverlay
           stats={snap.gameOver}
           onRestart={() => handleRef.current?.restart()}
