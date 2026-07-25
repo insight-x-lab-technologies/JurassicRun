@@ -65,10 +65,17 @@ export function renderPlaceholder(theme, layer) {
   const px = Buffer.alloc(W * h * 4); // tudo transparente por padrão (topo garantido)
   const baseFill = Math.round(h * L.fill); // altura média da silhueta a partir do fundo
   for (let x = 0; x < W; x++) {
-    // colunas esparsas do impact: só ~30% das colunas têm elemento (blocos de 64px), resto vazio
+    // colunas esparsas do impact: ~30% das colunas têm elemento, resto vazio (~70% transparente).
+    // Gating tileável SEM COSTURA no wrap: máscara = soma de COSSENOS de frequência inteira SEM
+    // fase. Assim x=0 é o MÁXIMO global (todas as parcelas em pico, derivada 0) ⇒ está bem acima
+    // do threshold e a coluna x=W-1 (topo achatado, ~mesmo valor) fica no MESMO estado ⇒ o clump
+    // atravessa a costura de tiling sem descontinuidade. Um threshold sobre uma senóide com fase
+    // deixava o cruzamento cair perto da fronteira (bloco 0 vs último colidindo) — o artefato que
+    // o 9.1 elimina; testado em parallax-placeholder.test (tileabilidade do impact).
     if (L.sparse) {
-      const block = Math.floor(x / 64);
-      if (phaseSeed(theme, layer + ':' + block) > 0.32) continue; // ~68% vazio ⇒ ~70% transparente
+      const t = (x / W) * Math.PI * 2;
+      const mask = Math.cos(5 * t) + 0.6 * Math.cos(11 * t);
+      if (mask < 0.5) continue; // fração preenchida ~30%
     }
     const top = h - (baseFill + Math.round((profile01(x, theme, layer) - 0.5) * L.amp));
     const y0 = Math.max(0, Math.min(h, top));

@@ -29,13 +29,30 @@ describe('gerador de parallax placeholder (alpha)', () => {
     }
   });
 
-  it('é tileável na horizontal: coluna 0 == coluna w (mesma silhueta ao envolver)', () => {
-    const { w, h, pixels } = renderPlaceholder('classic', 'far');
-    // a última coluna deve casar com a primeira (continuidade do perfil periódico)
-    for (let y = 0; y < h; y++) {
-      const a0 = pixels[(y * w + 0) * 4 + 3]!;
-      const aL = pixels[(y * w + (w - 1)) * 4 + 3]!;
-      expect(Math.abs(a0 - aL), `y=${y}`).toBeLessThanOrEqual(8);
+  it('é tileável na horizontal: sem LINHA de costura no wrap (altura da silhueta casa)', () => {
+    // A costura de tiling que o 9.1 elimina é uma LINHA vertical: a borda esquerda e a direita
+    // precisam estar no mesmo estado com ~mesma altura de silhueta. Comparar por-pixel com
+    // tolerância-0 seria estrito demais — a borda superior é dura e o `Math.round` do perfil pode
+    // diferir 1px entre a 1ª e a última coluna (invisível). Então comparamos a ALTURA DE
+    // PREENCHIMENTO (nº de pixels opacos, silhueta contígua ⇒ altura = h − topo) da coluna 0 vs a
+    // última: se diferirem por poucos px, não há linha de costura. Inclui `impact` (esparso): o
+    // gating por cossenos sem fase põe x=0 no MÁXIMO ⇒ ambas as bordas preenchidas (clump atravessa
+    // a costura), o mesmo estado ⇒ alturas próximas.
+    const fillHeight = (pixels: Buffer, w: number, h: number, x: number) => {
+      let n = 0;
+      for (let y = 0; y < h; y++) if (pixels[(y * w + x) * 4 + 3]! > 128) n++;
+      return n;
+    };
+    for (const { theme, layer } of [
+      { theme: 'classic', layer: 'far' },
+      { theme: 'volcano', layer: 'near' },
+      { theme: 'classic', layer: 'impact' },
+      { theme: 'glacier', layer: 'impact' },
+    ]) {
+      const { w, h, pixels } = renderPlaceholder(theme, layer);
+      const left = fillHeight(pixels, w, h, 0);
+      const right = fillHeight(pixels, w, h, w - 1);
+      expect(Math.abs(left - right), `${theme}.${layer}: costura ${left} vs ${right}`).toBeLessThanOrEqual(2);
     }
   });
 
