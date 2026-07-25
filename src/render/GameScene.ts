@@ -340,11 +340,15 @@ export class GameScene extends Phaser.Scene {
     this.drawVisibleSprites(world.collectibles, scrollX, entityTint);
     this.drawVisibleSprites(world.powerups, scrollX, entityTint);
     // Dino: sprite se o manifesto for sprite; senão primitivo (fallback de segurança).
+    const dinoSize = this.sizeFor(DINO_TYPE_ID, world.pterodactyl.hitbox);
     if (frameFor(DINO_TYPE_ID) !== null) {
-      this.dinoSprite.setVisible(true).setPosition(this.px(loop.renderX), this.px(loop.renderY));
-      this.dinoSprite.setTint(entityTint);
-      const ds = this.sizeFor(DINO_TYPE_ID, world.pterodactyl.hitbox);
-      this.dinoSprite.setDisplaySize(this.px(ds.w), this.px(ds.h));
+      this.dinoSprite.setVisible(true);
+      this.dinoSprite.setDisplaySize(this.px(dinoSize.w), this.px(dinoSize.h));
+      // Em `dying` a posição/tint vêm da animação de morte logo abaixo (não escreve 2×).
+      if (!dying) {
+        this.dinoSprite.setPosition(this.px(loop.renderX), this.px(loop.renderY));
+        this.dinoSprite.setTint(entityTint);
+      }
     } else {
       this.dinoSprite.setVisible(false);
       this.drawPrimitive(g, DINO_TYPE_ID, world.pterodactyl.hitbox, loop.renderX, loop.renderY);
@@ -353,11 +357,15 @@ export class GameScene extends Phaser.Scene {
     // Animação cosmética de morte (9.3): giro/queda/tint/partículas/shake sobre o frame
     // de flap congelado. Alocação-zero (scratch de campo, aritmética de cor por inteiro).
     if (dying) {
-      const ds = this.sizeFor(DINO_TYPE_ID, world.pterodactyl.hitbox);
       const v = deathVisual(this.match.deathElapsed, this.deathVisualScratch);
-      const groundY = VIEW_HEIGHT - GROUND_THICKNESS - ds.h / 2;
+      const groundY = VIEW_HEIGHT - GROUND_THICKNESS - dinoSize.h / 2;
+      // O "pop" inicial (dropFactor negativo) sobe até ~4% de maxDrop: numa morte colada no teto
+      // isso levaria o sprite para fora da tela (y < 0). Clampa nas DUAS pontas — e nunca acima do
+      // próprio ponto de impacto, para a morte que já ocorreu colada no teto não dar um salto.
+      const topY = Math.min(GROUND_THICKNESS + dinoSize.h / 2, this.deathY);
+      const bottomY = Math.max(groundY, this.deathY);
       const maxDrop = Math.max(0, groundY - this.deathY);
-      const y = Math.min(this.deathY + v.dropFactor * maxDrop, groundY);
+      const y = Math.min(Math.max(this.deathY + v.dropFactor * maxDrop, topY), bottomY);
       this.dinoSprite.setRotation(v.rotation);
       this.dinoSprite.setPosition(this.px(this.deathX), this.px(y));
       this.dinoSprite.setTint(this.impactTint(entityTint, v.flash));
