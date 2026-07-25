@@ -31,20 +31,32 @@ describe('atlas de entidades (arte real)', () => {
     20000,
   );
 
-  it('COMPLETUDE: todo id sprite do manifesto tem frame no atlas', () => {
+  const SEG_PARTS = ['cap', 'body', 'base'] as const;
+
+  it('COMPLETUDE: todo id sprite do manifesto tem frame(s) no atlas', () => {
     const { json } = renderAtlas();
     for (const [id, r] of Object.entries(ASSET_MANIFEST)) {
-      if (r.kind === 'sprite') {
+      if (r.kind !== 'sprite') continue;
+      if (r.segmented) {
+        for (const part of SEG_PARTS) {
+          expect(json.frames[`${id}.${part}`], `segmentado sem parte: ${id}.${part}`).toBeDefined();
+        }
+      } else {
         expect(json.frames[id], `manifesto sprite sem frame: ${id}`).toBeDefined();
       }
     }
   });
 
-  it('COMPLETUDE POR VARIANTE: todo id sprite do manifesto tem frame em CADA atlas de tema', () => {
+  it('COMPLETUDE POR VARIANTE: todo id sprite do manifesto tem frame(s) em CADA atlas de tema', () => {
     for (const v of ATLAS_VARIANTS) {
       const { json } = renderAtlas(v.sources);
       for (const [id, r] of Object.entries(ASSET_MANIFEST)) {
-        if (r.kind === 'sprite') {
+        if (r.kind !== 'sprite') continue;
+        if (r.segmented) {
+          for (const part of SEG_PARTS) {
+            expect(json.frames[`${id}.${part}`], `${v.key}: ${id}.${part}`).toBeDefined();
+          }
+        } else {
           expect(json.frames[id], `${v.key}: manifesto sprite sem frame: ${id}`).toBeDefined();
         }
       }
@@ -62,10 +74,10 @@ describe('atlas de entidades (arte real)', () => {
     }
   });
 
-  it('sem frame órfão: todo id (sem sufixo .N de animação) existe no manifesto', () => {
+  it('sem frame órfão: todo id (sem sufixo .N/.parte) existe no manifesto', () => {
     const { json } = renderAtlas();
     for (const name of Object.keys(json.frames)) {
-      const base = name.replace(/\.\d+$/, '');
+      const base = name.replace(/\.(cap|body|base)$/, '').replace(/\.\d+$/, '');
       expect(ASSET_MANIFEST[base], `frame órfão: ${name}`).toBeDefined();
     }
   });

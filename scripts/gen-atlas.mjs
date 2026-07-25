@@ -15,30 +15,18 @@ const CELL_MAX = 256; // maior dimensão de um frame após downscale
 const ATLAS_WIDTH = 1024; // largura fixa do atlas (shelf packing)
 const PAD = 2; // espaçamento entre frames (anti-bleeding)
 
-export const ATLAS_SOURCES = [
-  { id: 'dino.default', file: 'dinos/dino.default.flap.png', frames: 6 },
-  { id: 'obstacle.tree', file: 'obstacles/obstacle.tree.png', frames: 1 },
-  { id: 'obstacle.vine', file: 'obstacles/obstacle.vine.png', frames: 1 },
-  { id: 'obstacle.boulder', file: 'obstacles/obstacle.boulder.png', frames: 1 },
-  { id: 'obstacle.stalactite', file: 'obstacles/obstacle.stalactite.png', frames: 1 },
-  { id: 'bird.coin', file: 'collectibles/bird.coin.png', frames: 1 },
-  { id: 'powerup.shield', file: 'powerups/powerup.shield.png', frames: 1 },
-  { id: 'powerup.extraLife', file: 'powerups/powerup.extraLife.png', frames: 1 },
-  { id: 'powerup.magnet', file: 'powerups/powerup.magnet.png', frames: 1 },
-  { id: 'powerup.doubleCoin', file: 'powerups/powerup.doubleCoin.png', frames: 1 },
-  { id: 'powerup.slowMo', file: 'powerups/powerup.slowMo.png', frames: 1 },
-];
-
 /**
- * Fontes por tema (arte realista, chroma-keyed) para uma variante de atlas. Os 3 obstáculos sem
- * arte-tema ainda (vine/boulder/stalactite) reusam public/art/final/ (já alpha, sem chroma) —
- * mix temporário aceito por decisão de produto até essas peças ganharem arte real por tema.
+ * Fontes por tema (arte realista, chroma-keyed) para uma variante de atlas. tree/vine consomem as
+ * tiras de segmento [cap|body|base] (modo `parts`) — obstáculos por composição (9.2). boulder/
+ * stalactite sem arte-tema ainda reusam public/art/final/ (já alpha, sem chroma) — mix temporário
+ * aceito por decisão de produto até essas peças ganharem arte real por tema.
  */
 function themeSources(theme) {
   const R = `public/art/themes/${theme}`;
   return [
     { id: 'dino.default', root: R, file: `dinos/${theme}_dino.default.flap.chromakey.png`, frames: 6, chroma: true },
-    { id: 'obstacle.tree', root: R, file: `obstacles/${theme}_obstacle.tree.chromakey.png`, frames: 1, chroma: true },
+    { id: 'obstacle.tree', root: R, file: `obstacles/${theme}_obstacle.tree.segments.png`, parts: ['cap', 'body', 'base'] },
+    { id: 'obstacle.vine', root: R, file: `obstacles/${theme}_obstacle.vine.segments.png`, parts: ['cap', 'body', 'base'] },
     { id: 'bird.coin', root: R, file: `collectibles/${theme}_bird.coin.chromakey.png`, frames: 1, chroma: true },
     {
       id: 'powerups', root: R, file: `powerups/${theme}_powerups.chromakey.png`, chroma: true,
@@ -47,12 +35,13 @@ function themeSources(theme) {
         names: ['powerup.shield', 'powerup.extraLife', 'powerup.magnet', 'powerup.doubleCoin', 'powerup.slowMo', null],
       },
     },
-    // 3 obstáculos ainda cartoon: reusa final/ (já alpha, sem chroma).
-    { id: 'obstacle.vine', file: 'obstacles/obstacle.vine.png', frames: 1 },
     { id: 'obstacle.boulder', file: 'obstacles/obstacle.boulder.png', frames: 1 },
     { id: 'obstacle.stalactite', file: 'obstacles/obstacle.stalactite.png', frames: 1 },
   ];
 }
+
+// Default (test-only) = variante classic — sem divergência com o `entities` que de fato ship.
+export const ATLAS_SOURCES = themeSources('classic');
 
 // Variantes de atlas (multi-atlas): uma por tema, com os MESMOS ids do manifesto e arte-fonte
 // diferente. `entities` (classic) é a default consumida quando o pack não define `atlas` próprio.
@@ -220,6 +209,27 @@ export function renderAtlas(sources = ATLAS_SOURCES) {
         const b = contentBounds(img, x0, y0, x1, y1);
         const sw = b.maxX - b.minX, sh = b.maxY - b.minY, { dw, dh } = targetSize(sw, sh);
         frames.push({ name, dw, dh, pixels: cropResize(img, b.minX, b.minY, sw, sh, dw, dh) });
+      }
+    } else if (src.parts) {
+      // Fatia a tira horizontal em N partes iguais; largura CONSISTENTE entre partes (união do
+      // X-bbox) e altura PRÓPRIA por parte. Escala única (mesma p/ todas) ⇒ dw idêntico ⇒ empilham
+      // alinhadas. Emite frames `<id>.<parte>`.
+      const names = src.parts, n = names.length;
+      const cw = Math.floor(img.w / n);
+      let uMinX = cw, uMaxX = 0;
+      const cells = [];
+      for (let i = 0; i < n; i++) {
+        const b = contentBounds(img, i * cw, 0, i * cw + cw, img.h);
+        uMinX = Math.min(uMinX, b.minX - i * cw); uMaxX = Math.max(uMaxX, b.maxX - i * cw);
+        cells.push(b);
+      }
+      const sw = uMaxX - uMinX;
+      const maxSh = Math.max(...cells.map((b) => b.maxY - b.minY));
+      const s = Math.min(1, CELL_MAX / Math.max(sw, maxSh));
+      const dw = Math.max(1, Math.round(sw * s));
+      for (let i = 0; i < n; i++) {
+        const b = cells[i], sh = b.maxY - b.minY, dh = Math.max(1, Math.round(sh * s));
+        frames.push({ name: `${src.id}.${names[i]}`, dw, dh, pixels: cropResize(img, i * cw + uMinX, b.minY, sw, sh, dw, dh) });
       }
     } else if (src.frames === 1) {
       const b = contentBounds(img, 0, 0, img.w, img.h);

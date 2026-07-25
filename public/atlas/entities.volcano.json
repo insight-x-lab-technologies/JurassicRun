@@ -120,30 +120,130 @@
         "h": 240
       }
     },
-    "obstacle.tree": {
+    "obstacle.tree.cap": {
       "frame": {
         "x": 776,
         "y": 244,
-        "w": 60,
-        "h": 256
+        "w": 96,
+        "h": 96
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 60,
-        "h": 256
+        "w": 96,
+        "h": 96
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 60,
-        "h": 256
+        "w": 96,
+        "h": 96
+      }
+    },
+    "obstacle.tree.body": {
+      "frame": {
+        "x": 874,
+        "y": 244,
+        "w": 96,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "sourceSize": {
+        "w": 96,
+        "h": 96
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 96
+      }
+    },
+    "obstacle.tree.base": {
+      "frame": {
+        "x": 2,
+        "y": 486,
+        "w": 96,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "sourceSize": {
+        "w": 96,
+        "h": 96
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 96
+      }
+    },
+    "obstacle.vine.cap": {
+      "frame": {
+        "x": 100,
+        "y": 486,
+        "w": 96,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "sourceSize": {
+        "w": 96,
+        "h": 96
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 96
+      }
+    },
+    "obstacle.vine.body": {
+      "frame": {
+        "x": 198,
+        "y": 486,
+        "w": 96,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "sourceSize": {
+        "w": 96,
+        "h": 96
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 96
+      }
+    },
+    "obstacle.vine.base": {
+      "frame": {
+        "x": 296,
+        "y": 486,
+        "w": 96,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": false,
+      "sourceSize": {
+        "w": 96,
+        "h": 96
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 96,
+        "h": 96
       }
     },
     "bird.coin": {
       "frame": {
-        "x": 2,
-        "y": 502,
+        "x": 394,
+        "y": 486,
         "w": 256,
         "h": 184
       },
@@ -162,8 +262,8 @@
     },
     "powerup.shield": {
       "frame": {
-        "x": 260,
-        "y": 502,
+        "x": 652,
+        "y": 486,
         "w": 203,
         "h": 256
       },
@@ -182,8 +282,8 @@
     },
     "powerup.extraLife": {
       "frame": {
-        "x": 465,
-        "y": 502,
+        "x": 2,
+        "y": 744,
         "w": 236,
         "h": 256
       },
@@ -202,8 +302,8 @@
     },
     "powerup.magnet": {
       "frame": {
-        "x": 703,
-        "y": 502,
+        "x": 240,
+        "y": 744,
         "w": 224,
         "h": 256
       },
@@ -222,8 +322,8 @@
     },
     "powerup.doubleCoin": {
       "frame": {
-        "x": 2,
-        "y": 760,
+        "x": 466,
+        "y": 744,
         "w": 256,
         "h": 208
       },
@@ -242,8 +342,8 @@
     },
     "powerup.slowMo": {
       "frame": {
-        "x": 260,
-        "y": 760,
+        "x": 724,
+        "y": 744,
         "w": 238,
         "h": 256
       },
@@ -257,33 +357,13 @@
         "x": 0,
         "y": 0,
         "w": 238,
-        "h": 256
-      }
-    },
-    "obstacle.vine": {
-      "frame": {
-        "x": 500,
-        "y": 760,
-        "w": 21,
-        "h": 256
-      },
-      "rotated": false,
-      "trimmed": false,
-      "sourceSize": {
-        "w": 21,
-        "h": 256
-      },
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 21,
         "h": 256
       }
     },
     "obstacle.boulder": {
       "frame": {
-        "x": 523,
-        "y": 760,
+        "x": 2,
+        "y": 1002,
         "w": 256,
         "h": 254
       },
@@ -302,8 +382,8 @@
     },
     "obstacle.stalactite": {
       "frame": {
-        "x": 781,
-        "y": 760,
+        "x": 260,
+        "y": 1002,
         "w": 196,
         "h": 256
       },
@@ -345,7 +425,7 @@
     "image": "entities.volcano.png",
     "size": {
       "w": 1024,
-      "h": 1018
+      "h": 1260
     },
     "scale": "1"
   }
