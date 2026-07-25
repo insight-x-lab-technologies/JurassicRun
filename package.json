@@ -14,6 +14,7 @@
     "gen:atlas": "node scripts/gen-atlas.mjs",
     "gen:ui": "node scripts/gen-ui.mjs",
     "gen:parallax": "node scripts/gen-parallax-placeholder.mjs",
+    "gen:obstacle-placeholder": "node scripts/gen-obstacle-placeholder.mjs",
     "package:itch": "node scripts/package-itch.mjs"
   },
   "keywords": [],

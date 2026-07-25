@@ -148,10 +148,13 @@ como render/asset (core intocado ⇒ determinismo 67). Spec/plano:
 `docs/superpowers/{specs,plans}/2026-07-21-gameplay-tuning-and-realistic-theme-art*`.
 
 - **Entidades** (`gen-atlas.mjs`, 1 atlas por tema): `dino.default` (strip 6 frames),
-  `obstacle.tree`, `bird.coin`, folha de powerups 3×2 (shield/extraLife/magnet/doubleCoin/slowMo,
-  6º slot ignorado). `vine`/`boulder`/`stalactite` reusam a arte cartoon de `public/art/final/`
-  (mix temporário até gerar o set realista). Chroma via `chromaKeyToAlpha` (auto-detecta a chave,
-  feather + descontaminação).
+  `bird.coin`, folha de powerups 3×2 (shield/extraLife/magnet/doubleCoin/slowMo, 6º slot ignorado)
+  — via chroma (`chromaKeyToAlpha`, auto-detecta a chave, feather + descontaminação).
+  `obstacle.tree`/`obstacle.vine` **SEGMENTADOS (9.2)**: 3 frames `.cap/.body/.base` empacotados via
+  modo `parts` a partir das tiras `public/art/themes/<tema>/obstacles/<tema>_obstacle.<id>.segments.png`
+  (placeholder procedural por `gen-obstacle-placeholder.mjs`; arte AAA real dropa trocando os PNG-fonte,
+  prompts A.2 do PHASE-09). `boulder`/`stalactite` reusam a arte cartoon de `public/art/final/` (1 frame,
+  mix temporário — forma casa a hitbox circle/polygon, sem necessidade de segmentar).
 - **Parallax — SUPERSEDED pela Fase 9.1** (ver seção "Fundos / parallax" acima e
   `specs/bg.layer.{far,mid,near,impact}.md`): este parágrafo descreve o modelo antigo,
   aposentado — 3 tiras OPACAS por tema fatiadas da banda inferior da folha

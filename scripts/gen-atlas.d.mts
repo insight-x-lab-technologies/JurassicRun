@@ -6,6 +6,7 @@ export interface AtlasSource {
   root?: string;
   chroma?: boolean;
   grid?: AtlasGrid;
+  parts?: readonly string[];
 }
 export const ATLAS_KEY: string;
 export const ATLAS_SOURCES: readonly AtlasSource[];
