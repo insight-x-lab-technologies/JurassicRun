@@ -70,3 +70,8 @@ export const CONFIRM_KEYS: readonly string[] = ['Space', 'ArrowUp', 'Enter'];
 
 /** Frames por segundo da animação de flap do dino (8.1). */
 export const DINO_FLAP_FPS = 12;
+
+/** Animação de morte (9.3): cor de impacto (tint interpolado pelo flash) e cor das
+ *  partículas de poeira/pena (desenhadas no Graphics do mundo). */
+export const DEATH_IMPACT_TINT = 0xff5a4a;
+export const DEATH_PARTICLE_COLOR = 0xf0e2d0;

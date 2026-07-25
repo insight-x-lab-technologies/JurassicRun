@@ -10,6 +10,10 @@ import { spriteSizeFor, frameFor, atlasRefFor, segmentFramesFor, layoutSegments 
 import type { SegmentFrames, SegmentLayout } from './sprites';
 import { timeOfDayForSeed } from './daynight';
 import { packForId } from './packs';
+import { deathVisual } from './death';
+import type { DeathVisual } from './death';
+import { deathParticleAt, DEATH_PARTICLE_COUNT } from './particles';
+import type { Particle } from './particles';
 import { i18n } from '@services/i18n';
 import { entitlementsService } from '@services/entitlements';
 import { HudTicker, formatHudValues } from './hud';
@@ -40,6 +44,8 @@ import {
   GAMEOVER_BUTTON_COLOR,
   GAMEOVER_BUTTON_DISABLED_COLOR,
   DINO_FLAP_FPS,
+  DEATH_IMPACT_TINT,
+  DEATH_PARTICLE_COLOR,
 } from './constants';
 import { toRenderPx, parallaxTileScale } from './resolution';
 
@@ -75,6 +81,16 @@ export class GameScene extends Phaser.Scene {
   private readonly segScratch: SegmentLayout = { capH: 0, baseH: 0, bodyH: 0, bodyN: 0 };
   private readonly segDimCache = new Map<string, { partW: number; capH: number; bodyH: number; baseH: number }>();
   private atlasKey = 'entities';
+  private animKey = ''; // chave da anim de flap (por atlas); guardada p/ religar após o `dying`.
+  // Animação de morte (9.3): scratch reusável (REGRA 3) + ponto de impacto memorizado 1× na
+  // transição p/ `dying` + flag p/ detectar a transição (entrada e saída).
+  private readonly deathVisualScratch: DeathVisual = {
+    progress: 0, rotation: 0, dropFactor: 0, shakeX: 0, shakeY: 0, flash: 0,
+  };
+  private readonly particleScratch: Particle = { x: 0, y: 0, radius: 0, alpha: 0, visible: false };
+  private deathX = 0;
+  private deathY = 0;
+  private wasDying = false;
 
   /** Px de render por unidade de mundo (W5). Fixo durante a vida da cena; ver resolution.ts. */
   private readonly renderScale: number;
@@ -156,16 +172,16 @@ export class GameScene extends Phaser.Scene {
     this.dinoSprite = this.add
       .sprite(0, 0, this.atlasKey, frameFor(DINO_TYPE_ID) ?? DINO_TYPE_ID)
       .setDepth(1);
-    const animKey = 'dino.flap.' + this.atlasKey;
-    if (!this.anims.exists(animKey)) {
+    this.animKey = 'dino.flap.' + this.atlasKey;
+    if (!this.anims.exists(this.animKey)) {
       this.anims.create({
-        key: animKey,
+        key: this.animKey,
         frames: this.anims.generateFrameNames(this.atlasKey, { prefix: 'dino.default.', start: 0, end: 5 }),
         frameRate: DINO_FLAP_FPS,
         repeat: -1,
       });
     }
-    this.dinoSprite.play(animKey);
+    this.dinoSprite.play(this.animKey);
 
     // Overlay de pausa: retângulo semitransparente de tela cheia (scrollFactor 0, depth 1000).
     this.pauseOverlay = this.add.graphics().setScrollFactor(0).setScale(this.renderScale);
@@ -282,10 +298,27 @@ export class GameScene extends Phaser.Scene {
 
     const loop = match.loop;
     const world = match.world;
+    const dying = match.dying;
 
-    // Câmera segue o dino interpolado; vertical não scrolla (o mundo cabe na altura).
+    // Transições da animação de morte (9.3) — 1×, nunca por frame (REGRA 3).
+    if (dying && !this.wasDying) {
+      // Entrada em `dying`: memoriza o ponto de impacto (posição interpolada) e congela o flap.
+      this.deathX = loop.renderX;
+      this.deathY = loop.renderY;
+      this.dinoSprite.stop();
+    } else if (!dying && this.wasDying) {
+      // Saída (fim da animação ou nova partida): repõe o render normal e religa o flap.
+      this.dinoSprite.setRotation(0);
+      this.dinoSprite.setTint(this.appliedEntityTint);
+      this.cameras.main.scrollY = 0;
+      this.dinoSprite.play(this.animKey);
+    }
+    this.wasDying = dying;
+
+    // Câmera segue o dino interpolado; vertical não scrolla (o mundo cabe na altura), exceto
+    // durante o shake da morte (aplicado mais abaixo, só quando `dying`).
     // W5: o scroll da CÂMERA é em px de render; o scroll de MUNDO (abaixo) é o que alimenta
-    // culling e parallax, que raciocinam em unidades de mundo.
+    // culling e parallax, que raciocinam em unidades de mundo — e NUNCA leva shake.
     const scrollX = loop.renderX - DINO_SCREEN_X;
     this.cameras.main.scrollX = this.px(scrollX);
 
@@ -316,6 +349,30 @@ export class GameScene extends Phaser.Scene {
       this.dinoSprite.setVisible(false);
       this.drawPrimitive(g, DINO_TYPE_ID, world.pterodactyl.hitbox, loop.renderX, loop.renderY);
     }
+
+    // Animação cosmética de morte (9.3): giro/queda/tint/partículas/shake sobre o frame
+    // de flap congelado. Alocação-zero (scratch de campo, aritmética de cor por inteiro).
+    if (dying) {
+      const ds = this.sizeFor(DINO_TYPE_ID, world.pterodactyl.hitbox);
+      const v = deathVisual(this.match.deathElapsed, this.deathVisualScratch);
+      const groundY = VIEW_HEIGHT - GROUND_THICKNESS - ds.h / 2;
+      const maxDrop = Math.max(0, groundY - this.deathY);
+      const y = Math.min(this.deathY + v.dropFactor * maxDrop, groundY);
+      this.dinoSprite.setRotation(v.rotation);
+      this.dinoSprite.setPosition(this.px(this.deathX), this.px(y));
+      this.dinoSprite.setTint(this.impactTint(entityTint, v.flash));
+
+      for (let i = 0; i < DEATH_PARTICLE_COUNT; i++) {
+        const p = deathParticleAt(i, this.match.deathElapsed, this.particleScratch);
+        if (!p.visible) continue;
+        g.fillStyle(DEATH_PARTICLE_COLOR, p.alpha);
+        g.fillCircle(this.deathX + p.x, this.deathY + p.y, p.radius);
+      }
+
+      this.cameras.main.scrollX = this.px(scrollX + v.shakeX);
+      this.cameras.main.scrollY = this.px(v.shakeY);
+    }
+
     // Esconde os sprites do pool não usados neste frame.
     for (let i = this.spritePoolUsed; i < this.spritePool.length; i++) {
       this.spritePool[i]!.setVisible(false);
@@ -360,7 +417,7 @@ export class GameScene extends Phaser.Scene {
       this.gameOverQuit.setVisible(false);
       return;
     }
-    const dead = this.match.phase === 'dead';
+    const dead = this.match.phase === 'dead' && !this.match.dying;
     this.gameOverBg.setVisible(dead);
     this.gameOverTitle.setVisible(dead);
     this.gameOverStats.setVisible(dead);
@@ -405,6 +462,18 @@ export class GameScene extends Phaser.Scene {
       this.sizeCache.set(typeId, s);
     }
     return s;
+  }
+
+  /** Interpola `base` → `DEATH_IMPACT_TINT` por `flash` (0..1), canal a canal em inteiros —
+   *  sem alocar array/objeto por frame (REGRA 3). */
+  private impactTint(base: number, flash: number): number {
+    if (flash <= 0) return base;
+    const br = (base >> 16) & 0xff, bg = (base >> 8) & 0xff, bb = base & 0xff;
+    const ir = (DEATH_IMPACT_TINT >> 16) & 0xff, ig = (DEATH_IMPACT_TINT >> 8) & 0xff, ib = DEATH_IMPACT_TINT & 0xff;
+    const r = (br + (ir - br) * flash) | 0;
+    const g = (bg + (ig - bg) * flash) | 0;
+    const b = (bb + (ib - bb) * flash) | 0;
+    return (r << 16) | (g << 8) | b;
   }
 
   private drawSpriteEntity(e: Entity, scrollX: number, entityTint: number): void {
