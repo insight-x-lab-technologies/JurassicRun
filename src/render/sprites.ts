@@ -49,12 +49,23 @@ export function frameFor(typeId: string): string | null {
 /** Partes de um obstáculo segmentado (aabb): empilhadas cap(topo)→body(repete)→base(fundo). */
 export interface SegmentFrames { readonly cap: string; readonly body: string; readonly base: string; }
 
+/** Cache por typeId ⇒ o objeto (e as strings de frame) é estável entre chamadas: `segmentFramesFor`
+ *  roda 1×/obstáculo/frame no hot path, então não pode alocar por frame (REGRA 3). */
+const segFramesCache = new Map<string, SegmentFrames | null>();
+
 /** Frames das partes se o typeId for segmentado no manifesto, senão null. Convenção de nome:
- *  `<id>.cap` / `<id>.body` / `<id>.base` (o gen-atlas empacota com esses sufixos). */
+ *  `<id>.cap` / `<id>.body` / `<id>.base` (o gen-atlas empacota com esses sufixos). Memoizado ⇒
+ *  identidade estável, zero alocação após o 1º acesso (REGRA 3). */
 export function segmentFramesFor(typeId: string): SegmentFrames | null {
-  const r = renderableFor(typeId);
-  if (r.kind !== 'sprite' || r.segmented !== true) return null;
-  return { cap: `${typeId}.cap`, body: `${typeId}.body`, base: `${typeId}.base` };
+  let f = segFramesCache.get(typeId);
+  if (f === undefined) {
+    const r = renderableFor(typeId);
+    f = r.kind === 'sprite' && r.segmented === true
+      ? { cap: `${typeId}.cap`, body: `${typeId}.body`, base: `${typeId}.base` }
+      : null;
+    segFramesCache.set(typeId, f);
+  }
+  return f;
 }
 
 /** Layout vertical dos segmentos para cobrir uma hitbox aabb de altura `height` (unidades de

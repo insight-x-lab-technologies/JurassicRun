@@ -428,15 +428,16 @@ export class GameScene extends Phaser.Scene {
     img.setPosition(this.px(x), this.px(e.transform.position.y));
   }
 
-  /** Dims (largura da parte + alturas cap/body/base) do atlas, cacheadas por atlas+body. */
+  /** Dims (largura da parte + alturas cap/body/base) do atlas, cacheadas por frame do body. O
+   *  `atlasKey` é fixo durante a vida da cena (setado 1× no preload), então basta a string estável
+   *  `frames.body` como chave — sem concatenação por frame (REGRA 3). */
   private segDims(frames: SegmentFrames): { partW: number; capH: number; bodyH: number; baseH: number } {
-    const key = this.atlasKey + '|' + frames.body;
-    let d = this.segDimCache.get(key);
+    let d = this.segDimCache.get(frames.body);
     if (d === undefined) {
       const tex = this.textures.get(this.atlasKey);
       const cf = tex.get(frames.cap), bf = tex.get(frames.body), sf = tex.get(frames.base);
       d = { partW: bf.width, capH: cf.height, bodyH: bf.height, baseH: sf.height };
-      this.segDimCache.set(key, d);
+      this.segDimCache.set(frames.body, d);
     }
     return d;
   }

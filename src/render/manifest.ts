@@ -16,8 +16,10 @@ const FALLBACK: Renderable = { kind: 'primitive', color: 0xff00ff };
 /** Mapa id lógico → visual. Todos os sprites vêm do atlas 'entities'. */
 export const ASSET_MANIFEST: Readonly<Record<string, Renderable>> = {
   [DINO_TYPE_ID]: { kind: 'sprite', atlas: 'entities', frame: 'dino.default' },
-  'obstacle.tree': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.tree', segmented: true },
-  'obstacle.vine': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.vine', segmented: true },
+  // segmentados: a composição usa `<id>.cap/.body/.base`; `frame` aponta p/ a parte body como
+  // fallback representativo (frame que existe no atlas), nunca `<id>` bare (não empacotado).
+  'obstacle.tree': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.tree.body', segmented: true },
+  'obstacle.vine': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.vine.body', segmented: true },
   'obstacle.boulder': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.boulder' },
   'obstacle.stalactite': { kind: 'sprite', atlas: 'entities', frame: 'obstacle.stalactite' },
   'bird.coin': { kind: 'sprite', atlas: 'entities', frame: 'bird.coin' },
