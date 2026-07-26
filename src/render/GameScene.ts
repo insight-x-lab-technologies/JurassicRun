@@ -14,6 +14,9 @@ import { deathVisual } from './death';
 import type { DeathVisual } from './death';
 import { deathParticleAt, DEATH_PARTICLE_COUNT } from './particles';
 import type { Particle } from './particles';
+import { idleMotionFor, swayOffset, dripAt, idlePhaseFor, wrapIdleTime } from './idle';
+import type { SwayOffset, DripState } from './idle';
+import type { IdleSpec } from './manifest';
 import { i18n } from '@services/i18n';
 import { entitlementsService } from '@services/entitlements';
 import { HudTicker, formatHudValues } from './hud';
@@ -46,6 +49,7 @@ import {
   DINO_FLAP_FPS,
   DEATH_IMPACT_TINT,
   DEATH_PARTICLE_COLOR,
+  IDLE_DRIP_COLOR,
 } from './constants';
 import { toRenderPx, parallaxTileScale } from './resolution';
 
@@ -91,6 +95,12 @@ export class GameScene extends Phaser.Scene {
   private deathX = 0;
   private deathY = 0;
   private wasDying = false;
+
+  // Idle cosmético de obstáculo (9.4): relógio de render local (não existe no core, não entra em
+  // hash) + scratches reusáveis (REGRA 3).
+  private idleElapsed = 0;
+  private readonly swayScratch: SwayOffset = { dx: 0 };
+  private readonly dripScratch: DripState = { y: 0, radius: 0, alpha: 0, visible: false };
 
   /** Px de render por unidade de mundo (W5). Fixo durante a vida da cena; ver resolution.ts. */
   private readonly renderScale: number;
@@ -291,6 +301,10 @@ export class GameScene extends Phaser.Scene {
 
     if (paused) return; // congela a sim; o último frame desenhado permanece sob o overlay
 
+    // Relógio do idle cosmético (9.4). Congela na pausa (o early-return acima) e embrulha em
+    // IDLE_WRAP_SECONDS sem salto visual.
+    this.idleElapsed = wrapIdleTime(this.idleElapsed + deltaMs / 1000);
+
     const match = this.match;
     match.advance(deltaMs / 1000); // no-op fora de `playing`
     this.readyPrompt.setVisible(!this.domOverlays && match.phase === 'ready');
@@ -486,8 +500,9 @@ export class GameScene extends Phaser.Scene {
 
   private drawSpriteEntity(e: Entity, scrollX: number, entityTint: number): void {
     const typeId = e.tags[0] ?? '';
+    const idle = idleMotionFor(typeId);
     const seg = segmentFramesFor(typeId);
-    if (seg !== null) { this.drawSegmentedEntity(e, seg, scrollX, entityTint); return; }
+    if (seg !== null) { this.drawSegmentedEntity(e, seg, idle, scrollX, entityTint); return; }
     const x = e.transform.position.x;
     if (!isHorizontallyVisible(x, leftExtent(e.hitbox), rightExtent(e.hitbox), scrollX, VIEW_WIDTH, CULL_MARGIN)) {
       return;
@@ -503,6 +518,19 @@ export class GameScene extends Phaser.Scene {
     const s = this.sizeFor(typeId, e.hitbox);
     img.setDisplaySize(this.px(s.w), this.px(s.h)); // W5: mundo → px de render
     img.setPosition(this.px(x), this.px(e.transform.position.y));
+    // Idle 9.4: a estalactite pinga. O sprite NÃO se desloca ⇒ a cobertura da hitbox (9.2) fica
+    // idêntica; a gota é desenho à parte, como as partículas de morte.
+    if (idle !== null && idle.kind === 'drip') {
+      this.drawDrip(x, e.transform.position.y + s.h / 2);
+    }
+  }
+
+  /** Gota caindo da ponta (cx, tipY) em unidades de mundo. Alocação-zero (scratch de campo). */
+  private drawDrip(cx: number, tipY: number): void {
+    const d = dripAt(this.idleElapsed, idlePhaseFor(cx), this.dripScratch);
+    if (!d.visible || d.radius <= 0) return;
+    this.gfx.fillStyle(IDLE_DRIP_COLOR, d.alpha);
+    this.gfx.fillCircle(cx, tipY + d.y, d.radius);
   }
 
   /** Dims (largura da parte + alturas cap/body/base) do atlas, cacheadas por frame do body. O
@@ -520,24 +548,53 @@ export class GameScene extends Phaser.Scene {
   }
 
   /** Monta cap(topo)+N×body+base(fundo) cobrindo a hitbox aabb (REGRA 2). Alocação-zero:
-   *  scratch de layout reusado + pool de Image (REGRA 3). */
-  private drawSegmentedEntity(e: Entity, frames: SegmentFrames, scrollX: number, tint: number): void {
+   *  scratch de layout reusado + pool de Image (REGRA 3).
+   *  Idle 9.4 (`sway`): cada segmento desloca `dx` (|dx| <= amp) e é desenhado com largura
+   *  `W + 2·amp` — a SANGRIA igual à amplitude garante, por construção, que o balanço nunca
+   *  descobre a hitbox (aceite de 9.2: a borda visível cobre a caixa lógica). */
+  private drawSegmentedEntity(
+    e: Entity,
+    frames: SegmentFrames,
+    idle: IdleSpec | null,
+    scrollX: number,
+    tint: number,
+  ): void {
     const hb = e.hitbox;
     if (hb.kind !== 'aabb') return; // segmentação só p/ aabb (garantido pelo catálogo)
     const x = e.transform.position.x;
     if (!isHorizontallyVisible(x, leftExtent(hb), rightExtent(hb), scrollX, VIEW_WIDTH, CULL_MARGIN)) return;
-    const W = hb.halfW * 2, H = hb.halfH * 2;
+    const sway = idle !== null && idle.kind === 'sway' ? idle : null;
+    const amp = sway !== null ? sway.amp : 0;
+    const phase = sway !== null ? idlePhaseFor(x) : 0;
+    const W = hb.halfW * 2 + 2 * amp, H = hb.halfH * 2;
     const cy = e.transform.position.y, top = cy - hb.halfH, bottom = cy + hb.halfH;
     const d = this.segDims(frames);
     const widthScale = W / d.partW;
     const L = layoutSegments(H, d.capH * widthScale, d.bodyH * widthScale, d.baseH * widthScale, this.segScratch);
-    this.placeSeg(frames.cap, x, top + L.capH / 2, W, L.capH, tint);
+    const capY = top + L.capH / 2;
+    this.placeSeg(frames.cap, x + this.swayDx(sway, phase, capY, top, H), capY, W, L.capH, tint);
     let y = top + L.capH;
     for (let i = 0; i < L.bodyN; i++) {
-      this.placeSeg(frames.body, x, y + L.bodyH / 2, W, L.bodyH, tint);
+      const bodyY = y + L.bodyH / 2;
+      this.placeSeg(frames.body, x + this.swayDx(sway, phase, bodyY, top, H), bodyY, W, L.bodyH, tint);
       y += L.bodyH;
     }
-    this.placeSeg(frames.base, x, bottom - L.baseH / 2, W, L.baseH, tint);
+    const baseY = bottom - L.baseH / 2;
+    this.placeSeg(frames.base, x + this.swayDx(sway, phase, baseY, top, H), baseY, W, L.baseH, tint);
+  }
+
+  /** Deslocamento lateral do segmento centrado em `cy`. `t01` = distância normalizada até a
+   *  extremidade PRESA (`anchor`). 0 quando o obstáculo não balança. */
+  private swayDx(
+    sway: Extract<IdleSpec, { kind: 'sway' }> | null,
+    phase: number,
+    cy: number,
+    top: number,
+    H: number,
+  ): number {
+    if (sway === null || H <= 0) return 0;
+    const t01 = sway.anchor === 'top' ? (cy - top) / H : (top + H - cy) / H;
+    return swayOffset(sway.amp, t01, this.idleElapsed, phase, this.swayScratch).dx;
   }
 
   /** Posiciona 1 Image do pool numa faixa (cx,cy centro; w×h em unidades de mundo). */
