@@ -9,7 +9,7 @@ import { ReadyPrompt } from '../game/ReadyPrompt';
 import { Hud } from '../game/Hud';
 import { PauseOverlay } from '../game/PauseOverlay';
 
-const INITIAL: MatchSnapshot = { phase: 'ready', paused: false, gameOver: null, hud: null, dying: false };
+const INITIAL: MatchSnapshot = { phase: 'ready', paused: false, gameOver: null, dying: false };
 const HUD_INTERVAL_MS = 200; // ~5 Hz
 
 export function PlayScreen({ mode = 'endless' }: { mode?: MatchMode }) {
@@ -62,7 +62,8 @@ export function PlayScreen({ mode = 'endless' }: { mode?: MatchMode }) {
         lastT = t;
         if (t - lastHud >= HUD_INTERVAL_MS) {
           const fps = accumMs > 0 ? Math.round((frames * 1000) / accumMs) : 0;
-          setHud(s.hud !== null ? { hud: s.hud, fps } : null);
+          const live = handle.hud();
+          setHud(live !== null ? { hud: live, fps } : null);
           lastHud = t;
           frames = 0;
           accumMs = 0;

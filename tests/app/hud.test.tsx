@@ -9,7 +9,10 @@ describe('Hud DOM', () => {
     const host = document.createElement('div');
     render(
       <Hud
-        hud={{ distance: 123, food: 4, level: 2, speed: 130, weather: 'clear', seed: 'endless:X' }}
+        hud={{
+          distance: 123, food: 4, level: 2, speed: 130, weather: 'clear', seed: 'endless:X',
+          effects: [], extraLives: 0, trait: 'none',
+        }}
         fps={60}
       />,
       host,
