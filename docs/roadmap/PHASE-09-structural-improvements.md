@@ -203,6 +203,18 @@ aparece após a animação; determinismo do core inalterado.
 > existente como as partículas de 9.3 — a estalactite `polygon` **não** se desloca, cobertura
 > byte-idêntica). Ligar/tunar/desligar = campo `idle` no manifesto (REGRA 2); `obstacle.boulder`
 > fica estático de propósito.
+> **Review final: READY** com 2 Minor, ambos corrigidos inline: (a) `deltaMs` do relógio idle sem
+> clamp (volta de aba em background daria salto) ⇒ clampado em `MAX_FRAME_TIME` como no
+> `FixedStepLoop`; (b) faltava a guarda prometida na spec ⇒ `manifest.test.ts` passa a exigir que
+> **só ids `obstacle.*`** tenham `idle`.
+> **Validação Playwright** (build de produção, exposição TEMP `window.__jrSway`/`__jrDrip`
+> revertida): 219 amostras em partidas reais ⇒ árvore `freeDx ∈ [−0,50; +0,49]` (amp 0,6) e cipó
+> `[−0,66; +0,65]` (amp 0,8) — balançando de fato; **0 violações de cobertura** (cap e base sempre
+> com `segLeft ≤ hitLeft` e `segRight ≥ hitRight`); gota em 94 amostras, fase de formação em `y=0`
+> e queda até `y≈24,7` de 26; **0 erros de console**. Gotcha reconfirmado: medir o segmento livre
+> (na árvore é o `cap`, não a `base` — a base é a extremidade PRESA) e SW cacheia `dist` antigo
+> (unregister + clear caches + `?nocache`).
+> Suíte **843** testes, `check` limpo, determinismo **67**.
 > **Backlog:** arte AAA real segmentada (A.2) e, se um dia ela vier animada, a variante de frames.
 
 **Toca:** `src/render/GameScene.ts`, `scripts/gen-atlas.mjs` (strips de frames por obstáculo),
