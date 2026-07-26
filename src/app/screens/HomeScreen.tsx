@@ -3,10 +3,13 @@ import { navigate, type Screen } from '../router';
 import { i18n } from '@services/i18n';
 import { profileService, avatarFor, type Profile } from '@services/profile';
 import { getHomeStats } from '../home/stats';
-import { shareGame, defaultShareDeps } from '../home/share';
-import { openDonation, defaultDonateDeps } from '../home/donate';
+import { ShareLinks, defaultShareLinkProps } from '../components/ShareLinks';
 
-// Destinos de navegação do menu, na ordem do roadmap 4.3.
+/**
+ * Destinos do menu, na ordem do roadmap 4.3 + `donate` no fim: a Doação virou TELA (mesmo padrão
+ * das outras) e por isso entra no mesmo grid, com o mesmo tamanho — ela cai ao lado de
+ * Configurações em qualquer largura que caiba 2+ colunas.
+ */
 const MENU: readonly Screen[] = [
   'daily',
   'weekly',
@@ -15,6 +18,7 @@ const MENU: readonly Screen[] = [
   'expansions',
   'leaderboard',
   'settings',
+  'donate',
 ];
 
 const NAV_ICON: Record<string, string> = {
@@ -25,6 +29,7 @@ const NAV_ICON: Record<string, string> = {
   expansions: 'icon.expansions',
   leaderboard: 'icon.leaderboard',
   settings: 'icon.settings',
+  donate: 'icon.donate',
 };
 function navIcon(id: string): string {
   return `${import.meta.env.BASE_URL}ui/${id}.png`;
@@ -104,20 +109,9 @@ export function HomeScreen(): VNode {
           ))}
         </div>
 
-        <div class="home__actions">
-          <button class="btn btn--ghost" onClick={() => void shareGame(defaultShareDeps())}>
-            <img class="nav-icon" src={navIcon('icon.share')} alt="" aria-hidden="true" />
-            {i18n.t('nav.share')}
-          </button>
-          <button
-            class="btn btn--ghost"
-            data-testid="home-donate"
-            onClick={() => openDonation(defaultDonateDeps())}
-          >
-            <img class="nav-icon" src={navIcon('icon.donate')} alt="" aria-hidden="true" />
-            {i18n.t('nav.donate')}
-          </button>
-        </div>
+        <ShareLinks {...defaultShareLinkProps()} />
+
+        <p class="home__copyright">{i18n.t('home.copyright')}</p>
       </main>
     </div>
   );

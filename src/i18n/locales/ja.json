@@ -58,11 +58,15 @@
     "newGame": "新しいゲーム",
     "coins": "コイン",
     "trophies": "トロフィー",
-    "level": "最高Lv"
+    "level": "最高Lv",
+    "copyright": "© Insight X Lab Game Studios 2026"
   },
   "share": {
     "title": "JurassicRun",
-    "text": "JurassicRun をプレイしよう — 翼竜の横スクロールゲーム！"
+    "text": "JurassicRun をプレイしよう — 翼竜の横スクロールゲーム！",
+    "via": "{{network}}で共有",
+    "copyFor": "{{network}}用にリンクをコピー",
+    "copied": "リンクをコピーしました"
   },
   "onboarding": {
     "title": "ようこそ",
@@ -304,5 +308,18 @@
   "pause": {
     "title": "一時停止",
     "resume": "タップで再開"
+  },
+  "donate": {
+    "title": "寄付",
+    "whyTitle": "寄付の理由",
+    "whyBody": "JurassicRunは趣味で作られた無料のゲームです。広告も有料機能もありません。寄付は公開を続ける費用と、新しい拡張の絵や音を用意する費用にだけ使われます。",
+    "howTitle": "寄付の方法",
+    "howBody": "下からプラットフォームを選んでください。支払いは各サイトで行われ、ゲームがカード情報を尋ねることはありません。",
+    "open": "開く",
+    "thanks": "金額は問いません。遊んでくれてありがとう！",
+    "platform": {
+      "buymeacoffee": "一度きりのコーヒー。アカウント不要です。",
+      "kofi": "単発でも毎月でも支援できます。"
+    }
   }
 }

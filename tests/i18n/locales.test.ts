@@ -44,6 +44,8 @@ const LOCALES_NON_EN = SUPPORTED_LANGUAGES.filter((l) => l !== DEFAULT_LANGUAGE)
 const IDENTICAL_TO_EN_ALLOWLIST: ReadonlySet<string> = new Set<string>([
   // Marca "JurassicRun" — não se traduz.
   ...LOCALES_NON_EN.flatMap((l) => [`${l}::app.title`, `${l}::share.title`]),
+  // Aviso legal de copyright: razão social + ano. Nome de empresa não se traduz.
+  ...LOCALES_NON_EN.map((l) => `${l}::home.copyright`),
   // Acrônimo universal "FPS".
   ...LOCALES_NON_EN.map((l) => `${l}::hud.fps`),
   // Nome próprio "Midas" (it/zh/ja/ko o localizam; estes o mantêm).

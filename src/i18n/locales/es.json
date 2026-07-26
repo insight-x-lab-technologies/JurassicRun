@@ -58,11 +58,15 @@
     "newGame": "Nuevo Juego",
     "coins": "Monedas",
     "trophies": "Trofeos",
-    "level": "Niv máx"
+    "level": "Niv máx",
+    "copyright": "© Insight X Lab Game Studios 2026"
   },
   "share": {
     "title": "JurassicRun",
-    "text": "¡Juega JurassicRun, un side-scroller de pterodáctilo!"
+    "text": "¡Juega JurassicRun, un side-scroller de pterodáctilo!",
+    "via": "Compartir en {{network}}",
+    "copyFor": "Copiar enlace para {{network}}",
+    "copied": "Enlace copiado"
   },
   "onboarding": {
     "title": "Bienvenido",
@@ -304,5 +308,18 @@
   "pause": {
     "title": "En pausa",
     "resume": "Toca para reanudar"
+  },
+  "donate": {
+    "title": "Donación",
+    "whyTitle": "Por qué donar",
+    "whyBody": "JurassicRun es un proyecto de afición: gratuito, sin anuncios y sin funciones de pago. Las donaciones solo cubren el coste de mantenerlo en línea y de comprar el arte y el sonido de las nuevas expansiones.",
+    "howTitle": "Cómo donar",
+    "howBody": "Elige una plataforma abajo. El pago ocurre en su sitio: el juego nunca pide los datos de tu tarjeta.",
+    "open": "Abrir",
+    "thanks": "Cualquier cantidad ayuda. ¡Gracias por jugar!",
+    "platform": {
+      "buymeacoffee": "Un café puntual, sin necesidad de cuenta.",
+      "kofi": "Apoyo puntual o mensual."
+    }
   }
 }

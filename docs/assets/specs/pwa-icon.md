@@ -3,13 +3,15 @@
 ## Identidade
 - **id:** `pwa-icon`
 - **Categoria:** ui | logo (ícone de instalação/PWA — home screen, splash, tab)
-- **Substitui o placeholder geométrico:** fundo sólido `#0e1116` (`--color-bg`) + triângulo
-  apontando para a direita na cor `#4ea1ff` (`--color-primary`), ecoando o dino cosmético
-  triangular usado no render de jogo (`GameScene`). Gerado por `scripts/gen-icons.mjs`
-  (encoder PNG puro via `node:zlib`, sem dependência de imagem).
+- **Estado: ART.** O placeholder geométrico (fundo `#0e1116` + triângulo azul `#4ea1ff`) foi
+  substituído: o ícone agora é **composto a partir da arte real** por `scripts/gen-app-icon.mjs`
+  — a moeda cunhada com o pterodáctilo em relevo (emblema do jogo desde a Fase 9) sobre gradiente
+  radial escuro dos tokens, com aro dourado nas variantes `any`. `scripts/gen-icons.mjs` ficou só
+  com o encoder PNG compartilhado.
 
 ## Especificação técnica
-- **Dimensões alvo (px):** 3 tamanhos, todos quadrados:
+- **Dimensões alvo (px):** 4 tamanhos, todos quadrados:
+  - `icon-180.png` — 180×180 (`apple-touch-icon`; iOS ignora o webmanifest e o `purpose`)
   - `icon-192.png` — 192×192 (`sizes: 192x192`, `purpose: any`)
   - `icon-512.png` — 512×512 (`sizes: 512x512`, `purpose: any`)
   - `icon-maskable-512.png` — 512×512 (`sizes: 512x512`, `purpose: maskable`)

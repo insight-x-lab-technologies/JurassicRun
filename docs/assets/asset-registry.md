@@ -69,7 +69,7 @@ usada no manifesto de assets do render.
 |----|-----------|--------|------|
 | `icon.coin` `icon.trophy` ... | ícones de HUD | placeholder | — |
 | `logo.app` | logotipo do jogo (wordmark ornamentado "JurassicRun") | spec | `specs/logo.app.md` |
-| `pwa-icon` | ícone de instalação PWA (192/512/maskable-512) | spec | `specs/pwa-icon.md` |
+| `pwa-icon` | ícone de instalação PWA (180 apple-touch/192/512/maskable-512) | art | `specs/pwa-icon.md` |
 
 ## UI / chrome (Fase 8 — look AAA)
 > Molduras/botões/ícones de menu. Ver `docs/assets/ART-DIRECTION.md` (Style Bible). Tier 1.

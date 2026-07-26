@@ -58,11 +58,15 @@
     "newGame": "新游戏",
     "coins": "金币",
     "trophies": "奖杯",
-    "level": "最高等级"
+    "level": "最高等级",
+    "copyright": "© Insight X Lab Game Studios 2026"
   },
   "share": {
     "title": "JurassicRun",
-    "text": "来玩 JurassicRun — 一款翼龙横版游戏！"
+    "text": "来玩 JurassicRun — 一款翼龙横版游戏！",
+    "via": "分享到{{network}}",
+    "copyFor": "为{{network}}复制链接",
+    "copied": "链接已复制"
   },
   "onboarding": {
     "title": "欢迎",
@@ -304,5 +308,18 @@
   "pause": {
     "title": "已暂停",
     "resume": "点按继续"
+  },
+  "donate": {
+    "title": "捐赠",
+    "whyTitle": "为什么捐赠",
+    "whyBody": "JurassicRun 是一个业余项目：免费、无广告、没有付费功能。捐赠只用于维持游戏在线，以及为新扩展购买美术和音效。",
+    "howTitle": "如何捐赠",
+    "howBody": "在下方选择一个平台。付款在对方网站完成，游戏永远不会索取你的银行卡信息。",
+    "open": "打开",
+    "thanks": "任何金额都是支持。感谢游玩！",
+    "platform": {
+      "buymeacoffee": "一次性请杯咖啡，无需账号。",
+      "kofi": "一次性或按月支持。"
+    }
   }
 }

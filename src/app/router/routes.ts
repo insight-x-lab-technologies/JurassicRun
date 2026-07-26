@@ -9,6 +9,7 @@ export type Screen =
   | 'settings'
   | 'leaderboard'
   | 'expansions'
-  | 'trophies';
+  | 'trophies'
+  | 'donate';
 
 export const HOME_SCREEN: Screen = 'home';

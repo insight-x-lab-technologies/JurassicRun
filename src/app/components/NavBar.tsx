@@ -3,7 +3,9 @@ import { navigate, type Screen } from '../router';
 import { i18n } from '@services/i18n';
 
 /** Destinos de navegação da barra inferior (atalhos do menu). */
-const NAV: readonly Screen[] = ['daily', 'weekly', 'nest', 'shop', 'expansions', 'leaderboard', 'settings'];
+const NAV: readonly Screen[] = [
+  'daily', 'weekly', 'nest', 'shop', 'expansions', 'leaderboard', 'settings', 'donate',
+];
 
 /** Barra de navegação inferior (chrome W2): ícone + rótulo por destino, emoldurada por `nav.bar`. */
 export function NavBar({ current }: { current: Screen }): VNode {

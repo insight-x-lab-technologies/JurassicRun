@@ -58,11 +58,15 @@
     "newGame": "새 게임",
     "coins": "코인",
     "trophies": "트로피",
-    "level": "최고 레벨"
+    "level": "최고 레벨",
+    "copyright": "© Insight X Lab Game Studios 2026"
   },
   "share": {
     "title": "JurassicRun",
-    "text": "JurassicRun 플레이하기 — 익룡 횡스크롤 게임!"
+    "text": "JurassicRun 플레이하기 — 익룡 횡스크롤 게임!",
+    "via": "{{network}}에 공유",
+    "copyFor": "{{network}}용 링크 복사",
+    "copied": "링크를 복사했습니다"
   },
   "onboarding": {
     "title": "환영합니다",
@@ -304,5 +308,18 @@
   "pause": {
     "title": "일시정지",
     "resume": "탭하여 재개"
+  },
+  "donate": {
+    "title": "후원",
+    "whyTitle": "후원이 필요한 이유",
+    "whyBody": "JurassicRun은 취미로 만든 게임입니다. 무료이고 광고도, 유료 기능도 없습니다. 후원금은 서비스를 유지하고 새 확장팩의 그림과 소리를 마련하는 데만 쓰입니다.",
+    "howTitle": "후원 방법",
+    "howBody": "아래에서 플랫폼을 선택하세요. 결제는 해당 사이트에서 이루어지며 게임은 카드 정보를 묻지 않습니다.",
+    "open": "열기",
+    "thanks": "금액과 상관없이 큰 힘이 됩니다. 플레이해 주셔서 고맙습니다!",
+    "platform": {
+      "buymeacoffee": "계정 없이 한 번만 후원.",
+      "kofi": "일회성 또는 매월 후원."
+    }
   }
 }

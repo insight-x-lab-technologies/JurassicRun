@@ -9,6 +9,7 @@ import { ExpansionsScreen } from './screens/ExpansionsScreen';
 import { TrophiesScreen } from './screens/TrophiesScreen';
 import { LeaderboardScreen } from './screens/LeaderboardScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
+import { DonateScreen } from './screens/DonateScreen';
 import { NavBar } from './components/NavBar';
 import { profileService } from '@services/profile';
 import { settingsService } from '@services/settings';
@@ -16,7 +17,7 @@ import type { VNode } from 'preact';
 
 /** Sub-telas DOM que exibem a barra de navegação inferior (não home/play/daily/weekly/onboarding). */
 const NAV_SCREENS: ReadonlySet<Screen> = new Set<Screen>([
-  'nest', 'shop', 'expansions', 'leaderboard', 'settings', 'trophies', 'profile',
+  'nest', 'shop', 'expansions', 'leaderboard', 'settings', 'donate', 'trophies', 'profile',
 ]);
 
 function screenFor(screen: Screen): VNode {
@@ -43,6 +44,8 @@ function screenFor(screen: Screen): VNode {
       return <ExpansionsScreen />;
     case 'trophies':
       return <TrophiesScreen />;
+    case 'donate':
+      return <DonateScreen />;
     default: {
       const _never: never = screen;
       return _never;

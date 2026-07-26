@@ -7,11 +7,12 @@ import { route, resetToHome } from '../../src/app/router';
 afterEach(() => resetToHome());
 
 describe('NavBar', () => {
-  it('renderiza os 7 destinos e destaca o atual', () => {
+  it('renderiza os 8 destinos (inclui Doação) e destaca o atual', () => {
     const host = document.createElement('div');
     render(<NavBar current="nest" />, host);
     const items = host.querySelectorAll('.navbar__item');
-    expect(items.length).toBe(7);
+    expect(items.length).toBe(8);
+    expect(host.querySelector('[data-testid="navbar-donate"]')).not.toBeNull();
     expect(host.querySelector('.navbar__item--active')?.getAttribute('data-testid')).toBe('navbar-nest');
   });
 
