@@ -375,9 +375,12 @@ export class GameScene extends Phaser.Scene {
       this.drawPrimitive(g, DINO_TYPE_ID, world.pterodactyl.hitbox, loop.renderX, loop.renderY);
     }
 
-    // Aura dos efeitos ativos (9.5): um anel por efeito, atrás do dino (this.gfx foi criado
-    // antes do dinoSprite). Some durante a morte — a cena ali é o impacto.
-    if (!dying) {
+    // Aura dos efeitos ativos (9.5): um anel por efeito, atrás do dino — contra o `dinoSprite`
+    // por `setDepth(1)` explícito vs `setDepth(0)` implícito de `this.gfx`; contra os sprites de
+    // entidade do pool (também depth 0) pela ordem de criação/display list (this.gfx foi criado
+    // antes deles). Some durante a morte E no Game Over — só aparece durante `playing`, senão os
+    // anéis reapareceriam pulsando sob a tela de Game Over com os efeitos congelados.
+    if (!dying && this.match.phase === 'playing') {
       const alpha = auraPulse(this.idleElapsed);
       const base = Math.max(dinoSize.w, dinoSize.h) / 2 + AURA_BASE_MARGIN;
       let ring = 0;

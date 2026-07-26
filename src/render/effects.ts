@@ -9,32 +9,39 @@ import {
 } from '@core/powerup';
 import { FIXED_DT } from '@core/sim';
 
+/** Kinds de efeito TEMPORÁRIO exibíveis (exclui `extraLife`, que no core é carga —
+ *  `WorldState.extraLives` — não efeito com `remaining`). */
+type TimedEffectKind = Exclude<PowerupKind, 'extraLife'>;
+
 /** Ordem CANÔNICA de exibição — fixa, para o chip não pular de posição quando um efeito expira.
  *  `extraLife` fica de fora de propósito: no core é carga (`WorldState.extraLives`), não efeito. */
-export const EFFECT_ORDER: readonly PowerupKind[] = Object.freeze([
+export const EFFECT_ORDER: readonly TimedEffectKind[] = Object.freeze([
   'shield', 'slowMo', 'magnet', 'doubleCoin',
 ]);
 
 /** Duração NOMINAL por kind (steps) — denominador da barra. */
-export const EFFECT_DURATION_STEPS: Readonly<Record<PowerupKind, number>> = Object.freeze({
+export const EFFECT_DURATION_STEPS: Readonly<Record<TimedEffectKind, number>> = Object.freeze({
   shield: SHIELD_DURATION_STEPS,
   slowMo: SLOW_MO_DURATION_STEPS,
   magnet: MAGNET_DURATION_STEPS,
   doubleCoin: DOUBLE_COIN_DURATION_STEPS,
-  extraLife: 1, // não exibido; presente só para o Record ser total
 });
 
 /** Cor do anel de aura por kind (0xRRGGBB). */
-export const EFFECT_COLORS: Readonly<Record<PowerupKind, number>> = Object.freeze({
+export const EFFECT_COLORS: Readonly<Record<TimedEffectKind, number>> = Object.freeze({
   shield: 0x6fd3ff,
   slowMo: 0xb08cff,
   magnet: 0xff8a3d,
   doubleCoin: 0xffd75e,
-  extraLife: 0xff6b7a,
 });
 
 export const AURA_MIN_ALPHA = 0.35;
 export const AURA_MAX_ALPHA = 0.7;
+/** `auraPulse` é alimentada por `GameScene.idleElapsed` (relógio cosmético de 9.4, `idle.ts`),
+ *  que embrulha em `IDLE_WRAP_SECONDS` (100 s). Por isso ESTA frequência precisa fechar um
+ *  número INTEIRO de ciclos em `IDLE_WRAP_SECONDS` (1,4 × 100 = 140) — senão o embrulho criaria
+ *  um salto de fase visível na aura. Ao mudar este valor, mantenha `AURA_PULSE_HZ * IDLE_WRAP_SECONDS`
+ *  inteiro. */
 export const AURA_PULSE_HZ = 1.4;
 
 /** Dados de um chip do HUD. `seconds` é `ceil` (nunca 0 enquanto ativo); `fraction` ∈ [0,1]. */

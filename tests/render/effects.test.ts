@@ -13,6 +13,7 @@ import {
 } from '../../src/render/effects';
 import { SHIELD_DURATION_STEPS } from '@core/powerup';
 import { HEAD_START_SHIELD_STEPS } from '@core/dino';
+import { IDLE_WRAP_SECONDS } from '../../src/render/idle';
 
 describe('effectViews', () => {
   it('mapeia kind, segundos (ceil) e fração da duração nominal', () => {
@@ -84,6 +85,10 @@ describe('auraPulse', () => {
 
   it('é pura (mesma entrada ⇒ mesma saída)', () => {
     expect(auraPulse(2.5)).toBe(auraPulse(2.5));
+  });
+
+  it('fecha número inteiro de ciclos em IDLE_WRAP_SECONDS — o embrulho de idle.ts é invisível', () => {
+    expect(auraPulse(IDLE_WRAP_SECONDS)).toBeCloseTo(auraPulse(0), 9);
   });
 });
 

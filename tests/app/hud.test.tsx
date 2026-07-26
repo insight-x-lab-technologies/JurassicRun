@@ -1,10 +1,13 @@
 // @vitest-environment happy-dom
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render } from 'preact';
 import { Hud } from '../../src/app/game/Hud';
 import { PauseOverlay } from '../../src/app/game/PauseOverlay';
 import { EffectBadges } from '../../src/app/game/EffectBadges';
 import type { HudLive } from '../../src/app/game/startGame';
+import { EFFECT_ORDER } from '../../src/render/effects';
+import { DINO_TRAITS } from '@core/dino/catalog';
+import { i18n } from '@services/i18n';
 
 describe('Hud DOM', () => {
   it('renderiza os campos do HUD', () => {
@@ -39,6 +42,10 @@ const BASE: HudLive = {
 };
 
 describe('EffectBadges', () => {
+  beforeEach(async () => {
+    await i18n.init();
+  });
+
   it('não renderiza nada sem efeito, sem vida extra e sem traço', () => {
     const host = document.createElement('div');
     render(<EffectBadges hud={BASE} />, host);
@@ -79,5 +86,38 @@ describe('EffectBadges', () => {
     expect(host.querySelector('.effect-badge--trait')).not.toBeNull();
     render(<EffectBadges hud={{ ...BASE, trait: 'none' }} />, host);
     expect(host.querySelector('.effect-badge--trait')).toBeNull();
+  });
+
+  it('resolve texto traduzido p/ todo kind de efeito e todo traço ≠ none (chave i18n nunca vaza p/ tela)', () => {
+    for (const kind of EFFECT_ORDER) {
+      const host = document.createElement('div');
+      render(
+        <EffectBadges hud={{ ...BASE, effects: [{ kind, seconds: 1, fraction: 1 }] }} />,
+        host,
+      );
+      const chip = host.querySelector('.effect-badge') as HTMLElement;
+      expect(chip.textContent).not.toContain('.name');
+    }
+
+    // Caso de controle: se a interpolação de chave quebrasse, isto continuaria a exibir a
+    // chave crua ('powerup.shield.name') em vez do rótulo em inglês.
+    const shieldHost = document.createElement('div');
+    render(
+      <EffectBadges hud={{ ...BASE, effects: [{ kind: 'shield', seconds: 1, fraction: 1 }] }} />,
+      shieldHost,
+    );
+    expect(shieldHost.querySelector('.effect-badge')!.textContent).toContain('Shield');
+
+    for (const trait of DINO_TRAITS) {
+      if (trait === 'none') continue;
+      const host = document.createElement('div');
+      render(<EffectBadges hud={{ ...BASE, trait }} />, host);
+      const chip = host.querySelector('.effect-badge--trait') as HTMLElement;
+      expect(chip.textContent).not.toContain('.name');
+    }
+
+    const magnetHost = document.createElement('div');
+    render(<EffectBadges hud={{ ...BASE, trait: 'magnet' }} />, magnetHost);
+    expect(magnetHost.querySelector('.effect-badge--trait')!.textContent).toContain('Magnet');
   });
 });
