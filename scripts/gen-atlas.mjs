@@ -17,14 +17,17 @@ const PAD = 2; // espaçamento entre frames (anti-bleeding)
 
 /**
  * Fontes por tema (arte realista, chroma-keyed) para uma variante de atlas. tree/vine consomem as
- * tiras de segmento [cap|body|base] (modo `parts`) — obstáculos por composição (9.2). boulder/
- * stalactite sem arte-tema ainda reusam public/art/final/ (já alpha, sem chroma) — mix temporário
- * aceito por decisão de produto até essas peças ganharem arte real por tema.
+ * tiras de segmento [cap|body|base] (modo `parts`) — obstáculos por composição (9.2); as tiras são
+ * OPACAS (cobrem a hitbox por construção), logo sem chroma. boulder/stalactite são 1 sprite e
+ * agora têm arte própria por tema — o mix temporário com public/art/final/ acabou.
  */
 function themeSources(theme) {
   const R = `public/art/themes/${theme}`;
   return [
     { id: 'dino.default', root: R, file: `dinos/${theme}_dino.default.flap.chromakey.png`, frames: 6, chroma: true },
+    // Frames de morte (9.3): estado de ANIMAÇÃO do dino, não um tipo de entidade — por isso não
+    // tem entrada no ASSET_MANIFEST (a guarda de frame órfão tem allowlist p/ ele).
+    { id: 'dino.hit', root: R, file: `dinos/${theme}_dino.hit.chromakey.png`, frames: 5, chroma: true },
     { id: 'obstacle.tree', root: R, file: `obstacles/${theme}_obstacle.tree.segments.png`, parts: ['cap', 'body', 'base'] },
     { id: 'obstacle.vine', root: R, file: `obstacles/${theme}_obstacle.vine.segments.png`, parts: ['cap', 'body', 'base'] },
     { id: 'bird.coin', root: R, file: `collectibles/${theme}_bird.coin.chromakey.png`, frames: 1, chroma: true },
@@ -35,8 +38,8 @@ function themeSources(theme) {
         names: ['powerup.shield', 'powerup.extraLife', 'powerup.magnet', 'powerup.doubleCoin', 'powerup.slowMo', null],
       },
     },
-    { id: 'obstacle.boulder', file: 'obstacles/obstacle.boulder.png', frames: 1 },
-    { id: 'obstacle.stalactite', file: 'obstacles/obstacle.stalactite.png', frames: 1 },
+    { id: 'obstacle.boulder', root: R, file: `obstacles/${theme}_obstacle.boulder.chromakey.png`, frames: 1, chroma: true },
+    { id: 'obstacle.stalactite', root: R, file: `obstacles/${theme}_obstacle.stalactite.chromakey.png`, frames: 1, chroma: true },
   ];
 }
 

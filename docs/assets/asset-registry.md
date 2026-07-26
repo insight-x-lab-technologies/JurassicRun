@@ -20,7 +20,7 @@ usada no manifesto de assets do render.
 | `dino.harvester` | roster do Ninho (4.4): traço `doubleFood` | spec | `specs/dino.harvester.md` |
 | `dino.phoenix` | roster do Ninho (4.4): traço `startLife` | spec | `specs/dino.phoenix.md` |
 | `dino.guardian` | roster do Ninho (4.4): traço `headStart` | spec | `specs/dino.guardian.md` |
-| `dino.hit` | frames de morte (9.3) — opcional: a animação atual é procedural | spec | `specs/dino.hit.md` |
+| `dino.hit` | frames de morte (9.3): tira 1×5 por tema, tocada 1× na fase `dying` | art | `specs/dino.hit.md` |
 
 ## Obstáculos (formatos variados)
 | id | descrição | status | spec |
@@ -46,15 +46,17 @@ usada no manifesto de assets do render.
 > **topo transparente** (o backdrop `bg.screen` vaza por cima); fonte
 > `public/art/themes/<tema>/parallax/<layer>.png` (classic/volcano/glacier) → runtime
 > `public/ui/parallax.<layer>.<tema>.png`. Aposentado o modelo antigo opaco/chroma
-> (`ui.<tema>_ui-parallax.chromakey.png`, 3 camadas). Status atual: **placeholder** (silhueta alpha
-> gerada proceduralmente); vira `art` quando a arte real do usuário substituir os PNGs-fonte.
+> (`ui.<tema>_ui-parallax.chromakey.png`, 3 camadas). Status atual: **art** — a arte AAA real
+> entrou na Fase 9 (12 PNGs, 4 camadas × 3 temas). Ela chega **chroma-keyed em magenta**, não com
+> canal alpha: o `gen-ui.mjs` produz o alpha (`chroma:true` + `killChroma:true`, sem content-trim
+> para não desalinhar a costura de tiling). Os geradores de placeholder foram removidos.
 
 | id | descrição | status | spec |
 |----|-----------|--------|------|
-| `bg.layer.far` | montanhas/horizonte distante (parallax, scrollFactor 0.15) | placeholder | `specs/bg.layer.far.md` |
-| `bg.layer.mid` | colinas/rochas médias (parallax, scrollFactor 0.35) | placeholder | `specs/bg.layer.mid.md` |
-| `bg.layer.near` | vegetação próxima (parallax, scrollFactor 0.6) | placeholder | `specs/bg.layer.near.md` |
-| `bg.layer.impact` | objetos de destaque esparsos em 1º plano de fundo (parallax, scrollFactor 0.85) | placeholder | `specs/bg.layer.impact.md` |
+| `bg.layer.far` | montanhas/horizonte distante (parallax, scrollFactor 0.15) | art | `specs/bg.layer.far.md` |
+| `bg.layer.mid` | colinas/rochas médias (parallax, scrollFactor 0.35) | art | `specs/bg.layer.mid.md` |
+| `bg.layer.near` | vegetação próxima (parallax, scrollFactor 0.6) | art | `specs/bg.layer.near.md` |
+| `bg.layer.impact` | objetos de destaque esparsos em 1º plano de fundo (parallax, scrollFactor 0.85) | art | `specs/bg.layer.impact.md` |
 
 ## Clima / tempo do dia (overlays)
 | id | descrição | status | spec |
@@ -153,9 +155,10 @@ como render/asset (core intocado ⇒ determinismo 67). Spec/plano:
   — via chroma (`chromaKeyToAlpha`, auto-detecta a chave, feather + descontaminação).
   `obstacle.tree`/`obstacle.vine` **SEGMENTADOS (9.2)**: 3 frames `.cap/.body/.base` empacotados via
   modo `parts` a partir das tiras `public/art/themes/<tema>/obstacles/<tema>_obstacle.<id>.segments.png`
-  (placeholder procedural por `gen-obstacle-placeholder.mjs`; arte AAA real dropa trocando os PNG-fonte,
-  prompts A.2 do PHASE-09). `boulder`/`stalactite` reusam a arte cartoon de `public/art/final/` (1 frame,
-  mix temporário — forma casa a hitbox circle/polygon, sem necessidade de segmentar).
+  (arte real da Fase 9, tiras OPACAS de 3 células ⇒ sem chroma; a opacidade total é o que garante a
+  cobertura da hitbox). `boulder`/`stalactite` são 1 frame e agora têm **arte própria por tema**
+  (`<tema>_obstacle.<id>.chromakey.png`) — a forma casa a hitbox circle/polygon, sem segmentar.
+  `dino.hit` (9.3): tira 1×5 por tema, estado de animação sem entrada no manifesto.
 - **Parallax — SUPERSEDED pela Fase 9.1** (ver seção "Fundos / parallax" acima e
   `specs/bg.layer.{far,mid,near,impact}.md`): este parágrafo descreve o modelo antigo,
   aposentado — 3 tiras OPACAS por tema fatiadas da banda inferior da folha

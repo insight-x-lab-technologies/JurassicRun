@@ -120,150 +120,250 @@
         "h": 240
       }
     },
-    "obstacle.tree.cap": {
+    "dino.hit.0": {
       "frame": {
-        "x": 776,
-        "y": 244,
-        "w": 96,
-        "h": 96
+        "x": 2,
+        "y": 486,
+        "w": 256,
+        "h": 255
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 96,
-        "h": 96
+        "w": 256,
+        "h": 255
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 96,
-        "h": 96
+        "w": 256,
+        "h": 255
+      }
+    },
+    "dino.hit.1": {
+      "frame": {
+        "x": 260,
+        "y": 486,
+        "w": 256,
+        "h": 255
+      },
+      "rotated": false,
+      "trimmed": false,
+      "sourceSize": {
+        "w": 256,
+        "h": 255
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 255
+      }
+    },
+    "dino.hit.2": {
+      "frame": {
+        "x": 518,
+        "y": 486,
+        "w": 256,
+        "h": 255
+      },
+      "rotated": false,
+      "trimmed": false,
+      "sourceSize": {
+        "w": 256,
+        "h": 255
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 255
+      }
+    },
+    "dino.hit.3": {
+      "frame": {
+        "x": 2,
+        "y": 743,
+        "w": 256,
+        "h": 255
+      },
+      "rotated": false,
+      "trimmed": false,
+      "sourceSize": {
+        "w": 256,
+        "h": 255
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 255
+      }
+    },
+    "dino.hit.4": {
+      "frame": {
+        "x": 260,
+        "y": 743,
+        "w": 256,
+        "h": 255
+      },
+      "rotated": false,
+      "trimmed": false,
+      "sourceSize": {
+        "w": 256,
+        "h": 255
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 255
+      }
+    },
+    "obstacle.tree.cap": {
+      "frame": {
+        "x": 518,
+        "y": 743,
+        "w": 256,
+        "h": 256
+      },
+      "rotated": false,
+      "trimmed": false,
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 256
       }
     },
     "obstacle.tree.body": {
       "frame": {
-        "x": 874,
-        "y": 244,
-        "w": 96,
-        "h": 96
+        "x": 2,
+        "y": 1001,
+        "w": 256,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 96,
-        "h": 96
+        "w": 256,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 96,
-        "h": 96
+        "w": 256,
+        "h": 256
       }
     },
     "obstacle.tree.base": {
       "frame": {
-        "x": 2,
-        "y": 486,
-        "w": 96,
-        "h": 96
+        "x": 260,
+        "y": 1001,
+        "w": 256,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 96,
-        "h": 96
+        "w": 256,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 96,
-        "h": 96
+        "w": 256,
+        "h": 256
       }
     },
     "obstacle.vine.cap": {
       "frame": {
-        "x": 100,
-        "y": 486,
-        "w": 96,
-        "h": 96
+        "x": 518,
+        "y": 1001,
+        "w": 256,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 96,
-        "h": 96
+        "w": 256,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 96,
-        "h": 96
+        "w": 256,
+        "h": 256
       }
     },
     "obstacle.vine.body": {
       "frame": {
-        "x": 198,
-        "y": 486,
-        "w": 96,
-        "h": 96
+        "x": 2,
+        "y": 1259,
+        "w": 256,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 96,
-        "h": 96
+        "w": 256,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 96,
-        "h": 96
+        "w": 256,
+        "h": 256
       }
     },
     "obstacle.vine.base": {
       "frame": {
-        "x": 296,
-        "y": 486,
-        "w": 96,
-        "h": 96
+        "x": 260,
+        "y": 1259,
+        "w": 256,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 96,
-        "h": 96
+        "w": 256,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 96,
-        "h": 96
+        "w": 256,
+        "h": 256
       }
     },
     "bird.coin": {
       "frame": {
-        "x": 394,
-        "y": 486,
+        "x": 518,
+        "y": 1259,
         "w": 256,
-        "h": 184
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
         "w": 256,
-        "h": 184
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
         "w": 256,
-        "h": 184
+        "h": 256
       }
     },
     "powerup.shield": {
       "frame": {
-        "x": 652,
-        "y": 486,
+        "x": 776,
+        "y": 1259,
         "w": 203,
         "h": 256
       },
@@ -283,7 +383,7 @@
     "powerup.extraLife": {
       "frame": {
         "x": 2,
-        "y": 744,
+        "y": 1517,
         "w": 236,
         "h": 256
       },
@@ -303,7 +403,7 @@
     "powerup.magnet": {
       "frame": {
         "x": 240,
-        "y": 744,
+        "y": 1517,
         "w": 224,
         "h": 256
       },
@@ -323,27 +423,27 @@
     "powerup.doubleCoin": {
       "frame": {
         "x": 466,
-        "y": 744,
+        "y": 1517,
         "w": 256,
-        "h": 208
+        "h": 217
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
         "w": 256,
-        "h": 208
+        "h": 217
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
         "w": 256,
-        "h": 208
+        "h": 217
       }
     },
     "powerup.slowMo": {
       "frame": {
         "x": 724,
-        "y": 744,
+        "y": 1517,
         "w": 238,
         "h": 256
       },
@@ -363,40 +463,40 @@
     "obstacle.boulder": {
       "frame": {
         "x": 2,
-        "y": 1002,
-        "w": 256,
-        "h": 254
+        "y": 1775,
+        "w": 255,
+        "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 256,
-        "h": 254
+        "w": 255,
+        "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 256,
-        "h": 254
+        "w": 255,
+        "h": 256
       }
     },
     "obstacle.stalactite": {
       "frame": {
-        "x": 260,
-        "y": 1002,
-        "w": 196,
+        "x": 259,
+        "y": 1775,
+        "w": 256,
         "h": 256
       },
       "rotated": false,
       "trimmed": false,
       "sourceSize": {
-        "w": 196,
+        "w": 256,
         "h": 256
       },
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 196,
+        "w": 256,
         "h": 256
       }
     },
@@ -425,7 +525,7 @@
     "image": "entities.volcano.png",
     "size": {
       "w": 1024,
-      "h": 1260
+      "h": 2033
     },
     "scale": "1"
   }

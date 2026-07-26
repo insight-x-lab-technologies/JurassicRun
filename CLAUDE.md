@@ -69,7 +69,7 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **67** testes · suíte **864** testes · `check` limpo.
+**Métricas correntes:** determinismo **67** testes · suíte **856** testes · `check` limpo.
 Branch `main`. Fases 0–8 **CONCLUÍDAS**; Fase 9 **EM ANDAMENTO** (9.1–9.5 feitos ⇒ Frentes A e B
 fechadas).
 
@@ -133,4 +133,10 @@ Ordem travada **A → B → C → D**. Um item por PR (SDD por subagentes). Só 
 - **D (core/desafios):** 9.8 novos obstáculos (`add-gameplay-entity`) · 9.9 briefing + modificadores
   de desafio por seed (`src/core/challenge/`, função pura da seed; verificador recomputa).
 
-Prompts de geração de asset prontos no Apêndice do `PHASE-09`.
+**ARTE REAL DA FASE 9 ENTREGUE** (fecha o débito de placeholder de A): 33 PNGs photoreal nos 3 temas
+— parallax 4×3, tiras segmentadas tree/vine 2×3, boulder/stalactite 2×3 (antes classic p/ todo mundo),
+**moeda** (o pássaro dourado virou disco cunhado: enche a hitbox circular e lê a 16 px), folha de
+power-ups e `dino.hit` (5 frames, agora tocados na fase `dying`). Briefing de geração:
+`docs/assets/PHASE-09-ART-BRIEF.md`. Placeholders `gen-{parallax,obstacle}-placeholder` REMOVIDOS
+(sobrescreviam a arte real). Gotcha: a arte chega **chroma-key magenta, sem alpha** ⇒ `gen-ui.mjs`
+faz o alpha do parallax (`chroma` + `killChroma`, sem content-trim p/ não desalinhar o tiling).

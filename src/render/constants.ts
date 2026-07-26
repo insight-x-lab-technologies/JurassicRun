@@ -71,6 +71,11 @@ export const CONFIRM_KEYS: readonly string[] = ['Space', 'ArrowUp', 'Enter'];
 /** Frames por segundo da animação de flap do dino (8.1). */
 export const DINO_FLAP_FPS = 12;
 
+/** Frames por segundo da tira de morte `dino.hit` (5 frames). Fica abaixo de 5/DEATH_ANIM_SECONDS
+ *  (≈6.7) de propósito: a tira termina um pouco antes do fim da fase `dying` e o último frame
+ *  (queda mole) fica segurado até o overlay de Game Over aparecer. */
+export const DINO_HIT_FPS = 6;
+
 /** Animação de morte (9.3): cor de impacto (tint interpolado pelo flash) e cor das
  *  partículas de poeira/pena (desenhadas no Graphics do mundo). */
 export const DEATH_IMPACT_TINT = 0xff5a4a;

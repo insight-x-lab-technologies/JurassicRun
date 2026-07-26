@@ -49,6 +49,7 @@ import {
   GAMEOVER_BUTTON_COLOR,
   GAMEOVER_BUTTON_DISABLED_COLOR,
   DINO_FLAP_FPS,
+  DINO_HIT_FPS,
   DEATH_IMPACT_TINT,
   DEATH_PARTICLE_COLOR,
   IDLE_DRIP_COLOR,
@@ -91,6 +92,7 @@ export class GameScene extends Phaser.Scene {
   private readonly segDimCache = new Map<string, { partW: number; capH: number; bodyH: number; baseH: number }>();
   private atlasKey = 'entities';
   private animKey = ''; // chave da anim de flap (por atlas); guardada p/ religar após o `dying`.
+  private hitAnimKey = ''; // chave da anim de morte (por atlas), tocada 1× durante o `dying`.
   // Animação de morte (9.3): scratch reusável (REGRA 3) + ponto de impacto memorizado 1× na
   // transição p/ `dying` + flag p/ detectar a transição (entrada e saída).
   private readonly deathVisualScratch: DeathVisual = {
@@ -197,6 +199,19 @@ export class GameScene extends Phaser.Scene {
       });
     }
     this.dinoSprite.play(this.animKey);
+
+    // Anim de morte (9.3, arte da Fase 9): 5 frames tocados UMA vez durante a fase `dying`.
+    // frameRate escolhido p/ a tira terminar dentro de DEATH_ANIM_SECONDS (5/0.75 ≈ 6.7) ⇒ o
+    // último frame fica segurado até o overlay de Game Over aparecer. `repeat: 0` = toca 1×.
+    this.hitAnimKey = 'dino.hit.' + this.atlasKey;
+    if (!this.anims.exists(this.hitAnimKey)) {
+      this.anims.create({
+        key: this.hitAnimKey,
+        frames: this.anims.generateFrameNames(this.atlasKey, { prefix: 'dino.hit.', start: 0, end: 4 }),
+        frameRate: DINO_HIT_FPS,
+        repeat: 0,
+      });
+    }
 
     // Overlay de pausa: retângulo semitransparente de tela cheia (scrollFactor 0, depth 1000).
     this.pauseOverlay = this.add.graphics().setScrollFactor(0).setScale(this.renderScale);
@@ -323,10 +338,11 @@ export class GameScene extends Phaser.Scene {
 
     // Transições da animação de morte (9.3) — 1×, nunca por frame (REGRA 3).
     if (dying && !this.wasDying) {
-      // Entrada em `dying`: memoriza o ponto de impacto (posição interpolada) e congela o flap.
+      // Entrada em `dying`: memoriza o ponto de impacto (posição interpolada) e troca o flap pela
+      // anim de morte (toca 1× e segura o último frame; giro/queda/tint continuam procedurais).
       this.deathX = loop.renderX;
       this.deathY = loop.renderY;
-      this.dinoSprite.stop();
+      this.dinoSprite.play(this.hitAnimKey);
     } else if (!dying && this.wasDying) {
       // Saída (fim da animação ou nova partida): repõe o render normal e religa o flap.
       this.dinoSprite.setRotation(0);

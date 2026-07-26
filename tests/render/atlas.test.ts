@@ -74,10 +74,16 @@ describe('atlas de entidades (arte real)', () => {
     }
   });
 
+  // Estados de ANIMAÇÃO do dino: existem como frames no atlas mas não são tipos de entidade, então
+  // não têm (nem devem ter) entrada no ASSET_MANIFEST — quem os toca é a GameScene, por chave de
+  // anim. Allowlist explícita para a guarda de frame órfão continuar valendo p/ o resto.
+  const ANIMATION_ONLY_IDS = new Set(['dino.hit']);
+
   it('sem frame órfão: todo id (sem sufixo .N/.parte) existe no manifesto', () => {
     const { json } = renderAtlas();
     for (const name of Object.keys(json.frames)) {
       const base = name.replace(/\.(cap|body|base)$/, '').replace(/\.\d+$/, '');
+      if (ANIMATION_ONLY_IDS.has(base)) continue;
       expect(ASSET_MANIFEST[base], `frame órfão: ${name}`).toBeDefined();
     }
   });

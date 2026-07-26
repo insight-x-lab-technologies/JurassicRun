@@ -33,9 +33,11 @@ export const UI_SOURCES = [
     { name: 'cover.classic', x: 0.0, y: 0, w: 0.3333, h: 1, opaque: true },
     { name: 'cover.volcano', x: 0.3333, y: 0, w: 0.3333, h: 1, opaque: true },
     { name: 'cover.glacier', x: 0.6667, y: 0, w: 0.3333, h: 1, opaque: true } ] },
-  // Parallax alpha por tema (9.1): silhuetas com canal alpha. Modo single com `opaque:true` =
-  // SEM content-trim (preserva o frame tileável inteiro; cropResize preserva o alpha). SEM
-  // chroma/hardAlpha/padBottomTo — a transparência já vem do PNG-fonte.
+  // Parallax por tema (9.1): silhuetas com topo transparente. A arte real (Fase 9) chega
+  // CHROMA-KEYED em magenta, não com canal alpha — o gerador de imagem não emite RGBA —, então o
+  // alpha é produzido aqui por `chroma:true` (a chave é auto-detectada no pixel (0,0)). Modo
+  // single com `opaque:true` = SEM content-trim: preserva o frame tileável inteiro (recortar pelo
+  // conteúdo quebraria a costura de tiling); `cropResize` preserva o alpha que o chroma criou.
   ...['classic', 'volcano', 'glacier'].flatMap((theme) =>
     ['far', 'mid', 'near', 'impact'].map((layer) => ({
       out: `parallax.${layer}.${theme}`,
@@ -43,6 +45,8 @@ export const UI_SOURCES = [
       root: `public/art/themes/${theme}`,
       maxDim: 2048,
       opaque: true,
+      chroma: true,
+      killChroma: true,
     })),
   ),
   ...['starter', 'lodestone', 'goldbeak', 'midas', 'nine-lives', 'aegis', 'prospector', 'harvester', 'phoenix', 'guardian'].map((id) => ({
@@ -90,6 +94,23 @@ function padBottom(w, h, pixels, targetH) {
  * keying por distância não zera; ele só aparece na costura de tiling (bordas justapostas). */
 function isChromaish(r, g, b, a) {
   return a > 128 && ((r > 110 && g < 90 && b > 100) || (r < 90 && g > 140 && b < 90));
+}
+
+/** Zera o alpha de TODO pixel chroma-ish opaco da imagem, sem recortar nada.
+ *
+ * Usada pelas tiras de parallax, onde `trimChromaEdges` (margem) e `hardCutAlpha` (que re-apara a
+ * bbox de conteúdo) não servem: o frame precisa continuar inteiro e do tamanho original, senão a
+ * costura de tiling se desalinha. O keying por distância deixa alguns pixels de resíduo opaco
+ * (roxo muddy da descontaminação) espalhados pela silhueta — poucas dezenas por camada, mas os que
+ * caem na coluna 0/última viram uma LINHA visível no wrap do scroll (guarda em
+ * tests/render/parallax-chroma.test.ts). Nenhuma camada tem magenta/verde legítimo na paleta
+ * (folhagem verde-escura não passa em `g > 140`), então o corte global é seguro. */
+function killChromaish(w, h, pixels) {
+  for (let i = 0; i < w * h; i++) {
+    const o = i * 4;
+    if (isChromaish(pixels[o], pixels[o + 1], pixels[o + 2], pixels[o + 3])) pixels[o + 3] = 0;
+  }
+  return pixels;
 }
 
 /** Zera o alpha de qualquer pixel chroma-ish opaco na MARGEM externa (5% de cada borda, 4 lados).
@@ -150,6 +171,7 @@ export function renderUi() {
       }
     } else {
       const { w, h, pixels } = crop(img, 0, 0, img.w, img.h, src.maxDim, src.opaque);
+      if (src.killChroma) killChromaish(w, h, pixels);
       outs.push({ out: src.out, png: encodePng(w, h, pixels) });
     }
   }
