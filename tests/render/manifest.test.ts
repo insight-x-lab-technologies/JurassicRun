@@ -29,4 +29,11 @@ describe('manifesto de assets', () => {
       expect(ASSET_MANIFEST[id], `id sem entrada no manifesto: ${id}`).toBeDefined();
     }
   });
+
+  it('IDLE (9.4): só obstáculo anima — dino/coletáveis/power-ups ficam sem `idle`', () => {
+    for (const [id, r] of Object.entries(ASSET_MANIFEST)) {
+      if (r.kind !== 'sprite' || r.idle === undefined) continue;
+      expect(id.startsWith('obstacle.'), `id não-obstáculo com idle: ${id}`).toBe(true);
+    }
+  });
 });

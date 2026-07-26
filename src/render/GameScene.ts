@@ -50,6 +50,7 @@ import {
   DEATH_IMPACT_TINT,
   DEATH_PARTICLE_COLOR,
   IDLE_DRIP_COLOR,
+  MAX_FRAME_TIME,
 } from './constants';
 import { toRenderPx, parallaxTileScale } from './resolution';
 
@@ -302,8 +303,10 @@ export class GameScene extends Phaser.Scene {
     if (paused) return; // congela a sim; o último frame desenhado permanece sob o overlay
 
     // Relógio do idle cosmético (9.4). Congela na pausa (o early-return acima) e embrulha em
-    // IDLE_WRAP_SECONDS sem salto visual.
-    this.idleElapsed = wrapIdleTime(this.idleElapsed + deltaMs / 1000);
+    // IDLE_WRAP_SECONDS sem salto visual. O delta é clampado em MAX_FRAME_TIME como no
+    // FixedStepLoop: volta de aba em background traria um delta gigante ⇒ salto visual.
+    const idleDt = deltaMs / 1000;
+    this.idleElapsed = wrapIdleTime(this.idleElapsed + (idleDt > MAX_FRAME_TIME ? MAX_FRAME_TIME : idleDt));
 
     const match = this.match;
     match.advance(deltaMs / 1000); // no-op fora de `playing`
