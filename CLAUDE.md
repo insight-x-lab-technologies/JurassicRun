@@ -69,8 +69,9 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **67** testes · suíte **843** testes · `check` limpo.
-Branch `main`. Fases 0–8 **CONCLUÍDAS**; Fase 9 **EM ANDAMENTO** (9.1–9.4 feitos ⇒ Frente A fechada).
+**Métricas correntes:** determinismo **67** testes · suíte **862** testes · `check` limpo.
+Branch `main`. Fases 0–8 **CONCLUÍDAS**; Fase 9 **EM ANDAMENTO** (9.1–9.5 feitos ⇒ Frentes A e B
+fechadas).
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
@@ -124,9 +125,11 @@ Ordem travada **A → B → C → D**. Um item por PR (SDD por subagentes). Só 
   9.4 idle cosmético de obstáculo ✅ (também PROCEDURAL: sway da árvore/cipó com **sangria =
   amplitude** ⇒ o balanço nunca descobre a hitbox; gota da estalactite; campo `idle` no manifesto).
   **Frente A concluída.**
-- **B (feedback):** **9.5 indicador de power-up ativo + traço do dino ← PRÓXIMO** (badges HUD +
-  aura no canvas).
-- **C (áudio/UX):** 9.6 áudio procedural rico (multi-camada + SFX por evento) · 9.7 toggle de SFX.
+- **B (feedback):** 9.5 indicador de power-up ativo + traço do dino ✅ (badges HUD via
+  `GameHandle.hud()` + barra de duração + aura pulsante no canvas, atrás do dino; traço fixo do
+  Ninho como chip). **Frente B concluída.**
+- **C (áudio/UX):** **9.6 áudio procedural rico ← PRÓXIMO** (multi-camada + SFX por evento) ·
+  9.7 toggle de SFX.
 - **D (core/desafios):** 9.8 novos obstáculos (`add-gameplay-entity`) · 9.9 briefing + modificadores
   de desafio por seed (`src/core/challenge/`, função pura da seed; verificador recomputa).
 
