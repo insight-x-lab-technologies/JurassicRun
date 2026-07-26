@@ -9,7 +9,7 @@
 - **Dimensões alvo (px):** 64 × 272 (@1x para mobile; exportar também @2x)
 - **Pivô / âncora:** topo centralizado (prende no teto)
 - **Hitbox lógica associada:** aabb fina — halfW ≈ 4, halfH 20–34 (variável por instância). Definida no core (`OBSTACLE_CATALOG`); a arte NUNCA a altera.
-- **Animação:** estático (1 frame); opcional leve balanço orgânico (cosmético)
+- **Animação:** idle PROCEDURAL no render (9.4) — balanço pendente (`idle: { kind:'sway', anchor:'top', amp:0.8 }` no manifesto), fixação no teto cravada e ponta solta; a arte é 1 frame por parte. Variante futura opcional: tira de 4 frames por parte (Apêndice A.2 do PHASE-09).
 - **Composição:** SEGMENTADO (9.2) — 3 frames `cap`/`body`/`base` (tira horizontal); o render monta `cap + N×body + base` para cobrir qualquer altura da hitbox aabb sem distorção nem vazio. `body` é tileável na vertical. Fonte placeholder: `public/art/themes/<tema>/obstacles/<tema>_obstacle.vine.segments.png` (empacotada via modo `parts` do `gen-atlas`). Arte AAA real: prompts A.2 do PHASE-09.
 - **Atlas de destino:** `obstacles`
 - **Formato de exportação:** PNG com alpha, @1x e @2x

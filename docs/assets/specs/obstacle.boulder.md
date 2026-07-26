@@ -9,7 +9,7 @@
 - **Dimensões alvo (px):** 72 × 72 (@1x para mobile; exportar também @2x)
 - **Pivô / âncora:** centro (sem âncora a teto/chão)
 - **Hitbox lógica associada:** círculo — raio 10–18 (variável por instância). Definida no core (`OBSTACLE_CATALOG`); a arte NUNCA a altera.
-- **Animação:** estático (1 frame)
+- **Animação:** estático de propósito (pedra) — sem `idle` no manifesto (9.4).
 - **Atlas de destino:** `obstacles`
 - **Formato de exportação:** PNG com alpha, @1x e @2x
 - **Margens/padding seguros:** 4px

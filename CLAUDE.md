@@ -69,8 +69,8 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **67** testes · suíte **823** testes · `check` limpo.
-Branch `main`. Fases 0–8 **CONCLUÍDAS**; Fase 9 **EM ANDAMENTO** (9.1, 9.2, 9.3 feitos).
+**Métricas correntes:** determinismo **67** testes · suíte **842** testes · `check` limpo.
+Branch `main`. Fases 0–8 **CONCLUÍDAS**; Fase 9 **EM ANDAMENTO** (9.1–9.4 feitos ⇒ Frente A fechada).
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
@@ -121,8 +121,11 @@ Ordem travada **A → B → C → D**. Um item por PR (SDD por subagentes). Só 
 - **A (arte/render):** 9.1 parallax alpha ✅ · 9.2 obstáculos segmentados (cobrem hitbox) ✅ ·
   9.3 animação de morte do dino ✅ (fase cosmética `dying` 0,75 s: giro/queda/partículas/shake, tudo
   procedural — frames `dino.hit` ficaram como asset-spec futuro) ·
-  **9.4 animação idle cosmética de obstáculo ← PRÓXIMO**.
-- **B (feedback):** 9.5 indicador de power-up ativo + traço do dino (badges HUD + aura no canvas).
+  9.4 idle cosmético de obstáculo ✅ (também PROCEDURAL: sway da árvore/cipó com **sangria =
+  amplitude** ⇒ o balanço nunca descobre a hitbox; gota da estalactite; campo `idle` no manifesto).
+  **Frente A concluída.**
+- **B (feedback):** **9.5 indicador de power-up ativo + traço do dino ← PRÓXIMO** (badges HUD +
+  aura no canvas).
 - **C (áudio/UX):** 9.6 áudio procedural rico (multi-camada + SFX por evento) · 9.7 toggle de SFX.
 - **D (core/desafios):** 9.8 novos obstáculos (`add-gameplay-entity`) · 9.9 briefing + modificadores
   de desafio por seed (`src/core/challenge/`, função pura da seed; verificador recomputa).
