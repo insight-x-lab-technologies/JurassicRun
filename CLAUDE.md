@@ -69,7 +69,7 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **67** testes · suíte **862** testes · `check` limpo.
+**Métricas correntes:** determinismo **67** testes · suíte **864** testes · `check` limpo.
 Branch `main`. Fases 0–8 **CONCLUÍDAS**; Fase 9 **EM ANDAMENTO** (9.1–9.5 feitos ⇒ Frentes A e B
 fechadas).
 

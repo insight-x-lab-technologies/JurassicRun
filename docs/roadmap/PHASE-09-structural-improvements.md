@@ -263,7 +263,7 @@ de obstáculo do [Apêndice A.2](#a2-obst%C3%A1culos-segmentados-92) (variante a
 > (`🛡Shield 5s` barra 99,7%, `🧲Magnet 3s` barra 49,7%, `❤Extra life ×1`); após 2s as barras caíram
 > para 83%/35,8% (esvaziando de fato); zero sobreposição com o HUD (chips `left:8,bottom:712` ×
 > HUD `left:1081,top:8`); screenshot com `shield+slowMo+magnet` mostrou 3 anéis concêntricos nas
-> cores certas (azul/roxo/laranja), atrás do sprite. Suíte **862** testes, `check` limpo.
+> cores certas (azul/roxo/laranja), atrás do sprite. Suíte **864** testes, `check` limpo.
 > **Backlog:** largura da barra sem arredondamento (`fraction*100` pode dar dízima); comentário no
 > `GameScene` atribui o z-order da aura à ordem de criação quando o real é `setDepth(0)` vs
 > `setDepth(1)`; `seconds` não compensa `SLOW_MO_TIME_SCALE` durante o slow-mo (decisão de design
