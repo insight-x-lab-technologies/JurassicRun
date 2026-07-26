@@ -227,13 +227,47 @@ de obstáculo do [Apêndice A.2](#a2-obst%C3%A1culos-segmentados-92) (variante a
 
 ## Frente B — Feedback de jogo
 
-### 9.5 Indicador de power-up ativo + traço do dino (#7, resolve o #2)
-- [ ] HUD DOM: **badges** dos efeitos ativos (`world.effects[]`) com **barra de duração**
+### 9.5 Indicador de power-up ativo + traço do dino (#7, resolve o #2) — CONCLUÍDA
+- [x] HUD DOM: **badges** dos efeitos ativos (`world.effects[]`) com **barra de duração**
       esvaziando (`remaining` em steps ⇒ segundos = `remaining × FIXED_DT`, determinístico).
-- [ ] **Aura** ao redor do dino no canvas por efeito ativo (cor por tipo; alocação-zero, cacheada
+- [x] **Aura** ao redor do dino no canvas por efeito ativo (cor por tipo; alocação-zero, cacheada
       na transição).
-- [ ] Mostrar o **traço permanente** do dino ativo do Ninho (ex.: `magnet` sempre, `doubleFood`)
+- [x] Mostrar o **traço permanente** do dino ativo do Ninho (ex.: `magnet` sempre, `doubleFood`)
       como badge fixo — assim o jogador vê o efeito da escolha do Ninho no gameplay.
+
+> **CONCLUÍDA** (`src/core/` intocado, determinismo **67**; spec/plano
+> `docs/superpowers/{specs,plans}/2026-07-25-active-powerup-indicator*`). Puro×casca: novo
+> `src/render/effects.ts` (`EFFECT_ORDER` = ordem canônica de EXIBIÇÃO `shield,slowMo,magnet,
+> doubleCoin`, não a ordem de pickup; `EFFECT_DURATION_STEPS` lidas das constantes do core, sem
+> duplicar número; `EFFECT_COLORS`; `EffectView {kind, seconds=ceil(remaining×FIXED_DT), fraction
+> ∈[0,1]}`; `effectViews()`; `auraPulse(t)` alpha 0,35–0,70 a 1,4 Hz; `auraRadius`/`AURA_RING_GAP`).
+> **Ponte refeita:** o payload do HUD saiu do `MatchSnapshot` (montado 1×/frame no rAF) e virou
+> `GameHandle.hud()`, chamado só no gate de ~200 ms — **menos alocação por frame que antes**, mesmo
+> com payload maior (`effects`, `extraLives`, `trait`); o traço vem de `world.trait` (verdade da
+> partida — nos desafios é `'none'`), não do `nestService`. `EffectBadges.tsx` (DOM, canto inferior
+> esquerdo, `pointer-events:none`, `aria-hidden`): chip por efeito com nome + segundos + barra
+> esvaziando; chip de vidas extras (`❤ ×N`, some em 0); chip fixo do traço (some em `'none'`).
+> Glifos são **emoji** (glifo de fonte, sem asset novo — precedente `📱↻`); 13 chaves i18n novas
+> nos 10 locales (`powerup.*.name`, `trait.*.name`, `hud.seconds`, `hud.extraLives`). **Aura no
+> canvas** (`GameScene`): um anel por efeito ativo, cor por tipo, raio `max(w,h)/2+margem +
+> i·gap`, alpha pulsante pelo relógio `idleElapsed` (congela na pausa), desenhado no `this.gfx` já
+> existente ⇒ atrás do dino; **não** aparece durante `dying`; alocação-zero.
+> **Decisões:** aura só para efeitos TEMPORÁRIOS (traço permanente ficaria aceso a partida
+> inteira = ruído ⇒ vira chip fixo); `extraLife` é carga (`world.extraLives`), não efeito, logo
+> chip sem barra; `fraction` usa a duração NOMINAL do catálogo ⇒ o escudo curto do traço
+> `headStart` (180 de 300 steps) nasce de propósito com barra parcial.
+> **Review:** 1 Important (a tradução `ja` de `trait.headStart` era transliteração katakana
+> `ヘッドスタート` ⇒ virou `先行スタート`); gotcha recorrente do SW cacheando `dist` antigo na
+> validação (unregister + clear caches + `?nocache`). **Validação Playwright** (build de produção,
+> exposição TEMP `window.__jr95` revertida): com `shield`+`magnet` ativos e 1 vida extra ⇒ 3 chips
+> (`🛡Shield 5s` barra 99,7%, `🧲Magnet 3s` barra 49,7%, `❤Extra life ×1`); após 2s as barras caíram
+> para 83%/35,8% (esvaziando de fato); zero sobreposição com o HUD (chips `left:8,bottom:712` ×
+> HUD `left:1081,top:8`); screenshot com `shield+slowMo+magnet` mostrou 3 anéis concêntricos nas
+> cores certas (azul/roxo/laranja), atrás do sprite. Suíte **864** testes, `check` limpo.
+> **Backlog:** largura da barra sem arredondamento (`fraction*100` pode dar dízima); comentário no
+> `GameScene` atribui o z-order da aura à ordem de criação quando o real é `setDepth(0)` vs
+> `setDepth(1)`; `seconds` não compensa `SLOW_MO_TIME_SCALE` durante o slow-mo (decisão de design
+> documentada). **Frente B concluída.**
 
 **Estado atual:** os efeitos existem em `world.effects` com `remaining`; nada os exibe. O traço do
 dino é aplicado em `createWorld` mas sem indicação visual. Isto entrega o feedback que faltava do

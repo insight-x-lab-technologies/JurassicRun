@@ -74,6 +74,14 @@ const IDENTICAL_TO_EN_ALLOWLIST: ReadonlySet<string> = new Set<string>([
   'de::online.title', 'de::online.status.offline', 'de::online.status.online',
   // "Local" — cognato real (mesma grafia) em espanhol/português/francês (molde de settings.volume).
   'es::leaderboard.source.local', 'pt-BR::leaderboard.source.local', 'fr::leaderboard.source.local',
+  // 9.5: "×{{value}}" é só o símbolo de multiplicação (multiplicador de vidas extras) — não tem
+  // palavra para traduzir; idêntico em todos os locales por construção.
+  ...LOCALES_NON_EN.map((l) => `${l}::hud.extraLives`),
+  // 9.5: "{{value}}s" usa "s", símbolo SI universal de segundos — es/pt-BR/fr/it/de mantêm o
+  // mesmo símbolo do en (ja/zh/ko/hi traduzem para o próprio caractere de "segundo").
+  'es::hud.seconds', 'pt-BR::hud.seconds', 'fr::hud.seconds', 'it::hud.seconds', 'de::hud.seconds',
+  // "Magnet" — cognato alemão real (mesma grafia do en), molde de de::nav.nest/de::weather.wind.
+  'de::powerup.magnet.name', 'de::trait.magnet.name',
 ]);
 
 // Valor que é só interpolação (ex.: "{{value}}") não tem o que traduzir.

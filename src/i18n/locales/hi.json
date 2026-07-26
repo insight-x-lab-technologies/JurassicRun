@@ -10,7 +10,9 @@
     "level": "स्तर {{value}}",
     "speed": "गति: {{value}}",
     "seed": "सीड: {{value}}",
-    "weather": "मौसम: {{value}}"
+    "weather": "मौसम: {{value}}",
+    "extraLives": "×{{value}}",
+    "seconds": "{{value}} सेकंड"
   },
   "match": {
     "tapToStart": "शुरू करने के लिए टैप करें"
@@ -202,22 +204,45 @@
   },
   "trait": {
     "none": {
+      "name": "कोई गुण नहीं",
       "desc": "कोई विशेष गुण नहीं।"
     },
     "magnet": {
+      "name": "चुंबक",
       "desc": "स्थायी सिक्का चुंबक।"
     },
     "doubleFood": {
+      "name": "दोगुना भोजन",
       "desc": "भोजन का मूल्य दोगुना।"
     },
     "tripleFood": {
+      "name": "तिगुना भोजन",
       "desc": "भोजन का मूल्य तिगुना।"
     },
     "startLife": {
+      "name": "अतिरिक्त जीवन",
       "desc": "एक अतिरिक्त जीवन के साथ शुरुआत।"
     },
     "headStart": {
+      "name": "आगे की शुरुआत",
       "desc": "एक सुरक्षा ढाल के साथ शुरुआत।"
+    }
+  },
+  "powerup": {
+    "shield": {
+      "name": "ढाल"
+    },
+    "slowMo": {
+      "name": "धीमी गति"
+    },
+    "magnet": {
+      "name": "चुंबक"
+    },
+    "doubleCoin": {
+      "name": "दोगुना भोजन"
+    },
+    "extraLife": {
+      "name": "अतिरिक्त जीवन"
     }
   },
   "settings": {

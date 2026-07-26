@@ -10,7 +10,9 @@
     "level": "Nív {{value}}",
     "speed": "Vel: {{value}}",
     "seed": "Semente: {{value}}",
-    "weather": "Clima: {{value}}"
+    "weather": "Clima: {{value}}",
+    "extraLives": "×{{value}}",
+    "seconds": "{{value}}s"
   },
   "match": {
     "tapToStart": "Toque para começar"
@@ -202,22 +204,45 @@
   },
   "trait": {
     "none": {
+      "name": "Sem traço",
       "desc": "Sem traço especial."
     },
     "magnet": {
+      "name": "Ímã",
       "desc": "Ímã de moedas permanente."
     },
     "doubleFood": {
+      "name": "Comida dobrada",
       "desc": "Comida vale o dobro."
     },
     "tripleFood": {
+      "name": "Comida triplicada",
       "desc": "Comida vale o triplo."
     },
     "startLife": {
+      "name": "Vida extra",
       "desc": "Começa com uma vida extra."
     },
     "headStart": {
+      "name": "Largada na frente",
       "desc": "Começa com um escudo protetor."
+    }
+  },
+  "powerup": {
+    "shield": {
+      "name": "Escudo"
+    },
+    "slowMo": {
+      "name": "Câmera lenta"
+    },
+    "magnet": {
+      "name": "Ímã"
+    },
+    "doubleCoin": {
+      "name": "Comida dobrada"
+    },
+    "extraLife": {
+      "name": "Vida extra"
     }
   },
   "settings": {

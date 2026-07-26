@@ -10,7 +10,9 @@
     "level": "Lv {{value}}",
     "speed": "速度: {{value}}",
     "seed": "シード: {{value}}",
-    "weather": "天気: {{value}}"
+    "weather": "天気: {{value}}",
+    "extraLives": "×{{value}}",
+    "seconds": "{{value}}秒"
   },
   "match": {
     "tapToStart": "タップして開始"
@@ -202,22 +204,45 @@
   },
   "trait": {
     "none": {
+      "name": "特性なし",
       "desc": "特別な特性なし。"
     },
     "magnet": {
+      "name": "マグネット",
       "desc": "常時コインマグネット。"
     },
     "doubleFood": {
+      "name": "エサ2倍",
       "desc": "エサの価値が2倍。"
     },
     "tripleFood": {
+      "name": "エサ3倍",
       "desc": "エサの価値が3倍。"
     },
     "startLife": {
+      "name": "エクストラライフ",
       "desc": "追加ライフを持って開始。"
     },
     "headStart": {
+      "name": "先行スタート",
       "desc": "防御シールドを持って開始。"
+    }
+  },
+  "powerup": {
+    "shield": {
+      "name": "シールド"
+    },
+    "slowMo": {
+      "name": "スローモーション"
+    },
+    "magnet": {
+      "name": "マグネット"
+    },
+    "doubleCoin": {
+      "name": "エサ2倍"
+    },
+    "extraLife": {
+      "name": "エクストラライフ"
     }
   },
   "settings": {

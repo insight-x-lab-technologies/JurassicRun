@@ -10,7 +10,9 @@
     "level": "Lv {{value}}",
     "speed": "Speed: {{value}}",
     "seed": "Seed: {{value}}",
-    "weather": "Weather: {{value}}"
+    "weather": "Weather: {{value}}",
+    "extraLives": "×{{value}}",
+    "seconds": "{{value}}s"
   },
   "match": {
     "tapToStart": "Tap to start"
@@ -202,22 +204,45 @@
   },
   "trait": {
     "none": {
+      "name": "No trait",
       "desc": "No special trait."
     },
     "magnet": {
+      "name": "Magnet",
       "desc": "Permanent coin magnet."
     },
     "doubleFood": {
+      "name": "Double food",
       "desc": "Food is worth double."
     },
     "tripleFood": {
+      "name": "Triple food",
       "desc": "Food is worth triple."
     },
     "startLife": {
+      "name": "Extra life",
       "desc": "Start with an extra life."
     },
     "headStart": {
+      "name": "Head start",
       "desc": "Start with a protective shield."
+    }
+  },
+  "powerup": {
+    "shield": {
+      "name": "Shield"
+    },
+    "slowMo": {
+      "name": "Slow-mo"
+    },
+    "magnet": {
+      "name": "Magnet"
+    },
+    "doubleCoin": {
+      "name": "Double food"
+    },
+    "extraLife": {
+      "name": "Extra life"
     }
   },
   "settings": {

@@ -78,3 +78,8 @@ export const DEATH_PARTICLE_COLOR = 0xf0e2d0;
 
 /** Cor da gota da estalactite (idle 9.4). Água mineral clara sobre a rocha. */
 export const IDLE_DRIP_COLOR = 0x9fd8ef;
+
+/** Aura de efeitos ativos (9.5): folga entre o corpo do dino e o primeiro anel, e espessura
+ *  do traço. Desenhada no Graphics do mundo (unidades de mundo, sem `px()`). */
+export const AURA_BASE_MARGIN = 2;
+export const AURA_LINE_WIDTH = 1;

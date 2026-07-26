@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { boundsOf, leftExtent, rightExtent } from '@core/sim';
 import type { Entity, Hitbox } from '@core/sim';
+import { isEffectActive } from '@core/powerup';
 import { renderableFor, DINO_TYPE_ID } from './manifest';
 import type { MatchController } from './match';
 import type { PauseController } from './input';
@@ -17,6 +18,7 @@ import type { Particle } from './particles';
 import { idleMotionFor, swayOffset, dripAt, idlePhaseFor, wrapIdleTime } from './idle';
 import type { SwayOffset, DripState } from './idle';
 import type { IdleSpec } from './manifest';
+import { EFFECT_ORDER, EFFECT_COLORS, auraPulse, auraRadius } from './effects';
 import { i18n } from '@services/i18n';
 import { entitlementsService } from '@services/entitlements';
 import { HudTicker, formatHudValues } from './hud';
@@ -51,6 +53,8 @@ import {
   DEATH_PARTICLE_COLOR,
   IDLE_DRIP_COLOR,
   MAX_FRAME_TIME,
+  AURA_BASE_MARGIN,
+  AURA_LINE_WIDTH,
 } from './constants';
 import { toRenderPx, parallaxTileScale } from './resolution';
 
@@ -369,6 +373,24 @@ export class GameScene extends Phaser.Scene {
     } else {
       this.dinoSprite.setVisible(false);
       this.drawPrimitive(g, DINO_TYPE_ID, world.pterodactyl.hitbox, loop.renderX, loop.renderY);
+    }
+
+    // Aura dos efeitos ativos (9.5): um anel por efeito, atrás do dino — contra o `dinoSprite`
+    // por `setDepth(1)` explícito vs `setDepth(0)` implícito de `this.gfx`; contra os sprites de
+    // entidade do pool (também depth 0) pela ordem de criação/display list (this.gfx foi criado
+    // antes deles). Some durante a morte E no Game Over — só aparece durante `playing`, senão os
+    // anéis reapareceriam pulsando sob a tela de Game Over com os efeitos congelados.
+    if (!dying && this.match.phase === 'playing') {
+      const alpha = auraPulse(this.idleElapsed);
+      const base = Math.max(dinoSize.w, dinoSize.h) / 2 + AURA_BASE_MARGIN;
+      let ring = 0;
+      for (let i = 0; i < EFFECT_ORDER.length; i++) {
+        const kind = EFFECT_ORDER[i]!;
+        if (!isEffectActive(world.effects, kind)) continue;
+        g.lineStyle(AURA_LINE_WIDTH, EFFECT_COLORS[kind], alpha);
+        g.strokeCircle(loop.renderX, loop.renderY, auraRadius(base, ring));
+        ring++;
+      }
     }
 
     // Animação cosmética de morte (9.3): giro/queda/tint/partículas/shake sobre o frame

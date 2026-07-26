@@ -11,6 +11,7 @@ vi.mock('@app/game/startGame', () => ({
   startGame: vi.fn(() => ({
     stop: () => {},
     snapshot: () => ({ phase: 'ready', paused: false, gameOver: null }),
+    hud: () => null,
     restart: () => {},
   })),
 }));

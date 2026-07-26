@@ -10,7 +10,9 @@
     "level": "Niv {{value}}",
     "speed": "Vel: {{value}}",
     "seed": "Semilla: {{value}}",
-    "weather": "Clima: {{value}}"
+    "weather": "Clima: {{value}}",
+    "extraLives": "×{{value}}",
+    "seconds": "{{value}}s"
   },
   "match": {
     "tapToStart": "Toca para empezar"
@@ -202,22 +204,45 @@
   },
   "trait": {
     "none": {
+      "name": "Sin rasgo",
       "desc": "Sin rasgo especial."
     },
     "magnet": {
+      "name": "Imán",
       "desc": "Imán de monedas permanente."
     },
     "doubleFood": {
+      "name": "Comida doble",
       "desc": "La comida vale el doble."
     },
     "tripleFood": {
+      "name": "Comida triple",
       "desc": "La comida vale el triple."
     },
     "startLife": {
+      "name": "Vida extra",
       "desc": "Empieza con una vida extra."
     },
     "headStart": {
+      "name": "Ventaja inicial",
       "desc": "Empieza con un escudo protector."
+    }
+  },
+  "powerup": {
+    "shield": {
+      "name": "Escudo"
+    },
+    "slowMo": {
+      "name": "Cámara lenta"
+    },
+    "magnet": {
+      "name": "Imán"
+    },
+    "doubleCoin": {
+      "name": "Comida doble"
+    },
+    "extraLife": {
+      "name": "Vida extra"
     }
   },
   "settings": {
