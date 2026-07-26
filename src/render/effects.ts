@@ -65,3 +65,11 @@ export function auraPulse(t: number): number {
   const amp = (AURA_MAX_ALPHA - AURA_MIN_ALPHA) / 2;
   return mid + amp * Math.sin(2 * Math.PI * AURA_PULSE_HZ * t);
 }
+
+/** Distância (unidades de mundo) entre anéis concêntricos da aura. */
+export const AURA_RING_GAP = 2;
+
+/** Raio do i-ésimo anel visível (anel 0 abraça o dino; cada anel seguinte afasta um passo fixo). */
+export function auraRadius(baseRadius: number, index: number): number {
+  return baseRadius + index * AURA_RING_GAP;
+}

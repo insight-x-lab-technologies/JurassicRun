@@ -5,9 +5,11 @@ import {
   EFFECT_COLORS,
   effectViews,
   auraPulse,
+  auraRadius,
   AURA_MIN_ALPHA,
   AURA_MAX_ALPHA,
   AURA_PULSE_HZ,
+  AURA_RING_GAP,
 } from '../../src/render/effects';
 import { SHIELD_DURATION_STEPS } from '@core/powerup';
 import { HEAD_START_SHIELD_STEPS } from '@core/dino';
@@ -82,5 +84,13 @@ describe('auraPulse', () => {
 
   it('é pura (mesma entrada ⇒ mesma saída)', () => {
     expect(auraPulse(2.5)).toBe(auraPulse(2.5));
+  });
+});
+
+describe('auraRadius', () => {
+  it('o primeiro anel abraça o dino e cada anel seguinte afasta um passo fixo', () => {
+    expect(auraRadius(10, 0)).toBe(10);
+    expect(auraRadius(10, 1)).toBe(10 + AURA_RING_GAP);
+    expect(auraRadius(10, 2)).toBe(10 + 2 * AURA_RING_GAP);
   });
 });
