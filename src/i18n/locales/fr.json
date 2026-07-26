@@ -10,7 +10,9 @@
     "level": "Niv {{value}}",
     "speed": "Vit: {{value}}",
     "seed": "Graine: {{value}}",
-    "weather": "Météo : {{value}}"
+    "weather": "Météo : {{value}}",
+    "extraLives": "×{{value}}",
+    "seconds": "{{value}}s"
   },
   "match": {
     "tapToStart": "Touchez pour commencer"
@@ -202,22 +204,45 @@
   },
   "trait": {
     "none": {
+      "name": "Aucun trait",
       "desc": "Aucun trait spécial."
     },
     "magnet": {
+      "name": "Aimant",
       "desc": "Aimant à pièces permanent."
     },
     "doubleFood": {
+      "name": "Nourriture double",
       "desc": "La nourriture vaut le double."
     },
     "tripleFood": {
+      "name": "Nourriture triple",
       "desc": "La nourriture vaut le triple."
     },
     "startLife": {
+      "name": "Vie supplémentaire",
       "desc": "Commence avec une vie supplémentaire."
     },
     "headStart": {
+      "name": "Avance au départ",
       "desc": "Commence avec un bouclier protecteur."
+    }
+  },
+  "powerup": {
+    "shield": {
+      "name": "Bouclier"
+    },
+    "slowMo": {
+      "name": "Ralenti"
+    },
+    "magnet": {
+      "name": "Aimant"
+    },
+    "doubleCoin": {
+      "name": "Nourriture double"
+    },
+    "extraLife": {
+      "name": "Vie supplémentaire"
     }
   },
   "settings": {

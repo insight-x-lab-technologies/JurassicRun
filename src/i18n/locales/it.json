@@ -10,7 +10,9 @@
     "level": "Liv {{value}}",
     "speed": "Vel: {{value}}",
     "seed": "Seme: {{value}}",
-    "weather": "Meteo: {{value}}"
+    "weather": "Meteo: {{value}}",
+    "extraLives": "×{{value}}",
+    "seconds": "{{value}}s"
   },
   "match": {
     "tapToStart": "Tocca per iniziare"
@@ -202,22 +204,45 @@
   },
   "trait": {
     "none": {
+      "name": "Nessun tratto",
       "desc": "Nessun tratto speciale."
     },
     "magnet": {
+      "name": "Calamita",
       "desc": "Calamita per monete permanente."
     },
     "doubleFood": {
+      "name": "Cibo doppio",
       "desc": "Il cibo vale il doppio."
     },
     "tripleFood": {
+      "name": "Cibo triplo",
       "desc": "Il cibo vale il triplo."
     },
     "startLife": {
+      "name": "Vita extra",
       "desc": "Inizia con una vita extra."
     },
     "headStart": {
+      "name": "Partenza avvantaggiata",
       "desc": "Inizia con uno scudo protettivo."
+    }
+  },
+  "powerup": {
+    "shield": {
+      "name": "Scudo"
+    },
+    "slowMo": {
+      "name": "Rallentamento"
+    },
+    "magnet": {
+      "name": "Calamita"
+    },
+    "doubleCoin": {
+      "name": "Cibo doppio"
+    },
+    "extraLife": {
+      "name": "Vita extra"
     }
   },
   "settings": {

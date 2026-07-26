@@ -10,7 +10,9 @@
     "level": "等级 {{value}}",
     "speed": "速度: {{value}}",
     "seed": "种子: {{value}}",
-    "weather": "天气：{{value}}"
+    "weather": "天气：{{value}}",
+    "extraLives": "×{{value}}",
+    "seconds": "{{value}}秒"
   },
   "match": {
     "tapToStart": "点击开始"
@@ -202,22 +204,45 @@
   },
   "trait": {
     "none": {
+      "name": "无特性",
       "desc": "无特殊特性。"
     },
     "magnet": {
+      "name": "磁铁",
       "desc": "永久金币磁铁。"
     },
     "doubleFood": {
+      "name": "双倍食物",
       "desc": "食物价值翻倍。"
     },
     "tripleFood": {
+      "name": "三倍食物",
       "desc": "食物价值三倍。"
     },
     "startLife": {
+      "name": "额外生命",
       "desc": "开局附带一条额外生命。"
     },
     "headStart": {
+      "name": "领先起步",
       "desc": "开局附带护盾。"
+    }
+  },
+  "powerup": {
+    "shield": {
+      "name": "护盾"
+    },
+    "slowMo": {
+      "name": "慢动作"
+    },
+    "magnet": {
+      "name": "磁铁"
+    },
+    "doubleCoin": {
+      "name": "双倍食物"
+    },
+    "extraLife": {
+      "name": "额外生命"
     }
   },
   "settings": {

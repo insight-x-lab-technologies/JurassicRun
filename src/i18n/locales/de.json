@@ -10,7 +10,9 @@
     "level": "Stufe {{value}}",
     "speed": "Tempo: {{value}}",
     "seed": "Seed: {{value}}",
-    "weather": "Wetter: {{value}}"
+    "weather": "Wetter: {{value}}",
+    "extraLives": "×{{value}}",
+    "seconds": "{{value}}s"
   },
   "match": {
     "tapToStart": "Zum Starten tippen"
@@ -202,22 +204,45 @@
   },
   "trait": {
     "none": {
+      "name": "Keine Fähigkeit",
       "desc": "Keine besondere Fähigkeit."
     },
     "magnet": {
+      "name": "Magnet",
       "desc": "Dauerhafter Münzmagnet."
     },
     "doubleFood": {
+      "name": "Doppelte Nahrung",
       "desc": "Futter zählt doppelt."
     },
     "tripleFood": {
+      "name": "Dreifache Nahrung",
       "desc": "Futter zählt dreifach."
     },
     "startLife": {
+      "name": "Extraleben",
       "desc": "Startet mit einem Extraleben."
     },
     "headStart": {
+      "name": "Vorsprung",
       "desc": "Startet mit einem Schutzschild."
+    }
+  },
+  "powerup": {
+    "shield": {
+      "name": "Schild"
+    },
+    "slowMo": {
+      "name": "Zeitlupe"
+    },
+    "magnet": {
+      "name": "Magnet"
+    },
+    "doubleCoin": {
+      "name": "Doppelte Nahrung"
+    },
+    "extraLife": {
+      "name": "Extraleben"
     }
   },
   "settings": {

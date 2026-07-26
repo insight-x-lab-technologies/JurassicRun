@@ -7,6 +7,7 @@ import type { GameHandle, MatchSnapshot, HudLive } from '../game/startGame';
 import { GameOverOverlay } from '../game/GameOverOverlay';
 import { ReadyPrompt } from '../game/ReadyPrompt';
 import { Hud } from '../game/Hud';
+import { EffectBadges } from '../game/EffectBadges';
 import { PauseOverlay } from '../game/PauseOverlay';
 
 const INITIAL: MatchSnapshot = { phase: 'ready', paused: false, gameOver: null, dying: false };
@@ -86,7 +87,12 @@ export function PlayScreen({ mode = 'endless' }: { mode?: MatchMode }) {
         {i18n.t('nav.back')}
       </button>
       <div class="play-screen__canvas" ref={containerRef} />
-      {snap.phase === 'playing' && !snap.paused && hud !== null && <Hud hud={hud.hud} fps={hud.fps} />}
+      {snap.phase === 'playing' && !snap.paused && hud !== null && (
+        <>
+          <Hud hud={hud.hud} fps={hud.fps} />
+          <EffectBadges hud={hud.hud} />
+        </>
+      )}
       {snap.phase === 'ready' && !snap.paused && <ReadyPrompt />}
       {snap.paused && <PauseOverlay />}
       {snap.phase === 'dead' && !snap.dying && snap.gameOver !== null && (

@@ -10,7 +10,9 @@
     "level": "Lv {{value}}",
     "speed": "속도: {{value}}",
     "seed": "시드: {{value}}",
-    "weather": "날씨: {{value}}"
+    "weather": "날씨: {{value}}",
+    "extraLives": "×{{value}}",
+    "seconds": "{{value}}초"
   },
   "match": {
     "tapToStart": "탭하여 시작"
@@ -202,22 +204,45 @@
   },
   "trait": {
     "none": {
+      "name": "특성 없음",
       "desc": "특별한 특성 없음."
     },
     "magnet": {
+      "name": "자석",
       "desc": "영구 코인 자석."
     },
     "doubleFood": {
+      "name": "먹이 2배",
       "desc": "먹이 가치 2배."
     },
     "tripleFood": {
+      "name": "먹이 3배",
       "desc": "먹이 가치 3배."
     },
     "startLife": {
+      "name": "추가 목숨",
       "desc": "여분의 생명으로 시작."
     },
     "headStart": {
+      "name": "유리한 출발",
       "desc": "보호막을 갖고 시작."
+    }
+  },
+  "powerup": {
+    "shield": {
+      "name": "보호막"
+    },
+    "slowMo": {
+      "name": "슬로우모션"
+    },
+    "magnet": {
+      "name": "자석"
+    },
+    "doubleCoin": {
+      "name": "먹이 2배"
+    },
+    "extraLife": {
+      "name": "추가 목숨"
     }
   },
   "settings": {
