@@ -119,7 +119,8 @@ para cada kind em EFFECT_ORDER com isEffectActive(world.effects, kind), índice 
 ### i18n (skill `add-locale`, 10 locales)
 
 Novas chaves: `powerup.shield.name`, `powerup.slowMo.name`, `powerup.magnet.name`,
-`powerup.doubleCoin.name`, `powerup.extraLife.name`, `hud.extraLives` (`×{{value}}`) e
+`powerup.doubleCoin.name`, `powerup.extraLife.name`, `hud.seconds` (`{{value}}s`),
+`hud.extraLives` (`×{{value}}`) e
 `trait.<t>.name` para os 6 traços (segue o padrão já existente `trait.<t>.desc` e
 `dino.<id>.name`). Nada hardcoded; os glifos são emoji (sem alfanumérico ⇒ passam pelo scanner
 AST do 4.9, precedente `📱↻`).
