@@ -9,7 +9,7 @@
 - **Dimensões alvo (px):** 96 × 320 (@1x para mobile; exportar também @2x)
 - **Pivô / âncora:** base centralizada (encosta no chão)
 - **Hitbox lógica associada:** aabb estreita e alta — halfW ≈ 6, halfH 24–40 (variável por instância). Definida no core (`OBSTACLE_CATALOG`); a arte NUNCA a altera.
-- **Animação:** estático (1 frame); opcional leve balanço de folhas (cosmético)
+- **Animação:** idle PROCEDURAL no render (9.4) — balanço lateral (`idle: { kind:'sway', anchor:'bottom', amp:0.6 }` no manifesto), base cravada e copa solta; a arte é 1 frame por parte. Variante futura opcional: tira de 4 frames por parte (Apêndice A.2 do PHASE-09) — exigiria também trocar o manifesto e o caminho de render.
 - **Composição:** SEGMENTADO (9.2) — 3 frames `cap`/`body`/`base` (tira horizontal); o render monta `cap + N×body + base` para cobrir qualquer altura da hitbox aabb sem distorção nem vazio. `body` é tileável na vertical. Fonte placeholder: `public/art/themes/<tema>/obstacles/<tema>_obstacle.tree.segments.png` (empacotada via modo `parts` do `gen-atlas`). Arte AAA real: prompts A.2 do PHASE-09.
 - **Atlas de destino:** `obstacles`
 - **Formato de exportação:** PNG com alpha, @1x e @2x

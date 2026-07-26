@@ -75,3 +75,6 @@ export const DINO_FLAP_FPS = 12;
  *  partículas de poeira/pena (desenhadas no Graphics do mundo). */
 export const DEATH_IMPACT_TINT = 0xff5a4a;
 export const DEATH_PARTICLE_COLOR = 0xf0e2d0;
+
+/** Cor da gota da estalactite (idle 9.4). Água mineral clara sobre a rocha. */
+export const IDLE_DRIP_COLOR = 0x9fd8ef;

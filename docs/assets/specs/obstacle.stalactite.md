@@ -9,7 +9,7 @@
 - **Dimensões alvo (px):** 112 × 144 (@1x para mobile; exportar também @2x)
 - **Pivô / âncora:** topo centralizado (prende no teto)
 - **Hitbox lógica associada:** polígono triangular convexo apontando para baixo — halfW 8–14, halfH 11–18 (variável por instância). Vértices em (-halfW, -halfH), (halfW, -halfH), (0, halfH). Definida no core (`OBSTACLE_CATALOG`); a arte NUNCA a altera.
-- **Animação:** estático (1 frame)
+- **Animação:** idle PROCEDURAL no render (9.4) — gota se formando na ponta e caindo em ciclo de 2,5 s (`idle: { kind:'drip' }` no manifesto), desenhada à parte no `Graphics`; o sprite NÃO se desloca. A arte é 1 frame.
 - **Atlas de destino:** `obstacles`
 - **Formato de exportação:** PNG com alpha, @1x e @2x
 - **Margens/padding seguros:** 4px

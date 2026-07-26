@@ -175,11 +175,47 @@ intocado.** Prompt: [Apêndice A.3](#a3-frames-de-morte-do-dino-93).
 **Aceite:** ao colidir, o dino reage visualmente (impacto/queda) antes do Game Over; overlay DOM
 aparece após a animação; determinismo do core inalterado.
 
-### 9.4 Animação cosmética de obstáculo (#10)
-- [ ] Frames idle por obstáculo (vinha/folhas balançando, estalactite pingando/vibrando) tocados
-      no render; **hitbox fica estática** (lógica intacta).
-- [ ] Reusar o mecanismo de `Sprite` animado do dino (anim por atlas), aplicado às `Image` do pool
-      de obstáculos, sem alocação por frame.
+### 9.4 Animação cosmética de obstáculo (#10) — CONCLUÍDA
+- [x] Idle por obstáculo (árvore/cipó balançando, estalactite pingando) tocado no render;
+      **hitbox fica estática** (lógica intacta).
+- [x] Sem alocação por frame: curvas puras com scratch + `idleMotionFor` memoizado, sobre o pool
+      de `Image` existente.
+
+> **CONCLUÍDA** (`src/core/` intocado, determinismo **67**; spec/plano
+> `docs/superpowers/{specs,plans}/2026-07-25-obstacle-idle-animation*`).
+> **Decisão: animação PROCEDURAL por transformação, não frames de atlas** (mesma escolha de 9.3).
+> A tira de 4 frames do Apêndice A.2 custaria 72 frames de PLACEHOLDER (4 frames × 3 partes ×
+> 2 obstáculos × 3 temas) com movimento inventado pelo gerador, travaria a arte AAA real em
+> entregar 4× frames por parte, inflaria o atlas/precache e ainda exigiria trocar o pool de
+> `Image` (alocação-zero, 8.2/9.2) por `Sprite` com estado de anim por objeto. A transformação
+> embala placeholder e arte real sem retrabalho; o caminho de frames fica **documentado** no
+> campo *Animação* dos asset-specs de obstáculo (REGRA 5 sem branch morto no código).
+> **Invariante crítica — a sangria:** deslocar um segmento por `dx` descobriria uma tira `|dx|` da
+> hitbox, regressão direta do aceite de 9.2 ("a borda visível cobre a caixa"). Quem balança
+> desenha cada segmento com largura `W + 2·amp` (arte full-bleed opaca), e como `|dx| ≤ amp` a
+> cobertura vale **por construção**, em qualquer instante — não por tuning.
+> Puro×casca: `src/render/idle.ts` (`swayOffset` = `amp·t01²·sin(2π·0,4 Hz·t + fase)`, com a
+> extremidade **presa** em `t01=0` — âncora `bottom` na árvore, `top` no cipó; `dripAt` = ciclo de
+> 2,5 s, gota engorda parada 40 % do ciclo, cai em `q²` e desvanece; `idlePhaseFor(x)` dessincroniza
+> por instância **sem RNG**, e `wrapIdleTime` embrulha o relógio em 100 s — 0,4 Hz e 2,5 s fecham
+> **40 ciclos exatos** ⇒ embrulho invisível e sem degradar precisão de float) + casca `GameScene`
+> (relógio `idleElapsed` que congela na pausa, `swayDx` por segmento, gota no `Graphics` já
+> existente como as partículas de 9.3 — a estalactite `polygon` **não** se desloca, cobertura
+> byte-idêntica). Ligar/tunar/desligar = campo `idle` no manifesto (REGRA 2); `obstacle.boulder`
+> fica estático de propósito.
+> **Review final: READY** com 2 Minor, ambos corrigidos inline: (a) `deltaMs` do relógio idle sem
+> clamp (volta de aba em background daria salto) ⇒ clampado em `MAX_FRAME_TIME` como no
+> `FixedStepLoop`; (b) faltava a guarda prometida na spec ⇒ `manifest.test.ts` passa a exigir que
+> **só ids `obstacle.*`** tenham `idle`.
+> **Validação Playwright** (build de produção, exposição TEMP `window.__jrSway`/`__jrDrip`
+> revertida): 219 amostras em partidas reais ⇒ árvore `freeDx ∈ [−0,50; +0,49]` (amp 0,6) e cipó
+> `[−0,66; +0,65]` (amp 0,8) — balançando de fato; **0 violações de cobertura** (cap e base sempre
+> com `segLeft ≤ hitLeft` e `segRight ≥ hitRight`); gota em 94 amostras, fase de formação em `y=0`
+> e queda até `y≈24,7` de 26; **0 erros de console**. Gotcha reconfirmado: medir o segmento livre
+> (na árvore é o `cap`, não a `base` — a base é a extremidade PRESA) e SW cacheia `dist` antigo
+> (unregister + clear caches + `?nocache`).
+> Suíte **843** testes, `check` limpo, determinismo **67**.
+> **Backlog:** arte AAA real segmentada (A.2) e, se um dia ela vier animada, a variante de frames.
 
 **Toca:** `src/render/GameScene.ts`, `scripts/gen-atlas.mjs` (strips de frames por obstáculo),
 `docs/assets/specs/obstacle.*.md` (campo animação). **Core intocado.** Prompt: incluído nos specs
