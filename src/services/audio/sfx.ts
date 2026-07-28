@@ -14,6 +14,14 @@ export type SfxId =
   | 'levelUp'
   | 'block';
 
+/** Canal de mixagem lógico: `ui` = feedback de interface, `game` = eventos de partida. */
+export type SfxChannel = 'ui' | 'game';
+
+/** Classificação total (não heurística de nome): só o clique de botão é de UI. */
+export function sfxChannelFor(id: SfxId): SfxChannel {
+  return id === 'click' ? 'ui' : 'game';
+}
+
 export interface SfxLayer {
   /** `'noise'` = ruído branco filtrado; o resto são osciladores. */
   readonly timbre: Timbre | 'noise';

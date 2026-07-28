@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { SFX_CATALOG, SFX_IDS, sfxDurationSec, sfxDetune } from '@services/audio/sfx';
+import { SFX_CATALOG, SFX_IDS, sfxDurationSec, sfxDetune, sfxChannelFor } from '@services/audio/sfx';
 
 describe('SFX_CATALOG', () => {
   it('cobre os 9 eventos', () => {
@@ -63,5 +63,14 @@ describe('sfxDetune', () => {
   it('o clique não varia (feedback de UI estável)', () => {
     expect(sfxDetune('click', 0)).toBe(0);
     expect(sfxDetune('click', 7)).toBe(0);
+  });
+});
+
+describe('sfxChannelFor', () => {
+  it('só o click é do canal de UI; todo o resto é gameplay', () => {
+    expect(sfxChannelFor('click')).toBe('ui');
+    for (const id of ['flap', 'coin', 'powerup', 'hit', 'gameOver', 'nearMiss', 'levelUp', 'block'] as const) {
+      expect(sfxChannelFor(id)).toBe('game');
+    }
   });
 });
