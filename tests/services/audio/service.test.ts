@@ -4,6 +4,8 @@ import { audioService, bindButtonSfx } from '@services/audio';
 import { nullAudioEngine } from '@services/audio/engine';
 import { settingsService } from '@services/settings';
 import { memorySettingsStorage } from '@services/settings/storage';
+import { entitlementsService } from '@services/entitlements';
+import { memoryEntitlementsStorage } from '@services/entitlements/storage';
 import { resetToHome, navigate } from '@app/router';
 import { i18n } from '@services/i18n';
 
@@ -15,6 +17,7 @@ beforeEach(async () => {
   settingsService.setVolume(100);
   settingsService.setMenuMusic(true);
   settingsService.setGameplayMusic(true);
+  entitlementsService.init(memoryEntitlementsStorage());
   resetToHome();
   engine = nullAudioEngine();
   audioService.init(engine);
@@ -51,6 +54,20 @@ describe('AudioService', () => {
     settingsService.setMenuMusic(false);
     expect(engine.running).toBeNull();
     expect(engine.stops).toBeGreaterThanOrEqual(1);
+  });
+
+  it('trocar de expansão troca a faixa (tema novo)', () => {
+    audioService.unlock();
+    expect(engine.running).toBe('menu');
+    expect(engine.themeStarts).toEqual(['classic']);
+    const startsBefore = engine.musicStarts.length;
+
+    entitlementsService.grantAndSelect('volcano');
+
+    expect(engine.running).toBe('menu');
+    expect(engine.runningTheme).toBe('volcano');
+    expect(engine.musicStarts.length).toBeGreaterThan(startsBefore);
+    expect(engine.themeStarts[engine.themeStarts.length - 1]).toBe('volcano');
   });
 
   it('mudar volume ajusta ganho sem reiniciar a faixa', () => {

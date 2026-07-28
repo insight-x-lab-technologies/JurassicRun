@@ -1,9 +1,17 @@
 import type { Screen } from '@app/router';
 import type { MusicTrack } from './tracks';
+import type { MusicTheme } from './music';
 
 /** Teto de mixagem: música mais baixa que SFX (placeholder, tuning Fase 8). */
 export const MUSIC_CEILING = 0.35;
 export const SFX_CEILING = 0.6;
+
+const THEMES: ReadonlySet<string> = new Set<string>(['classic', 'volcano', 'glacier']);
+
+/** Id da expansão ativa (seam 4.6/8.3) → tema musical. Desconhecido ⇒ `classic`. */
+export function musicThemeFor(expansionId: string): MusicTheme {
+  return THEMES.has(expansionId) ? (expansionId as MusicTheme) : 'classic';
+}
 
 export interface AudioInput {
   readonly route: Screen;
@@ -11,12 +19,14 @@ export interface AudioInput {
   readonly menuMusic: boolean;
   readonly gameplayMusic: boolean;
   readonly unlocked: boolean;
+  readonly expansionId: string;
 }
 
 export interface AudioTarget {
   readonly track: MusicTrack | null;
   readonly musicGain: number; // 0..1
   readonly sfxGain: number; // 0..1
+  readonly theme: MusicTheme;
 }
 
 /** 0..100 → 0..1 com curva perceptual (v²); clampa fora de faixa. */
@@ -31,8 +41,9 @@ export function resolveAudioTarget(input: AudioInput): AudioTarget {
   const base = volumeToGain(input.volume);
   const musicGain = base * MUSIC_CEILING;
   const sfxGain = base * SFX_CEILING;
+  const theme = musicThemeFor(input.expansionId);
 
-  if (base === 0) return { track: null, musicGain: 0, sfxGain: 0 };
+  if (base === 0) return { track: null, musicGain: 0, sfxGain: 0, theme };
 
   let track: MusicTrack | null = null;
   if (input.unlocked) {
@@ -43,5 +54,5 @@ export function resolveAudioTarget(input: AudioInput): AudioTarget {
     }
   }
 
-  return { track, musicGain, sfxGain };
+  return { track, musicGain, sfxGain, theme };
 }

@@ -1,5 +1,6 @@
 import { effect, signal } from '@preact/signals';
 import { settingsService } from '@services/settings';
+import { entitlementsService } from '@services/entitlements';
 import { route } from '@app/router';
 import { resolveAudioTarget } from './policy';
 import { WebAudioEngine, type AudioEngine } from './engine';
@@ -23,15 +24,15 @@ class AudioService {
         menuMusic: settingsService.menuMusic.value,
         gameplayMusic: settingsService.gameplayMusic.value,
         unlocked: this._unlocked.value,
+        expansionId: entitlementsService.activeExpansion.value.id,
       });
       this._sfxGain = target.sfxGain;
       if (target.track === null) {
         if (this.engine.running !== null) this.engine.stopMusic();
         return;
       }
-      if (this.engine.running !== target.track) {
-        // TODO(9.6 Task 4): tema real vem de `policy.ts`/`activeExpansion`; por ora fixo em 'classic'.
-        this.engine.playMusic(target.track, target.musicGain, 'classic');
+      if (this.engine.running !== target.track || this.engine.runningTheme !== target.theme) {
+        this.engine.playMusic(target.track, target.musicGain, target.theme);
       } else {
         this.engine.setMusicGain(target.musicGain);
       }
