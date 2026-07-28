@@ -4,6 +4,7 @@ import {
   setVolume,
   setMenuMusic,
   setGameplayMusic,
+  setButtonSfx,
   setLanguage,
   setFont,
   type SettingsState,
@@ -23,6 +24,7 @@ class SettingsService {
   readonly volume: ReadonlySignal<number> = computed(() => this._state.value.volume);
   readonly menuMusic: ReadonlySignal<boolean> = computed(() => this._state.value.menuMusic);
   readonly gameplayMusic: ReadonlySignal<boolean> = computed(() => this._state.value.gameplayMusic);
+  readonly buttonSfx: ReadonlySignal<boolean> = computed(() => this._state.value.buttonSfx);
   readonly language: ReadonlySignal<string> = computed(() => this._state.value.language);
   readonly font: ReadonlySignal<FontChoice> = computed(() => this._state.value.font);
 
@@ -44,6 +46,10 @@ class SettingsService {
 
   setGameplayMusic(on: boolean): void {
     this.commit(setGameplayMusic(this._state.value, on));
+  }
+
+  setButtonSfx(on: boolean): void {
+    this.commit(setButtonSfx(this._state.value, on));
   }
 
   /** Troca o idioma: aplica no i18n ANTES de comitar o sinal (para o re-render já ler as strings novas). */

@@ -32,10 +32,11 @@ export function parseState(raw: string): SettingsState {
     const volume = typeof d.volume === 'number' ? sanitizeVolume(d.volume) : base.volume;
     const menuMusic = typeof d.menuMusic === 'boolean' ? d.menuMusic : base.menuMusic;
     const gameplayMusic = typeof d.gameplayMusic === 'boolean' ? d.gameplayMusic : base.gameplayMusic;
+    const buttonSfx = typeof d.buttonSfx === 'boolean' ? d.buttonSfx : base.buttonSfx;
     const language =
       typeof d.language === 'string' && isSupportedLanguage(d.language) ? d.language : base.language;
     const font = typeof d.font === 'string' && isFontChoice(d.font) ? d.font : base.font;
-    return { volume, menuMusic, gameplayMusic, language, font };
+    return { volume, menuMusic, gameplayMusic, buttonSfx, language, font };
   } catch {
     return base;
   }

@@ -9,6 +9,7 @@ export interface SettingsState {
   readonly volume: number; // inteiro 0..100
   readonly menuMusic: boolean;
   readonly gameplayMusic: boolean;
+  readonly buttonSfx: boolean;
   readonly language: SupportedLanguage;
   readonly font: FontChoice;
 }
@@ -18,6 +19,7 @@ export function initialSettingsState(): SettingsState {
     volume: 80,
     menuMusic: true,
     gameplayMusic: true,
+    buttonSfx: true,
     language: DEFAULT_LANGUAGE,
     font: DEFAULT_FONT,
   };
@@ -46,6 +48,10 @@ export function setMenuMusic(s: SettingsState, on: boolean): SettingsState {
 
 export function setGameplayMusic(s: SettingsState, on: boolean): SettingsState {
   return { ...s, gameplayMusic: on };
+}
+
+export function setButtonSfx(s: SettingsState, on: boolean): SettingsState {
+  return { ...s, buttonSfx: on };
 }
 
 /** Idioma inválido ⇒ retorna a MESMA referência (no-op). */

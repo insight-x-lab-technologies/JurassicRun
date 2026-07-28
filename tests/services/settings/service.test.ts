@@ -14,6 +14,7 @@ describe('SettingsService', () => {
       volume: 30,
       menuMusic: false,
       gameplayMusic: true,
+      buttonSfx: true,
       font: 'cinzel' as const,
       language: 'pt-BR',
     });
@@ -42,5 +43,14 @@ describe('SettingsService', () => {
     expect(settingsService.language.value).toBe('de');
     expect(i18n.getLanguage()).toBe('de');
     expect(storage.load().language).toBe('de');
+  });
+
+  it('setButtonSfx comita no sinal e persiste', async () => {
+    const storage = memorySettingsStorage();
+    await settingsService.init(storage);
+    expect(settingsService.buttonSfx.value).toBe(true);
+    settingsService.setButtonSfx(false);
+    expect(settingsService.buttonSfx.value).toBe(false);
+    expect(storage.load().buttonSfx).toBe(false);
   });
 });

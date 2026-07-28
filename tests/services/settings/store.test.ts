@@ -5,6 +5,7 @@ import {
   setVolume,
   setMenuMusic,
   setGameplayMusic,
+  setButtonSfx,
   setLanguage,
   isSupportedLanguage,
 } from '@services/settings/store';
@@ -15,6 +16,7 @@ describe('settings/store', () => {
       volume: 80,
       menuMusic: true,
       gameplayMusic: true,
+      buttonSfx: true,
       language: 'en',
       font: 'cinzel',
     });
@@ -42,6 +44,15 @@ describe('settings/store', () => {
     expect(setMenuMusic(s, false).menuMusic).toBe(false);
     expect(setGameplayMusic(s, false).gameplayMusic).toBe(false);
     expect(s.menuMusic).toBe(true); // imutável
+  });
+
+  it('buttonSfx começa ligado e alterna sem mutar', () => {
+    const s = initialSettingsState();
+    expect(s.buttonSfx).toBe(true);
+    const off = setButtonSfx(s, false);
+    expect(off.buttonSfx).toBe(false);
+    expect(s.buttonSfx).toBe(true); // original intacto
+    expect(setButtonSfx(off, true).buttonSfx).toBe(true);
   });
 
   it('setLanguage: válido troca; inválido retorna a MESMA referência', () => {
