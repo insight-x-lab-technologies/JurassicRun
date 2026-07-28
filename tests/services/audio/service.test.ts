@@ -17,6 +17,7 @@ beforeEach(async () => {
   settingsService.setVolume(100);
   settingsService.setMenuMusic(true);
   settingsService.setGameplayMusic(true);
+  settingsService.setButtonSfx(true);
   entitlementsService.init(memoryEntitlementsStorage());
   resetToHome();
   engine = nullAudioEngine();
@@ -104,5 +105,29 @@ describe('AudioService', () => {
     cleanup();
     btn.remove();
     div.remove();
+  });
+
+  it('toggle de SFX off silencia o clique mas não o gameplay', () => {
+    audioService.unlock();
+    settingsService.setButtonSfx(false);
+    audioService.playSfx('click');
+    expect(engine.sfxPlayed).toEqual([]);
+    audioService.playSfx('flap');
+    expect(engine.sfxPlayed).toEqual(['flap']);
+    settingsService.setButtonSfx(true);
+    audioService.playSfx('click');
+    expect(engine.sfxPlayed).toEqual(['flap', 'click']);
+  });
+
+  it('com o toggle off, o clique em botão ainda desbloqueia o áudio', () => {
+    settingsService.setButtonSfx(false);
+    const cleanup = bindButtonSfx(document.body, audioService);
+    const btn = document.createElement('button');
+    document.body.append(btn);
+    btn.click();
+    expect(engine.sfxPlayed).toEqual([]);
+    expect(engine.resumed).toBe(true); // unlock aconteceu ⇒ a música pode começar
+    cleanup();
+    btn.remove();
   });
 });

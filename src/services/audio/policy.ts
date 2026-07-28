@@ -18,6 +18,7 @@ export interface AudioInput {
   readonly volume: number; // 0..100
   readonly menuMusic: boolean;
   readonly gameplayMusic: boolean;
+  readonly buttonSfx: boolean;
   readonly unlocked: boolean;
   readonly expansionId: string;
 }
@@ -26,6 +27,7 @@ export interface AudioTarget {
   readonly track: MusicTrack | null;
   readonly musicGain: number; // 0..1
   readonly sfxGain: number; // 0..1
+  readonly uiSfxGain: number; // 0..1
   readonly theme: MusicTheme;
 }
 
@@ -41,9 +43,10 @@ export function resolveAudioTarget(input: AudioInput): AudioTarget {
   const base = volumeToGain(input.volume);
   const musicGain = base * MUSIC_CEILING;
   const sfxGain = base * SFX_CEILING;
+  const uiSfxGain = input.buttonSfx ? sfxGain : 0;
   const theme = musicThemeFor(input.expansionId);
 
-  if (base === 0) return { track: null, musicGain: 0, sfxGain: 0, theme };
+  if (base === 0) return { track: null, musicGain: 0, sfxGain: 0, uiSfxGain: 0, theme };
 
   let track: MusicTrack | null = null;
   if (input.unlocked) {
@@ -54,5 +57,5 @@ export function resolveAudioTarget(input: AudioInput): AudioTarget {
     }
   }
 
-  return { track, musicGain, sfxGain, theme };
+  return { track, musicGain, sfxGain, uiSfxGain, theme };
 }

@@ -4,12 +4,13 @@ import { entitlementsService } from '@services/entitlements';
 import { route } from '@app/router';
 import { resolveAudioTarget } from './policy';
 import { WebAudioEngine, type AudioEngine } from './engine';
-import type { SfxId } from './sfx';
+import { sfxChannelFor, type SfxId } from './sfx';
 
 class AudioService {
   private engine: AudioEngine = new WebAudioEngine();
   private readonly _unlocked = signal(false);
   private _sfxGain = 0;
+  private _uiSfxGain = 0;
   private dispose: (() => void) | null = null;
 
   /** Liga a reatividade. `engine` injetável para testes/SSR. */
@@ -23,10 +24,12 @@ class AudioService {
         volume: settingsService.volume.value,
         menuMusic: settingsService.menuMusic.value,
         gameplayMusic: settingsService.gameplayMusic.value,
+        buttonSfx: settingsService.buttonSfx.value,
         unlocked: this._unlocked.value,
         expansionId: entitlementsService.activeExpansion.value.id,
       });
       this._sfxGain = target.sfxGain;
+      this._uiSfxGain = target.uiSfxGain;
       if (target.track === null) {
         if (this.engine.running !== null) this.engine.stopMusic();
         return;
@@ -47,8 +50,9 @@ class AudioService {
   }
 
   playSfx(id: SfxId): void {
-    if (!this._unlocked.value || this._sfxGain <= 0) return;
-    this.engine.playSfx(id, this._sfxGain);
+    const gain = sfxChannelFor(id) === 'ui' ? this._uiSfxGain : this._sfxGain;
+    if (!this._unlocked.value || gain <= 0) return;
+    this.engine.playSfx(id, gain);
   }
 }
 

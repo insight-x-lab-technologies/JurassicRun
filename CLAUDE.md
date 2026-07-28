@@ -69,9 +69,9 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **67** testes · suíte **908** testes · `check` limpo.
-Branch `main`. Fases 0–8 **CONCLUÍDAS**; Fase 9 **EM ANDAMENTO** (9.1–9.6 feitos ⇒ Frentes A e B
-fechadas, C pela metade).
+**Métricas correntes:** determinismo **67** testes · suíte **921** testes · `check` limpo.
+Branch `main`. Fases 0–8 **CONCLUÍDAS**; Fase 9 **EM ANDAMENTO** (9.1–9.7 feitos ⇒ Frentes A, B e C
+fechadas; resta a D, que toca core).
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
@@ -135,8 +135,12 @@ Ordem travada **A → B → C → D**. Um item por PR (SDD por subagentes). Só 
   buses + limiter + ruído cacheado + scheduler por compasso. **Tema = expansão ativa** (troca ao
   vivo). **Seam de trilha de arquivo**: `public/audio/<tema>/{menu,gameplay}.mp3` entra em
   crossfade sobre o procedural — prompts do Suno em `docs/audio/specs/SUNO-BRIEF.md`; fora do
-  precache do SW) · **9.7 toggle de SFX ← PRÓXIMO**.
-- **D (core/desafios):** 9.8 novos obstáculos (`add-gameplay-entity`) · 9.9 briefing + modificadores
+  precache do SW) · 9.7 toggle de SFX de clique ✅ (`SettingsState.buttonSfx` no molde de
+  `menuMusic`; canal puro `sfxChannelFor(id): 'ui' | 'game'` — só `click` é UI — e campo NOVO
+  `uiSfxGain` na política, para não silenciar os SFX de gameplay junto; gate no `playSfx`, **não**
+  no `bindButtonSfx`, senão o `unlock()` do 1º gesto morre e a música nunca começa).
+  **Frente C concluída.**
+- **D (core/desafios) ← PRÓXIMA:** 9.8 novos obstáculos (`add-gameplay-entity`) · 9.9 briefing + modificadores
   de desafio por seed (`src/core/challenge/`, função pura da seed; verificador recomputa).
 
 **ARTE REAL DA FASE 9 ENTREGUE** (fecha o débito de placeholder de A): 33 PNGs photoreal nos 3 temas

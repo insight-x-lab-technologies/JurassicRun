@@ -9,6 +9,7 @@ export function SettingsScreen(): VNode {
   const volume = settingsService.volume.value;
   const menuMusic = settingsService.menuMusic.value;
   const gameplayMusic = settingsService.gameplayMusic.value;
+  const buttonSfx = settingsService.buttonSfx.value;
   const language = settingsService.language.value;
   const font = settingsService.font.value;
 
@@ -58,6 +59,21 @@ export function SettingsScreen(): VNode {
         />
         <span class="settings__state" aria-hidden="true">
           {i18n.t(gameplayMusic ? 'settings.on' : 'settings.off')}
+        </span>
+      </label>
+
+      <label class="settings__row" for="settings-button-sfx">
+        <span class="settings__label">{i18n.t('settings.buttonSfx')}</span>
+        <input
+          id="settings-button-sfx"
+          data-testid="settings-button-sfx"
+          type="checkbox"
+          class="settings__toggle"
+          checked={buttonSfx}
+          onChange={(e) => settingsService.setButtonSfx((e.currentTarget as HTMLInputElement).checked)}
+        />
+        <span class="settings__state" aria-hidden="true">
+          {i18n.t(buttonSfx ? 'settings.on' : 'settings.off')}
         </span>
       </label>
 

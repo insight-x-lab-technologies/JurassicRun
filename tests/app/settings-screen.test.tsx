@@ -20,11 +20,25 @@ describe('SettingsScreen', () => {
     container.remove();
   });
 
-  it('renderiza os 4 controles', () => {
+  it('renderiza os controles', () => {
     expect(container.querySelector('[data-testid="settings-volume"]')).not.toBeNull();
     expect(container.querySelector('[data-testid="settings-menu-music"]')).not.toBeNull();
     expect(container.querySelector('[data-testid="settings-gameplay-music"]')).not.toBeNull();
+    expect(container.querySelector('[data-testid="settings-button-sfx"]')).not.toBeNull();
     expect(container.querySelector('[data-testid="settings-language"]')).not.toBeNull();
+    expect(container.querySelector('[data-testid="settings-font"]')).not.toBeNull();
+  });
+
+  it('renderiza o toggle de SFX de botão', () => {
+    expect(container.querySelector('[data-testid="settings-button-sfx"]')).not.toBeNull();
+  });
+
+  it('desmarcar o toggle de SFX atualiza o serviço', () => {
+    const box = container.querySelector('[data-testid="settings-button-sfx"]') as HTMLInputElement;
+    expect(box.checked).toBe(true);
+    box.checked = false;
+    box.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(settingsService.buttonSfx.value).toBe(false);
   });
 
   it('trocar o volume atualiza o serviço', () => {

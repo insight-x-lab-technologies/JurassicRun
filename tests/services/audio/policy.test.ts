@@ -13,6 +13,7 @@ const base: AudioInput = {
   volume: 100,
   menuMusic: true,
   gameplayMusic: true,
+  buttonSfx: true,
   unlocked: true,
   expansionId: 'classic',
 };
@@ -37,7 +38,7 @@ describe('resolveAudioTarget', () => {
 
   it('volume 0 ⇒ silêncio total', () => {
     const t = resolveAudioTarget({ ...base, volume: 0 });
-    expect(t).toEqual({ track: null, musicGain: 0, sfxGain: 0, theme: 'classic' });
+    expect(t).toEqual({ track: null, musicGain: 0, sfxGain: 0, uiSfxGain: 0, theme: 'classic' });
   });
 
   it('rota play + gameplayMusic ⇒ faixa gameplay', () => {
@@ -61,6 +62,23 @@ describe('resolveAudioTarget', () => {
   it('menuMusic off em rota de menu ⇒ sem música', () => {
     const t = resolveAudioTarget({ ...base, route: 'shop', menuMusic: false });
     expect(t.track).toBeNull();
+  });
+
+  it('buttonSfx off zera só o SFX de UI', () => {
+    const t = resolveAudioTarget({ ...base, volume: 100, buttonSfx: false });
+    expect(t.uiSfxGain).toBe(0);
+    expect(t.sfxGain).toBeGreaterThan(0); // gameplay segue soando
+  });
+
+  it('buttonSfx on iguala o ganho de UI ao de gameplay', () => {
+    const t = resolveAudioTarget({ ...base, volume: 100, buttonSfx: true });
+    expect(t.uiSfxGain).toBe(t.sfxGain);
+  });
+
+  it('volume 0 zera os dois ganhos', () => {
+    const t = resolveAudioTarget({ ...base, volume: 0, buttonSfx: true });
+    expect(t.sfxGain).toBe(0);
+    expect(t.uiSfxGain).toBe(0);
   });
 });
 
