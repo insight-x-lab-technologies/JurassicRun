@@ -352,12 +352,20 @@ ativo é visível; sem strings hardcoded.
 **Aceite:** música de menu e de gameplay claramente mais ricas e distintas; SFX por evento;
 respeita volume/toggles; sem custo/arquivo.
 
-### 9.7 Toggle de SFX de clique em Configurações (#6)
-- [ ] `SettingsState.buttonSfx: boolean` no molde de `menuMusic`/`gameplayMusic` (saneado por
-      campo, persistido, reativo).
-- [ ] `resolveAudioTarget` / `bindButtonSfx` respeitam o toggle (SFX silenciado quando off).
-- [ ] `SettingsScreen`: novo toggle; chave i18n `settings.buttonSfx` nos 10 locales (skill
-      `add-locale`).
+### 9.7 Toggle de SFX de clique em Configurações (#6) — CONCLUÍDA
+- [x] `SettingsState.buttonSfx: boolean` no molde de `menuMusic`/`gameplayMusic` (saneado por
+      campo, persistido, reativo). Sem bump de versão do storage: estado antigo carrega com o
+      default `true`.
+- [x] `resolveAudioTarget` ganha `AudioInput.buttonSfx` → `AudioTarget.uiSfxGain`
+      (`buttonSfx ? sfxGain : 0`, campo NOVO — sobrescrever `sfxGain` silenciaria o gameplay).
+      Classificação pura `sfxChannelFor(id): 'ui' | 'game'` em `sfx.ts` (só `click` é de UI);
+      `AudioService.playSfx` escolhe o ganho pelo canal. `bindButtonSfx` **não muda**: o gate fica
+      no `playSfx`, senão o `unlock()` do 1º gesto morreria junto e a música nunca começaria.
+- [x] `SettingsScreen`: novo toggle; chave i18n `settings.buttonSfx` nos 10 locales.
+
+**Escopo decidido:** silencia **só o SFX de clique**; os 8 SFX de gameplay do 9.6 seguem no volume
+geral (o canal `game` é a costura pronta caso se queira um toggle deles depois).
+Spec `docs/superpowers/specs/2026-07-27-sfx-toggle-design.md`, plano `…/plans/2026-07-27-sfx-toggle.md`.
 
 **Toca:** `src/services/settings/*`, `src/services/audio/*`, `src/app/.../SettingsScreen`,
 locales. **Core intocado.**
