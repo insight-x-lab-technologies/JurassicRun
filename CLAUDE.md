@@ -69,9 +69,9 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **67** testes · suíte **871** testes · `check` limpo.
-Branch `main`. Fases 0–8 **CONCLUÍDAS**; Fase 9 **EM ANDAMENTO** (9.1–9.5 feitos ⇒ Frentes A e B
-fechadas).
+**Métricas correntes:** determinismo **67** testes · suíte **908** testes · `check` limpo.
+Branch `main`. Fases 0–8 **CONCLUÍDAS**; Fase 9 **EM ANDAMENTO** (9.1–9.6 feitos ⇒ Frentes A e B
+fechadas, C pela metade).
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
@@ -128,8 +128,14 @@ Ordem travada **A → B → C → D**. Um item por PR (SDD por subagentes). Só 
 - **B (feedback):** 9.5 indicador de power-up ativo + traço do dino ✅ (badges HUD via
   `GameHandle.hud()` + barra de duração + aura pulsante no canvas, atrás do dino; traço fixo do
   Ninho como chip). **Frente B concluída.**
-- **C (áudio/UX):** **9.6 áudio procedural rico ← PRÓXIMO** (multi-camada + SFX por evento) ·
-  9.7 toggle de SFX.
+- **C (áudio/UX):** 9.6 áudio procedural rico ✅ (música GENERATIVA multi-camada — `music.ts`
+  puro: score = bpm/modo/progressão + 4 `LayerSpec`, melodia variando por **LCG semeado por
+  (partitura, compasso)**; 9 SFX multi-parcial em `sfx.ts`; detector PURO `render/audioEvents.ts`
+  faz diff de escalares do `WorldState` ⇒ flap/coin/nearMiss/levelUp/powerup/block/hit; casca com
+  buses + limiter + ruído cacheado + scheduler por compasso. **Tema = expansão ativa** (troca ao
+  vivo). **Seam de trilha de arquivo**: `public/audio/<tema>/{menu,gameplay}.mp3` entra em
+  crossfade sobre o procedural — prompts do Suno em `docs/audio/specs/SUNO-BRIEF.md`; fora do
+  precache do SW) · **9.7 toggle de SFX ← PRÓXIMO**.
 - **D (core/desafios):** 9.8 novos obstáculos (`add-gameplay-entity`) · 9.9 briefing + modificadores
   de desafio por seed (`src/core/challenge/`, função pura da seed; verificador recomputa).
 
