@@ -3,7 +3,7 @@ import { settingsService } from '@services/settings';
 import { route } from '@app/router';
 import { resolveAudioTarget } from './policy';
 import { WebAudioEngine, type AudioEngine } from './engine';
-import type { SfxId } from './tracks';
+import type { SfxId } from './sfx';
 
 class AudioService {
   private engine: AudioEngine = new WebAudioEngine();
@@ -77,3 +77,4 @@ export function bindButtonSfx(root: EventTarget, service: AudioService = audioSe
 }
 
 export type { AudioEngine } from './engine';
+export type { SfxId } from './sfx';

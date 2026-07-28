@@ -1,5 +1,6 @@
-import { SFX_CATALOG, beatsToSeconds, type MusicTrack, type SfxId } from './tracks';
+import { beatsToSeconds, type MusicTrack } from './tracks';
 import { MUSIC_SCORES, voicesForBar, type Voice } from './music';
+import { SFX_CATALOG, type SfxId } from './sfx';
 
 export interface AudioEngine {
   resume(): Promise<void>;
@@ -149,21 +150,30 @@ export class WebAudioEngine implements AudioEngine {
     osc.stop(when + dur + 0.02);
   }
 
+  // TODO(9.6 Task 3): renderiza só a 1ª camada; a casca multi-camada completa (buses, ruído,
+  // detune) vem na reescrita de `WebAudioEngine` da Task 3.
   playSfx(id: SfxId, gain: number): void {
     const ctx = this.ensureCtx();
     void ctx.resume();
     const spec = SFX_CATALOG[id];
-    const now = ctx.currentTime;
+    const layer = spec.layers[0];
+    if (layer === undefined) return;
+    const now = ctx.currentTime + layer.delaySec;
     const osc = ctx.createOscillator();
     const g = ctx.createGain();
-    osc.type = spec.type;
-    osc.frequency.value = spec.freq;
+    const isOscType =
+      layer.timbre !== 'noise' &&
+      layer.timbre !== 'kick' &&
+      layer.timbre !== 'snare' &&
+      layer.timbre !== 'hat';
+    osc.type = isOscType ? layer.timbre : 'sine';
+    osc.frequency.value = layer.freq;
     g.gain.setValueAtTime(0.0001, now);
-    g.gain.linearRampToValueAtTime(Math.max(gain, 0.0001), now + spec.attackSec);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + spec.attackSec + spec.releaseSec);
+    g.gain.linearRampToValueAtTime(Math.max(gain * layer.gain, 0.0001), now + layer.attackSec);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + layer.attackSec + layer.decaySec);
     osc.connect(g);
     g.connect(ctx.destination);
     osc.start(now);
-    osc.stop(now + spec.durationSec + 0.02);
+    osc.stop(now + layer.attackSec + layer.decaySec + 0.02);
   }
 }
