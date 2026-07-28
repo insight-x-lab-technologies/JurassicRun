@@ -30,7 +30,8 @@ class AudioService {
         return;
       }
       if (this.engine.running !== target.track) {
-        this.engine.playMusic(target.track, target.musicGain);
+        // TODO(9.6 Task 4): tema real vem de `policy.ts`/`activeExpansion`; por ora fixo em 'classic'.
+        this.engine.playMusic(target.track, target.musicGain, 'classic');
       } else {
         this.engine.setMusicGain(target.musicGain);
       }
