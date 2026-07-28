@@ -70,6 +70,8 @@ export function nullAudioEngine(): RecordingAudioEngine {
 const LOOKAHEAD_MS = 25;
 const SCHEDULE_AHEAD_SEC = 0.35; // ≥ 1 compasso de folga p/ agendar por compasso
 const NOISE_BUFFER_SEC = 2;
+/** Fade da trilha de arquivo: entra em `startFile`, sai em `stopMusic`. */
+const FILE_FADE_SEC = 0.4;
 
 /** Casca WebAudio real: buses de música/SFX, ruído branco cacheado, scheduler por compasso. */
 export class WebAudioEngine implements AudioEngine {
@@ -104,11 +106,18 @@ export class WebAudioEngine implements AudioEngine {
     if (this.ctx === null) {
       const ctx = new AudioContext();
       this.ctx = ctx;
+      // Limiter no destino: música e SFX somam no mesmo barramento e cada camada nova (packs,
+      // SFX futuros) aumenta o pico. O compressor segura o estouro sem precisar re-tunar ganhos.
+      const master = ctx.createDynamicsCompressor();
+      master.threshold.value = -6;
+      master.ratio.value = 12;
+      master.attack.value = 0.003;
+      master.release.value = 0.25;
+      master.connect(ctx.destination);
       this.musicBus = ctx.createGain();
-      this.musicBus.connect(ctx.destination);
+      this.musicBus.connect(master);
       this.sfxBus = ctx.createGain();
-      this.sfxBus.gain.value = 1;
-      this.sfxBus.connect(ctx.destination);
+      this.sfxBus.connect(master);
       // Ruído branco cacheado (kick/snare/hat/whooshes reusam este buffer).
       const frames = Math.floor(ctx.sampleRate * NOISE_BUFFER_SEC);
       const buf = ctx.createBuffer(1, frames, ctx.sampleRate);
@@ -154,15 +163,25 @@ export class WebAudioEngine implements AudioEngine {
       clearInterval(this.timer);
       this.timer = null;
     }
-    if (this.fileSource !== null) {
-      this.fileSource.stop();
-      this.fileSource.disconnect();
-      this.fileSource = null;
+    // Fade-out curto antes de cortar: `stop()` seco no meio de uma onda estala (o procedural não
+    // sofre disso porque cada nota já tem envelope próprio). Os nós se auto-desconectam no `stop`.
+    if (this.fileSource !== null && this.ctx !== null) {
+      const src = this.fileSource;
+      const g = this.fileGain;
+      const end = this.ctx.currentTime + FILE_FADE_SEC;
+      if (g !== null) {
+        g.gain.cancelScheduledValues(this.ctx.currentTime);
+        g.gain.setValueAtTime(Math.max(g.gain.value, 0.0001), this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, end);
+      }
+      src.stop(end);
+      src.onended = (): void => {
+        src.disconnect();
+        g?.disconnect();
+      };
     }
-    if (this.fileGain !== null) {
-      this.fileGain.disconnect();
-      this.fileGain = null;
-    }
+    this.fileSource = null;
+    this.fileGain = null;
     this._running = null;
     this._theme = null;
     this.playToken += 1;
@@ -177,7 +196,11 @@ export class WebAudioEngine implements AudioEngine {
     if (buffer === undefined) {
       try {
         const res = await fetch(url);
-        if (!res.ok) {
+        // Um host com fallback de SPA (vite preview, GitHub Pages com 404.html) responde 200 +
+        // index.html para um caminho inexistente. Sem esta checagem, o HTML iria parar no
+        // `decodeAudioData` — funciona (a exceção cai no catch), mas baixa a página inteira à toa.
+        const type = res.headers.get('content-type') ?? '';
+        if (!res.ok || type.includes('text/html')) {
           this.missingFiles.add(url);
           return;
         }
@@ -198,7 +221,7 @@ export class WebAudioEngine implements AudioEngine {
     if (ctx === null || this.musicBus === null) return;
     const g = ctx.createGain();
     g.gain.setValueAtTime(0.0001, ctx.currentTime);
-    g.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.4);
+    g.gain.linearRampToValueAtTime(1, ctx.currentTime + FILE_FADE_SEC);
     const src = ctx.createBufferSource();
     src.buffer = buffer;
     src.loop = true;
@@ -322,7 +345,6 @@ export class WebAudioEngine implements AudioEngine {
   playSfx(id: SfxId, gain: number): void {
     const ctx = this.ensureCtx();
     void ctx.resume();
-    if (this.sfxBus !== null) this.sfxBus.gain.value = 1;
     const spec = SFX_CATALOG[id];
     const detune = sfxDetune(id, this.sfxCount);
     this.sfxCount += 1;
