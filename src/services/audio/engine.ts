@@ -1,6 +1,7 @@
 import { beatsToSeconds, type MusicTrack } from './tracks';
 import { MUSIC_SCORES, voicesForBar, type MusicTheme, type Voice } from './music';
 import { SFX_CATALOG, sfxDetune, type SfxId } from './sfx';
+import { musicFileUrl } from './musicSource';
 
 export interface AudioEngine {
   resume(): Promise<void>;
@@ -83,6 +84,13 @@ export class WebAudioEngine implements AudioEngine {
   private barIndex = 0;
   private sfxCount = 0;
   private readonly voiceScratch: Voice[] = [];
+  private readonly baseUrl: string = import.meta.env.BASE_URL;
+  private readonly fileBuffers = new Map<string, AudioBuffer>();
+  private readonly missingFiles = new Set<string>();
+  private fileSource: AudioBufferSourceNode | null = null;
+  private fileGain: GainNode | null = null;
+  /** Token da reprodução corrente: um fetch que resolve tarde não pode ressuscitar faixa antiga. */
+  private playToken = 0;
 
   get running(): MusicTrack | null {
     return this._running;
@@ -130,12 +138,15 @@ export class WebAudioEngine implements AudioEngine {
   playMusic(track: MusicTrack, gain: number, theme: MusicTheme): void {
     const ctx = this.ensureCtx();
     this.stopMusic();
+    const token = this.playToken; // capturado APÓS stopMusic (que já incrementou o anterior)
     this._running = track;
     this._theme = theme;
     if (this.musicBus !== null) this.musicBus.gain.value = gain;
     this.nextBarTime = ctx.currentTime + 0.08;
     this.barIndex = 0;
     this.timer = setInterval(() => this.scheduler(), LOOKAHEAD_MS);
+    // Trilha de arquivo (Suno) é opcional: some ⇒ segue procedural, sem quebrar nada.
+    void this.tryFile(track, theme, token);
   }
 
   stopMusic(): void {
@@ -143,8 +154,63 @@ export class WebAudioEngine implements AudioEngine {
       clearInterval(this.timer);
       this.timer = null;
     }
+    if (this.fileSource !== null) {
+      this.fileSource.stop();
+      this.fileSource.disconnect();
+      this.fileSource = null;
+    }
+    if (this.fileGain !== null) {
+      this.fileGain.disconnect();
+      this.fileGain = null;
+    }
     this._running = null;
     this._theme = null;
+    this.playToken += 1;
+  }
+
+  private async tryFile(track: MusicTrack, theme: MusicTheme, token: number): Promise<void> {
+    const ctx = this.ctx;
+    if (ctx === null) return;
+    const url = musicFileUrl(theme, track, this.baseUrl);
+    if (this.missingFiles.has(url)) return;
+    let buffer = this.fileBuffers.get(url);
+    if (buffer === undefined) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) {
+          this.missingFiles.add(url);
+          return;
+        }
+        buffer = await ctx.decodeAudioData(await res.arrayBuffer());
+        this.fileBuffers.set(url, buffer);
+      } catch {
+        this.missingFiles.add(url); // offline/404/formato inválido ⇒ procedural para sempre
+        return;
+      }
+    }
+    if (token !== this.playToken || this.musicBus === null) return; // trocou de faixa no meio
+    this.startFile(buffer);
+  }
+
+  /** Crossfade 0,4 s: arquivo entra, camada procedural para. */
+  private startFile(buffer: AudioBuffer): void {
+    const ctx = this.ctx;
+    if (ctx === null || this.musicBus === null) return;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.4);
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    src.loop = true;
+    src.connect(g);
+    g.connect(this.musicBus);
+    src.start();
+    this.fileSource = src;
+    this.fileGain = g;
+    if (this.timer !== null) {
+      clearInterval(this.timer);
+      this.timer = null;
+    } // para o procedural
   }
 
   private scheduler(): void {
