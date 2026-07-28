@@ -1,10 +1,5 @@
-import {
-  MUSIC_TRACKS,
-  SFX_CATALOG,
-  beatsToSeconds,
-  type MusicTrack,
-  type SfxId,
-} from './tracks';
+import { SFX_CATALOG, beatsToSeconds, type MusicTrack, type SfxId } from './tracks';
+import { MUSIC_SCORES, voicesForBar, type Voice } from './music';
 
 export interface AudioEngine {
   resume(): Promise<void>;
@@ -69,8 +64,9 @@ export class WebAudioEngine implements AudioEngine {
   private musicGainNode: GainNode | null = null;
   private _running: MusicTrack | null = null;
   private timer: ReturnType<typeof setInterval> | null = null;
-  private nextNoteTime = 0;
-  private stepIndex = 0;
+  private nextBarTime = 0;
+  private barIndex = 0;
+  private readonly voiceScratch: Voice[] = [];
 
   get running(): MusicTrack | null {
     return this._running;
@@ -101,8 +97,8 @@ export class WebAudioEngine implements AudioEngine {
     this.stopMusic();
     this._running = track;
     if (this.musicGainNode !== null) this.musicGainNode.gain.value = gain;
-    this.nextNoteTime = ctx.currentTime + 0.05;
-    this.stepIndex = 0;
+    this.nextBarTime = ctx.currentTime + 0.05;
+    this.barIndex = 0;
     this.timer = setInterval(() => this.scheduler(), LOOKAHEAD_MS);
   }
 
@@ -116,17 +112,27 @@ export class WebAudioEngine implements AudioEngine {
 
   private scheduler(): void {
     if (this.ctx === null || this._running === null || this.musicGainNode === null) return;
-    const spec = MUSIC_TRACKS[this._running];
-    while (this.nextNoteTime < this.ctx.currentTime + SCHEDULE_AHEAD_SEC) {
-      const step = spec.steps[this.stepIndex]!;
-      const dur = beatsToSeconds(step.durBeats, spec.bpm);
-      if (step.freq > 0) this.scheduleNote(spec.type, step.freq, this.nextNoteTime, dur);
-      this.nextNoteTime += dur;
-      this.stepIndex = (this.stepIndex + 1) % spec.steps.length;
+    const score = MUSIC_SCORES.classic[this._running];
+    const barSeconds = beatsToSeconds(score.beatsPerBar, score.bpm);
+    while (this.nextBarTime < this.ctx.currentTime + SCHEDULE_AHEAD_SEC) {
+      voicesForBar(score, this.barIndex, this.voiceScratch);
+      for (const v of this.voiceScratch) {
+        if (v.timbre === 'kick' || v.timbre === 'snare' || v.timbre === 'hat') continue;
+        const when = this.nextBarTime + beatsToSeconds(v.startBeat, score.bpm);
+        this.scheduleNote(v.timbre, v.freq, when, beatsToSeconds(v.durBeats, score.bpm), v.gain);
+      }
+      this.nextBarTime += barSeconds;
+      this.barIndex += 1;
     }
   }
 
-  private scheduleNote(type: OscillatorType, freq: number, when: number, dur: number): void {
+  private scheduleNote(
+    type: OscillatorType,
+    freq: number,
+    when: number,
+    dur: number,
+    gain: number,
+  ): void {
     if (this.ctx === null || this.musicGainNode === null) return;
     const osc = this.ctx.createOscillator();
     const g = this.ctx.createGain();
@@ -134,8 +140,8 @@ export class WebAudioEngine implements AudioEngine {
     osc.frequency.value = freq;
     const sustainEnd = when + Math.max(0.01, dur - 0.05);
     g.gain.setValueAtTime(0, when);
-    g.gain.linearRampToValueAtTime(1, when + 0.01);
-    g.gain.setValueAtTime(1, sustainEnd);
+    g.gain.linearRampToValueAtTime(gain, when + 0.01);
+    g.gain.setValueAtTime(gain, sustainEnd);
     g.gain.linearRampToValueAtTime(0, when + dur);
     osc.connect(g);
     g.connect(this.musicGainNode);
