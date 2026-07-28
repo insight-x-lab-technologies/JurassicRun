@@ -1,9 +1,10 @@
 import { effect, signal } from '@preact/signals';
 import { settingsService } from '@services/settings';
+import { entitlementsService } from '@services/entitlements';
 import { route } from '@app/router';
 import { resolveAudioTarget } from './policy';
 import { WebAudioEngine, type AudioEngine } from './engine';
-import type { SfxId } from './tracks';
+import type { SfxId } from './sfx';
 
 class AudioService {
   private engine: AudioEngine = new WebAudioEngine();
@@ -23,14 +24,15 @@ class AudioService {
         menuMusic: settingsService.menuMusic.value,
         gameplayMusic: settingsService.gameplayMusic.value,
         unlocked: this._unlocked.value,
+        expansionId: entitlementsService.activeExpansion.value.id,
       });
       this._sfxGain = target.sfxGain;
       if (target.track === null) {
         if (this.engine.running !== null) this.engine.stopMusic();
         return;
       }
-      if (this.engine.running !== target.track) {
-        this.engine.playMusic(target.track, target.musicGain);
+      if (this.engine.running !== target.track || this.engine.runningTheme !== target.theme) {
+        this.engine.playMusic(target.track, target.musicGain, target.theme);
       } else {
         this.engine.setMusicGain(target.musicGain);
       }
@@ -77,3 +79,4 @@ export function bindButtonSfx(root: EventTarget, service: AudioService = audioSe
 }
 
 export type { AudioEngine } from './engine';
+export type { SfxId } from './sfx';

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   volumeToGain,
   resolveAudioTarget,
+  musicThemeFor,
   MUSIC_CEILING,
   SFX_CEILING,
 } from '@services/audio/policy';
@@ -13,6 +14,7 @@ const base: AudioInput = {
   menuMusic: true,
   gameplayMusic: true,
   unlocked: true,
+  expansionId: 'classic',
 };
 
 describe('volumeToGain', () => {
@@ -35,7 +37,7 @@ describe('resolveAudioTarget', () => {
 
   it('volume 0 ⇒ silêncio total', () => {
     const t = resolveAudioTarget({ ...base, volume: 0 });
-    expect(t).toEqual({ track: null, musicGain: 0, sfxGain: 0 });
+    expect(t).toEqual({ track: null, musicGain: 0, sfxGain: 0, theme: 'classic' });
   });
 
   it('rota play + gameplayMusic ⇒ faixa gameplay', () => {
@@ -59,5 +61,28 @@ describe('resolveAudioTarget', () => {
   it('menuMusic off em rota de menu ⇒ sem música', () => {
     const t = resolveAudioTarget({ ...base, route: 'shop', menuMusic: false });
     expect(t.track).toBeNull();
+  });
+});
+
+describe('musicThemeFor', () => {
+  it('mapeia as expansões conhecidas', () => {
+    expect(musicThemeFor('classic')).toBe('classic');
+    expect(musicThemeFor('volcano')).toBe('volcano');
+    expect(musicThemeFor('glacier')).toBe('glacier');
+  });
+
+  it('cai em classic para id desconhecido', () => {
+    expect(musicThemeFor('nao-existe')).toBe('classic');
+    expect(musicThemeFor('')).toBe('classic');
+  });
+});
+
+describe('resolveAudioTarget — tema', () => {
+  it('propaga o tema da expansão ativa', () => {
+    expect(resolveAudioTarget({ ...base, expansionId: 'volcano' }).theme).toBe('volcano');
+  });
+
+  it('mantém o tema mesmo em silêncio (o consumidor não precisa de fallback)', () => {
+    expect(resolveAudioTarget({ ...base, volume: 0, expansionId: 'glacier' }).theme).toBe('glacier');
   });
 });

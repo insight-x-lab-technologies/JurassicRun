@@ -6,7 +6,7 @@ describe('nullAudioEngine (spy)', () => {
     const e = nullAudioEngine();
     expect(e.running).toBeNull();
 
-    e.playMusic('menu', 0.3);
+    e.playMusic('menu', 0.3, 'classic');
     expect(e.running).toBe('menu');
     expect(e.musicStarts).toEqual(['menu']);
     expect(e.lastMusicGain).toBeCloseTo(0.3);
@@ -26,5 +26,18 @@ describe('nullAudioEngine (spy)', () => {
     expect(e.sfxPlayed).toEqual(['click']);
     await e.resume();
     expect(e.resumed).toBe(true);
+  });
+});
+
+describe('nullAudioEngine — tema', () => {
+  it('registra o tema junto com a faixa', () => {
+    const e = nullAudioEngine();
+    e.playMusic('menu', 0.3, 'volcano');
+    expect(e.running).toBe('menu');
+    expect(e.runningTheme).toBe('volcano');
+    expect(e.themeStarts).toEqual(['volcano']);
+    e.stopMusic();
+    expect(e.running).toBeNull();
+    expect(e.runningTheme).toBeNull();
   });
 });

@@ -284,13 +284,64 @@ ativo é visível; sem strings hardcoded.
 
 ## Frente C — Áudio / UX
 
-### 9.6 Áudio procedural rico (#5)
-- [ ] Reescrever `src/services/audio/tracks.ts` + `engine.ts`: música **multi-camada**
+### 9.6 Áudio procedural rico (#5) — CONCLUÍDA
+- [x] Reescrever `src/services/audio/tracks.ts` + `engine.ts`: música **multi-camada**
       (baixo + percussão + melodia + harmonia/pad), com tempo/tom/escala distintos por contexto
       (menu vs. gameplay) e por tema (classic/volcano/glacier).
-- [ ] **SFX distintos e agradáveis**: flap, coleta de comida, colisão/morte, ativação de
+- [x] **SFX distintos e agradáveis**: flap, coleta de comida, colisão/morte, ativação de
       power-up, game over, clique de menu (hoje só existe `click`).
-- [ ] Manter tudo procedural (osciladores + envelopes + ruído filtrado), zero arquivo, offline.
+- [x] Manter tudo procedural (osciladores + envelopes + ruído filtrado), zero arquivo, offline.
+- [x] **Extra (fora do escopo original):** seam de **trilha de arquivo** — se existir
+      `public/audio/<tema>/<contexto>.mp3`, ele entra em crossfade por cima do procedural.
+
+> **CONCLUÍDA** (`src/core/` intocado, determinismo **67**; spec/plano
+> `docs/superpowers/{specs,plans}/2026-07-27-rich-procedural-audio*`). Puro×casca em 3 módulos
+> novos: **`music.ts`** (modelo GENERATIVO, não 6 partituras à mão — `MusicScore {bpm, modo,
+> progressão, 4 × LayerSpec}` + `voicesForBar(score, bar, out)` que recicla objetos `Voice` num
+> scratch; a variação de melodia vem de um **LCG semeado por `(id da partitura, índice do
+> compasso)`** ⇒ mesma barra sempre soa igual, o loop de 8 compassos não enjoa e o teste consegue
+> afirmar o resultado — sem `Math.random`, no espírito da REGRA 1 mesmo fora do core);
+> **`sfx.ts`** (9 SFX como pilha de parciais `SfxLayer` com envelope AD, glide e ruído filtrado +
+> `sfxDetune` cíclico para o flap não virar metralhadora); **`musicSource.ts`** (URL da faixa de
+> arquivo sob `import.meta.env.BASE_URL`). Casca `engine.ts`: buses separados de música/SFX sob um
+> `DynamicsCompressor` de destino, **ruído branco cacheado 1× por LCG**, scheduler que agenda por
+> **compasso** (lookahead 25 ms / janela 0,35 s) e renderer de SFX multi-camada.
+> **Tema = expansão ativa** (`musicThemeFor` na `policy`, seam 4.6/8.3): trocar de pack troca a
+> música ao vivo, como já fazia com o tema CSS.
+> **SFX de gameplay:** `src/render/audioEvents.ts` é um detector PURO que faz **diff de escalares
+> do `WorldState`** (flap por borda de `lastFlap`, coin/nearMiss/levelUp por contador, powerup por
+> bitmask de kinds, block por `extraLives` caindo com `alive` true, hit por `alive true→false`),
+> alocação-zero, encaminhado pelo `GameScene`. O `gameOver` (cauda longa) sai da transição 1× para
+> `dying` de 9.3, não do detector por-frame.
+> **Decisões:** (a) música multi-camada **generativa** em vez de partituras fixas — 6 combinações
+> saem de ~30 linhas de dados por score, e trocar o "sabor" de um tema é editar modo/tônica/timbre;
+> (b) **SFX NÃO vão para o Suno** — latência zero e variação por evento pedem procedural;
+> (c) o seam de arquivo entrou **agora** porque o usuário já vai gerar trilhas no Suno
+> (`docs/audio/specs/SUNO-BRIEF.md` traz os 6 prompts prontos): é a REGRA 2 aplicada a áudio, e
+> sem arquivo nada muda; (d) os `.mp3` ficam **fora do precache** do SW (`globPatterns` não inclui
+> `mp3`) — são grandes e opcionais.
+> **Bug do plano corrigido na Task 5:** rearmar o baseline do detector por `world.tick` não cobria
+> a **primeira** partida (`0 < -1` é falso) e `createWorld` começa com `level: 1` — e um traço pode
+> começar com escudo ativo ⇒ `levelUp`/`powerup` espúrios no 1º frame. Trocado por comparação de
+> **referência** do `WorldState` (o `MatchController` só troca o objeto em `startMatch`).
+> **Review final: NOT READY** apenas pelo gate de processo (faltava a validação de browser);
+> 0 Critical/Important de código. Os 4 Minor foram corrigidos inline: limiter no destino,
+> fade-out de 0,4 s no `stopMusic` da trilha de arquivo (o `stop()` seco estalava),
+> guarda de `content-type` no `tryFile` e remoção de um `sfxBus.gain.value = 1` redundante.
+> **Validação Playwright** (build de produção, SW desregistrado, instrumentando `AudioContext` —
+> sem exposição TEMP no código): menu glacier = baixo 65,4 Hz + pad 261,6 + melodia variando por
+> barra + 8 hats, com o compasso fechando em **3529 ms = exatamente 4 beats a 68 bpm**; `Select`
+> em Volcano troca os timbres na hora (sawtooth F2 87,3 + **8 kicks** 160→45 Hz); gameplay usa
+> outro score (36 sawtooth + 18 square); **6 taps ⇒ 6 flaps**, 1 moeda ⇒ arpejo 988+1319,
+> morte ⇒ **1 hit** (180→55) + gameOver **1×** (392/311/233); as 3 URLs de trilha foram buscadas
+> (seam ligado) e a ausência caiu no procedural; **0 erros de console**; fps 7,3 sob SwiftShader
+> headless (mesma faixa de 9.3/9.4 — GPU-bound, não áudio).
+> **Gotcha novo:** medir SFX no browser exige **uma única chamada** de `evaluate` que joga E lê —
+> o jogo continua rodando no intervalo entre duas chamadas, e a morte cai nesse buraco.
+> Suíte **908** testes, `check` limpo, determinismo **67**.
+> **Backlog:** `engine.ts` em ~355 linhas (acima do guia de 300 — separar um módulo de síntese
+> numa próxima passada); `levelUp`/`nearMiss`/`powerup`/`block` provados só por teste unitário
+> (difíceis de forçar no browser); ducking da música durante SFX; trilhas reais do Suno.
 
 **Estado atual:** placeholder do 4.10 — sequência de notas trivial + 1 SFX de clique. O
 `AudioEngine` é a costura; reescrita fica atrás dela sem mexer nos consumidores.
