@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { boundsOf, leftExtent, rightExtent } from '@core/sim';
-import type { Entity, Hitbox } from '@core/sim';
+import type { Entity, Hitbox, WorldState } from '@core/sim';
 import { isEffectActive } from '@core/powerup';
 import { renderableFor, DINO_TYPE_ID } from './manifest';
 import type { MatchController } from './match';
@@ -21,6 +21,9 @@ import type { IdleSpec } from './manifest';
 import { EFFECT_ORDER, EFFECT_COLORS, auraPulse, auraRadius } from './effects';
 import { i18n } from '@services/i18n';
 import { entitlementsService } from '@services/entitlements';
+import { audioService } from '@services/audio';
+import type { SfxId } from '@services/audio';
+import { AudioEventDetector } from './audioEvents';
 import { HudTicker, formatHudValues } from './hud';
 import { formatGameOverStats } from './gameover';
 import {
@@ -108,6 +111,15 @@ export class GameScene extends Phaser.Scene {
   private idleElapsed = 0;
   private readonly swayScratch: SwayOffset = { dx: 0 };
   private readonly dripScratch: DripState = { y: 0, radius: 0, alpha: 0, visible: false };
+
+  // Eventos de gameplay → SFX (9.6): detector puro + array-scratch de saída (REGRA 3).
+  // Identidade da partida corrente via REFERÊNCIA do WorldState (não `world.tick`): a 1ª
+  // partida também precisa rearmar o baseline contra o estado inicial real (ex.: `level` começa
+  // em 1, não 0; um traço pode começar com escudo ativo) — comparar tick contra um sentinel
+  // deixaria esse baseline errado no primeiro frame e disparava SFX espúrio.
+  private readonly audioEvents = new AudioEventDetector();
+  private readonly sfxScratch: SfxId[] = [];
+  private lastAudioWorld: WorldState | null = null;
 
   /** Px de render por unidade de mundo (W5). Fixo durante a vida da cena; ver resolution.ts. */
   private readonly renderScale: number;
@@ -336,6 +348,15 @@ export class GameScene extends Phaser.Scene {
     const world = match.world;
     const dying = match.dying;
 
+    // 9.6: eventos de gameplay → SFX. Nova partida (objeto WorldState novo) ⇒ rearma o baseline
+    // antes de comparar, senão os campos do mundo novo (ex.: food=0 após uma partida com comida)
+    // disparariam eventos falsos de "perda" na primeira leitura.
+    if (world !== this.lastAudioWorld) {
+      this.audioEvents.reset(world);
+      this.lastAudioWorld = world;
+    }
+    for (const id of this.audioEvents.poll(world, this.sfxScratch)) audioService.playSfx(id);
+
     // Transições da animação de morte (9.3) — 1×, nunca por frame (REGRA 3).
     if (dying && !this.wasDying) {
       // Entrada em `dying`: memoriza o ponto de impacto (posição interpolada) e troca o flap pela
@@ -343,6 +364,9 @@ export class GameScene extends Phaser.Scene {
       this.deathX = loop.renderX;
       this.deathY = loop.renderY;
       this.dinoSprite.play(this.hitAnimKey);
+      // Game over é um SFX de cauda longa: disparado 1× na transição p/ `dying`, não pelo
+      // detector por-frame (que já cobriu `hit` no impacto/morte).
+      audioService.playSfx('gameOver');
     } else if (!dying && this.wasDying) {
       // Saída (fim da animação ou nova partida): repõe o render normal e religa o flap.
       this.dinoSprite.setRotation(0);
