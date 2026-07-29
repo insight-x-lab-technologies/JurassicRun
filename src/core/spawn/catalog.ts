@@ -83,7 +83,15 @@ export const OBSTACLE_CATALOG: readonly SpawnType[] = [
     },
   },
   // Agulha rochosa flutuante: estreita e alta ⇒ decide-se passar por cima ou por baixo.
-  { id: 'obstacle.spire', anchor: 'floating', makeHitbox: (rng) => aabb(rng.range(4, 6), rng.range(24, 34)) },
+  {
+    id: 'obstacle.spire',
+    anchor: 'floating',
+    makeHitbox: (rng) => {
+      const halfW = rng.range(4, 6);
+      const halfH = rng.range(24, 34);
+      return aabb(halfW, halfH);
+    },
+  },
   // Par chão+teto no mesmo x, com fresta no meio (composto de 2 peças). ATENÇÃO: a fresta
   // (GATE_GAP_*) e os braços mínimos (GATE_ARM_MIN) são ABSOLUTOS, calibrados para o campo
   // lógico fixo de worldHeight=180 — os invariantes de justiça (testados em catalog.test.ts)
@@ -140,7 +148,7 @@ export const OBSTACLE_CATALOG: readonly SpawnType[] = [
 ];
 
 /** Catálogo de coletáveis (pássaros-moeda). 1.5: um único tipo basta. */
-export const COLLECTIBLE_CATALOG: readonly SpawnType[] = [
+export const COLLECTIBLE_CATALOG: readonly SimpleSpawnType[] = [
   // Pássaro-moeda flutuante (comida). Corpo compacto ⇒ hitbox circular.
   { id: 'bird.coin', anchor: 'floating', makeHitbox: (rng) => circle(rng.range(7, 9)) },
 ];

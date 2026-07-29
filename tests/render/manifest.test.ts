@@ -2,19 +2,18 @@ import { describe, it, expect } from 'vitest';
 import { ASSET_MANIFEST, DINO_TYPE_ID, renderableFor } from '@render/manifest';
 import { OBSTACLE_CATALOG, COLLECTIBLE_CATALOG } from '@core/spawn';
 import { createRng } from '@core/rng';
-import type { SpawnField } from '@core/spawn';
+import type { SpawnField, SpawnType } from '@core/spawn';
 import { POWERUP_CATALOG } from '@core/powerup';
 
 const FIELD: SpawnField = { worldHeight: 180, yMargin: 8 };
 
 /** Tags que o gerador de fato coloca em `entity.tags[0]` — para tipo composto, as tags das peças. */
-function emittedTags(catalog: readonly { id: string; makePieces?: unknown }[]): string[] {
+function emittedTags(catalog: readonly SpawnType[]): string[] {
   const out: string[] = [];
   for (const t of catalog) {
-    const composite = t as { id: string; makePieces?: (rng: ReturnType<typeof createRng>, f: SpawnField) => readonly { tag?: string }[] };
-    if (composite.makePieces === undefined) { out.push(t.id); continue; }
+    if (t.makePieces === undefined) { out.push(t.id); continue; }
     const rng = createRng('manifest-guard');
-    for (const p of composite.makePieces(rng, FIELD)) out.push(p.tag ?? t.id);
+    for (const p of t.makePieces(rng, FIELD)) out.push(p.tag ?? t.id);
   }
   return out;
 }

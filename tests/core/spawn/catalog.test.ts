@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createRng } from '@core/rng';
-import { OBSTACLE_CATALOG } from '@core/spawn';
+import { OBSTACLE_CATALOG, SPAWN_Y_MARGIN } from '@core/spawn';
+import { WORLD_HEIGHT } from '@core/sim/constants';
 import { boundsOf } from '@core/sim/hitbox';
 import type { SpawnField, SpawnPiece } from '@core/spawn';
 
@@ -33,7 +34,7 @@ describe('OBSTACLE_CATALOG', () => {
   });
 });
 
-const FIELD: SpawnField = { worldHeight: 180, yMargin: 8 };
+const FIELD: SpawnField = { worldHeight: WORLD_HEIGHT, yMargin: SPAWN_Y_MARGIN };
 const DINO_H = 16;
 const MIN_PASSAGE = 30; // ≈1,9× a altura do dino
 
@@ -56,7 +57,9 @@ describe('justiça dos obstáculos novos (9.8)', () => {
     for (let i = 0; i < 500; i++) {
       const pieces = t.makePieces!(rng, FIELD);
       expect(pieces).toHaveLength(2);
-      const [ceil, floor] = pieces.map(span) as [ReturnType<typeof span>, ReturnType<typeof span>];
+      const [ceilPiece, floorPiece] = pieces;
+      const ceil = span(ceilPiece!);
+      const floor = span(floorPiece!);
       expect(ceil.top).toBeCloseTo(FIELD.yMargin, 6);
       expect(floor.bottom).toBeCloseTo(FIELD.worldHeight - FIELD.yMargin, 6);
       expect(floor.top - ceil.bottom).toBeGreaterThanOrEqual(MIN_PASSAGE);

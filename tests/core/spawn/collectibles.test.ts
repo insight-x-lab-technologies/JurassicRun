@@ -34,7 +34,7 @@ describe('geração de coletáveis', () => {
 
   it('catálogo cobre bird.coin com hitbox circular', () => {
     expect(COLLECTIBLE_CATALOG.some((t) => t.id === 'bird.coin')).toBe(true);
-    const hb = COLLECTIBLE_CATALOG[0]!.makeHitbox!(createRng('x'));
+    const hb = COLLECTIBLE_CATALOG[0]!.makeHitbox(createRng('x'));
     expect(hb.kind).toBe('circle');
   });
 });

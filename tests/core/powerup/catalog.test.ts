@@ -15,8 +15,7 @@ describe('powerup catalog', () => {
     const rng = createRng('endless:CAT');
     for (const t of POWERUP_CATALOG) {
       expect(t.anchor).toBe('floating');
-      // Catálogo de power-ups só tem tipos simples.
-      expect(t.makeHitbox!(rng).kind).toBe('circle');
+      expect(t.makeHitbox(rng).kind).toBe('circle');
     }
   });
 
