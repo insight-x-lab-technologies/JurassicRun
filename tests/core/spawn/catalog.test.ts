@@ -14,7 +14,8 @@ describe('OBSTACLE_CATALOG', () => {
 
   it('cobre os três tipos de hitbox (não só retângulos)', () => {
     const rng = createRng('catalog-test');
-    const kinds = new Set(OBSTACLE_CATALOG.map((t) => t.makeHitbox(rng).kind));
+    // Catálogo atual só tem tipos simples (nenhum composto ainda).
+    const kinds = new Set(OBSTACLE_CATALOG.map((t) => t.makeHitbox!(rng).kind));
     expect(kinds.has('aabb')).toBe(true);
     expect(kinds.has('circle')).toBe(true);
     expect(kinds.has('polygon')).toBe(true);
@@ -22,8 +23,8 @@ describe('OBSTACLE_CATALOG', () => {
 
   it('makeHitbox é determinístico para o mesmo estado de rng', () => {
     const t = OBSTACLE_CATALOG[0]!;
-    const a = t.makeHitbox(createRng('seed-x'));
-    const b = t.makeHitbox(createRng('seed-x'));
+    const a = t.makeHitbox!(createRng('seed-x'));
+    const b = t.makeHitbox!(createRng('seed-x'));
     expect(a).toEqual(b);
   });
 });

@@ -5,16 +5,43 @@ import { aabb, circle, polygon } from '@core/sim/hitbox';
 /** Onde a entidade se ancora verticalmente. */
 export type Anchor = 'floor' | 'ceiling' | 'floating';
 
-/**
- * Tipo lógico de algo colocável (obstáculo ou coletável): dado puro. `id` = chave do
- * asset-registry e tag da entidade. `makeHitbox` pode variar o tamanho via Rng (a arte
- * nunca muda a hitbox).
- */
-export interface SpawnType {
+/** Campo lógico visto por um compositor de peças (subconjunto de SpawnConfig). */
+export interface SpawnField {
+  readonly worldHeight: number;
+  readonly yMargin: number;
+}
+
+/** Peça de um obstáculo composto: hitbox convexa própria, `dx` relativo ao x do spawn e `y`
+ *  CENTRO absoluto (o compositor já ancorou). `tag` default = id do tipo. */
+export interface SpawnPiece {
+  readonly hitbox: Hitbox;
+  readonly dx: number;
+  readonly y: number;
+  readonly tag?: string;
+}
+
+/** Tipo simples: 1 entidade, ancorada por `placeY`. */
+export interface SimpleSpawnType {
   readonly id: string;
   readonly anchor: Anchor;
   makeHitbox(rng: Rng): Hitbox;
+  readonly makePieces?: undefined;
 }
+
+/** Tipo composto: N entidades convexas emitidas no mesmo evento de spawn. Resolve formas
+ *  não-convexas (arco com buraco) sem tocar em `collision/` (SAT continua convexo-a-convexo). */
+export interface CompositeSpawnType {
+  readonly id: string;
+  readonly anchor?: undefined;
+  readonly makeHitbox?: undefined;
+  makePieces(rng: Rng, field: SpawnField): readonly SpawnPiece[];
+}
+
+/**
+ * Tipo lógico de algo colocável (obstáculo ou coletável): dado puro. `id` = chave do
+ * asset-registry e tag da entidade. Tamanhos podem variar via Rng (a arte nunca muda a hitbox).
+ */
+export type SpawnType = SimpleSpawnType | CompositeSpawnType;
 
 /** Catálogo de obstáculos. Cobre aabb, circle e polygon (formatos variados). */
 export const OBSTACLE_CATALOG: readonly SpawnType[] = [

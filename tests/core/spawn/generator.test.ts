@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { createRng } from '@core/rng';
 import { boundsOf } from '@core/sim';
+import { aabb } from '@core/sim/hitbox';
 import type { Entity } from '@core/sim';
 import { SpawnGenerator, DEFAULT_SPAWN_CONFIG } from '@core/spawn';
-import type { SpawnConfig } from '@core/spawn';
+import type { SpawnConfig, SpawnType } from '@core/spawn';
 import { difficultyAt } from '@core/difficulty';
 
 const CONFIG: SpawnConfig = { ...DEFAULT_SPAWN_CONFIG, worldHeight: 180 };
@@ -105,5 +106,64 @@ describe('SpawnGenerator — gapScale (dificuldade)', () => {
     const fromOrig: Entity[] = [];
     g.generateUpTo(30000, fromOrig);
     expect(fromOrig).toEqual(fromClone);
+  });
+});
+
+/** Tipo composto de teste: 2 peças a ±10 em x, y fixos. Consome 1 saque. */
+const COMPOSITE: SpawnType = {
+  id: 'obstacle.test_composite',
+  makePieces: (rng, field) => {
+    const h = 10 + rng.next() * 10;
+    return [
+      { hitbox: aabb(3, h / 2), dx: -10, y: field.yMargin + h / 2 },
+      { hitbox: aabb(3, h / 2), dx: 10, y: field.worldHeight - field.yMargin - h / 2, tag: 'obstacle.test_composite.low' },
+    ];
+  },
+};
+
+describe('obstáculo composto', () => {
+  it('emite uma entidade por peça, no mesmo evento de spawn', () => {
+    const g = new SpawnGenerator(createRng('comp').fork('obstacles'), DEFAULT_SPAWN_CONFIG, [COMPOSITE]);
+    const out: Entity[] = [];
+    g.generateUpTo(DEFAULT_SPAWN_CONFIG.startX, out);
+    expect(out).toHaveLength(2);
+    expect(out[0]!.transform.position.x).toBe(DEFAULT_SPAWN_CONFIG.startX - 10);
+    expect(out[1]!.transform.position.x).toBe(DEFAULT_SPAWN_CONFIG.startX + 10);
+  });
+
+  it('ids são sequenciais entre peças e entre eventos', () => {
+    const g = new SpawnGenerator(createRng('comp').fork('obstacles'), DEFAULT_SPAWN_CONFIG, [COMPOSITE]);
+    const out: Entity[] = [];
+    g.generateUpTo(DEFAULT_SPAWN_CONFIG.startX + 500, out);
+    expect(out.map((e) => e.id)).toEqual(out.map((_, i) => i));
+  });
+
+  it('a tag da peça manda; sem tag, herda o id do tipo', () => {
+    const g = new SpawnGenerator(createRng('comp').fork('obstacles'), DEFAULT_SPAWN_CONFIG, [COMPOSITE]);
+    const out: Entity[] = [];
+    g.generateUpTo(DEFAULT_SPAWN_CONFIG.startX, out);
+    expect(out[0]!.tags).toEqual(['obstacle.test_composite']);
+    expect(out[1]!.tags).toEqual(['obstacle.test_composite.low']);
+  });
+
+  it('mesma seed ⇒ mesmas peças (determinismo)', () => {
+    const run = () => {
+      const g = new SpawnGenerator(createRng('comp').fork('obstacles'), DEFAULT_SPAWN_CONFIG, [COMPOSITE]);
+      const out: Entity[] = [];
+      g.generateUpTo(DEFAULT_SPAWN_CONFIG.startX + 900, out);
+      return out;
+    };
+    expect(run()).toEqual(run());
+  });
+
+  it('clone() preserva o cursor e o estado do rng com compostos', () => {
+    const g = new SpawnGenerator(createRng('comp').fork('obstacles'), DEFAULT_SPAWN_CONFIG, [COMPOSITE]);
+    const warm: Entity[] = [];
+    g.generateUpTo(DEFAULT_SPAWN_CONFIG.startX + 300, warm);
+    const a: Entity[] = [];
+    const b: Entity[] = [];
+    g.clone().generateUpTo(DEFAULT_SPAWN_CONFIG.startX + 900, a);
+    g.generateUpTo(DEFAULT_SPAWN_CONFIG.startX + 900, b);
+    expect(a).toEqual(b);
   });
 });
