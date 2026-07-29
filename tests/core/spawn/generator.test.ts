@@ -3,7 +3,7 @@ import { createRng } from '@core/rng';
 import { boundsOf } from '@core/sim';
 import { aabb } from '@core/sim/hitbox';
 import type { Entity } from '@core/sim';
-import { SpawnGenerator, DEFAULT_SPAWN_CONFIG } from '@core/spawn';
+import { SpawnGenerator, DEFAULT_SPAWN_CONFIG, OBSTACLE_CATALOG } from '@core/spawn';
 import type { SpawnConfig, SpawnType } from '@core/spawn';
 import { difficultyAt } from '@core/difficulty';
 
@@ -35,6 +35,21 @@ describe('SpawnGenerator.generateUpTo', () => {
       }
     }
     expect(out[0]!.transform.position.x).toBe(CONFIG.startX);
+  });
+
+  // Catálogo reduzido a tipos simples (1 entidade por evento, dx=0): isola a garantia de
+  // avanço ESTRITO do cursor entre eventos de spawn, sem a interferência do dx relativo de
+  // peças compostas (que pode empatar/intercalar x DENTRO do mesmo evento — ver teste acima).
+  const SIMPLE_ONLY_CATALOG: readonly SpawnType[] = OBSTACLE_CATALOG.filter((t) => t.makePieces === undefined);
+
+  it('entre eventos de spawn (catálogo só de tipos simples), o x avança estritamente ≥ gapMin', () => {
+    const out: Entity[] = [];
+    new SpawnGenerator(createRng('gen-test').fork('obstacles'), CONFIG, SIMPLE_ONLY_CATALOG).generateUpTo(5000, out);
+    expect(out.length).toBeGreaterThan(10);
+    for (let i = 1; i < out.length; i++) {
+      const dx = out[i]!.transform.position.x - out[i - 1]!.transform.position.x;
+      expect(dx).toBeGreaterThanOrEqual(CONFIG.gapMin - 1e-9);
+    }
   });
 
   it('placement mantém a hitbox dentro de [margin, worldHeight - margin]', () => {

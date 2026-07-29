@@ -121,3 +121,42 @@ describe('justiça dos obstáculos novos (9.8)', () => {
     }
   });
 });
+
+// Campo degenerado: worldHeight tão pequeno que o par do gate não cabe (tMax < tMin) — exercita
+// o clamp de I1 (ceilH/floorH nunca negativos) e ainda assim precisa consumir o mesmo nº de
+// saques de RNG do caso normal (contrato de determinismo/estabilidade do stream).
+const DEGENERATE_FIELD: SpawnField = { worldHeight: 60, yMargin: 8 };
+
+// Nº de saques de RNG (`next()`) que cada tipo composto consome por chamada de `makePieces`,
+// FIXO independente do campo (inclusive no ramo degenerado). Se um tipo composto mudar de
+// tuning e passar a consumir um nº variável de saques, o stream do SpawnGenerator deixa de ser
+// estável entre fps/replays — este teste pina o nº esperado para pegar a regressão cedo.
+const COMPOSITE_RNG_DRAWS: Record<string, number> = {
+  'obstacle.gate': 2, // rng.range(gap) + rng.next(u)
+  'obstacle.rock_arch': 1, // rng.range(legH)
+};
+
+describe('consumo de RNG dos tipos compostos é fixo (determinismo)', () => {
+  for (const [id, draws] of Object.entries(COMPOSITE_RNG_DRAWS)) {
+    for (const field of [FIELD, DEGENERATE_FIELD]) {
+      it(`${id}: consome exatamente ${draws} saque(s) em worldHeight=${field.worldHeight}`, () => {
+        const t = typeById(id);
+        const seed = `rng-draws-${id}-${field.worldHeight}`;
+
+        const rngViaPieces = createRng(seed);
+        const pieces = t.makePieces!(rngViaPieces, field);
+
+        const rngViaNext = createRng(seed);
+        for (let i = 0; i < draws; i++) rngViaNext.next();
+
+        // Mesmo nº de saques consumidos ⇒ o próximo valor sorteado por ambos os streams coincide.
+        expect(rngViaPieces.next()).toBe(rngViaNext.next());
+
+        // Ramo degenerado (I1): nenhuma peça pode sair com hitbox invertida (halfH negativo).
+        for (const p of pieces) {
+          if (p.hitbox.kind === 'aabb') expect(p.hitbox.halfH).toBeGreaterThanOrEqual(0);
+        }
+      });
+    }
+  }
+});

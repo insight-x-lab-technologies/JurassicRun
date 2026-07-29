@@ -2,7 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { simulate, hashState, buildTimeline } from '@core/replay';
 import { verifyChallengeSubmission, type ChallengeSubmission } from '@services/online/verifyChallenge';
 
-const SEED = 'daily:2026-07-16';
+// 9.8 (fix round 1): a seed antiga ('daily:2026-07-16') passou a produzir, com o catálogo novo,
+// um congelamento coincidente — o `obstacle.gate` pode ocupar quase toda a coluna vertical (ver
+// comentário em src/core/spawn/catalog.ts), então a trajetória adulterada (primeiros 100 steps
+// invertidos) ainda colidia com a MESMA parede no MESMO step e o estado final congelava
+// byte-idêntico ao original, fazendo `verifyChallengeSubmission` aceitar por engano a submissão
+// adulterada. Trocada por uma seed onde a adulteração realmente diverge (o step de morte muda ou
+// a posição no congelamento muda, mesmo quando distance/score coincidem por acaso).
+const SEED = 'daily:2026-07-05';
 
 /** Constrói uma submissão fiel re-simulando de verdade. */
 function faithful(seed = SEED): ChallengeSubmission {

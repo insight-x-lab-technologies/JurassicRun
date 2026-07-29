@@ -84,7 +84,11 @@ export const OBSTACLE_CATALOG: readonly SpawnType[] = [
   },
   // Agulha rochosa flutuante: estreita e alta ⇒ decide-se passar por cima ou por baixo.
   { id: 'obstacle.spire', anchor: 'floating', makeHitbox: (rng) => aabb(rng.range(4, 6), rng.range(24, 34)) },
-  // Par chão+teto no mesmo x, com fresta no meio (composto de 2 peças).
+  // Par chão+teto no mesmo x, com fresta no meio (composto de 2 peças). ATENÇÃO: a fresta
+  // (GATE_GAP_*) e os braços mínimos (GATE_ARM_MIN) são ABSOLUTOS, calibrados para o campo
+  // lógico fixo de worldHeight=180 — os invariantes de justiça (testados em catalog.test.ts)
+  // só valem nesse campo. Em campos bem maiores o par passa a ocupar quase toda a coluna
+  // vertical fora da fresta (ver nota em weather.determinism.test.ts, que usa worldHeight=600).
   {
     id: 'obstacle.gate',
     makePieces: (rng, field) => {
@@ -96,8 +100,12 @@ export const OBSTACLE_CATALOG: readonly SpawnType[] = [
       // Sempre consome exatamente 1 saque (estabilidade do stream), como placeY faz no floating.
       const u = rng.next();
       const t = tMax > tMin ? tMin + u * (tMax - tMin) : (tMin + tMax) / 2;
-      const ceilH = t - top;
-      const floorH = bottom - (t + gap);
+      // Campo degenerado (worldHeight pequeno, ex.: < 68 com yMargin=8): `t` pode cair fora de
+      // [top, bottom-gap] e ceilH/floorH ficariam negativos, gerando hitbox invertida (atravessa
+      // boundsOf/SAT/culling sem erro). Clampa em 0 — nesse caso a peça vira uma faixa de altura
+      // zero, não uma caixa inválida; não é mais "justo", mas nunca corrompe o estado.
+      const ceilH = Math.max(0, t - top);
+      const floorH = Math.max(0, bottom - (t + gap));
       return [
         { hitbox: aabb(GATE_HALF_W, ceilH / 2), dx: 0, y: top + ceilH / 2 },
         { hitbox: aabb(GATE_HALF_W, floorH / 2), dx: 0, y: bottom - floorH / 2 },
