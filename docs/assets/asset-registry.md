@@ -25,11 +25,13 @@ usada no manifesto de assets do render.
 ## Obstáculos (formatos variados)
 | id | descrição | status | spec |
 |----|-----------|--------|------|
-| `obstacle.rock_arch` | arco de pedra | placeholder | — |
 | `obstacle.tree` | árvore | art | `specs/obstacle.tree.md` |
 | `obstacle.vine` | cipó/coluna vegetal | art | `specs/obstacle.vine.md` |
 | `obstacle.boulder` | pedregulho flutuante | art | `specs/obstacle.boulder.md` |
 | `obstacle.stalactite` | estalactite | art | `specs/obstacle.stalactite.md` |
+| `obstacle.spire` | agulha rochosa flutuante (9.8) | spec | `specs/obstacle.spire.md` |
+| `obstacle.gate` | par chão+teto com fresta (9.8, composto 2 peças) | spec | `specs/obstacle.gate.md` |
+| `obstacle.rock_arch.leg` / `obstacle.rock_arch.span` | arco de pedra (9.8, composto 3 peças: 2 pernas + trave) | spec | `specs/obstacle.rock_arch.md` |
 
 ## Coletáveis / power-ups
 | id | descrição | status | spec |

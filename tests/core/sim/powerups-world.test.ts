@@ -49,7 +49,15 @@ describe('power-ups in the world', () => {
 
   it('the spawner materializes power-ups keyed by distance and cloneWorld deep-copies them', () => {
     const w = createWorld(CONFIG);
-    for (let i = 0; i < 400; i++) step(w, { flap: i % 20 === 0 });
+    // flapEvery recalibrado em 9.8 (Task 4): o catálogo de obstáculos cresceu de 4 para 7 tipos
+    // (`obstacle.spire`/`gate`/`rock_arch`), o que muda a sequência consumida do fork RNG
+    // 'obstacles' e, por consequência, o traçado do curso neste campo de teste legado
+    // (worldHeight=600, bem maior que o campo real 320×180). Com `flapEvery=20` o dino agora
+    // morre (distance≈535) antes que a 1ª peça do catálogo de power-ups (fork independente,
+    // gapMin=600) tenha chance de materializar. `flapEvery=30` sobrevive até distance≈925,
+    // reproduzindo a mesma propriedade que o teste sempre quis provar. Mesma técnica de
+    // recalibração já usada em economy/weather.determinism.test.ts (9.8, Task 2).
+    for (let i = 0; i < 400; i++) step(w, { flap: i % 30 === 0 });
     expect(w.powerups.length).toBeGreaterThan(0);
     const c = cloneWorld(w);
     expect(c.powerups).toEqual(w.powerups);

@@ -72,20 +72,31 @@ export class SpawnGenerator {
   generateUpTo(upToX: number, sink: Entity[]): void {
     while (this.nextSpawnX <= upToX) {
       const type = this.rng.pick(this.catalog);
-      const hitbox = type.makeHitbox(this.rng);
-      const y = placeY(type.anchor, hitbox, this.config, this.rng);
-      sink.push({
-        id: this.nextId,
-        type: this.entityType,
-        tags: [type.id],
-        transform: { position: { x: this.nextSpawnX, y } },
-        kinematics: { velocity: { x: 0, y: 0 } },
-        hitbox,
-      });
-      this.nextId += 1;
+      if (type.makePieces !== undefined) {
+        const pieces = type.makePieces(this.rng, this.config);
+        for (const p of pieces) {
+          this.emit(p.tag ?? type.id, p.hitbox, this.nextSpawnX + p.dx, p.y, sink);
+        }
+      } else {
+        const hitbox = type.makeHitbox(this.rng);
+        this.emit(type.id, hitbox, this.nextSpawnX, placeY(type.anchor, hitbox, this.config, this.rng), sink);
+      }
       const s = this.gapScale(this.nextSpawnX);
       this.nextSpawnX += this.rng.range(this.config.gapMin * s, this.config.gapMax * s);
     }
+  }
+
+  /** Materializa 1 entidade e avança o contador de id. */
+  private emit(tag: string, hitbox: Hitbox, x: number, y: number, sink: Entity[]): void {
+    sink.push({
+      id: this.nextId,
+      type: this.entityType,
+      tags: [tag],
+      transform: { position: { x, y } },
+      kinematics: { velocity: { x: 0, y: 0 } },
+      hitbox,
+    });
+    this.nextId += 1;
   }
 
   /** Cópia independente (rng clonado + cursor). Para cloneWorld/snapshots. */

@@ -5,7 +5,10 @@
 > entrega com o caminho exato de cada arquivo.
 >
 > **Escopo:** fechar toda a arte pendente da Fase 9 — parallax em camadas (9.1), **os 4
-> obstáculos** (9.2/9.4) e a moeda coletável. **27 imagens obrigatórias + 6 opcionais.**
+> obstáculos** originais (9.2/9.4) e a moeda coletável. **27 imagens obrigatórias + 6 opcionais**
+> (Lotes A–F, já entregues). O **Lote G** (§12), adicionado depois que a lógica do item 9.8 fechou
+> no core, cobre os **3 obstáculos novos** (`spire`, `gate`, `rock_arch`) — é um addendum, ainda
+> pendente de geração.
 >
 > **Regra inegociável do projeto (REGRA 2):** a arte **nunca** define a colisão. A hitbox lógica é
 > fixa no core. Por isso várias restrições abaixo falam em "preencher a moldura inteira" — é a arte
@@ -183,8 +186,9 @@ sprite único esticado distorceria e deixaria buracos, então eles são **montad
 Pedregulho e estalactite têm proporção estável e a forma da arte já casa a forma da colisão ⇒
 1 sprite basta.
 
-**Fora de escopo:** `rock_arch` (arco de pedra) aparece no registro de assets como reservado, mas
-**a lógica ainda não existe no core** — a colisão precisa ser definida antes da arte. Não gerar.
+**Fora deste capítulo (mas não mais fora de escopo):** os 3 obstáculos novos do item 9.8
+(`spire`, `gate`, `rock_arch`) — a lógica e a hitbox **já existem no core** desde que o 9.8 fechou;
+os prompts ficam no **Lote G (§12)**, um addendum a este briefing.
 
 ---
 
@@ -449,11 +453,22 @@ contrato com o pipeline. **Todo lote se repete nos 3 temas** (`classic` / `volca
 |---|---------|----------|
 | 31–33 | `public/art/themes/<tema>/powerups/<tema>_powerups.chromakey.png` | 1536×1024 |
 
+### Lote G — obstáculos novos do item 9.8 (12), PENDENTE · prompts em §12
+
+| # | Arquivo | Dimensão | Regime |
+|---|---------|----------|--------|
+| 34–36 | `public/art/themes/<tema>/obstacles/<tema>_obstacle.spire.segments.png` | 1536×512 | opaco (tira cap/body/base) |
+| 37–39 | `public/art/themes/<tema>/obstacles/<tema>_obstacle.gate.segments.png` | 1536×512 | opaco (tira cap/body/base) |
+| 40–42 | `public/art/themes/<tema>/obstacles/<tema>_obstacle.rock_arch.leg.segments.png` | 1536×512 | opaco (tira cap/body/base) |
+| 43–45 | `public/art/themes/<tema>/obstacles/<tema>_obstacle.rock_arch.span.chromakey.png` | 1024×1024 | magenta `#FF00FF` (1 sprite) |
+
 ### Resumo por expansão
 
 Cada uma das 3 expansões recebe **9 arquivos obrigatórios**: 4 de parallax + 2 tiras de obstáculo
 segmentado + 2 obstáculos de sprite único + 1 moeda. Total **27**. Os opcionais somam 2 por
-expansão (**+6**).
+expansão (**+6**). O **Lote G** (9.8, §12) soma **+4 arquivos por expansão** (3 tiras segmentadas +
+1 sprite único) quando for gerado — não está contado nos totais acima, que descrevem o briefing
+original já entregue.
 
 ### NÃO gerar (já está pronto e aprovado)
 
@@ -463,10 +478,12 @@ botões, 10 ícones, medalhas, barra de nav, emblema, logo) · os 11 retratos de
 Também **não** regerar `<tema>_ui-parallax.chromakey.png` nem `<tema>_obstacle.tree.chromakey.png`
 — são formatos **aposentados** (o parallax virou 4 camadas alpha; a árvore virou tira segmentada).
 
-### Fora de escopo agora
+### Lote G — obstáculos novos do item 9.8 (12), pendente · ver §12
 
-Obstáculos novos do item 9.8 (`rock_arch`, espigão flutuante, pilar chão+teto): a lógica ainda não
-existe no core — a hitbox precisa ser definida antes da arte.
+O item 9.8 fechou no core depois deste briefing original (Lotes A–F): 3 tipos de obstáculo novos —
+`obstacle.spire`, `obstacle.gate`, `obstacle.rock_arch` — com hitbox e asset-spec definidos
+(`docs/assets/specs/obstacle.{spire,gate,rock_arch}.md`). Prompts e tabela de arquivos no
+**§12** abaixo. Ainda **não gerado**.
 
 ---
 
@@ -517,3 +534,125 @@ existe no core — a hitbox precisa ser definida antes da arte.
 > ⚠️ **Armadilha:** `npm run gen:parallax` e `npm run gen:obstacle-placeholder` **sobrescrevem a
 > arte real com placeholder** — são os geradores provisórios. Depois que a arte entrar, não rodar
 > mais; o ideal é remover os dois scripts do `package.json`.
+
+---
+
+## 12. Lote G — Obstáculos novos do item 9.8 (12 imagens) — addendum
+
+O 9.8 fechou 3 tipos de obstáculo novos no core, com asset-spec própria
+(`docs/assets/specs/obstacle.{spire,gate,rock_arch}.md`). Os arquivos seguem os **mesmos regimes de
+fundo e as mesmas regras técnicas dos Lotes B e C** deste briefing (§1): tiras segmentadas =
+**100% opacas**, sem transparência, `body` **tileável na vertical**; sprite único = fundo
+**magenta `#FF00FF`** chapado. Regras gerais válidas para todos: **sem texto**, **sem sombra
+projetada**, iluminação neutra, mesmo bloco de `STYLE`/`PALETTE` do §0.
+
+| Obstáculo | Peça(s) | Forma da colisão | Formato da arte |
+|---|---|---|---|
+| `obstacle.spire` | 1 (flutua, sem chão/teto) | aabb estreita, altura variável 48–68 | tira segmentada (cap/body/base), como `tree`/`vine` |
+| `obstacle.gate` | 2 (teto + chão, **mesma tag/asset**) | aabb, altura variável por peça e por spawn | tira segmentada única, reaproveitada nas duas orientações |
+| `obstacle.rock_arch` | `leg` ×2 (espelhada) + `span` ×1 | `leg`: aabb altura variável 34–50 · `span`: aabb fixa 46×8 | `leg` = tira segmentada · `span` = 1 sprite único |
+
+> **Por que segmentado para `spire`/`gate`/`leg` e não 1 sprite único** (mesmo raciocínio do Lote
+> B): a altura sorteada varia por instância — um sprite esticado distorceria ou deixaria vazios. O
+> `span` do arco tem dimensão FIXA (nunca varia entre spawns) ⇒ 1 sprite único basta, como
+> `boulder`/`stalactite` do Lote C.
+>
+> **`obstacle.gate` é um caso especial:** as peças de teto e de chão **compartilham a mesma tag no
+> core** — não há uma tira "de teto" e outra "de chão", é **uma única tira** usada nas duas
+> orientações (a peça de teto usa o `cap` da tira encostado na rocha do teto e o `base` solto perto
+> da fresta; a peça de chão usa o `cap` solto perto da fresta e o `base` cravado no chão). O prompt
+> abaixo já pede um design plausível nas duas pontas por esse motivo (ver detalhe no asset-spec).
+
+### `obstacle.spire.segments` — agulha rochosa/cristal flutuante
+
+Formato idêntico ao Lote B: 1536×512, três células de 512×512, **cap | body | base**, 100% opacas,
+sem separador, `body` tileável na vertical.
+
+```
+A single 1536x512 image split into three equal 512x512 cells side by side, NO gaps, NO separators,
+NO transparency anywhere — every pixel opaque, content bleeding to all four edges of every cell.
+This is a vertical tiling set for a narrow floating rock/crystal spire seen from the side,
+orthographic, viewed straight on. It floats free in the air — it does NOT attach to any ground or
+ceiling, so both ends should read as fractured/tapering rock, not roots or ceiling fusion.
+CELL 1 (left) = CAP: the top tapering tip of the spire, filling the square, fractured rock texture.
+CELL 2 (middle) = BODY: a repeatable mid-section of the spire, filling the full width, VERTICALLY
+SEAMLESS (top edge continues bottom edge when stacked).
+CELL 3 (right) = BASE: the bottom tapering tip of the spire, mirroring the fractured look of the
+cap, filling the square, no cast shadow, no ground beneath it.
+Consistent rock texture, color and lighting across the three cells so they read as one floating
+spire when stacked.
+STYLE (locked): <colar bloco de estilo>
+PALETTE: <colar paleta do tema>
+```
+
+### `obstacle.gate.segments` — pilar chão+teto que estreita a passagem
+
+Formato idêntico ao Lote B: 1536×512, três células de 512×512, **cap | body | base**, 100% opacas,
+sem separador, `body` tileável na vertical. **Mesma tira usada tanto encostada no teto quanto
+encostada no chão** (ver nota acima) — as duas pontas precisam ler bem em qualquer das duas
+orientações.
+
+```
+A single 1536x512 image split into three equal 512x512 cells side by side, NO gaps, NO separators,
+NO transparency anywhere — every pixel opaque, content bleeding to all four edges of every cell.
+This is a vertical tiling set for a rough stone-and-wood pillar segment used in a prehistoric
+gateway/passage: the SAME strip is used once hanging from a cave ceiling and once rising from the
+ground, so both end cells must plausibly read as either a ceiling fusion or a ground anchor without
+looking wrong either way (e.g. a rough fractured rock joint at each end works for both).
+CELL 1 (left) = CAP: one end of the pillar, fractured/weathered rock joint, filling the square.
+CELL 2 (middle) = BODY: a repeatable pillar mid-section, filling the full width, VERTICALLY
+SEAMLESS (top edge continues bottom edge when stacked).
+CELL 3 (right) = BASE: the other end of the pillar, matching fractured/weathered rock joint,
+filling the square, no cast shadow.
+Consistent stone-and-wood texture, color and lighting across the three cells.
+STYLE (locked): <colar bloco de estilo>
+PALETTE: <colar paleta do tema>
+```
+
+### `obstacle.rock_arch.leg.segments` — perna do arco de pedra
+
+Formato idêntico ao Lote B: 1536×512, três células de 512×512, **cap | body | base**, 100% opacas,
+sem separador, `body` tileável na vertical. A mesma tira é usada nas duas pernas do arco (a
+esquerda é a direita espelhada pelo jogo, sem imagem duplicada).
+
+```
+A single 1536x512 image split into three equal 512x512 cells side by side, NO gaps, NO separators,
+NO transparency anywhere — every pixel opaque, content bleeding to all four edges of every cell.
+This is a vertical tiling set for one leg (pillar) of a prehistoric stone archway, seen from the
+side, orthographic.
+CELL 1 (left) = CAP: the top of the leg where it will meet the archway's horizontal span, flat
+weathered rock, filling the square.
+CELL 2 (middle) = BODY: a repeatable stone pillar mid-section, filling the full width, VERTICALLY
+SEAMLESS (top edge continues bottom edge when stacked).
+CELL 3 (right) = BASE: the foot of the leg planted in the ground, filling the square, no cast
+shadow.
+Consistent stone texture, color and lighting across the three cells so they read as one pillar leg
+when stacked, and coherent with a matching horizontal archway span piece.
+STYLE (locked): <colar bloco de estilo>
+PALETTE: <colar paleta do tema>
+```
+
+### `obstacle.rock_arch.span.chromakey` — trave/lintel do arco
+
+Formato idêntico ao Lote C: 1024×1024, fundo magenta `#FF00FF` chapado, proporção larga e baixa
+(a hitbox lógica é 46×8 unidades de mundo, razão ≈5,75:1) preenchendo a moldura sem margem interna.
+
+```
+A single horizontal stone archway lintel/span connecting two rock pillars, wide and low
+proportions filling a 1024x1024 frame with generous empty magenta margin above and below (the
+object itself is a thin horizontal slab, roughly 6x wider than tall), seen from the side,
+orthographic, lit evenly, coherent stone texture and color with a matching pillar-leg piece.
+No cast shadow.
+BACKGROUND: solid pure magenta #FF00FF, perfectly flat, no gradient, no vignette, no shadow.
+STYLE (locked): <colar bloco de estilo>
+PALETTE: <colar paleta do tema>
+```
+
+### Tabela de entrega do Lote G
+
+Ver tabela em §9 (linhas 34–45). Depois de gerado: rodar `npm run gen:atlas`, adicionar as fontes
+por tema em `themeSources()`/`ATLAS_VARIANTS` de `scripts/gen-atlas.mjs` (modo `parts` para
+`spire`/`gate`/`rock_arch.leg`; entrada simples com `chroma:true` para `rock_arch.span`), trocar as
+entradas `obstacle.spire`/`obstacle.gate`/`ARCH_LEG_TAG`/`ARCH_SPAN_TAG` de `src/render/manifest.ts`
+de `kind:'primitive'` para `kind:'sprite'` (`segmented:true` nas 3 primeiras), e marcar
+`spec` → `art` em `docs/assets/asset-registry.md`.

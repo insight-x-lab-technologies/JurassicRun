@@ -69,9 +69,9 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **67** testes · suíte **921** testes · `check` limpo.
-Branch `main`. Fases 0–8 **CONCLUÍDAS**; Fase 9 **EM ANDAMENTO** (9.1–9.7 feitos ⇒ Frentes A, B e C
-fechadas; resta a D, que toca core).
+**Métricas correntes:** determinismo **67** testes · suíte **935** testes · `check` limpo.
+Branch `main`. Fases 0–8 **CONCLUÍDAS**; Fase 9 **EM ANDAMENTO** (9.1–9.8 feitos ⇒ Frentes A, B e C
+fechadas, Frente D iniciada; resta 9.9).
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
@@ -111,7 +111,9 @@ fechadas; resta a D, que toca core).
 - **`coder` agente NÃO commita** (regra do agente) ⇒ o controlador commita os arquivos staged.
 - **SW cacheia `dist` antigo** na validação Playwright ⇒ unregister SW + clear caches + `?nocache`.
 - **Verificar por NÚMERO, não screenshot:** medir `getComputedStyle`/runtime, não confiar em CSS/print
-  em cache. Encoder pode passar nos testes mas estourar timeout (custo ≠ asserção).
+  em cache. Encoder pode passar nos testes mas estourar timeout (custo ≠ asserção): `tests/render/
+  atlas.test.ts` falha na suíte cheia e passa isolado — **não é regressão**, mas por isso as tasks
+  que rodam só arquivos-alvo escondem quebras (precedente 9.8); rode `npm test` antes de fechar.
 - **`git commit -am` de subagente varre trabalho pré-existente** do usuário ⇒ commitar só os arquivos
   do item (precedente 8.4).
 
@@ -140,8 +142,14 @@ Ordem travada **A → B → C → D**. Um item por PR (SDD por subagentes). Só 
   `uiSfxGain` na política, para não silenciar os SFX de gameplay junto; gate no `playSfx`, **não**
   no `bindButtonSfx`, senão o `unlock()` do 1º gesto morre e a música nunca começa).
   **Frente C concluída.**
-- **D (core/desafios) ← PRÓXIMA:** 9.8 novos obstáculos (`add-gameplay-entity`) · 9.9 briefing + modificadores
-  de desafio por seed (`src/core/challenge/`, função pura da seed; verificador recomputa).
+- **D (core/desafios):** 9.8 novos obstáculos ✅ — `spire` (simples, flutuante) + **compostos**
+  `gate` e `rock_arch`: `SpawnType` virou união `Simple | Composite` (`makePieces` opcional ⇒ N
+  entidades convexas por evento de spawn, sem hitbox não-convexa). Caminho simples byte-idêntico;
+  goldens re-pinados só por `rng.pick` sobre 7 tipos. Entram como placeholder primitivo (desenha a
+  hitbox exata); arte real em asset-specs + Lote G do art-brief. `STORAGE_KEY` de replays `v1→v2`
+  (catálogo novo ⇒ `finalHash` antigos não recomputam). Detalhes/gotchas:
+  [[deferred-new-obstacles-9.8]] · 9.9 briefing + modificadores de desafio por seed
+  (`src/core/challenge/`, função pura da seed; verificador recomputa) ← PRÓXIMA.
 
 **ARTE REAL DA FASE 9 ENTREGUE** (fecha o débito de placeholder de A): 33 PNGs photoreal nos 3 temas
 — parallax 4×3, tiras segmentadas tree/vine 2×3, boulder/stalactite 2×3 (antes classic p/ todo mundo),

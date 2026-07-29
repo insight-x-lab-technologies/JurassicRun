@@ -1,10 +1,10 @@
-import type { SpawnType } from '@core/spawn';
+import type { SimpleSpawnType } from '@core/spawn';
 import type { SpawnConfig } from '@core/spawn';
 import { circle } from '@core/sim/hitbox';
 import type { PowerupKind } from './types';
 
 /** Catálogo de power-ups (pickups flutuantes de corpo compacto ⇒ hitbox circular). */
-export const POWERUP_CATALOG: readonly SpawnType[] = [
+export const POWERUP_CATALOG: readonly SimpleSpawnType[] = [
   { id: 'powerup.shield', anchor: 'floating', makeHitbox: (rng) => circle(rng.range(7, 9)) },
   { id: 'powerup.extraLife', anchor: 'floating', makeHitbox: (rng) => circle(rng.range(7, 9)) },
   { id: 'powerup.magnet', anchor: 'floating', makeHitbox: (rng) => circle(rng.range(7, 9)) },

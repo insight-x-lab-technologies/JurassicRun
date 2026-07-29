@@ -377,13 +377,60 @@ inalterados.
 
 ## Frente D — Conteúdo / desafios (toca core → determinismo)
 
-### 9.8 Novos tipos de obstáculo (#9)
-- [ ] Adicionar 2–3 obstáculos via skill `add-gameplay-entity` (lógica determinística + hitbox
+### 9.8 Novos tipos de obstáculo (#9) — CONCLUÍDA
+- [x] Adicionar 2–3 obstáculos via skill `add-gameplay-entity` (lógica determinística + hitbox
       desacoplada + asset-spec + testes). Candidatos: `rock_arch` (multi-hitbox, adiado do 1.4),
       um obstáculo estreito **flutuante** (gap vertical), um par **chão+teto** que estreita a
       passagem.
-- [ ] Integrar ao `OBSTACLE_CATALOG` / distribuição de spawn; re-pin de goldens se a sequência de
+- [x] Integrar ao `OBSTACLE_CATALOG` / distribuição de spawn; re-pin de goldens se a sequência de
       spawn mudar; `verify-determinism` verde.
+
+> **CONCLUÍDA** (determinismo **67**, suíte **935**; spec/plano
+> `docs/superpowers/{specs,plans}/2026-07-28-new-obstacle-types*`, execução SDD por 4 tasks
+> `.superpowers/sdd/2026-07-28-new-obstacle-types/`). **Os 3 candidatos entraram, todos:**
+> `obstacle.spire` (tipo SIMPLES, `SimpleSpawnType`, aabb flutuante `halfW 4–6 × halfH 24–34` ⇒
+> 8–12×48–68 unidades), `obstacle.gate` (composto, 2 peças aabb `halfW=5` no mesmo `dx=0` — teto
+> + chão, fresta `38–52`, braços `≥12`, **mesma tag** `obstacle.gate` nas duas peças) e
+> `obstacle.rock_arch` (composto, 3 peças — 2 pernas `aabb(5, legH/2)` `legH∈[34,50]` em
+> `dx=∓18`, tag `obstacle.rock_arch.leg`, + 1 trave `aabb(23,4)` fixa em `dx=0`, tag
+> `obstacle.rock_arch.span`; `rock_arch` estava adiado desde o item 1.4 por ser não-convexo).
+> **Mecanismo novo no gerador** (Task 1): `SpawnType` virou union `SimpleSpawnType |
+> CompositeSpawnType` (`makePieces(rng, field): SpawnPiece[]`, opcional); `SpawnGenerator.
+> generateUpTo` ramifica por `type.makePieces !== undefined`, preservando o caminho simples
+> byte-a-byte (prova mais forte de não-regressão: os goldens do catálogo **por-tag** não mudam
+> quando só o mecanismo entra, antes do catálogo real crescer). Tuning de `gate`/`rock_arch` é
+> **ABSOLUTO**, calibrado só para o campo lógico fixo `worldHeight=180`/`yMargin=8` (faixa útil
+> `y∈[8,172]`); toda passagem garantida **≥30 unidades** (testes de justiça).
+> **Determinismo:** catálogo de obstáculos cresceu de 4 para 7 tipos ⇒ `rng.pick` sobre range maior
+> muda a sequência do fork `'obstacles'` ⇒ 3 dos 4 goldens de `replay.determinism.test.ts`
+> re-pinados (o cenário "sem seed" fica inalterado, mundo sem spawner); `_verify.bundle.js`
+> regenerado (`npm run build:edge`). **`STORAGE_KEY` de replays bumpado `v1→v2`**
+> (`src/services/replay/storage.ts`) — o catálogo novo muda a sequência de spawn e `finalHash`
+> de replays antigos não recomputa mais; o bump descarta essas entradas de propósito.
+> **Efeitos colaterais descobertos e corrigidos durante as tasks** (todos documentados nos
+> relatórios/`progress.md` do SDD): clamp do `gate` degenerado (campo minúsculo não gera hitbox
+> invertida); pin de consumo de RNG dos tipos compostos; ordem das peças do `rock_arch` por `dx`
+> crescente (preserva x global não-decrescente no stream, sem mudar tuning); recalibração de
+> `economy`/`weather.determinism.test.ts` e de uma seed em `verifyChallenge.test.ts` (campos-teste
+> legados com `worldHeight` bem maior que 180 ficam mais sensíveis ao `gate`, que pode ocupar quase
+> toda a coluna vertical fora da fresta nesses campos — não é regressão de justiça, o campo real
+> 320×180 segue provado); e, só na verificação final da Task 4 (1ª vez que a suíte completa rodou
+> desde a Task 2), `tests/core/sim/powerups-world.test.ts` (mesmo fenômeno, `worldHeight=600`) —
+> recalibrado (`flapEvery` 20→30). **Gotcha do processo:** Tasks 1–3 rodaram só arquivos-alvo (por
+> causa do timeout conhecido de `tests/render/atlas.test.ts`), então essa última regressão só
+> apareceu no `npm test` completo da Task 4 — rodar a suíte cheia pelo menos 1× antes de fechar um
+> item que toca `src/core/spawn` é o que teria pego mais cedo.
+> **Render/arte (Task 3):** entram como placeholder primitivo (`kind:'primitive'`, cor exata da
+> hitbox ⇒ cobertura perfeita) — `obstacle.spire`/`obstacle.gate`/`ARCH_LEG_TAG`/`ARCH_SPAN_TAG` em
+> `src/render/manifest.ts`; guarda de completude do manifesto expande tipos compostos em peças
+> reais antes de checar (`obstacle.rock_arch` bare nunca é emitido, só suas peças).
+> **Asset-specs (Task 4):** `docs/assets/specs/obstacle.{spire,gate,rock_arch}.md` + Lote G (12
+> imagens, pendente) em `docs/assets/PHASE-09-ART-BRIEF.md`. **Achado de review registrado nos
+> specs:** `GameScene.sizeFor` cacheia `displaySize` por `typeId` — as duas peças do `gate`
+> (mesma tag, alturas bem diferentes) e a perna do `rock_arch` (altura variável entre spawns)
+> exigem composição **SEGMENTADA** (precedente 9.2) quando a arte real entrar, não 1-sprite-por-tag
+> (o caminho que `boulder`/`stalactite` usam hoje) — só a trave (`span`, dimensão fixa) pode seguir
+> 1 sprite único.
 
 **Toca:** `src/core/spawn/catalog.ts` (+ `sim/hitbox` se multi-hitbox), goldens de replay,
 `docs/assets/specs/obstacle.*.md`, atlas. Prompt: [Apêndice A.4](#a4-novos-obst%C3%A1culos-98).
@@ -584,14 +631,17 @@ frame, transparent background, no text. PALETTE: match the existing dino sprite.
 
 Partículas (penas/poeira) e screen-shake são **procedurais no render** (não precisam de asset).
 
-## A.4 — Novos obstáculos (9.8)
+## A.4 — Novos obstáculos (9.8) — hitbox e core CONCLUÍDOS, arte PENDENTE
 
-Definir a hitbox lógica no core primeiro (skill `add-gameplay-entity`), depois gerar a arte
-**segmentada** (mesmo esquema do A.2: cap/body/base) cobrindo a hitbox.
+A hitbox lógica e o mecanismo de multi-peça (`CompositeSpawnType`) já existem no core (ver a
+entrada 9.8 acima). Os prompts abaixo ficam como o registro histórico do plano original; os
+**asset-specs definitivos**, com as dimensões exatas travadas na implementação e a estratégia de
+composição (segmentada, precedente 9.2), são `docs/assets/specs/obstacle.{spire,gate,
+rock_arch}.md` — os prompts prontos para gerar (formato cap/body/base, por tema) estão no
+**Lote G** de `docs/assets/PHASE-09-ART-BRIEF.md`. Use esses, não os prompts genéricos abaixo.
 
 - **rock_arch** (multi-hitbox, passagem no meio): autorar como pé-esquerdo + topo + pé-direito,
-  com o **vão central transparente** (a hitbox é o arco, não o vão). Confirmar o modelo de
-  multi-hitbox no core antes de gerar.
+  com o **vão central transparente** (a hitbox é o arco, não o vão).
 ```
 A prehistoric stone arch/rock gateway seen from the side, two vertical rock pillars joined by a
 top span, the central passage fully transparent, flat cartoon vector, bold outline, transparent
@@ -604,6 +654,7 @@ cartoon vector, bold outline, subtle inner glow, transparent background, no text
 ```
 - **chão+teto (par que estreita a passagem)**: reusar `tree`+`stalactite` posicionados como par
   (sem arte nova) OU gerar um `pillar` simétrico segmentado (cap/body/base) para os dois lados.
+  Implementado no core como `obstacle.gate` (par de peças `aabb`, não `tree`+`stalactite`).
 
 > Ao adicionar cada obstáculo: entrada no `docs/assets/asset-registry.md` (status `spec`→`art`),
 > asset-spec em `docs/assets/specs/`, e goldens re-pinados se a sequência de spawn mudar.

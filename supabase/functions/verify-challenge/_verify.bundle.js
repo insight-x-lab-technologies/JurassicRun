@@ -143,6 +143,18 @@ function createRng(seed) {
 }
 
 // src/core/spawn/catalog.ts
+var GATE_HALF_W = 5;
+var GATE_GAP_MIN = 38;
+var GATE_GAP_MAX = 52;
+var GATE_ARM_MIN = 12;
+var ARCH_LEG_HALF_W = 5;
+var ARCH_LEG_DX = 18;
+var ARCH_LEG_MIN = 34;
+var ARCH_LEG_MAX = 50;
+var ARCH_SPAN_HALF_H = 4;
+var ARCH_SPAN_HALF_W = ARCH_LEG_DX + ARCH_LEG_HALF_W;
+var ARCH_LEG_TAG = "obstacle.rock_arch.leg";
+var ARCH_SPAN_TAG = "obstacle.rock_arch.span";
 var OBSTACLE_CATALOG = [
   // Tronco subindo do chão.
   { id: "obstacle.tree", anchor: "floor", makeHitbox: (rng) => aabb(6, rng.range(24, 40)) },
@@ -162,6 +174,60 @@ var OBSTACLE_CATALOG = [
         { x: halfW, y: -halfH },
         { x: 0, y: halfH }
       ]);
+    }
+  },
+  // Agulha rochosa flutuante: estreita e alta ⇒ decide-se passar por cima ou por baixo.
+  {
+    id: "obstacle.spire",
+    anchor: "floating",
+    makeHitbox: (rng) => {
+      const halfW = rng.range(4, 6);
+      const halfH = rng.range(24, 34);
+      return aabb(halfW, halfH);
+    }
+  },
+  // Par chão+teto no mesmo x, com fresta no meio (composto de 2 peças). ATENÇÃO: a fresta
+  // (GATE_GAP_*) e os braços mínimos (GATE_ARM_MIN) são ABSOLUTOS, calibrados para o campo
+  // lógico fixo de worldHeight=180 — os invariantes de justiça (testados em catalog.test.ts)
+  // só valem nesse campo. Em campos bem maiores o par passa a ocupar quase toda a coluna
+  // vertical fora da fresta (ver nota em weather.determinism.test.ts, que usa worldHeight=600).
+  {
+    id: "obstacle.gate",
+    makePieces: (rng, field) => {
+      const gap = rng.range(GATE_GAP_MIN, GATE_GAP_MAX);
+      const top = field.yMargin;
+      const bottom = field.worldHeight - field.yMargin;
+      const tMin = top + GATE_ARM_MIN;
+      const tMax = bottom - gap - GATE_ARM_MIN;
+      const u = rng.next();
+      const t = tMax > tMin ? tMin + u * (tMax - tMin) : (tMin + tMax) / 2;
+      const ceilH = Math.max(0, t - top);
+      const floorH = Math.max(0, bottom - (t + gap));
+      return [
+        { hitbox: aabb(GATE_HALF_W, ceilH / 2), dx: 0, y: top + ceilH / 2 },
+        { hitbox: aabb(GATE_HALF_W, floorH / 2), dx: 0, y: bottom - floorH / 2 }
+      ];
+    }
+  },
+  // Arco de pedra: 2 pernas no chão + trave. O "buraco" (não-convexo) sai de 3 peças convexas —
+  // é o obstacle.rock_arch adiado no item 1.4.
+  {
+    id: "obstacle.rock_arch",
+    makePieces: (rng, field) => {
+      const bottom = field.worldHeight - field.yMargin;
+      const legH = rng.range(ARCH_LEG_MIN, ARCH_LEG_MAX);
+      const legHalfH = legH / 2;
+      const legY = bottom - legHalfH;
+      return [
+        { hitbox: aabb(ARCH_LEG_HALF_W, legHalfH), dx: -ARCH_LEG_DX, y: legY, tag: ARCH_LEG_TAG },
+        {
+          hitbox: aabb(ARCH_SPAN_HALF_W, ARCH_SPAN_HALF_H),
+          dx: 0,
+          y: bottom - legH - ARCH_SPAN_HALF_H,
+          tag: ARCH_SPAN_TAG
+        },
+        { hitbox: aabb(ARCH_LEG_HALF_W, legHalfH), dx: ARCH_LEG_DX, y: legY, tag: ARCH_LEG_TAG }
+      ];
     }
   }
 ];
@@ -211,20 +277,30 @@ var SpawnGenerator = class _SpawnGenerator {
   generateUpTo(upToX, sink) {
     while (this.nextSpawnX <= upToX) {
       const type = this.rng.pick(this.catalog);
-      const hitbox = type.makeHitbox(this.rng);
-      const y = placeY(type.anchor, hitbox, this.config, this.rng);
-      sink.push({
-        id: this.nextId,
-        type: this.entityType,
-        tags: [type.id],
-        transform: { position: { x: this.nextSpawnX, y } },
-        kinematics: { velocity: { x: 0, y: 0 } },
-        hitbox
-      });
-      this.nextId += 1;
+      if (type.makePieces !== void 0) {
+        const pieces = type.makePieces(this.rng, this.config);
+        for (const p of pieces) {
+          this.emit(p.tag ?? type.id, p.hitbox, this.nextSpawnX + p.dx, p.y, sink);
+        }
+      } else {
+        const hitbox = type.makeHitbox(this.rng);
+        this.emit(type.id, hitbox, this.nextSpawnX, placeY(type.anchor, hitbox, this.config, this.rng), sink);
+      }
       const s = this.gapScale(this.nextSpawnX);
       this.nextSpawnX += this.rng.range(this.config.gapMin * s, this.config.gapMax * s);
     }
+  }
+  /** Materializa 1 entidade e avança o contador de id. */
+  emit(tag, hitbox, x, y, sink) {
+    sink.push({
+      id: this.nextId,
+      type: this.entityType,
+      tags: [tag],
+      transform: { position: { x, y } },
+      kinematics: { velocity: { x: 0, y: 0 } },
+      hitbox
+    });
+    this.nextId += 1;
   }
   /** Cópia independente (rng clonado + cursor). Para cloneWorld/snapshots. */
   clone() {
