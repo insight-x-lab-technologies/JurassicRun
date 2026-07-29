@@ -20,7 +20,7 @@ describe('SpawnGenerator.generateUpTo', () => {
     expect(out).toEqual([]);
   });
 
-  it('emite obstáculos com x crescente e ids monotônicos a partir de 0', () => {
+  it('emite obstáculos com x não-decrescente e ids monotônicos a partir de 0', () => {
     const out: Entity[] = [];
     gen().generateUpTo(2000, out);
     expect(out.length).toBeGreaterThan(3);
@@ -28,7 +28,11 @@ describe('SpawnGenerator.generateUpTo', () => {
       expect(out[i]!.id).toBe(i);
       expect(out[i]!.type).toBe('obstacle');
       expect(out[i]!.tags[0]!.startsWith('obstacle.')).toBe(true);
-      if (i > 0) expect(out[i]!.transform.position.x).toBeGreaterThan(out[i - 1]!.transform.position.x);
+      // Peças do mesmo evento composto podem empatar em x (ex.: obstacle.gate, dx=0 nas 2
+      // peças) — o catálogo (9.8) ordena as peças por dx crescente, então o x nunca regride.
+      if (i > 0) {
+        expect(out[i]!.transform.position.x).toBeGreaterThanOrEqual(out[i - 1]!.transform.position.x);
+      }
     }
     expect(out[0]!.transform.position.x).toBe(CONFIG.startX);
   });

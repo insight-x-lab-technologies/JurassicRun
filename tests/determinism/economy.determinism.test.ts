@@ -5,21 +5,24 @@ import { FOOD_SCORE_VALUE, NEAR_MISS_SCORE_VALUE, DISTANCE_SCORE_WEIGHT } from '
 
 // Config escolhida empiricamente para que food > 0 E nearMisses > 0 dentro da corrida:
 // worldHeight=180 (padrão) mantém o corredor de voo na faixa das entidades geradas pelo
-// SpawnGenerator; seed 'endless:GAME1' com flapEvery=25 produz a trajetória que intercepta
+// SpawnGenerator; seed 'endless:GAME1' com flapEvery=52 produz a trajetória que intercepta
 // coletáveis e passa perto de obstáculos. Valores medidos: food=2, nearMisses=1,
-// score≈690.14, distance≈665.14 (dino morre antes de 2000 steps; estado congela).
+// score≈683.06, distance≈658.06 (dino morre antes de 2000 steps; estado congela).
 // flapSpeed fixado explicitamente em 240 (valor do FLAP_SPEED anterior ao tuning de gameplay)
 // porque este cenário é uma trajetória empiricamente calibrada, não um teste do valor de
 // FLAP_SPEED em si — desacopla o guard da constante de produção para não exigir recalibração
 // a cada ajuste de tuning de flap.
+// Recalibrado no 9.8 (flapEvery 25→52): o catálogo de obstáculos cresceu de 4 para 7 tipos,
+// o que muda a sequência de `rng.pick` e, portanto, qual obstáculo cai em cada spawn — a
+// trajetória antiga (flapEvery=25) passou a morrer antes de coletar/quase-colidir.
 const SEEDED: WorldConfig = { worldHeight: 180, startY: 90, seed: 'endless:GAME1', flapSpeed: 240 };
 const STEPS = 2000;
 
 function makeTimeline(n: number): InputFrame[] {
   const out: InputFrame[] = [];
-  // Flap a cada 25 steps (borda de subida): mantém o pterodáctilo em voo nivelado sem
+  // Flap a cada 52 steps (borda de subida): mantém o pterodáctilo em voo nivelado sem
   // acumular drift para o teto, atravessando o corredor onde os coletáveis/obstáculos são gerados.
-  for (let i = 0; i < n; i++) out.push({ flap: i % 25 === 0 });
+  for (let i = 0; i < n; i++) out.push({ flap: i % 52 === 0 });
   return out;
 }
 

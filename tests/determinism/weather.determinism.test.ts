@@ -5,22 +5,22 @@ import type { InputFrame, WorldConfig, WorldState } from '@core/sim';
 // worldHeight amplo p/ o dino sobreviver o suficiente e o clima sair de 'clear'.
 //
 // Tuning medido (nota p/ o 3º teste, "clima ligado ≠ desligado"): para a seed
-// 'endless:WEATHER1' o clima fica 'clear' até distance=1690, quando muda p/ 'storm'
-// (verificado isolando o WeatherGenerator com o mesmo stream 'weather'). Um padrão de
-// flap com borda a cada 6 steps faz o pterodáctilo derivar continuamente para o teto
-// (a decelaração de um flap leva ~17,5 steps; re-flapar antes disso soma impulso pra
-// cima) e ele morre por colisão com obstáculo bem antes de distance=600 (~step 54,
-// y=42.5 nos dois lados) — os dois congelam no MESMO y por coincidência de clamp,
-// não porque o clima não importa. Com flap a cada 32 steps (period > o tempo de
-// decelaração ⇒ o dino completa a subida e cai um pouco antes do próximo flap), a
-// trajetória oscila com deriva suave e o pterodáctilo segue vivo além de distance=1690.
-// Com STEPS=600 (dist≈2525), ambos os mundos (com/sem clima) seguem VIVOS e SEM
-// clamp de teto/chão; medido: y_on≈369.72 (sob 'storm': gravityScale=1.25,
-// downdraft=+90) vs y_off≈70.50 ('clear' o tempo todo, pois `weather:false` não gera
-// weatherGenerator) — divergência real de trajetória, não coincidência de congelamento.
-const SEEDED: WorldConfig = { worldHeight: 600, startY: 300, gravity: 1200, flapSpeed: 350, scrollSpeed: 200, seed: 'endless:WEATHER1' };
-const STEPS = 600;
-const FLAP_EVERY = 32;
+// 'endless:WX4' o clima já está 'storm' em distance≈1629 (o fork 'weather' é
+// independente do fork 'obstacles', então o ponto de virada depende só da seed, não do
+// catálogo de obstáculos). Com STEPS=410 e flap a cada 36 steps, ambos os mundos
+// (com/sem clima) seguem VIVOS até lá — medido: y_on≈245.98 (sob 'storm':
+// gravityScale=1.25, downdraft=+90) vs y_off≈385.33 ('clear' o tempo todo, pois
+// `weather:false` não gera weatherGenerator) — divergência real de trajetória, não
+// coincidência de congelamento.
+// Recalibrado no 9.8 (seed/flapEvery/STEPS antigos: WEATHER1/32/600): o catálogo de
+// obstáculos cresceu de 4 para 7 tipos (rng.pick muda) e o novo `obstacle.gate` pode
+// ocupar quase todo o campo vertical fora da fresta — nesse worldHeight=600 (bem maior
+// que o campo lógico fixo 320×180 do jogo real) isso tornou a trajetória antiga letal
+// bem antes do clima virar tempestade. Reduzir STEPS minimiza a exposição a obstáculos
+// mantendo o clima chegando a 'storm' antes da morte.
+const SEEDED: WorldConfig = { worldHeight: 600, startY: 300, gravity: 1200, flapSpeed: 350, scrollSpeed: 200, seed: 'endless:WX4' };
+const STEPS = 410;
+const FLAP_EVERY = 36;
 
 function makeTimeline(n: number): InputFrame[] {
   const out: InputFrame[] = [];

@@ -34,21 +34,21 @@ const SCENARIOS: Scenario[] = [
     config: { ...BASE, seed: 'endless:GOLD1' },
     length: 1500,
     pattern: flapEvery(6),
-    golden: '3a4e511e0d5286ae60b495ced8b2a1d0',
+    golden: 'f279e70b85394287bb531de51db7af7c',
   },
   {
     name: 'com seed — difficulty:false',
     config: { ...BASE, seed: 'endless:GOLD1', difficulty: false },
     length: 1500,
     pattern: flapEvery(6),
-    golden: 'd6ab3eab4280b757fba6845ecb29e8e1',
+    golden: 'd3a9d72c8638add90d59277e686b9299',
   },
   {
     name: 'com seed diferente',
     config: { ...BASE, seed: 'endless:GOLD2' },
     length: 1500,
     pattern: flapEvery(6),
-    golden: '2f239e2209f8913e25807a30b4af1582',
+    golden: 'c7a668f7c4f3fecbf55119b97c27d54b',
   },
 ];
 

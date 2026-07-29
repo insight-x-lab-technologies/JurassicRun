@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { createRng } from '@core/rng';
 import { OBSTACLE_CATALOG } from '@core/spawn';
+import { boundsOf } from '@core/sim/hitbox';
+import type { SpawnField, SpawnPiece } from '@core/spawn';
 
 describe('OBSTACLE_CATALOG', () => {
   it('tem ids únicos e âncoras válidas', () => {
@@ -8,14 +10,15 @@ describe('OBSTACLE_CATALOG', () => {
     expect(new Set(ids).size).toBe(ids.length);
     for (const t of OBSTACLE_CATALOG) {
       expect(t.id.startsWith('obstacle.')).toBe(true);
-      expect(['floor', 'ceiling', 'floating']).toContain(t.anchor);
+      if (t.makePieces === undefined) expect(['floor', 'ceiling', 'floating']).toContain(t.anchor);
     }
   });
 
   it('cobre os três tipos de hitbox (não só retângulos)', () => {
     const rng = createRng('catalog-test');
-    // Catálogo atual só tem tipos simples (nenhum composto ainda).
-    const kinds = new Set(OBSTACLE_CATALOG.map((t) => t.makeHitbox!(rng).kind));
+    const kinds = new Set(
+      OBSTACLE_CATALOG.filter((t) => t.makePieces === undefined).map((t) => t.makeHitbox!(rng).kind),
+    );
     expect(kinds.has('aabb')).toBe(true);
     expect(kinds.has('circle')).toBe(true);
     expect(kinds.has('polygon')).toBe(true);
@@ -23,8 +26,98 @@ describe('OBSTACLE_CATALOG', () => {
 
   it('makeHitbox é determinístico para o mesmo estado de rng', () => {
     const t = OBSTACLE_CATALOG[0]!;
-    const a = t.makeHitbox!(createRng('seed-x'));
-    const b = t.makeHitbox!(createRng('seed-x'));
+    if (t.makePieces !== undefined) throw new Error('esperado tipo simples na posição 0');
+    const a = t.makeHitbox(createRng('seed-x'));
+    const b = t.makeHitbox(createRng('seed-x'));
     expect(a).toEqual(b);
+  });
+});
+
+const FIELD: SpawnField = { worldHeight: 180, yMargin: 8 };
+const DINO_H = 16;
+const MIN_PASSAGE = 30; // ≈1,9× a altura do dino
+
+function typeById(id: string) {
+  const t = OBSTACLE_CATALOG.find((x) => x.id === id);
+  expect(t, `tipo ausente no catálogo: ${id}`).toBeDefined();
+  return t!;
+}
+
+/** Faixa vertical [topo, base] ocupada por uma peça. */
+function span(p: SpawnPiece): { top: number; bottom: number } {
+  const b = boundsOf(p.hitbox);
+  return { top: p.y + b.minY, bottom: p.y + b.maxY };
+}
+
+describe('justiça dos obstáculos novos (9.8)', () => {
+  it('gate: fresta sempre passável e braços não degeneram', () => {
+    const t = typeById('obstacle.gate');
+    const rng = createRng('fairness-gate');
+    for (let i = 0; i < 500; i++) {
+      const pieces = t.makePieces!(rng, FIELD);
+      expect(pieces).toHaveLength(2);
+      const [ceil, floor] = pieces.map(span) as [ReturnType<typeof span>, ReturnType<typeof span>];
+      expect(ceil.top).toBeCloseTo(FIELD.yMargin, 6);
+      expect(floor.bottom).toBeCloseTo(FIELD.worldHeight - FIELD.yMargin, 6);
+      expect(floor.top - ceil.bottom).toBeGreaterThanOrEqual(MIN_PASSAGE);
+      expect(ceil.bottom - ceil.top).toBeGreaterThanOrEqual(12);
+      expect(floor.bottom - floor.top).toBeGreaterThanOrEqual(12);
+    }
+  });
+
+  it('rock_arch: buraco entre as pernas e vão superior sempre passáveis', () => {
+    const t = typeById('obstacle.rock_arch');
+    const rng = createRng('fairness-arch');
+    for (let i = 0; i < 500; i++) {
+      const pieces = t.makePieces!(rng, FIELD);
+      expect(pieces).toHaveLength(3);
+      const legs = pieces.filter((p) => p.tag === 'obstacle.rock_arch.leg');
+      const spanPiece = pieces.find((p) => p.tag === 'obstacle.rock_arch.span')!;
+      expect(legs).toHaveLength(2);
+      const legSpan = span(legs[0]!);
+      const barSpan = span(spanPiece);
+      // pernas apoiadas no chão
+      expect(legSpan.bottom).toBeCloseTo(FIELD.worldHeight - FIELD.yMargin, 6);
+      // buraco = do chão até a trave
+      expect(legSpan.bottom - legSpan.top).toBeGreaterThanOrEqual(MIN_PASSAGE);
+      // trave encostada no topo das pernas (sem invadir o buraco)
+      expect(barSpan.bottom).toBeCloseTo(legSpan.top, 6);
+      // vão por cima da trave
+      expect(barSpan.top - FIELD.yMargin).toBeGreaterThanOrEqual(MIN_PASSAGE);
+      // as pernas ficam de lados opostos e a trave as cobre
+      expect(legs[0]!.dx).toBeLessThan(0);
+      expect(legs[1]!.dx).toBeGreaterThan(0);
+      expect(boundsOf(spanPiece.hitbox).maxX).toBeGreaterThanOrEqual(
+        legs[1]!.dx + boundsOf(legs[1]!.hitbox).maxX - 1e-9,
+      );
+    }
+  });
+
+  it('spire: estreita, alta e sempre com um lado largo para passar', () => {
+    const t = typeById('obstacle.spire');
+    const rng = createRng('fairness-spire');
+    for (let i = 0; i < 500; i++) {
+      const h = t.makeHitbox!(rng);
+      expect(h.kind).toBe('aabb');
+      if (h.kind !== 'aabb') continue;
+      expect(h.halfW * 2).toBeLessThanOrEqual(12);
+      const free = FIELD.worldHeight - 2 * FIELD.yMargin - h.halfH * 2;
+      expect(free / 2).toBeGreaterThanOrEqual(MIN_PASSAGE); // pior caso (centrado)
+      expect(h.halfH * 2).toBeGreaterThan(DINO_H);
+    }
+  });
+
+  it('todo tipo composto emite peças com hitbox dentro do campo', () => {
+    const rng = createRng('fairness-bounds');
+    for (const t of OBSTACLE_CATALOG) {
+      if (t.makePieces === undefined) continue;
+      for (let i = 0; i < 200; i++) {
+        for (const p of t.makePieces(rng, FIELD)) {
+          const s = span(p);
+          expect(s.top).toBeGreaterThanOrEqual(FIELD.yMargin - 1e-9);
+          expect(s.bottom).toBeLessThanOrEqual(FIELD.worldHeight - FIELD.yMargin + 1e-9);
+        }
+      }
+    }
   });
 });
