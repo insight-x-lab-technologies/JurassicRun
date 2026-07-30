@@ -61,18 +61,32 @@ ao girar o aparelho.
 **Toca:** nada de código (ação de repositório). **Aceite:** `gh api .../branches` lista só `main`;
 `git branch -r` local idem.
 
-### 10.2 Versão do jogo visível na Home (#9)
-- [ ] Injetar a versão em **build time**: `define: { __APP_VERSION__ }` no `vite.config.ts` lendo
-      `package.json` (hoje o `vite.config.ts` **não tem `define`**) + declaração de tipo.
-- [ ] Exibir discreto no rodapé da Home (`data-testid="app-version"`), estilo texto muted pequeno,
+### 10.2 Versão do jogo visível na Home (#9) ✅
+- [x] Injetar a versão em **build time**: `define: { __APP_VERSION__ }` lendo `package.json`
+      (via `src/build/appVersion.ts`, que valida o campo e falha alto se faltar) + declaração de
+      tipo em `src/types/globals.d.ts` (primeiro `.d.ts` do projeto).
+- [x] Exibir discreto no rodapé da Home (`data-testid="app-version"`), estilo texto muted pequeno,
       fora do fluxo do menu (não pode empurrar o CTA em paisagem baixa — precedente 9.9).
-- [ ] Formato `v1.0.0` **sem palavra traduzível** ⇒ zero chave i18n nova. (Se algum dia levar
+- [x] Formato `v1.0.0` **sem palavra traduzível** ⇒ zero chave i18n nova. (Se algum dia levar
       rótulo, aí sim vira chave.)
-- [ ] Adotar bump manual de `package.json` ao fechar cada fase (documentar em `WORKFLOW.md`).
+- [x] Adotar bump manual de `package.json` ao fechar cada fase (documentar em `WORKFLOW.md`).
 
-**Toca:** `vite.config.ts`, `src/app/screens/HomeScreen.tsx`, `src/app/styles/global.css`, tipos.
-**Aceite:** Home renderiza a versão do `package.json`; teste unitário casa o texto com o valor
-injetado; paisagem baixa (740×360) não regride.
+**Toca:** `vite.config.ts`, **`vitest.config.ts`**, `src/build/appVersion.ts`,
+`src/types/globals.d.ts`, `src/app/screens/HomeScreen.tsx`, `src/app/styles/global.css`,
+`.gitignore`. **Aceite:** ✅ Home renderiza a versão do `package.json`; o teste **lê o
+`package.json` em runtime** (não hardcoda `'1.0.0'`) ⇒ bump não passa despercebido; `dist` contém o
+literal `v1.0.0` e zero `__APP_VERSION__`.
+
+> **3 gotchas descobertos aqui** (spec: `docs/superpowers/specs/2026-07-30-10.2-app-version-on-home.md`):
+> 1. **`vitest.config.ts` NÃO estende `vite.config.ts`** — são arquivos independentes. `define` só
+>    no Vite ⇒ todo teste que renderiza a Home morre com `ReferenceError: __APP_VERSION__`. O
+>    `define` vai nos DOIS, alimentado pelo mesmo helper (não dá para dessincronizar).
+> 2. **`happy-dom` polyfilla o `URL` global** ⇒ `new URL(x, import.meta.url)` dentro de
+>    `appVersion()` resolve contra `http://localhost:3000/` e `fileURLToPath` rejeita
+>    ("URL must be of scheme file"). Em teste com DOM, ler arquivo com `node:path`, não com `URL`.
+> 3. **`.gitignore` tinha `build/` sem barra inicial** ⇒ casava `src/build/` em qualquer
+>    profundidade e tornava o helper novo invisível ao git. Corrigido para `/build/` (nada no
+>    projeto gera `build/` na raiz; a saída é `dist/`).
 
 ### 10.3 Purga de dados pré-9.9 (#8)
 - [ ] `jurassicrun.leaderboard.v1` **→ `.v2`** (chave nova, dados antigos ignorados): mata o débito

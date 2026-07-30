@@ -5,7 +5,7 @@ node_modules/
 __pycache__/
 *.pyc
 dist/
-build/
+/build/
 .DS_Store
 .claudebot/
 .devserver.pid

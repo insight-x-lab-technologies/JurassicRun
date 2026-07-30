@@ -7,6 +7,27 @@ import { i18n } from '@services/i18n';
 import { profileService } from '@services/profile';
 import { memoryProfileStorage } from '@services/profile/storage';
 import { emptyState } from '@services/profile/store';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+// Lê o `package.json` diretamente com `node:path`/`node:fs`, em vez de importar
+// `src/build/appVersion.ts`: este arquivo roda sob `@vitest-environment happy-dom`, que
+// substitui o `URL` global do Node por um polyfill — o `new URL('../../package.json',
+// import.meta.url)` do helper resolve contra `http://localhost:3000/` (location mockada),
+// não contra o caminho real do arquivo, e `fileURLToPath` rejeita o resultado
+// ("URL must be of scheme file"). `path.resolve`/`fileURLToPath(import.meta.url)` não
+// passam pelo `URL` global, então funcionam sob qualquer ambiente de teste.
+function readPackageVersion(): string {
+  const here = path.dirname(fileURLToPath(import.meta.url));
+  const pkgPath = path.resolve(here, '../../package.json');
+  const raw = readFileSync(pkgPath, 'utf-8');
+  const pkg: unknown = JSON.parse(raw);
+  if (typeof pkg !== 'object' || pkg === null || typeof (pkg as { version?: unknown }).version !== 'string') {
+    throw new Error('readPackageVersion: package.json sem campo "version" válido.');
+  }
+  return (pkg as { version: string }).version;
+}
 
 function click(el: Element | null): void {
   el?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -90,6 +111,18 @@ describe('HomeScreen', () => {
   });
 
   it('mostra o aviso de copyright no rodapé da Home', () => {
-    expect(container.querySelector('.home__copyright')?.textContent).toBe(i18n.t('home.copyright'));
+    expect(container.querySelector('.home__copyright')?.textContent).toContain(i18n.t('home.copyright'));
+  });
+
+  it('mostra a versão do app no rodapé, lida do package.json', () => {
+    const versionEl = container.querySelector('[data-testid="app-version"]');
+    expect(versionEl).not.toBeNull();
+    expect(versionEl?.textContent).toBe(`v${readPackageVersion()}`);
+  });
+
+  it('a versão fica DENTRO do parágrafo de copyright, sem custo de altura novo', () => {
+    expect(
+      container.querySelector('.home__copyright [data-testid="app-version"]'),
+    ).not.toBeNull();
   });
 });
