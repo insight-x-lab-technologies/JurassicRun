@@ -282,8 +282,6 @@
   },
   "challenge": {
     "brief": {
-      "titleDaily": "Desafio Diário",
-      "titleWeekly": "Desafio Semanal",
       "subtitle": "Mesma semente e mesmas regras para todos.",
       "seed": "Semente",
       "yourBest": "Seu recorde",

@@ -13,7 +13,15 @@ import { PauseOverlay } from '../game/PauseOverlay';
 const INITIAL: MatchSnapshot = { phase: 'ready', paused: false, gameOver: null, dying: false };
 const HUD_INTERVAL_MS = 200; // ~5 Hz
 
-export function PlayScreen({ mode = 'endless' }: { mode?: MatchMode }) {
+export function PlayScreen({
+  mode = 'endless',
+  onExit,
+}: {
+  mode?: MatchMode;
+  /** Saída da tela: default volta no router; o desafio usa para retornar ao briefing. */
+  onExit?: () => void;
+}) {
+  const exit = onExit ?? back;
   const containerRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<GameHandle | null>(null);
   const suggestRotate = useRotateHint();
@@ -83,7 +91,7 @@ export function PlayScreen({ mode = 'endless' }: { mode?: MatchMode }) {
 
   return (
     <div class="play-screen">
-      <button class="btn btn--ghost play-screen__back" onClick={() => back()}>
+      <button class="btn btn--ghost play-screen__back" onClick={() => exit()}>
         {i18n.t('nav.back')}
       </button>
       <div class="play-screen__canvas" ref={containerRef} />
@@ -99,7 +107,7 @@ export function PlayScreen({ mode = 'endless' }: { mode?: MatchMode }) {
         <GameOverOverlay
           stats={snap.gameOver}
           onRestart={() => handleRef.current?.restart()}
-          onQuit={() => back()}
+          onQuit={() => exit()}
         />
       )}
       {suggestRotate && (

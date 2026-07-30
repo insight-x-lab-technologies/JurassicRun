@@ -1,6 +1,7 @@
 import { route, type Screen } from './router';
 import { HomeScreen } from './screens/HomeScreen';
 import { PlayScreen } from './screens/PlayScreen';
+import { ChallengeScreen } from './screens/ChallengeScreen';
 import { OnboardingScreen } from './screens/OnboardingScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { NestScreen } from './screens/NestScreen';
@@ -29,9 +30,12 @@ function screenFor(screen: Screen): VNode {
     case 'profile':
       return <ProfileScreen />;
     case 'daily':
-      return <PlayScreen mode="daily" />;
+      // `key` força remontagem ao trocar de modo: sem ele, o Preact reaproveita a MESMA
+      // instância (mesmo tipo de componente) e o estado interno `playing` vazaria entre
+      // Diário/Semanal, pulando o briefing do modo recém-navegado.
+      return <ChallengeScreen key="daily" mode="daily" />;
     case 'weekly':
-      return <PlayScreen mode="weekly" />;
+      return <ChallengeScreen key="weekly" mode="weekly" />;
     case 'nest':
       return <NestScreen />;
     case 'shop':

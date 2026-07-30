@@ -282,8 +282,6 @@
   },
   "challenge": {
     "brief": {
-      "titleDaily": "每日挑战",
-      "titleWeekly": "每周挑战",
       "subtitle": "所有人使用相同的种子和相同的规则。",
       "seed": "种子",
       "yourBest": "你的最佳成绩",

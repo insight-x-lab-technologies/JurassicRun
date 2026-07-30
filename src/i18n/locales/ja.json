@@ -282,8 +282,6 @@
   },
   "challenge": {
     "brief": {
-      "titleDaily": "デイリーチャレンジ",
-      "titleWeekly": "ウィークリーチャレンジ",
       "subtitle": "全員が同じシード・同じルール。",
       "seed": "シード",
       "yourBest": "自己ベスト",

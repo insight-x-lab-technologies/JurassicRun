@@ -282,8 +282,6 @@
   },
   "challenge": {
     "brief": {
-      "titleDaily": "Daily Challenge",
-      "titleWeekly": "Weekly Challenge",
       "subtitle": "Same seed and same rules for everyone.",
       "seed": "Seed",
       "yourBest": "Your best",

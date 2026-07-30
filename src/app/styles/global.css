@@ -908,6 +908,96 @@ body {
   text-align: center;
 }
 
+/* Briefing de Desafio (Diário/Semanal) — item 9.9: seed/período, recordes e regras da seed
+   antes da partida. Raiz reaproveita `.screen` (centralização + rolagem + safe-area, o mesmo
+   padrão de todas as outras telas), só os miolos são próprios. */
+.challenge-brief {
+  width: 100%;
+  max-width: 32rem;
+  gap: var(--space-4);
+}
+
+.challenge-brief__title {
+  margin-bottom: 0;
+}
+
+.challenge-brief__subtitle {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.challenge-brief__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  width: 100%;
+  margin: 0;
+  padding: var(--space-4);
+  border-style: solid;
+  border-color: transparent;
+  border-width: 14px;
+  border-image: var(--ui-panel) 30% fill / 14px / 0 stretch;
+}
+
+.challenge-brief__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.challenge-brief__stat dt {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.challenge-brief__stat dd {
+  margin: 0;
+  /* Algarismos modernos (não old-style do Cinzel) — mesmo tratamento do placar/HUD. */
+  font-family: var(--font-fallback);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-gold);
+  overflow-wrap: anywhere; /* seed semanal (AAAA-Www) num campo estreito não estoura o card */
+}
+
+.challenge-brief__rules-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-md);
+  color: var(--color-gold);
+}
+
+.challenge-brief__rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.challenge-brief__rule {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-size: var(--font-size-sm);
+  text-align: left;
+}
+
+.challenge-brief__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
 .home__logo {
   /* Item 1.4: bem maior que antes (era min(48%, 16rem)), sem empurrar o menu para fora. */
   display: block;
@@ -1444,5 +1534,12 @@ img.expansion-card__avatar {
   .nest__grid,
   .expansions__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Campo estreito: as 3 colunas do briefing (seed/seu recorde/recorde mundial) apertam
+     "Recorde mundial" nos 10 idiomas — reduzir espaçamento em vez de cortar coluna. */
+  .challenge-brief__stats {
+    gap: var(--space-2);
+    padding: var(--space-3);
   }
 }

@@ -282,8 +282,6 @@
   },
   "challenge": {
     "brief": {
-      "titleDaily": "일일 도전",
-      "titleWeekly": "주간 도전",
       "subtitle": "모두 같은 시드, 같은 규칙.",
       "seed": "시드",
       "yourBest": "내 최고 기록",
