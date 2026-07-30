@@ -71,7 +71,8 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 
 **Métricas correntes:** determinismo **73** testes · suíte **969** testes · `check` limpo.
 Branch `main`. Fases 0–9 **CONCLUÍDAS** (9.1–9.9 feitos ⇒ Frentes A, B, C e D fechadas).
-Próximo desenvolvimento: definir a Fase 10 (não há backlog aberto).
+**Fase 10 ABERTA** (`docs/roadmap/PHASE-10-polish-and-portrait.md`): 9 itens, nenhum toca `src/core/`.
+Próximo item: **10.1** (limpeza de branches remotos). Ordem A→B→C→D, um item por PR.
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
@@ -87,6 +88,9 @@ Próximo desenvolvimento: definir a Fase 10 (não há backlog aberto).
 | 7 | PWA & deploy (instalável/offline, responsividade final, GitHub Pages, itch.io; 7.5 wrappers de loja ADIADO) | ✅ | 67 |
 | 8 | Arte AAA & packs (manifesto→sprite atlas, arte real entidades+dino animado, Tier-1 UI/fundos/parallax, packs=expansão ativa, gateway Ko-Fi/código, redesign UI W1→W9) | ✅ | 67 |
 | 9 | Melhorias estruturais (parallax alpha, obstáculos cobrindo hitbox, morte/idle animados, indicador de power-up, áudio generativo + toggle SFX, obstáculos novos, briefing+mods de desafio) | ✅ | 73 |
+| 10 | Polimento, meta e retrato (higiene de branches, versão na Home, purga pré-9.9, UI em moedas, briefing full-width, avatares, +15 troféus, Loja sem moeda grátis, gameplay em retrato) | 🚧 | 73* |
+
+\* Fase 10 **não toca `src/core/`** ⇒ det permanece 73 (ver invariante abaixo).
 
 ### Invariantes que se repetem (padrões do projeto)
 
