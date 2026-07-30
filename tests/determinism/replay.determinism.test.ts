@@ -50,6 +50,13 @@ const SCENARIOS: Scenario[] = [
     pattern: flapEvery(6),
     golden: 'c7a668f7c4f3fecbf55119b97c27d54b',
   },
+  {
+    name: 'modo desafio — mods derivados da seed',
+    config: { ...BASE, seed: 'daily:2026-01-01', challenge: true },
+    length: 1500,
+    pattern: flapEvery(6),
+    golden: '471552c558c704a9442bc6f5c45fc351',
+  },
 ];
 
 describe('golden master — replay determinístico', () => {
