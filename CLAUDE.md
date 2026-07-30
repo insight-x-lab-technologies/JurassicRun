@@ -72,7 +72,9 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 **Métricas correntes:** determinismo **73** testes · suíte **969** testes · `check` limpo.
 Branch `main`. Fases 0–9 **CONCLUÍDAS** (9.1–9.9 feitos ⇒ Frentes A, B, C e D fechadas).
 **Fase 10 ABERTA** (`docs/roadmap/PHASE-10-polish-and-portrait.md`): 9 itens, nenhum toca `src/core/`.
-Próximo item: **10.1** (limpeza de branches remotos). Ordem A→B→C→D, um item por PR.
+10.1 ✅ (higiene de branches: remoto e local só com `main`; `delete_branch_on_merge` LIGADO ⇒ head
+branch de PR some sozinho no merge daqui pra frente).
+Próximo item: **10.2** (versão do jogo visível na Home). Ordem A→B→C→D, um item por PR.
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 

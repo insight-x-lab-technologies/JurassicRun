@@ -36,13 +36,21 @@ ao girar o aparelho.
 
 ## Frente A — Higiene e release (rápidos, risco baixo)
 
-### 10.1 Limpeza de branches remotos (#1)
-- [ ] Apagar no GitHub os 2 branches remanescentes: `feat/parallax-alpha-layers` e
+### 10.1 Limpeza de branches remotos (#1) ✅
+- [x] Apagar no GitHub os 2 branches remanescentes: `feat/parallax-alpha-layers` e
       `feat/3.1-powerups-system`.
-- [ ] `git fetch --prune` local — o repositório local ainda carrega **26 refs remote-tracking
+- [x] `git fetch --prune` local — o repositório local ainda carrega **26 refs remote-tracking
       podres** (branches que o GitHub já apagou no merge; `git branch -r` mente sem o prune).
-- [ ] Ligar **"Automatically delete head branches"** nas settings do repositório, para o problema
+- [x] Ligar **"Automatically delete head branches"** nas settings do repositório, para o problema
       não voltar.
+- [x] **Extra (fora do escopo original):** 3 branches **locais** órfãos, todos `--merged main`
+      (`feat/ui-parallax-and-png-compression`, `feat/ui-w5-render-resolution`,
+      `feat/ui-w6-typography`) — apagados com `git branch -d`.
+
+> **Executado em 2026-07-30.** `ahead_by: 0` reconfirmado nos dois remotos antes de apagar
+> (behind 29 e 402). `delete_branch_on_merge` agora `true` via
+> `gh api -X PATCH repos/{owner}/{repo}`. Resultado: `gh api .../branches` e `git branch -a`
+> devolvem **só `main`**.
 
 > **Já verificado:** o remoto tem hoje só `main`, `feat/parallax-alpha-layers`,
 > `feat/3.1-powerups-system`. Os 27 PRs do repositório estão **todos merged, zero abertos**.
