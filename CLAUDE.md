@@ -69,12 +69,15 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **73** testes · suíte **969** testes · `check` limpo.
+**Métricas correntes:** determinismo **73** testes · suíte **973** testes · `check` limpo.
 Branch `main`. Fases 0–9 **CONCLUÍDAS** (9.1–9.9 feitos ⇒ Frentes A, B, C e D fechadas).
 **Fase 10 ABERTA** (`docs/roadmap/PHASE-10-polish-and-portrait.md`): 9 itens, nenhum toca `src/core/`.
 10.1 ✅ (higiene de branches: remoto e local só com `main`; `delete_branch_on_merge` LIGADO ⇒ head
-branch de PR some sozinho no merge daqui pra frente).
-Próximo item: **10.2** (versão do jogo visível na Home). Ordem A→B→C→D, um item por PR.
+branch de PR some sozinho no merge daqui pra frente) · 10.2 ✅ (versão na Home: `__APP_VERSION__`
+injetado por `define` a partir do `package.json`; **`define` tem de ir em `vite.config.ts` E
+`vitest.config.ts`** — configs independentes, senão os testes da Home dão `ReferenceError`; bump
+manual do `package.json` ao fechar cada fase, ver `WORKFLOW.md`).
+Próximo item: **10.3** (purga de dados pré-9.9). Ordem A→B→C→D, um item por PR.
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
