@@ -3,11 +3,18 @@ import { cloneHitbox } from './hitbox';
 import type { Entity, WorldConfig, WorldState } from './types';
 import { createRng } from '@core/rng';
 import { SpawnGenerator, DEFAULT_SPAWN_CONFIG, DEFAULT_COLLECTIBLE_CONFIG, COLLECTIBLE_CATALOG } from '@core/spawn';
-import type { SpawnConfig } from '@core/spawn';
+import type { SpawnConfig, SpawnType } from '@core/spawn';
 import { difficultyAt } from '@core/difficulty';
-import { POWERUP_CATALOG, DEFAULT_POWERUP_CONFIG, cloneEffects, activateEffect } from '@core/powerup';
+import {
+  POWERUP_CATALOG,
+  DEFAULT_POWERUP_CONFIG,
+  cloneEffects,
+  activateEffect,
+  powerupCatalogExcluding,
+} from '@core/powerup';
 import { WeatherGenerator } from '@core/weather';
 import { traitModifiers } from '@core/dino';
+import { challengeModifiersForSeed } from '@core/challenge';
 
 /** Referência de função ESTÁVEL (não realocar por createWorld) p/ igualdade estrutural
  * (toEqual) em testes de determinismo/replay. Mesmo motivo do `noScale` do spawn. */
@@ -28,9 +35,14 @@ function buildCollectibleSpawner(seed: string, worldHeight: number, override?: P
   return new SpawnGenerator(createRng(seed).fork('collectibles'), config, COLLECTIBLE_CATALOG, 'collectible');
 }
 
-function buildPowerupSpawner(seed: string, worldHeight: number, override?: Partial<SpawnConfig>): SpawnGenerator {
+function buildPowerupSpawner(
+  seed: string,
+  worldHeight: number,
+  override?: Partial<SpawnConfig>,
+  catalog: readonly SpawnType[] = POWERUP_CATALOG,
+): SpawnGenerator {
   const config: SpawnConfig = { ...DEFAULT_POWERUP_CONFIG, ...override, worldHeight };
-  return new SpawnGenerator(createRng(seed).fork('powerups'), config, POWERUP_CATALOG, 'collectible');
+  return new SpawnGenerator(createRng(seed).fork('powerups'), config, catalog, 'collectible');
 }
 
 function buildWeatherGenerator(seed: string): WeatherGenerator {
@@ -45,11 +57,26 @@ export function createWorld(config: WorldConfig = {}): WorldState {
   const spawner = config.seed === undefined ? null : buildSpawner(config.seed, c.worldHeight, config.spawn, gapScale);
   const collectibleSpawner =
     config.seed === undefined ? null : buildCollectibleSpawner(config.seed, c.worldHeight, config.collectibleSpawn);
+  // Modo desafio: as regras vêm da PRÓPRIA seed (idênticas p/ todos; o verificador recomputa).
+  const challengeMods = config.challenge === true && config.seed !== undefined
+    ? challengeModifiersForSeed(config.seed)
+    : null;
   const powerupSpawner =
-    config.seed === undefined ? null : buildPowerupSpawner(config.seed, c.worldHeight, config.powerupSpawn);
+    config.seed === undefined
+      ? null
+      : buildPowerupSpawner(
+          config.seed,
+          c.worldHeight,
+          config.powerupSpawn,
+          challengeMods === null ? undefined : powerupCatalogExcluding(challengeMods.bannedPowerup),
+        );
   const weatherEnabled = config.weather ?? true;
+  // Clima forçado ⇒ constante toda a partida, sem sequenciador (sem drift, sem saques).
   const weatherGenerator =
-    config.seed === undefined || !weatherEnabled ? null : buildWeatherGenerator(config.seed);
+    config.seed === undefined || !weatherEnabled || challengeMods !== null
+      ? null
+      : buildWeatherGenerator(config.seed);
+  const forcedWeather = weatherEnabled && challengeMods !== null ? challengeMods.forcedWeather : 'clear';
   const trait = config.trait ?? 'none';
   const mods = traitModifiers(trait);
   const effects: WorldState['effects'] = [];
@@ -83,7 +110,7 @@ export function createWorld(config: WorldConfig = {}): WorldState {
     powerupSpawner,
     effects,
     extraLives: mods.startExtraLives,
-    weather: 'clear',
+    weather: forcedWeather,
     weatherGenerator,
     trait,
   };

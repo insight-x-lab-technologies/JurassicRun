@@ -38,3 +38,16 @@ export const DEFAULT_POWERUP_CONFIG: SpawnConfig = Object.freeze({
   gapMin: 600,
   gapMax: 1000,
 });
+
+/** Cache por kind: uma array congelada por power-up banido ⇒ zero alocação por createWorld
+ *  e referência estável para as comparações estruturais dos testes de determinismo. */
+const CATALOG_WITHOUT = new Map<PowerupKind, readonly SimpleSpawnType[]>();
+
+/** Catálogo de power-ups sem o `kind` dado (modificador de desafio). Ref memoizada. */
+export function powerupCatalogExcluding(kind: PowerupKind): readonly SimpleSpawnType[] {
+  const cached = CATALOG_WITHOUT.get(kind);
+  if (cached !== undefined) return cached;
+  const filtered = Object.freeze(POWERUP_CATALOG.filter((t) => t.id !== `powerup.${kind}`));
+  CATALOG_WITHOUT.set(kind, filtered);
+  return filtered;
+}
