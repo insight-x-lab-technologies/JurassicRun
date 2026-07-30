@@ -470,7 +470,16 @@ inalterados.
 **Notas de determinismo:** os modificadores só alteram campos já hasheados (`weather`, entidades
 de power-up emitidas) ⇒ possivelmente **sem novas chaves em `hashState`**. Goldens de replay atuais
 são Endless/no-challenge ⇒ **não re-pinam**; adicionar um golden de modo-desafio é recomendado. O
-bundle de verificação **precisa regenerar**.
+bundle de verificação **precisa regenerar**. *(Confirmado na execução: zero campo novo, zero
+re-pin dos 4 goldens de Endless, bundle regenerado.)*
+
+**Débito conhecido (aceito, pré-lançamento):** o leaderboard local (`jurassicrun.leaderboard.v1`)
+**não é versionado** e não registra sob quais regras o score foi obtido. Um recorde da mesma seed
+gravado ANTES de 9.9 (clima sorteado, todos os power-ups) segue aparecendo como `yourBest` no
+briefing, indistinguível de um obtido sob as regras novas — `buildChallengeBrief` filtra só por
+igualdade de seed. Mesmo padrão de risco já aceito para `challenge_entries.verified` (sinal, não
+gate). Se um dia importar, a correção é versionar a chave do leaderboard como se fez com os
+replays (`v2→v3`).
 
 **Toca:** `src/core/challenge/` (novo), `src/core/sim/world.ts` (aplicação), `src/render/
 matchFactory.ts` (flag challenge), `src/app` (briefing screen), `src/services/online/
