@@ -69,9 +69,9 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **67** testes · suíte **935** testes · `check` limpo.
-Branch `main`. Fases 0–8 **CONCLUÍDAS**; Fase 9 **EM ANDAMENTO** (9.1–9.8 feitos ⇒ Frentes A, B e C
-fechadas, Frente D iniciada; resta 9.9).
+**Métricas correntes:** determinismo **73** testes · suíte **969** testes · `check` limpo.
+Branch `main`. Fases 0–9 **CONCLUÍDAS** (9.1–9.9 feitos ⇒ Frentes A, B, C e D fechadas).
+Próximo desenvolvimento: definir a Fase 10 (não há backlog aberto).
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
@@ -86,7 +86,7 @@ fechadas, Frente D iniciada; resta 9.9).
 | 6 | Online Supabase (schema/RLS, ID global anônimo, leaderboard central, anti-cheat Edge Function, troféus sincronizados) | ✅ | 67 |
 | 7 | PWA & deploy (instalável/offline, responsividade final, GitHub Pages, itch.io; 7.5 wrappers de loja ADIADO) | ✅ | 67 |
 | 8 | Arte AAA & packs (manifesto→sprite atlas, arte real entidades+dino animado, Tier-1 UI/fundos/parallax, packs=expansão ativa, gateway Ko-Fi/código, redesign UI W1→W9) | ✅ | 67 |
-| 9 | Melhorias estruturais | 🚧 | 67 |
+| 9 | Melhorias estruturais (parallax alpha, obstáculos cobrindo hitbox, morte/idle animados, indicador de power-up, áudio generativo + toggle SFX, obstáculos novos, briefing+mods de desafio) | ✅ | 73 |
 
 ### Invariantes que se repetem (padrões do projeto)
 
@@ -117,7 +117,7 @@ fechadas, Frente D iniciada; resta 9.9).
 - **`git commit -am` de subagente varre trabalho pré-existente** do usuário ⇒ commitar só os arquivos
   do item (precedente 8.4).
 
-### Fase 9 — Melhorias estruturais (EM ANDAMENTO) — `docs/roadmap/PHASE-09-*.md`
+### Fase 9 — Melhorias estruturais (CONCLUÍDA) — `docs/roadmap/PHASE-09-*.md`
 
 Ordem travada **A → B → C → D**. Um item por PR (SDD por subagentes). Só D toca core.
 
@@ -148,8 +148,18 @@ Ordem travada **A → B → C → D**. Um item por PR (SDD por subagentes). Só 
   goldens re-pinados só por `rng.pick` sobre 7 tipos. Entram como placeholder primitivo (desenha a
   hitbox exata); arte real em asset-specs + Lote G do art-brief. `STORAGE_KEY` de replays `v1→v2`
   (catálogo novo ⇒ `finalHash` antigos não recomputam). Detalhes/gotchas:
-  [[deferred-new-obstacles-9.8]] · 9.9 briefing + modificadores de desafio por seed
-  (`src/core/challenge/`, função pura da seed; verificador recomputa) ← PRÓXIMA.
+  [[deferred-new-obstacles-9.8]] · 9.9 briefing + modificadores de desafio por seed ✅ —
+  `challengeModifiersForSeed(seed)` (`src/core/challenge/`) devolve SEMPRE
+  `{ forcedWeather, bannedPowerup }` (dois eixos, nunca opcionais); **contrato de ordem: RNG forkado
+  no stream `'challenge'`, 2 saques — clima e depois power-up** (mudar isso muda as regras de todas
+  as seeds já jogadas). `createWorld` com `challenge:true` fixa o clima (`weatherGenerator = null`) e
+  dá ao spawner o catálogo sem o banido (`powerupCatalogExcluding`, memoizado por kind) ⇒ **contagem
+  de saques inalterada e ZERO campo novo em `WorldState`** ⇒ goldens de Endless nos MESMOS valores.
+  Builder único `challengeWorldConfig(seed)` virou a fonte da verdade dos 3 pontos (fábrica de
+  partida, `verifyReplay`, `verifyChallengeSubmission`) — antes literal copiado, risco de rejeitar
+  replay honesto. Briefing sem rota nova (`ChallengeScreen` ⇄ `PlayScreen.onExit`, `key` por modo
+  senão o estado vaza e pula o briefing); `STORAGE_KEY` de replays **v2→v3**. Detalhes/gotchas:
+  [[deferred-challenge-modifiers-9.9]]. **Frente D e Fase 9 concluídas.**
 
 **ARTE REAL DA FASE 9 ENTREGUE** (fecha o débito de placeholder de A): 33 PNGs photoreal nos 3 temas
 — parallax 4×3, tiras segmentadas tree/vine 2×3, boulder/stalactite 2×3 (antes classic p/ todo mundo),

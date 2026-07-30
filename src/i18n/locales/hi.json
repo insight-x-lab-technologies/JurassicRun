@@ -280,6 +280,20 @@
       "weekly": "साप्ताहिक"
     }
   },
+  "challenge": {
+    "brief": {
+      "subtitle": "सभी के लिए एक ही सीड और एक ही नियम।",
+      "seed": "सीड",
+      "yourBest": "आपका सर्वश्रेष्ठ स्कोर",
+      "worldBest": "विश्व सर्वश्रेष्ठ स्कोर",
+      "none": "—",
+      "rules": "आज के नियम",
+      "ruleWeather": "मौसम तय: {{value}}",
+      "ruleBannedPowerup": "प्रतिबंधित पावर-अप: {{value}}",
+      "ruleTrait": "डायनो गुण: {{value}}",
+      "play": "खेलें"
+    }
+  },
   "online": {
     "title": "ऑनलाइन",
     "status": {

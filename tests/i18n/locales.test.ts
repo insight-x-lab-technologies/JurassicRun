@@ -84,6 +84,11 @@ const IDENTICAL_TO_EN_ALLOWLIST: ReadonlySet<string> = new Set<string>([
   'es::hud.seconds', 'pt-BR::hud.seconds', 'fr::hud.seconds', 'it::hud.seconds', 'de::hud.seconds',
   // "Magnet" — cognato alemão real (mesma grafia do en), molde de de::nav.nest/de::weather.wind.
   'de::powerup.magnet.name', 'de::trait.magnet.name',
+  // 9.9: "Seed" — mesmo empréstimo de gaming de de::hud.seed, agora no briefing de desafio.
+  'de::challenge.brief.seed',
+  // 9.9: "—" é só o traço de "sem recorde ainda" — símbolo puro, sem palavra para traduzir
+  // (molde de hud.extraLives/hud.seconds).
+  ...LOCALES_NON_EN.map((l) => `${l}::challenge.brief.none`),
 ]);
 
 // Valor que é só interpolação (ex.: "{{value}}") não tem o que traduzir.

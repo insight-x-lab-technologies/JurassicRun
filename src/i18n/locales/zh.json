@@ -280,6 +280,20 @@
       "weekly": "每周"
     }
   },
+  "challenge": {
+    "brief": {
+      "subtitle": "所有人使用相同的种子和相同的规则。",
+      "seed": "种子",
+      "yourBest": "你的最佳成绩",
+      "worldBest": "世界最佳成绩",
+      "none": "—",
+      "rules": "今日规则",
+      "ruleWeather": "天气锁定：{{value}}",
+      "ruleBannedPowerup": "禁用道具：{{value}}",
+      "ruleTrait": "恐龙特性：{{value}}",
+      "play": "开始"
+    }
+  },
   "online": {
     "title": "在线",
     "status": {

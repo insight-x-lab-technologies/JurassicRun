@@ -280,6 +280,20 @@
       "weekly": "Hebdomadaire"
     }
   },
+  "challenge": {
+    "brief": {
+      "subtitle": "Même graine et mêmes règles pour tous.",
+      "seed": "Graine",
+      "yourBest": "Votre record",
+      "worldBest": "Record mondial",
+      "none": "—",
+      "rules": "Règles du jour",
+      "ruleWeather": "Météo verrouillée : {{value}}",
+      "ruleBannedPowerup": "Bonus interdit : {{value}}",
+      "ruleTrait": "Trait du dino : {{value}}",
+      "play": "Jouer"
+    }
+  },
   "online": {
     "title": "En ligne",
     "status": {

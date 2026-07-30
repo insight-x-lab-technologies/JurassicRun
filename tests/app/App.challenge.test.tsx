@@ -22,18 +22,25 @@ describe('App — rotas de desafio', () => {
     profileService.init(); // garante um perfil ativo (ou onboarding); ver nota abaixo
   });
 
-  it('renderiza a PlayScreen (canvas) nas rotas daily e weekly', async () => {
+  it('renderiza o briefing e, ao Jogar, a PlayScreen (canvas) nas rotas daily e weekly', async () => {
     // pré-condição: um perfil ativo para passar do onboarding
     if (profileService.activeProfile.value === null) profileService.create('Tester');
 
     const host = document.createElement('div');
     navigate('daily');
     render(<App />, host);
+    // Item 9.9: briefing primeiro (seed/recordes/regras), jogo só após "Jogar".
+    const dailyPlay = host.querySelector<HTMLButtonElement>('[data-testid="challenge-play"]');
+    expect(dailyPlay).not.toBeNull();
+    dailyPlay?.click();
     await Promise.resolve();
     expect(host.querySelector('.play-screen__canvas')).not.toBeNull();
 
     navigate('weekly');
     render(<App />, host);
+    const weeklyPlay = host.querySelector<HTMLButtonElement>('[data-testid="challenge-play"]');
+    expect(weeklyPlay).not.toBeNull();
+    weeklyPlay?.click();
     await Promise.resolve();
     expect(host.querySelector('.play-screen__canvas')).not.toBeNull();
 

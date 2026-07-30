@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { simulate, hashState, buildTimeline } from '@core/replay';
+import { challengeWorldConfig } from '@core/challenge';
 import { verifyChallengeSubmission, type ChallengeSubmission } from '@services/online/verifyChallenge';
 
 // 9.8 (fix round 1): a seed antiga ('daily:2026-07-16') passou a produzir, com o catálogo novo,
@@ -11,10 +12,10 @@ import { verifyChallengeSubmission, type ChallengeSubmission } from '@services/o
 // a posição no congelamento muda, mesmo quando distance/score coincidem por acaso).
 const SEED = 'daily:2026-07-05';
 
-/** Constrói uma submissão fiel re-simulando de verdade. */
+/** Constrói uma submissão fiel re-simulando de verdade (config canônica de desafio). */
 function faithful(seed = SEED): ChallengeSubmission {
   const frames = buildTimeline(600, (i) => i % 3 === 0); // InputFrame[]; pattern é (i)=>boolean
-  const world = simulate({ seed, trait: 'none' }, frames);
+  const world = simulate(challengeWorldConfig(seed), frames);
   return {
     seed,
     timeline: frames.map((f) => f.flap),

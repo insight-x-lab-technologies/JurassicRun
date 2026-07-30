@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { simulate, hashState, buildTimeline } from '@core/replay';
+import { challengeWorldConfig } from '@core/challenge';
 import { verifyChallengeSubmission as fromSource, type ChallengeSubmission } from '@services/online/verifyChallenge';
 // @ts-expect-error bundle JS gerado sem tipos
 import { verifyChallengeSubmission as fromBundle } from '../../supabase/functions/verify-challenge/_verify.bundle.js';
 
 function sample(seed: string): ChallengeSubmission {
   const frames = buildTimeline(400, (i) => i % 3 === 0);
-  const w = simulate({ seed, trait: 'none' }, frames);
+  const w = simulate(challengeWorldConfig(seed), frames);
   return {
     seed, timeline: frames.map((f) => f.flap),
     score: w.score, distance: w.distance, food: w.food, nearMisses: w.nearMisses,

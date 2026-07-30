@@ -280,6 +280,20 @@
       "weekly": "Settimanale"
     }
   },
+  "challenge": {
+    "brief": {
+      "subtitle": "Stesso seme e stesse regole per tutti.",
+      "seed": "Seme",
+      "yourBest": "Il tuo record",
+      "worldBest": "Record mondiale",
+      "none": "—",
+      "rules": "Regole di oggi",
+      "ruleWeather": "Meteo bloccato: {{value}}",
+      "ruleBannedPowerup": "Power-up vietato: {{value}}",
+      "ruleTrait": "Tratto del dino: {{value}}",
+      "play": "Gioca"
+    }
+  },
   "online": {
     "title": "Online",
     "status": {

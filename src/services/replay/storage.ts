@@ -12,12 +12,9 @@ export interface ReplayStorage {
   save(state: ReplayState): void;
 }
 
-// v2 (9.8): o catálogo de obstáculos mudou (4→7 tipos), o que muda a sequência de `rng.pick`
-// consumida pelo SpawnGenerator ⇒ replays gravados sob a v1 não recomputam mais o mesmo
-// `finalHash` (ver src/services/replay/verify.ts). Bump proposital da chave: descarta de
-// propósito os replays antigos (ficam órfãos sob `jurassicrun.replays.v1`, nunca mais lidos)
-// em vez de deixá-los aparecer como `valid: false` no leaderboard local.
-export const STORAGE_KEY = 'jurassicrun.replays.v2';
+// v3 (9.9): modo desafio aplica modificadores derivados da seed ⇒ os `finalHash` gravados
+// antes de 9.9 não recomputam. O bump aposenta os replays antigos em vez de reportá-los inválidos.
+export const STORAGE_KEY = 'jurassicrun.replays.v3';
 
 export function memoryReplayStorage(initial: ReplayState = initialReplayState()): ReplayStorage {
   let state = initial;

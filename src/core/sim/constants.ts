@@ -13,11 +13,14 @@ export const SCROLL_SPEED = 120; // unidades/s (avanço em +x)
 export const PTERODACTYL_HITBOX: Hitbox = aabb(10, 8);
 
 /** Config padrão totalmente preenchida (merge com WorldConfig parcial em createWorld).
- * seed/spawn/collectibleSpawn/powerupSpawn/difficulty/weather/trait não têm default fixo e são
- * omitidos intencionalmente (difficulty/weather/trait lidos diretamente de config em
- * createWorld). */
+ * seed/spawn/collectibleSpawn/powerupSpawn/difficulty/weather/trait/challenge não têm default
+ * fixo e são omitidos intencionalmente (difficulty/weather/trait/challenge lidos diretamente de
+ * config em createWorld). */
 export const DEFAULT_WORLD_CONFIG: Required<
-  Omit<WorldConfig, 'seed' | 'spawn' | 'collectibleSpawn' | 'powerupSpawn' | 'difficulty' | 'weather' | 'trait'>
+  Omit<
+    WorldConfig,
+    'seed' | 'spawn' | 'collectibleSpawn' | 'powerupSpawn' | 'difficulty' | 'weather' | 'trait' | 'challenge'
+  >
 > = {
   worldHeight: WORLD_HEIGHT,
   gravity: GRAVITY,

@@ -389,6 +389,13 @@ function isEffectActive(effects, kind) {
 }
 
 // src/core/powerup/catalog.ts
+var POWERUP_KINDS = Object.freeze([
+  "shield",
+  "extraLife",
+  "magnet",
+  "doubleCoin",
+  "slowMo"
+]);
 var POWERUP_CATALOG = [
   { id: "powerup.shield", anchor: "floating", makeHitbox: (rng) => circle(rng.range(7, 9)) },
   { id: "powerup.extraLife", anchor: "floating", makeHitbox: (rng) => circle(rng.range(7, 9)) },
@@ -414,6 +421,14 @@ var DEFAULT_POWERUP_CONFIG = Object.freeze({
   gapMin: 600,
   gapMax: 1e3
 });
+var CATALOG_WITHOUT = /* @__PURE__ */ new Map();
+function powerupCatalogExcluding(kind) {
+  const cached = CATALOG_WITHOUT.get(kind);
+  if (cached !== void 0) return cached;
+  const filtered = Object.freeze(POWERUP_CATALOG.filter((t) => t.id !== `powerup.${kind}`));
+  CATALOG_WITHOUT.set(kind, filtered);
+  return filtered;
+}
 
 // src/core/powerup/constants.ts
 var SHIELD_DURATION_STEPS = 300;
@@ -563,6 +578,20 @@ function traitModifiers(trait) {
   return TRAIT_CATALOG[trait];
 }
 
+// src/core/challenge/modifiers.ts
+var CHALLENGE_STREAM = "challenge";
+function challengeModifiersForSeed(seed) {
+  const rng = createRng(seed).fork(CHALLENGE_STREAM);
+  const forcedWeather = rng.pick(WEATHER_KINDS);
+  const bannedPowerup = rng.pick(POWERUP_KINDS);
+  return Object.freeze({ forcedWeather, bannedPowerup });
+}
+
+// src/core/challenge/config.ts
+function challengeWorldConfig(seed) {
+  return { seed, trait: "none", challenge: true };
+}
+
 // src/core/sim/world.ts
 var OBSTACLE_GAP_SCALE = (x) => difficultyAt(x).gapScale;
 function buildSpawner(seed, worldHeight, override, gapScale) {
@@ -573,9 +602,9 @@ function buildCollectibleSpawner(seed, worldHeight, override) {
   const config = { ...DEFAULT_COLLECTIBLE_CONFIG, ...override, worldHeight };
   return new SpawnGenerator(createRng(seed).fork("collectibles"), config, COLLECTIBLE_CATALOG, "collectible");
 }
-function buildPowerupSpawner(seed, worldHeight, override) {
+function buildPowerupSpawner(seed, worldHeight, override, catalog = POWERUP_CATALOG) {
   const config = { ...DEFAULT_POWERUP_CONFIG, ...override, worldHeight };
-  return new SpawnGenerator(createRng(seed).fork("powerups"), config, POWERUP_CATALOG, "collectible");
+  return new SpawnGenerator(createRng(seed).fork("powerups"), config, catalog, "collectible");
 }
 function buildWeatherGenerator(seed) {
   return new WeatherGenerator(createRng(seed).fork("weather"));
@@ -586,9 +615,16 @@ function createWorld(config = {}) {
   const gapScale = difficultyEnabled ? OBSTACLE_GAP_SCALE : void 0;
   const spawner = config.seed === void 0 ? null : buildSpawner(config.seed, c.worldHeight, config.spawn, gapScale);
   const collectibleSpawner = config.seed === void 0 ? null : buildCollectibleSpawner(config.seed, c.worldHeight, config.collectibleSpawn);
-  const powerupSpawner = config.seed === void 0 ? null : buildPowerupSpawner(config.seed, c.worldHeight, config.powerupSpawn);
+  const challengeMods = config.challenge === true && config.seed !== void 0 ? challengeModifiersForSeed(config.seed) : null;
+  const powerupSpawner = config.seed === void 0 ? null : buildPowerupSpawner(
+    config.seed,
+    c.worldHeight,
+    config.powerupSpawn,
+    challengeMods === null ? void 0 : powerupCatalogExcluding(challengeMods.bannedPowerup)
+  );
   const weatherEnabled = config.weather ?? true;
-  const weatherGenerator = config.seed === void 0 || !weatherEnabled ? null : buildWeatherGenerator(config.seed);
+  const weatherGenerator = config.seed === void 0 || !weatherEnabled || challengeMods !== null ? null : buildWeatherGenerator(config.seed);
+  const forcedWeather = weatherEnabled && challengeMods !== null ? challengeMods.forcedWeather : "clear";
   const trait = config.trait ?? "none";
   const mods = traitModifiers(trait);
   const effects = [];
@@ -622,7 +658,7 @@ function createWorld(config = {}) {
     powerupSpawner,
     effects,
     extraLives: mods.startExtraLives,
-    weather: "clear",
+    weather: forcedWeather,
     weatherGenerator,
     trait
   };
@@ -1011,7 +1047,7 @@ function hashState(world) {
 // src/services/online/verifyChallenge.ts
 function verifyChallengeSubmission(sub) {
   const timeline = sub.timeline.map((flap) => ({ flap }));
-  const world = simulate({ seed: sub.seed, trait: "none" }, timeline);
+  const world = simulate(challengeWorldConfig(sub.seed), timeline);
   const expectedHash = hashState(world);
   const hashMatches = expectedHash === sub.finalHash;
   const fieldsMatch = world.score === sub.score && world.distance === sub.distance && world.food === sub.food && world.nearMisses === sub.nearMisses;

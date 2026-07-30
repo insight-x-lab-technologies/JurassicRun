@@ -280,6 +280,20 @@
       "weekly": "ウィークリー"
     }
   },
+  "challenge": {
+    "brief": {
+      "subtitle": "全員が同じシード・同じルール。",
+      "seed": "シード",
+      "yourBest": "自己ベスト",
+      "worldBest": "世界記録",
+      "none": "—",
+      "rules": "今日のルール",
+      "ruleWeather": "天気固定: {{value}}",
+      "ruleBannedPowerup": "禁止パワーアップ: {{value}}",
+      "ruleTrait": "恐竜の特性: {{value}}",
+      "play": "プレイ"
+    }
+  },
   "online": {
     "title": "オンライン",
     "status": {

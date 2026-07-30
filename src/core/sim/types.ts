@@ -69,6 +69,12 @@ export interface WorldConfig {
   weather?: boolean;
   /** Traço do dino ativo (de fora do core, via startGame). Default 'none'. */
   trait?: DinoTrait;
+  /**
+   * Modo desafio (Diário/Semanal): `createWorld` deriva os modificadores da própria seed
+   * (clima fixo + power-up banido) via `@core/challenge`. Default false.
+   * Use `challengeWorldConfig(seed)` em vez de montar a config à mão.
+   */
+  challenge?: boolean;
 }
 
 /**
