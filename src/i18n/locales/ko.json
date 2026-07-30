@@ -280,6 +280,22 @@
       "weekly": "주간"
     }
   },
+  "challenge": {
+    "brief": {
+      "titleDaily": "일일 도전",
+      "titleWeekly": "주간 도전",
+      "subtitle": "모두 같은 시드, 같은 규칙.",
+      "seed": "시드",
+      "yourBest": "내 최고 기록",
+      "worldBest": "세계 기록",
+      "none": "—",
+      "rules": "오늘의 규칙",
+      "ruleWeather": "날씨 고정: {{value}}",
+      "ruleBannedPowerup": "금지된 파워업: {{value}}",
+      "ruleTrait": "공룡 특성: {{value}}",
+      "play": "플레이"
+    }
+  },
   "online": {
     "title": "온라인",
     "status": {

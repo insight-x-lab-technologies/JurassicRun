@@ -280,6 +280,22 @@
       "weekly": "Weekly"
     }
   },
+  "challenge": {
+    "brief": {
+      "titleDaily": "Daily Challenge",
+      "titleWeekly": "Weekly Challenge",
+      "subtitle": "Same seed and same rules for everyone.",
+      "seed": "Seed",
+      "yourBest": "Your best",
+      "worldBest": "World best",
+      "none": "—",
+      "rules": "Today's rules",
+      "ruleWeather": "Weather locked: {{value}}",
+      "ruleBannedPowerup": "Banned power-up: {{value}}",
+      "ruleTrait": "Dino trait: {{value}}",
+      "play": "Play"
+    }
+  },
   "online": {
     "title": "Online",
     "status": {

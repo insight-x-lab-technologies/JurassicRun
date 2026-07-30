@@ -280,6 +280,22 @@
       "weekly": "Semanal"
     }
   },
+  "challenge": {
+    "brief": {
+      "titleDaily": "Reto Diario",
+      "titleWeekly": "Reto Semanal",
+      "subtitle": "Misma semilla y mismas reglas para todos.",
+      "seed": "Semilla",
+      "yourBest": "Tu récord",
+      "worldBest": "Récord mundial",
+      "none": "—",
+      "rules": "Reglas de hoy",
+      "ruleWeather": "Clima bloqueado: {{value}}",
+      "ruleBannedPowerup": "Power-up prohibido: {{value}}",
+      "ruleTrait": "Rasgo del dino: {{value}}",
+      "play": "Jugar"
+    }
+  },
   "online": {
     "title": "En línea",
     "status": {

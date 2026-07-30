@@ -280,6 +280,22 @@
       "weekly": "Wöchentlich"
     }
   },
+  "challenge": {
+    "brief": {
+      "titleDaily": "Tägliche Herausforderung",
+      "titleWeekly": "Wöchentliche Herausforderung",
+      "subtitle": "Gleicher Seed und gleiche Regeln für alle.",
+      "seed": "Seed",
+      "yourBest": "Dein Rekord",
+      "worldBest": "Weltrekord",
+      "none": "—",
+      "rules": "Heutige Regeln",
+      "ruleWeather": "Wetter festgelegt: {{value}}",
+      "ruleBannedPowerup": "Verbotenes Power-up: {{value}}",
+      "ruleTrait": "Dino-Merkmal: {{value}}",
+      "play": "Spielen"
+    }
+  },
   "online": {
     "title": "Online",
     "status": {
