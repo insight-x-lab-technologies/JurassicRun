@@ -442,6 +442,12 @@ body {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
+.home__version {
+  color: var(--color-text-muted);
+  font-size: calc(var(--font-size-sm) * 0.75);
+  opacity: 0.7;
+}
+
 /* Doação — tela dedicada (mesmo padrão das demais sub-telas). */
 .donate__section {
   width: min(100%, 44rem);

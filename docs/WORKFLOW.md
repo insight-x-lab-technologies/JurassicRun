@@ -65,6 +65,12 @@ Use agentes quando o usuário pedir ou quando a tarefa se beneficiar de isolamen
 - `verify-determinism` — rodar a bateria de testes de determinismo.
 - `create-asset-spec` — criar a especificação de uma imagem trocável para geração por IA.
 
+## Versão exibida na Home
+
+A Home mostra `v` + o campo `version` do `package.json` (rodapé, junto do copyright — item 10.2).
+Não há automação de release: ao **fechar uma fase**, suba manualmente esse campo. É a única fonte
+da versão exibida — nenhum outro lugar guarda ou deriva o número.
+
 ## Regras de ouro
 
 - **Sempre** comece pelas skills de processo (brainstorming/debugging) antes de implementar.

@@ -111,7 +111,12 @@ export function HomeScreen(): VNode {
 
         <ShareLinks {...defaultShareLinkProps()} />
 
-        <p class="home__copyright">{i18n.t('home.copyright')}</p>
+        <p class="home__copyright">
+          {i18n.t('home.copyright')}{' '}
+          <span class="home__version" data-testid="app-version">
+            {`v${__APP_VERSION__}`}
+          </span>
+        </p>
       </main>
     </div>
   );
