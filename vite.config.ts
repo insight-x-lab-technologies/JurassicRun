@@ -3,6 +3,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import { VitePWA } from 'vite-plugin-pwa';
 import { pwaOptions } from './src/pwa/manifest';
 import { resolveBasePath } from './src/pwa/base';
+import { appVersion } from './src/build/appVersion';
 
 export default defineConfig({
   base: resolveBasePath(process.env),
@@ -13,4 +14,5 @@ export default defineConfig({
   // Vite 8 usa rolldown/oxc (não esbuild) para o transform de JSX; `esbuild.jsx` não
   // existe mais no tipo (o pacote `esbuild` nem é dependência). Equivalente em oxc:
   oxc: { jsx: { runtime: 'automatic', importSource: 'preact' } },
+  define: { __APP_VERSION__: JSON.stringify(appVersion()) },
 });
