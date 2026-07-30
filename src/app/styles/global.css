@@ -1480,6 +1480,57 @@ img.expansion-card__avatar {
     width: 1.7rem;
     height: 1.7rem;
   }
+
+  /* Fix round 1 (item 9.9): em paisagem baixa (celular deitado, ex. 740×360) o briefing
+     completo (título grande + stats emolduradas + 3 regras empilhadas + botões grandes)
+     estourava a altura da viewport e escondia o CTA "Jogar" atrás de rolagem — o botão
+     principal do fluxo não pode depender de scroll. Comprime na vertical, mesmo tratamento
+     já dado à `.home` acima nesta media query. */
+  .challenge-brief {
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-4);
+  }
+
+  .challenge-brief__title {
+    font-size: var(--font-size-lg);
+  }
+
+  .challenge-brief__subtitle {
+    /* Texto secundário: some para dar lugar ao essencial (seed/recordes/regras/CTA), que já
+       cabe sem ele. */
+    display: none;
+  }
+
+  .challenge-brief__stats {
+    padding: var(--space-2);
+    border-width: 8px;
+  }
+
+  .challenge-brief__stat dd {
+    font-size: var(--font-size-sm);
+  }
+
+  .challenge-brief__rules-title {
+    font-size: var(--font-size-sm);
+  }
+
+  /* 2 colunas em vez de empilhadas: 2 linhas no lugar de 3 (a 3ª regra some sozinha na 2ª). */
+  .challenge-brief__rules {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-1);
+  }
+
+  .challenge-brief__rule {
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .challenge-brief__actions .btn {
+    min-height: 2.4rem;
+    border-width: 6px 14px;
+    border-image-width: 6px 14px;
+    padding: var(--space-1) var(--space-2);
+  }
 }
 
 @media (max-width: 640px) {
