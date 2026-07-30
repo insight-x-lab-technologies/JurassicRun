@@ -438,19 +438,34 @@ inalterados.
 **Aceite:** novos obstáculos jogáveis e justos; determinismo provado; arte cobre a hitbox
 (usa a composição por segmentos do 9.2).
 
-### 9.9 Briefing + modificadores de desafio por seed (#8)
-- [ ] **Briefing screen** (DOM) antes de Diário/Semanal: recorde atual (local + central se
+### 9.9 Briefing + modificadores de desafio por seed (#8) — CONCLUÍDA
+- [x] **Briefing screen** (DOM) antes de Diário/Semanal: recorde atual (local + central se
       online), seed do período, e as **regras do dia** (traço proibido = padrão + os
       modificadores derivados da seed). Botões Jogar / Voltar.
-- [ ] **Modificadores determinísticos:** função pura `challengeModifiersForSeed(seed)` em
-      `src/core/challenge/` (usa `hashSeed` de `@core/rng`, sem `Date`/random) → ex.:
-      `{ forcedWeather?: WeatherKind, bannedPowerup?: PowerupKind }`.
-- [ ] `createWorld`, quando em modo desafio (flag `challenge:true` + seed), **deriva os
-      modificadores internamente** e os aplica (clima fixo ao invés do gerado; spawner de power-up
-      pula o tipo banido). Idênticos para todos os jogadores.
-- [ ] **Verificação:** `verifyReplay`/`verify-challenge` reconstroem `{seed, trait:'none',
-      challenge:true}` ⇒ recomputam os mesmos modificadores da seed ⇒ replays seguem válidos.
-      Regenerar `_verify.bundle.js` (`build:edge`).
+      Entregue como `ChallengeScreen` (casca com estado `playing`, seed capturada 1×/montagem,
+      `key` por modo) + `ChallengeBrief` (apresentação) + `buildChallengeBrief` (view-model PURO
+      que devolve chaves i18n, nunca texto). `PlayScreen` ganhou `onExit` ⇒ sair do jogo volta ao
+      briefing com o recorde já atualizado. Sem rota nova.
+- [x] **Modificadores determinísticos:** função pura `challengeModifiersForSeed(seed)` em
+      `src/core/challenge/`. Decidido **sempre os dois eixos, nunca opcionais**:
+      `{ forcedWeather: WeatherKind; bannedPowerup: PowerupKind }` (zero ramo condicional; o
+      briefing sempre mostra 2 regras concretas). RNG forkado no stream `'challenge'`;
+      **CONTRATO de ordem: 2 saques — `pick(WEATHER_KINDS)` e depois `pick(POWERUP_KINDS)`**
+      (mudar ordem/stream/catálogo muda as regras de todas as seeds já jogadas).
+- [x] `createWorld`, quando em modo desafio (flag `challenge:true` + seed), **deriva os
+      modificadores internamente** e os aplica: `weather = forcedWeather` **e
+      `weatherGenerator = null`** (clima constante, sem sequenciador nem saques de clima); o
+      `powerupSpawner` recebe `powerupCatalogExcluding(banido)` — array congelada e **memoizada
+      por kind** (zero alocação, ref estável p/ as comparações estruturais). `pick` consome 1
+      saque com 4 ou 5 tipos ⇒ contagem de saques inalterada. `weather:false` continua vencendo.
+- [x] **Verificação:** builder único `challengeWorldConfig(seed)` em `@core/challenge` é a FONTE
+      DA VERDADE — usado por `createMatchFactory` (daily/weekly), `verifyReplay` e
+      `verifyChallengeSubmission` (antes: literal `{seed, trait:'none'}` copiado em 3 lugares).
+      `_verify.bundle.js` regenerado. `STORAGE_KEY` de replays **v2→v3** (os `finalHash` gravados
+      antes de 9.9 não recomputam com os modificadores).
+- [x] **Sem campos novos em `WorldState`** ⇒ `hashState` intocado, teste de completude intocado,
+      os 4 goldens de Endless **nos mesmos valores** (prova de que o caminho comum não mudou).
+      Golden novo de modo-desafio + fps-independência. det **67 → 73**.
 
 **Notas de determinismo:** os modificadores só alteram campos já hasheados (`weather`, entidades
 de power-up emitidas) ⇒ possivelmente **sem novas chaves em `hashState`**. Goldens de replay atuais
