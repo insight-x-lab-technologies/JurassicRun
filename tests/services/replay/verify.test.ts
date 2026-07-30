@@ -1,14 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { simulate, hashState, buildTimeline } from '@core/replay';
+import { challengeWorldConfig } from '@core/challenge';
 import { verifyReplay } from '@services/replay/verify';
 import type { StoredReplay } from '@services/replay/store';
 
 const SEED = 'daily:2026-07-08';
 
-/** Constrói um StoredReplay honesto: simula {seed, trait:'none'} + timeline e ancora o hash. */
+/** Constrói um StoredReplay honesto: simula a config canônica de desafio + timeline e ancora o hash. */
 function honestReplay(): StoredReplay {
   const timeline = buildTimeline(300, (i) => i % 20 === 0); // flap menos frequente
-  const world = simulate({ seed: SEED, trait: 'none' }, timeline);
+  const world = simulate(challengeWorldConfig(SEED), timeline);
   return {
     mode: 'daily',
     seed: SEED,

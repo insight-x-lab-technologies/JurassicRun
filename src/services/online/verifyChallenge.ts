@@ -1,5 +1,6 @@
 import { simulate, hashState } from '@core/replay';
 import type { InputTimeline } from '@core/replay';
+import { challengeWorldConfig } from '@core/challenge';
 
 /** Submissão de desafio a verificar (Diário/Semanal). challenge_entries não tem `level`. */
 export interface ChallengeSubmission {
@@ -20,14 +21,16 @@ export interface ChallengeVerification {
 }
 
 /**
- * Re-simula {seed, trait:'none'} + timeline e valida integridade. Único ponto da verdade do
- * anti-cheat, importado tanto pelo Vitest quanto pela Edge Function (via bundle). Puro:
- * depende só de @core/replay. hashMatches prova a timeline; fieldsMatch prova que as colunas
- * não foram infladas independentemente do hash. Ambos são necessários.
+ * Re-simula a config canônica `challengeWorldConfig(seed)` ({seed, trait:'none', challenge:true}
+ * — os modificadores de clima/power-up são recomputados da própria seed) + timeline e valida
+ * integridade. Único ponto da verdade do anti-cheat, importado tanto pelo Vitest quanto pela Edge
+ * Function (via bundle). Puro: depende só de @core/replay e @core/challenge. hashMatches prova a
+ * timeline; fieldsMatch prova que as colunas não foram infladas independentemente do hash. Ambos
+ * são necessários.
  */
 export function verifyChallengeSubmission(sub: ChallengeSubmission): ChallengeVerification {
   const timeline: InputTimeline = sub.timeline.map((flap) => ({ flap }));
-  const world = simulate({ seed: sub.seed, trait: 'none' }, timeline);
+  const world = simulate(challengeWorldConfig(sub.seed), timeline);
   const expectedHash = hashState(world);
   const hashMatches = expectedHash === sub.finalHash;
   const fieldsMatch =

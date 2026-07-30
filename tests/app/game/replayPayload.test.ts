@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildReplayPayload } from '@app/game/replayPayload';
 import { simulate, hashState, buildTimeline } from '@core/replay';
+import { challengeWorldConfig } from '@core/challenge';
 import { verifyReplay } from '@services/replay';
 
 const SEED = 'daily:2026-07-08';
@@ -13,7 +14,7 @@ describe('buildReplayPayload', () => {
 
   it('daily ⇒ StoredReplay verificável (payload reproduz o hash do mundo final)', () => {
     const timeline = buildTimeline(90, (i) => i % 12 === 0);
-    const world = simulate({ seed: SEED, trait: 'none' }, timeline);
+    const world = simulate(challengeWorldConfig(SEED), timeline);
     const payload = buildReplayPayload('daily', SEED, world, timeline, 42);
     expect(payload).not.toBeNull();
     expect(payload!.mode).toBe('daily');

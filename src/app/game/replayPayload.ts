@@ -7,8 +7,9 @@ import type { StoredReplay } from '@services/replay';
 /**
  * Monta o payload de replay verificável para uma partida de desafio (daily/weekly).
  * Retorna null para endless (fora do escopo do 5.4 — trait aleatório não reconstrutível só da seed).
- * Puro/testável sem Phaser. O `finalHash` ancora a integridade: verifyReplay re-simula
- * {seed, trait:'none'} + timeline e compara este hash.
+ * Puro/testável sem Phaser. O `finalHash` ancora a integridade: `verifyReplay` re-simula a config
+ * canônica `challengeWorldConfig(seed)` ({seed, trait:'none', challenge:true}, modificadores
+ * recomputados da seed) + timeline e compara este hash.
  */
 export function buildReplayPayload(
   mode: MatchMode,
