@@ -22,19 +22,19 @@ function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
 }
 
+/**
+ * Varre as chaves do estado VAZIO (não uma lista fixa) — assim um campo novo em `TrophyStats`
+ * nunca fica de fora do saneamento por esquecimento (guarda: teste de invariante em storage.test.ts).
+ */
 function sanitizeStats(raw: unknown): TrophyStats {
   const base = emptyStats();
   if (!isRecord(raw)) return base;
-  const num = (k: keyof TrophyStats): number =>
-    typeof raw[k] === 'number' ? sanitizeStat(raw[k] as number) : 0;
-  return {
-    gamesPlayed: num('gamesPlayed'),
-    totalFood: num('totalFood'),
-    totalDistance: num('totalDistance'),
-    bestDistance: num('bestDistance'),
-    bestNearMisses: num('bestNearMisses'),
-    bestScore: num('bestScore'),
-  };
+  const out: Record<string, number> = {};
+  for (const key of Object.keys(base)) {
+    const v = raw[key];
+    out[key] = typeof v === 'number' ? sanitizeStat(v) : 0;
+  }
+  return out as unknown as TrophyStats;
 }
 
 function knownId(id: unknown): id is string {
@@ -67,7 +67,9 @@ export function localStorageTrophyStorage(): TrophyStorage {
       try {
         localStorage.setItem(
           STORAGE_KEY,
-          JSON.stringify({ version: 1, stats: state.stats, unlocked: state.unlocked }),
+          // A CHAVE continua `.v1` de propósito: bumpar apagaria desbloqueios conquistados.
+          // Só o schema do payload avança (10.7). Campos ausentes num payload v1 lêem 0.
+          JSON.stringify({ version: 2, stats: state.stats, unlocked: state.unlocked }),
         );
       } catch {
         // localStorage indisponível (modo privado); persistência é best-effort.
