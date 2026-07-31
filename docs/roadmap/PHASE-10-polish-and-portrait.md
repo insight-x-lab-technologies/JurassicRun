@@ -119,20 +119,42 @@ briefing e sem exceção; teste cobrindo storage indisponível (modo privado) se
 
 ## Frente B — Consistência de UI (render/app)
 
-### 10.4 "Moedas" no lugar de "comida" na UI (#4)
-- [ ] Game Over hoje mostra **duas linhas com o MESMO número**: `🍖 comida` e `🪙 moedas ganhas` —
+### 10.4 "Moedas" no lugar de "comida" na UI (#4) ✅
+- [x] Game Over hoje mostra **duas linhas com o MESMO número**: `🍖 comida` e `🪙 moedas ganhas` —
       `coinsForFood()` é **identidade 1:1** (`src/services/wallet/store.ts:17`). Colapsar em uma
       linha só de moedas.
-- [ ] HUD: `hud.food` → moedas, glifo `🍖` → `🪙` (`src/app/game/Hud.tsx`).
-- [ ] Chaves i18n novas (`hud.coins`, `gameover.coins`) nos **10 idiomas** e remoção das antigas
-      (`hud.food`, `gameover.food`) — usar a skill `add-locale`.
-- [ ] Núcleo/serviços mantêm os nomes internos (`WorldState.food`, `TrophyStats.totalFood`,
+- [x] HUD: `hud.food` → moedas (o HUD DOM não tem glifo — é texto puro; o `🍖` que existia era só
+      o do Game Over, que saiu junto com a linha duplicada).
+- [x] Chaves i18n novas (`hud.coins`, `gameover.coins`) nos **10 idiomas** e remoção das antigas
+      (`hud.food`, `gameover.food`) — mais `leaderboard.food` → `leaderboard.coins`, que a varredura
+      achou.
+- [x] Núcleo/serviços mantêm os nomes internos (`WorldState.food`, `TrophyStats.totalFood`,
       `coinsForFood`): são invisíveis ao usuário e renomeá-los mexeria em hash/goldens.
-- [ ] Varrer o resto da UI atrás de "comida/food" visível (Ninho, troféus, leaderboard, share).
+- [x] Varrer o resto da UI atrás de "comida/food" visível (Ninho, troféus, leaderboard, share).
 
-**Toca:** `src/app/game/{GameOverOverlay,Hud}.tsx`, `src/render/gameover.ts` (rótulos, não campos),
-`src/locales/*`. **Aceite:** nenhuma string de comida visível; guarda de paridade i18n + scanner AST
-verdes; testes de Game Over/HUD atualizados.
+**Toca:** `src/app/game/{GameOverOverlay,Hud}.tsx`, `src/render/GameScene.ts`,
+`src/app/screens/LeaderboardScreen.tsx`, `src/i18n/locales/*` (10). **Aceite:** ✅ nenhuma string de
+comida visível; guarda de paridade i18n + scanner AST verdes; testes de Game Over/HUD atualizados.
+
+> **Executado em 2026-07-30** (spec: `docs/superpowers/specs/2026-07-30-10.4-coins-not-food-ui.md`).
+> A varredura achou **duas naturezas** de string, tratadas em tasks separadas:
+> **(A) chaves renomeadas** — `hud.food`, `gameover.food` e `leaderboard.food` viram `*.coins` nos 10
+> locales e nos 4 pontos de uso (`Hud.tsx`, `GameScene.ts` HUD **e** Game Over in-canvas,
+> `LeaderboardScreen.tsx`);
+> **(B) só o texto muda** — `trophy.forager.desc`, `trait.doubleFood`, `trait.tripleFood` e
+> `powerup.doubleCoin.name` têm id de **código** (`traitKind` do roster, id de power-up) ⇒ a chave
+> fica, o valor passa a falar moeda nos 10 idiomas.
+>
+> O Game Over DOM passou a exibir **só** `gameover.coinsEarned` (`🪙 +N moedas`), lendo `stats.coins`
+> — o valor de fato creditado — e não `stats.food`: se `coinsForFood` deixar de ser identidade 1:1, a
+> tela continua verdadeira. Não foi preciso criar chave `gameover.coins` para o DOM; a `gameover.coins`
+> criada serve o Game Over **in-canvas** (`domOverlays = true` hoje o mantém invisível, mas o caminho
+> existe e não pode citar comida).
+>
+> **Guarda nova** `tests/i18n/no-food-keys.test.ts`: nenhum locale pode ter um segmento de chave
+> igual a `food`. A guarda é sobre **chaves**, não sobre textos traduzidos — caçar a palavra "comida"
+> em 10 idiomas exigiria um dicionário que o projeto não mantém, e é na chave que a regressão aparece.
+> Ids como `trait.doubleFood` seguem válidos (segmento ≠ `food`).
 
 ### 10.5 Briefing de desafio ocupando a tela (#7)
 - [ ] **Causa-raiz já isolada:** `ChallengeBrief` põe `class="screen challenge-brief"` na **raiz**
