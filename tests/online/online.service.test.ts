@@ -61,4 +61,13 @@ describe('OnlineService', () => {
     expect(onlineService.status.value).toBe('error');
     expect(onlineService.globalPlayerId.value).toBeNull();
   });
+
+  it('o jogador sincronizado leva o avatarId escolhido, não a matiz derivada', async () => {
+    const client = memoryOnlineClient({ uid: 'uid-9' });
+    const rexWithAvatar: Profile = { ...rex, avatarId: 'a06' };
+    const { view } = fakeProfile(rexWithAvatar);
+    await onlineService.init({ config: { url: 'u', anonKey: 'k' }, client, profile: view });
+    expect(client.upserts).toHaveLength(1);
+    expect(client.upserts[0]).toMatchObject({ id: 'uid-9', name: 'Rex', avatar: 'a06' });
+  });
 });
