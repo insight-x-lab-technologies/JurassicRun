@@ -16,6 +16,15 @@ Regra: uma fase deve deixar o jogo num estado coerente e testado antes da próxi
 | 8 | Arte AAA & packs look&feel | `PHASE-08-art-and-packs.md` |
 | 9 | Melhorias estruturais (parallax, feedback, áudio, desafios) | `PHASE-09-structural-improvements.md` |
 | 10 | Polimento, meta e retrato (higiene, loja, avatares, troféus, portrait) | `PHASE-10-polish-and-portrait.md` |
+| 11 | Retenção & economia viva (daily, missões, skins, ovos, revive, telemetria) | `PHASE-11-retention-and-economy.md` |
+| 12 | Viral & social (link de desafio, ghost, share card, soft launch) | `PHASE-12-viral-and-social.md` |
+| 13 | Ads & portais web (seam AdsProvider, flavors, CrazyGames/Poki, H5 Ads) | `PHASE-13-ads-and-portals.md` |
+| 14 | Play Store (TWA, Play Billing, listing; wrappers extras opcionais) | `PHASE-14-play-store.md` |
+| 15 | Live-ops (eventos temáticos, torneio semanal, calendário) | `PHASE-15-liveops-events-tournaments.md` |
+| 16 | Modo aventura (missões procedurais, mapa, estrelas, recompensas) | `PHASE-16-adventure-mode.md` |
+
+> Fases 11–16: design aprovado em `docs/superpowers/specs/2026-07-30-monetization-roadmap-design.md`
+> (estratégia "retenção primeiro"; único item que toca `src/core/` é o revive 11.5).
 
 ## Rastreabilidade: requisito → fase
 
@@ -48,7 +57,7 @@ Garante que **nada** do escopo ficou de fora.
 | Responsivo desktop/tablet/celular, retrato+paisagem | 7 (transversal, validado desde 2) |
 | PWA instalável | 7 |
 | Deploy GitHub Pages → itch.io | 7 |
-| Lojas Google/Samsung/Huawei/Microsoft | futuro (pós-7, fora do MVP) |
+| Lojas Google/Samsung/Huawei/Microsoft | 14 (Play; demais opcionais em 14.4) |
 | Geométrico substituível por PNG sem perda de fps | 0 (arquitetura), 8 (execução) |
 | Packs look&feel compráveis | 8 |
 | Compartilhar (WhatsApp/IG/TikTok/E-mail/URL) | 4 |
@@ -61,6 +70,13 @@ Garante que **nada** do escopo ficou de fora.
 | Higiene de repositório; versão visível; purga de dados legados | 10 |
 | Loja com compra real (sem crédito grátis); avatares de perfil; +15 troféus | 10 |
 | UI consistente em moedas; briefing full-width; **gameplay em retrato** | 10 |
+| Recompensa diária/streak; missões diárias; telemetria anônima | 11 |
+| Skins de dino; gacha de ovos (moeda soft); revive; Loja hub | 11 |
+| Link de desafio; corrida fantasma; card de share; soft launch | 12 |
+| Rewarded/interstitial ads; flavors de build; portais (CrazyGames/Poki); H5 Ads | 13 |
+| Play Store TWA + Play Billing + listing | 14 |
+| Eventos temáticos; torneio semanal com prêmios; calendário | 15 |
+| Modo aventura (missões, capítulos, estrelas) | 16 |
 
 ## Definição de "pronto" por fase
 
