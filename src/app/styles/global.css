@@ -183,7 +183,14 @@ body {
    Scale.FIT (todo retrato é mais alto que 16:9), então a altura da faixa jogável é fechada:
    largura × 9/16. O autoCenter:CENTER_BOTH do Phaser centra o canvas no container `inset: 0`,
    logo as bordas da faixa estão em 50% ∓ --field-h/2. Daí HUD e chips ancoram NA FAIXA, em vez
-   de nos cantos da tela (onde ficariam a ~300 px da ação num 390×844). */
+   de nos cantos da tela (onde ficariam a ~300 px da ação num 390×844).
+
+   ESPECIFICIDADE, não ordem: os seletores abaixo são `.play-screen .hud` (0,2,0), não `.hud`
+   (0,1,0). As regras BASE de `.hud`/`.effect-badges` vivem ~1200 linhas mais adiante neste
+   arquivo, então com especificidade igual elas venceriam por ordem de cascata e o `top: auto`
+   daqui seria ignorado — medido: HUD com `top: 8` E `bottom: 300` ao mesmo tempo, esticado em
+   292 px de altura. Com o descendente, a âncora de retrato vence onde quer que os blocos
+   estejam. */
 @media (orientation: portrait) {
   .play-screen {
     --field-h: calc(100vw * 9 / 16);
@@ -191,13 +198,13 @@ body {
   }
 
   /* HUD logo ACIMA da faixa (continua alinhado à direita). */
-  .hud {
+  .play-screen .hud {
     top: auto;
     bottom: calc(50% + var(--field-h) / 2 + var(--field-gap));
   }
 
   /* Chips de power-up (9.5) logo ABAIXO da faixa. */
-  .effect-badges {
+  .play-screen .effect-badges {
     bottom: auto;
     top: calc(50% + var(--field-h) / 2 + var(--field-gap));
   }
@@ -208,7 +215,7 @@ body {
      Ancorada ao RODAPÉ, não ao topo da banda: os chips de power-up (9.5) já ocupam o topo dela
      (`.effect-badges`, z-index 12) e um painel que começasse logo abaixo da faixa ficaria por
      baixo deles. Cada um fica com uma ponta da banda. */
-  .play-screen__tap {
+  .play-screen .play-screen__tap {
     display: flex;
     position: absolute;
     left: max(var(--space-3), env(safe-area-inset-left));

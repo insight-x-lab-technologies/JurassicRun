@@ -61,29 +61,49 @@ describe('letterbox do PlayScreen não é barra preta', () => {
   });
 });
 
+/** Corpo da regra de retrato cujo ALVO é `cls` (o seletor traz o descendente `.play-screen`). */
+function ruleFor(cls: string): string {
+  return cssBlocks(portraitMedia())
+    .filter((b) => b.selector.trim().endsWith(cls))
+    .map((b) => b.body)
+    .join('\n');
+}
+
 describe('chrome de retrato ancora na faixa de jogo', () => {
   it('a altura da faixa é derivada da largura (o FIT é limitado pela largura em retrato)', () => {
     expect(portraitMedia()).toMatch(/--field-h\s*:\s*calc\(\s*100vw\s*\*\s*9\s*\/\s*16\s*\)/);
   });
 
   it('o HUD desancora do topo da tela e encosta acima da faixa', () => {
-    const blocks = cssBlocks(portraitMedia());
-    const hud = blocks.filter((b) => b.selector === '.hud').map((b) => b.body).join('\n');
-    expect(hud, 'sem regra .hud em retrato').not.toBe('');
+    const hud = ruleFor('.hud');
+    expect(hud, 'sem regra do HUD em retrato').not.toBe('');
     expect(hud).toMatch(/top\s*:\s*auto/);
     expect(hud).toMatch(/bottom\s*:\s*calc\(/);
     expect(hud).toMatch(/var\(--field-h\)/);
   });
 
   it('os chips de power-up desancoram do rodapé e encostam abaixo da faixa', () => {
-    const blocks = cssBlocks(portraitMedia());
-    const badges = blocks
-      .filter((b) => b.selector === '.effect-badges')
-      .map((b) => b.body)
-      .join('\n');
-    expect(badges, 'sem regra .effect-badges em retrato').not.toBe('');
+    const badges = ruleFor('.effect-badges');
+    expect(badges, 'sem regra dos chips em retrato').not.toBe('');
     expect(badges).toMatch(/bottom\s*:\s*auto/);
     expect(badges).toMatch(/top\s*:\s*calc\(/);
     expect(badges).toMatch(/var\(--field-h\)/);
+  });
+
+  // A regressão que custou uma medição: as regras BASE de `.hud`/`.effect-badges`/`.play-screen__tap`
+  // vivem MUITO depois deste `@media` no arquivo. Com especificidade igual (`.hud` vs `.hud`), a
+  // base vence por ordem de cascata e a reancoragem de retrato é ignorada em silêncio — o HUD sai
+  // com `top` E `bottom` aplicados, esticado (medido: 292 px de altura num 390×844). Exigir o
+  // descendente `.play-screen` torna a âncora imune à posição dos blocos no arquivo.
+  it('as regras de retrato vencem as regras base por ESPECIFICIDADE, não por ordem', () => {
+    const weak: string[] = [];
+    for (const { selector } of cssBlocks(portraitMedia())) {
+      for (const part of selector.split(',')) {
+        const target = part.trim();
+        if (target === '' || target === '.play-screen') continue;
+        if (!/^\.play-screen\s+\./.test(target)) weak.push(target);
+      }
+    }
+    expect(weak, `seletor de retrato sem o descendente .play-screen: ${weak.join(', ')}`).toEqual([]);
   });
 });
