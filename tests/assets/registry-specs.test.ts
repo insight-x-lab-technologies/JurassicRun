@@ -39,6 +39,7 @@ describe('asset registry ↔ specs parity', () => {
       'ui.icons',
       'bg.screen',
       'expansion.covers',
+      'ui.avatars',
     ];
     const missing = NEW_SPECS.filter((name) => {
       const file = join(ASSETS_DIR, 'specs', `${name}.md`);
