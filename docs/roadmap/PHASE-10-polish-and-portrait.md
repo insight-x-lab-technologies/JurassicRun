@@ -156,22 +156,38 @@ comida visível; guarda de paridade i18n + scanner AST verdes; testes de Game Ov
 > em 10 idiomas exigiria um dicionário que o projeto não mantém, e é na chave que a regressão aparece.
 > Ids como `trait.doubleFood` seguem válidos (segmento ≠ `food`).
 
-### 10.5 Briefing de desafio ocupando a tela (#7)
-- [ ] **Causa-raiz já isolada:** `ChallengeBrief` põe `class="screen challenge-brief"` na **raiz**
+### 10.5 Briefing de desafio ocupando a tela (#7) ✅
+- [x] **Causa-raiz já isolada:** `ChallengeBrief` põe `class="screen challenge-brief"` na **raiz**
       (`src/app/screens/ChallengeBrief.tsx:30`) e `.challenge-brief` tem `max-width: 32rem`
       (`global.css:914`). A raiz é filha direta de `#app` (flex column, `align-items` default =
       `stretch`); com `max-width` a caixa deixa de esticar e **encosta à esquerda** — as outras
       telas não limitam a largura da raiz, por isso só esta destoa.
-- [ ] Correção recomendada: **`.screen` full-bleed + wrapper interno** com o `max-width` (padrão das
-      demais telas). Alternativa mínima: `align-self: center`/`margin-inline: auto` — resolve o
-      alinhamento, mas mantém o padrão divergente.
-- [ ] **Verificar por NÚMERO** (`getBoundingClientRect`/`getComputedStyle` em runtime), não por
-      screenshot — precedente W5/9.8.
-- [ ] Não regredir o fix de paisagem baixa do 9.9 (CTA "Jogar" acima da dobra em 740×360).
+- [x] Correção aplicada: **raiz full-bleed + teto nos blocos de conteúdo**. Em vez do wrapper novo,
+      o `max-width: 44rem` + `margin-inline: auto` foi para `.challenge-brief__{stats,rules,actions}`
+      — que é literalmente o padrão das outras telas (`.leaderboard__list` 44rem, `.nest__grid` e
+      `.expansions__grid` 58rem, `.trophies__grid` 40rem): o teto vive no filho, e é
+      `.screen { align-items: center }` que o centraliza. Wrapper novo no JSX seria um nó a mais
+      para reproduzir o mesmo efeito. **`ChallengeBrief.tsx` não foi tocado — o fix é 100% CSS.**
+- [x] **Verificado por NÚMERO** (`getBoundingClientRect`/`getComputedStyle` no `dist` servido, SW
+      desregistrado + caches limpos + `?nocache`).
+- [x] Fix de paisagem baixa do 9.9 preservado (CTA "Jogar" acima da dobra em 740×360).
 
-**Toca:** `src/app/screens/ChallengeBrief.tsx`, `src/app/styles/global.css`.
-**Aceite:** em mobile landscape (740×360 e 640×360) o briefing ocupa 100% da largura útil como as
-outras telas; Diário e Semanal idênticos; CTA visível sem rolagem.
+**Toca:** `src/app/styles/global.css`, `tests/app/screen-root-width.test.ts` (novo).
+**Aceite:** ✅ medições no `dist` — **740×360**: útil 708px, blocos 704px (**99,4%**), folgas 2px/2px
+simétricas, CTA `bottom` 298px < 360 e tela sem rolagem · **640×360**: útil 608px, blocos 608px
+(**100%**), folgas 0/0, CTA 301px · **390×844 (retrato)**: útil 342px, blocos 342px (**100%**) ·
+**1440×900**: blocos 704px centrados (folgas 344/344 — o teto de 44rem preserva a legibilidade em
+desktop) · **Semanal idêntico ao Diário** (seed `2026-W31`, mesmos números).
+
+> **Executado em 2026-07-30** (spec: `docs/superpowers/specs/2026-07-30-10.5-challenge-brief-full-width.md`).
+> **Guarda nova `tests/app/screen-root-width.test.ts`** — a lição generalizada, não uma asserção
+> sobre esta tela: *toda classe usada como raiz de tela (`class="screen <x>"` varrido dos
+> `src/app/screens/*.tsx`) que declare `max-width` no `global.css` precisa declarar
+> `margin-inline: auto` ou `align-self: center` no MESMO bloco*. O teto não é o defeito; teto **sem
+> centralização** é — dentro de um pai `stretch`, um item de largura resolvida assenta à esquerda.
+> O teste roda em ambiente **node** (só lê arquivos com `node:fs`) porque `happy-dom` não faz
+> layout: `getBoundingClientRect()` devolve zeros e um teste de renderização não pegaria o bug.
+> Vale para qualquer tela futura, inclusive as do 10.6/10.9.
 
 ### 10.6 Avatares de perfil (#3)
 - [ ] Hoje o avatar é `avatarFor(profile)` = inicial + `hsl(hue)` — a "bola vermelha" do relato

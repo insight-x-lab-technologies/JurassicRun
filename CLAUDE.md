@@ -85,7 +85,13 @@ nos 10 locales; Game Over sem a linha duplicada, exibindo `stats.coins` — o va
 `stats.food`; `trait.doubleFood`/`tripleFood`/`powerup.doubleCoin`/`trophy.forager.desc` mudam só o
 TEXTO, o id é código; guarda `tests/i18n/no-food-keys.test.ts` proíbe segmento de chave `food`.
 Campo interno `food` intocado em core/serviços/banco).
-Próximo item: **10.5** (briefing de desafio full-width). Ordem A→B→C→D, um item por PR.
+· 10.5 ✅ (briefing full-width: `max-width` sai da RAIZ `.challenge-brief` e vai para os blocos
+`__stats/__rules/__actions` com `margin-inline: auto` — dentro do `#app` (`align-items: stretch`) um
+item de largura resolvida não estica e **assenta à esquerda**; teto no filho + `.screen
+{align-items:center}` é o padrão de todas as outras telas. Fix 100% CSS, JSX intocado. Guarda
+`tests/app/screen-root-width.test.ts`: classe-raiz de tela com `max-width` **tem de** ter
+centralização no mesmo bloco — em ambiente node, porque `happy-dom` não faz layout).
+Próximo item: **10.6** (avatares de perfil). Ordem A→B→C→D, um item por PR.
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
