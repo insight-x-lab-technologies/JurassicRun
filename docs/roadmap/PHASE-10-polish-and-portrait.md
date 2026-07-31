@@ -307,23 +307,70 @@ preservando `unlocked`; paridade i18n verde; sync central sem rejeição; `npm t
 > grid 342 px em 390 px, `maxScroll` 1998, progresso visível no topo, último card e "Voltar"
 > alcançáveis. *(Medir `document.documentElement` aqui dá falso negativo — é `.screen` que rola.)*
 
-### 10.8 Loja com compra real de moedas (#2)
-- [ ] **Matar o crédito grátis:** hoje, sem gateway configurado, o botão do pacote chama
+### 10.8 Loja com compra real de moedas (#2) ✅
+- [x] **Matar o crédito grátis:** hoje, sem gateway configurado, o botão do pacote chama
       `walletService.earn(pack.coins)` direto (`ShopScreen.tsx:33`) — 1 clique = moedas.
-- [ ] Loja nova, sempre com as 3 seções visíveis: (a) **saldo**; (b) **pacotes** (`COIN_SKU_AMOUNTS`
+- [x] Loja nova, sempre com as 3 seções visíveis: (a) **saldo**; (b) **pacotes** (`COIN_SKU_AMOUNTS`
       small/medium/large) com **preço em dinheiro real** e CTA que abre o **Ko-Fi** (link externo,
       SKU na mensagem); (c) **resgate de código** — o fluxo 8.4 já existente (Edge Function, claim
       atômico single-use). Sem gateway configurado, (c) aparece desabilitado com aviso em vez de
       esconder a loja inteira.
-- [ ] Explicitar as **fontes gratuitas** de moeda (jogar, desafios, troféus) para a loja não parecer
-      um paywall.
-- [ ] Preços/URLs por SKU vêm de configuração (env/JSON), não hardcoded.
-- [ ] **Rejeitado:** checkout próprio (Stripe & cia) — custo, KYC e fora do escopo hobby.
+- [x] Explicitar as **fontes gratuitas** de moeda para a loja não parecer um paywall — **duas**,
+      não três: ver o desvio consciente abaixo.
+- [x] Preços/URLs por SKU vêm de configuração (env), não hardcoded.
+- [x] **Rejeitado:** checkout próprio (Stripe & cia) — custo, KYC e fora do escopo hobby.
 
 **Toca:** `src/app/screens/ShopScreen.tsx`, `src/app/shop/packs.ts`, `src/services/purchase/`,
-config de gateway, i18n. **Aceite:** **nenhum** caminho da UI credita moedas sem código válido
-(teste que prova que clique em pacote não chama `earn`); resgate válido continua creditando;
-offline/sem gateway não quebra a tela.
+`src/app/openUrl.ts`, `src/app/purchase/RedeemCodeForm.tsx`, `src/app/styles/global.css`,
+`.env.example`, `src/i18n/locales/*` (10). **`src/core/` intocado.**
+**Aceite:** ✅ **nenhum** caminho da UI credita moedas sem código válido (guarda de fonte +
+teste que clica em TODOS os pacotes e prova saldo inalterado); resgate válido continua creditando
+(testes 8.4 preservados); offline/sem gateway não quebra a tela; `npm test` **1079** verdes,
+`check` limpo, determinismo **73** inalterado.
+
+> **Executado em 2026-07-31** (spec: `docs/superpowers/specs/2026-07-31-10.8-real-coin-purchase-design.md`;
+> plano: `docs/superpowers/plans/2026-07-31-10.8-real-coin-purchase.md`). 7 tasks, 10 commits.
+>
+> **Vitrine é config, não literal:** `src/services/purchase/storefront.ts` puro, no molde de
+> `services/online/config.ts` — `parseStorefront(env)` valida **campo a campo** e o que vier
+> inválido cai no default (US$ 1,99/4,99/9,99 na página Ko-fi do estúdio), então a Loja funciona
+> **sem `.env`** e um env quebrado nunca derruba a tela. Preço em **unidades menores** (inteiro,
+> `amountMinor: 199`) e exibido por `Intl.NumberFormat` na língua ativa ⇒ **zero chave i18n para o
+> valor monetário**. Chaves documentadas em `.env.example` (`VITE_SHOP_KOFI_URL`,
+> `VITE_SHOP_CURRENCY`, `VITE_SHOP_PRICE_SMALL|MEDIUM|LARGE`).
+>
+> **A guarda é de FONTE, não de clique:** `tests/app/shop/no-free-coins.test.ts` varre
+> `ShopScreen.tsx` + `src/app/shop/**` + `src/app/purchase/**` (recursivo) e falha se aparecer
+> qualquer `.earn(`. Um teste de clique só cobre os botões que existem hoje; a guarda cobre os que
+> alguém acrescentar amanhã. Tem um teste próprio provando que a lista de arquivos não está vazia
+> (guarda que passa em vácuo é pior que guarda nenhuma). **Gotcha:** a regex casa o texto literal
+> `.earn(` — inclusive **dentro de comentário**; a redação do comentário na tela teve de mudar para
+> "chamada a `earn`". Ler o saldo (`walletService.balance.value`) segue permitido.
+>
+> **`checkoutUrlFor` usa `URL`, não concatenação:** a 1ª versão fazia `base + (? ou &) + jr_sku` e
+> uma base com **fragmento** produzia `…#tip?jr_sku=…`, onde a query vira parte do fragmento e some
+> para qualquer parser HTTP — o SKU se perderia em silêncio. Achado no review final. Concatenação
+> ficou como fallback para base absurda vinda de env.
+>
+> **A decisão do "sem gateway" mudou de dono:** era um `if` no `ShopScreen` que escondia a Loja
+> inteira e mostrava os pacotes grátis no lugar. Agora vive no `RedeemCodeForm`, que se
+> auto-desabilita com aviso — as 3 seções coexistem sempre. Comprar no Ko-fi **não** depende do
+> nosso servidor, então o botão do pacote continua ativo mesmo offline.
+>
+> **Desvio consciente do texto acima:** o roadmap pedia citar "jogar, desafios, **troféus**" como
+> fontes grátis. `walletService.earn` só tem dois call sites de gameplay (`startGame.ts:99`
+> `coinsForFood`, que roda para `endless`/`daily`/`weekly`, e o `purchase`) — **troféu não credita
+> moeda nenhuma**. Listá-lo seria texto falso na UI. Ficaram as duas fontes verdadeiras; fazer
+> troféu pagar é mudança de economia, item da Fase 11.
+>
+> **CSS:** não existia **uma única regra** `.shop*`/`.redeem*` no `global.css` — a tela herdava só o
+> genérico de `.screen`. Teto de largura nos filhos (invariante do 10.5).
+>
+> **Validação por NÚMERO** no `dist` (SW desregistrado + caches limpos + `?nocache`):
+> **390×844** útil 342 px, pacotes 342 px (**100%**), cards 140 px, `bodyOverflowX` 0, `.screen`
+> rola 507 px · **740×360** útil 692 px, pacotes 692 px (**100%**), folgas 0/0, cards 103 px,
+> "Voltar" alcançável · **1440×900** blocos 704 px centrados (folgas 344/344) · preços reais
+> renderizados (`$1.99`/`$4.99`/`$9.99`) e resgate desabilitado com aviso (caminho sem gateway).
 
 ---
 
