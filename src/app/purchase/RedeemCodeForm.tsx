@@ -7,6 +7,9 @@ export function RedeemCodeForm(): VNode {
   const [code, setCode] = useState('');
   const [status, setStatus] = useState<PurchaseStatus | null>(null);
   const [busy, setBusy] = useState(false);
+  // 10.8: sem gateway o formulário NÃO some da tela (antes o `ShopScreen` o escondia por
+  // completo) — fica visível e desabilitado, com aviso. A decisão pertence ao formulário.
+  const offline = !purchaseService.available.value;
   // Lê o valor atual do DOM (não o `code` do closure): o input pode ter sido
   // atualizado no mesmo tick do submit, antes do re-render do estado controlado
   // (molde de OnboardingScreen, gotcha de 4.2).
@@ -14,7 +17,7 @@ export function RedeemCodeForm(): VNode {
 
   async function submit(e: Event): Promise<void> {
     e.preventDefault();
-    if (busy) return;
+    if (busy || offline) return;
     setBusy(true);
     const raw = inputRef.current?.value ?? code;
     const result = await purchaseService.redeem(raw);
@@ -35,12 +38,18 @@ export function RedeemCodeForm(): VNode {
           type="text"
           value={code}
           placeholder={i18n.t('purchase.redeemPlaceholder')}
+          disabled={offline}
           onInput={(e) => setCode((e.target as HTMLInputElement).value)}
         />
-        <button type="submit" class="btn" data-testid="redeem-submit" disabled={busy}>
+        <button type="submit" class="btn" data-testid="redeem-submit" disabled={busy || offline}>
           {i18n.t('purchase.redeemButton')}
         </button>
       </div>
+      {offline && (
+        <p class="redeem__offline" data-testid="redeem-offline">
+          {i18n.t('shop.gatewayOffline')}
+        </p>
+      )}
       {status !== null && (
         <p class="redeem__status" data-testid="redeem-status">
           {i18n.t(`purchase.result.${status}`)}

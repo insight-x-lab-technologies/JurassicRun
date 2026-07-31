@@ -69,7 +69,7 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **73** testes · suíte **1055** testes · `check` limpo.
+**Métricas correntes:** determinismo **73** testes · suíte **1081** testes · `check` limpo.
 Branch `main`. Fases 0–9 **CONCLUÍDAS** (9.1–9.9 feitos ⇒ Frentes A, B, C e D fechadas).
 **Fase 10 ABERTA** (`docs/roadmap/PHASE-10-polish-and-portrait.md`): 9 itens, nenhum toca `src/core/`.
 10.1 ✅ (higiene de branches: remoto e local só com `main`; `delete_branch_on_merge` LIGADO ⇒ head
@@ -111,7 +111,20 @@ matiz + aro dourado + dino real tingido), com a mesma guarda anti-sobrescrita da
 `docs/assets/specs/ui.avatars.md` já com prompt de IA e entrada de pipeline prontos para quando a
 arte real chegar. Seletor `role="radiogroup"` em `ProfileScreen`, reuso em `Avatar.tsx` na Home.
 **10.6b (upload de foto) não feito, por decisão** — a grade de 12 já resolve o pedido).
-Próximo item: **10.8** (Loja com compra real de moedas). Ordem A→B→C→D, um item por PR.
+· 10.8 ✅ (Loja sem moeda grátis: o clique no pacote chamava `walletService.earn` — agora abre o
+**Ko-fi** com o SKU na query, e moeda paga só entra por `purchaseService.redeem` validado no
+servidor. Vitrine é config: `src/services/purchase/storefront.ts` puro valida o env **campo a
+campo** e cai no default a cada campo inválido ⇒ funciona **sem `.env`**; preço em **unidades
+menores** exibido por `Intl.NumberFormat` ⇒ **zero chave i18n de valor monetário**.
+Guarda `tests/app/shop/no-free-coins.test.ts` é de **FONTE** (varre `.earn(` em ShopScreen +
+`app/shop/**` + `app/purchase/**`, recursivo, com teste anti-vácuo) — cobre os botões que alguém
+criar amanhã, não só os de hoje; **gotcha:** a regex casa até dentro de COMENTÁRIO. `checkoutUrlFor`
+usa `URL`, não concatenação: base com fragmento gerava `#tip?jr_sku=…` e o SKU sumia. A decisão de
+"sem gateway" saiu do `if` do `ShopScreen` — que escondia a Loja inteira — e virou auto-desabilitar
+do `RedeemCodeForm`; as 3 seções coexistem sempre e comprar no Ko-fi não depende do nosso servidor.
+**Desvio consciente:** as fontes grátis citadas são **2**, não 3 — troféu NÃO credita moeda.)
+**Frentes B e C da Fase 10 concluídas.** Próximo item: **10.9** (jogar em retrato) — único item da
+Frente D e o maior da fase. Ordem A→B→C→D, um item por PR.
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
@@ -127,7 +140,7 @@ Próximo item: **10.8** (Loja com compra real de moedas). Ordem A→B→C→D, u
 | 7 | PWA & deploy (instalável/offline, responsividade final, GitHub Pages, itch.io; 7.5 wrappers de loja ADIADO) | ✅ | 67 |
 | 8 | Arte AAA & packs (manifesto→sprite atlas, arte real entidades+dino animado, Tier-1 UI/fundos/parallax, packs=expansão ativa, gateway Ko-Fi/código, redesign UI W1→W9) | ✅ | 67 |
 | 9 | Melhorias estruturais (parallax alpha, obstáculos cobrindo hitbox, morte/idle animados, indicador de power-up, áudio generativo + toggle SFX, obstáculos novos, briefing+mods de desafio) | ✅ | 73 |
-| 10 | Polimento, meta e retrato (higiene de branches, versão na Home, purga pré-9.9, UI em moedas, briefing full-width, avatares, +15 troféus, Loja sem moeda grátis, gameplay em retrato) | 🚧 7/9 | 73* |
+| 10 | Polimento, meta e retrato (higiene de branches, versão na Home, purga pré-9.9, UI em moedas, briefing full-width, avatares, +15 troféus, Loja sem moeda grátis, gameplay em retrato) | 🚧 8/9 | 73* |
 
 \* Fase 10 **não toca `src/core/`** ⇒ det permanece 73 (ver invariante abaixo).
 

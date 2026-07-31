@@ -8,4 +8,9 @@ describe('coin packs catalog', () => {
     expect(new Set(ids).size).toBe(ids.length);
     for (const p of COIN_PACKS) expect(p.coins).toBeGreaterThan(0);
   });
+
+  it('cada pacote carrega o SKU correspondente e a quantidade do catálogo', () => {
+    expect(COIN_PACKS.map((p) => p.sku)).toEqual(['coins:small', 'coins:medium', 'coins:large']);
+    for (const p of COIN_PACKS) expect(p.sku).toBe(`coins:${p.id}`);
+  });
 });

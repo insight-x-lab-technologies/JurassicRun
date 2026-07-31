@@ -57,3 +57,42 @@ describe('RedeemCodeForm', () => {
     );
   });
 });
+
+// 10.8: sem gateway o resgate NÃO some da tela — fica visível e desabilitado, para o jogador
+// entender que o caminho existe e está temporariamente fora do ar.
+describe('RedeemCodeForm sem gateway', () => {
+  let container: HTMLDivElement;
+  beforeEach(async () => {
+    await i18n.init();
+    walletService.init(memoryWalletStorage());
+    entitlementsService.init(memoryEntitlementsStorage());
+    purchaseService.init({}); // sem gateway ⇒ `unavailableGateway`
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    render(<RedeemCodeForm />, container);
+  });
+  afterEach(() => {
+    render(null, container);
+    container.remove();
+  });
+
+  it('mostra aviso e desabilita entrada e botão', () => {
+    expect(container.querySelector('[data-testid="redeem-offline"]')?.textContent).toBe(
+      i18n.t('shop.gatewayOffline'),
+    );
+    expect(
+      (container.querySelector('[data-testid="redeem-input"]') as HTMLInputElement).disabled,
+    ).toBe(true);
+    expect(
+      (container.querySelector('[data-testid="redeem-submit"]') as HTMLButtonElement).disabled,
+    ).toBe(true);
+  });
+
+  it('submeter não credita moeda nenhuma', async () => {
+    const before = walletService.balance.value;
+    setInput(container.querySelector('[data-testid="redeem-input"]'), 'GOLD');
+    submitForm(container);
+    await tick();
+    expect(walletService.balance.value).toBe(before);
+  });
+});
