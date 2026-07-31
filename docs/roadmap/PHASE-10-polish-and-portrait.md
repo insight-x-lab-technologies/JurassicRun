@@ -211,26 +211,74 @@ antes da mudança continuam com avatar válido; nenhuma string hardcoded.
 
 ## Frente C — Conteúdo e meta
 
-### 10.7 Mais 15 troféus (#6)
-- [ ] Catálogo atual: **8 troféus** (`src/services/trophy/catalog.ts`) sobre 6 campos de
-      `TrophyStats` + `dailyRank`. Meta: **+15 ⇒ ≥ 23**.
-- [ ] Ampliar o agregado vitalício com os fatos que faltam (cada campo novo = um `foldMatch`
-      testado): `bestLevel`, `totalNearMisses`, `totalPowerups`, `totalCoinsEarned`,
-      `challengesPlayed`, `dailyPodiums`, `weeklyPodiums`, `bestChallengeScore`, `daysPlayed`.
-      Fatos de outros serviços (expansões possuídas, traços do Ninho) entram no
-      `TrophyEvalContext`, não no agregado.
-- [ ] **Migração do storage de troféus**: versão + backfill `0` nos campos novos, sem perder
-      desbloqueios já conquistados.
-- [ ] **Verificar o lado central (Fase 6)** antes de fechar: os ids novos precisam ser aceitos pela
-      tabela/`RLS` de troféus sincronizados — se houver constraint de id conhecido, atualizar.
-- [ ] i18n: 15 × (nome + descrição) × 10 idiomas = **300 strings** — skill `add-locale`.
-- [ ] Tela de Troféus precisa aguentar 23+ cards (grid/scroll) em paisagem baixa e retrato.
-- [ ] Limiares calibrados contra os números reais do jogo (não repetir os placeholders "tuning
-      Fase 8" do catálogo atual).
+### 10.7 Mais 15 troféus (#6) ✅
+- [x] Catálogo atual: **8 troféus** (`src/services/trophy/catalog.ts`) sobre 6 campos de
+      `TrophyStats` + `dailyRank`. Meta: **+15 ⇒ ≥ 23**. **Entregue: 23.**
+- [x] Ampliar o agregado vitalício com os fatos que faltam (cada campo novo = um `foldMatch`
+      testado): **10 campos** — `bestLevel`, `totalNearMisses`, `totalPowerups`, `totalCoins`,
+      `challengesPlayed`, `dailyPodiums`, `weeklyPodiums`, `bestChallengeScore`, `daysPlayed` e
+      `lastPlayDay` (estado de suporte do `daysPlayed`). `TrophyStats` vai de 6 → **16 campos**.
+- [x] **Migração do storage de troféus**: `version` do payload `1 → 2` com backfill `0`, **sem
+      bumpar a `STORAGE_KEY`** — ela continua `jurassicrun.trophies.v1` (bumpar apagaria os
+      desbloqueios; é o oposto do requisito, e o contrário da 10.3, onde descartar era o objetivo).
+- [x] **Verificar o lado central (Fase 6):** `supabase/migrations/…_jr_schema.sql:50-55` tem
+      `trophy_id text not null` **sem `check`/enum/FK** ⇒ ids novos aceitos, zero migração. O único
+      filtro é o do cliente (`isKnownTrophyId`), derivado do próprio catálogo.
+- [x] i18n: 15 × (nome + descrição) × 10 idiomas = **300 strings** + `trophies.progress` — skill
+      `add-locale`.
+- [x] Tela de Troféus aguenta 23+ cards, com linha de progresso `n/23`.
+- [x] Limiares calibrados contra os números reais do jogo (nível = `1 + floor(dist/500)`, score =
+      `dist + 10·comida + 5·near-miss`), com os 8 troféus originais como degrau de baixo da escada.
 
-**Toca:** `src/services/trophy/{catalog,store,storage,online}.ts`, `TrophiesScreen.tsx`,
-`src/locales/*`. **Aceite:** cada troféu com teste de predicado (abaixo/no/acima do limiar); storage
-antigo migra preservando desbloqueios; paridade i18n verde; sync central sem rejeição.
+**Toca:** `src/services/trophy/{catalog,store,storage,index}.ts`, `src/render/{pickups,audioEvents,
+match}.ts`, `src/services/leaderboard/index.ts`, `src/app/game/startGame.ts`, `TrophiesScreen.tsx`,
+`src/app/styles/global.css`, `src/i18n/locales/*` (10). **`src/core/` intocado.**
+**Aceite:** ✅ cada um dos 15 novos com teste abaixo/no/acima do limiar; payload v1 migra
+preservando `unlocked`; paridade i18n verde; sync central sem rejeição; `npm test` **1030** verdes,
+`check` limpo, determinismo **73** inalterado.
+
+> **Executado em 2026-07-30/31** (spec: `docs/superpowers/specs/2026-07-30-10.7-more-trophies-design.md`;
+> plano: `docs/superpowers/plans/2026-07-30-10.7-more-trophies.md`). 7 tasks, 11 commits.
+>
+> **Os 15 troféus** (id → condição): `explorer` bestLevel≥5 · `skyLord` bestLevel≥10 ·
+> `globetrotter` totalDistance≥50 000 · `legend` bestScore≥20 000 · `veteran` gamesPlayed≥100 ·
+> `stuntPilot` bestNearMisses≥25 · `closeShave` totalNearMisses≥250 · `treasurer` totalCoins≥500 ·
+> `tycoon` totalCoins≥5000 · `empowered` totalPowerups≥25 · `powerHungry` totalPowerups≥200 ·
+> `challenger` challengesPlayed≥10 · `challengeAce` bestChallengeScore≥5000 · `weeklyPodium`
+> weeklyPodiums≥1 · `dedicated` daysPlayed≥7.
+>
+> **Decisões e gotchas:**
+> 1. **Power-ups contados FORA do core.** `WorldState` não tem contador de pickups e criá-lo tocaria
+>    `src/core/` (proibido nesta fase). `src/render/pickups.ts` deriva o fato por diff de bitmask —
+>    o `effectMask` saiu de `audioEvents.ts` (9.6) e passou a morar aqui, com dois consumidores.
+>    Dono: `MatchController` (`observe` **depois** do `_loop.advance` e **antes** do teste de
+>    `alive`, senão o pickup do frame da morte se perde; `reset` no `startMatch`).
+>    **Gotcha caro:** `killOrRevive` (`core/powerup/apply.ts`) consome uma vida **e acende um
+>    `shield` de graça** no mesmo step ⇒ a 1ª versão contava bloquear um hit como pickup. Guarda:
+>    quando `extraLives` cai na mesma observação, o bit de `shield` recém-aceso é descartado.
+> 2. **`daysPlayed` é marca d'água, não conjunto.** `epochDay(playedAt)` só avança `lastPlayDay`
+>    para frente ⇒ relógio para trás não decrementa nem duplica (custo: um dia perdido; preferível a
+>    troféu farmável mudando a data do aparelho). `gamesPlayed === 0` é o caso "nunca jogou", em que
+>    qualquer dia — inclusive o 0 — é novo.
+> 3. **Pódio conta uma vez só.** Rank local e rank central alimentam o MESMO contador. `startGame`
+>    lê `centralAvailable` **uma vez** e usa local ⊻ central. O **semanal não tem contraparte
+>    central** (a Fase 6 só fez rank diário) ⇒ usa sempre o local; se um `centralWeeklyRank` nascer,
+>    precisa da mesma guarda.
+> 4. **`MatchSummary` com campos obrigatórios de propósito:** um call site que esqueça `mode`
+>    quebra a compilação em vez de silenciar o troféu. O fallout de tipos foi planejado e fechado
+>    numa task só.
+> 5. **`sanitizeStats` varre `Object.keys(emptyStats())`** em vez de listar campos à mão ⇒ campo
+>    novo esquecido é impossível; `emptyStats()` é tipado como `TrophyStats`, então o TS quebra lá.
+> 6. **Fora do escopo por decisão:** troféus de coleção (expansões possuídas, traços do Ninho)
+>    acoplariam o serviço a `nest`/`wallet`/`entitlements` para premiar gastar moeda, não jogar.
+>    `TrophyEvalContext` continua sendo o lugar certo se isso mudar.
+>
+> **Validação de layout POR NÚMERO** no `dist` (SW desregistrado + caches limpos + `?nocache`):
+> o documento **não rola por design** (shell de viewport fixo) — quem rola é `.screen`
+> (`overflow-y:auto`). **740×360:** 23 cards, nenhum com altura 0, `overflowX` 0, `scrollHeight`
+> 1803 > `clientHeight` 270, último card e "Voltar" alcançáveis. **390×844 (retrato):** 23 cards,
+> grid 342 px em 390 px, `maxScroll` 1998, progresso visível no topo, último card e "Voltar"
+> alcançáveis. *(Medir `document.documentElement` aqui dá falso negativo — é `.screen` que rola.)*
 
 ### 10.8 Loja com compra real de moedas (#2)
 - [ ] **Matar o crédito grátis:** hoje, sem gateway configurado, o botão do pacote chama

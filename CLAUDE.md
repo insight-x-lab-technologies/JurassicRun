@@ -69,7 +69,7 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **73** testes · suíte **981** testes · `check` limpo.
+**Métricas correntes:** determinismo **73** testes · suíte **1030** testes · `check` limpo.
 Branch `main`. Fases 0–9 **CONCLUÍDAS** (9.1–9.9 feitos ⇒ Frentes A, B, C e D fechadas).
 **Fase 10 ABERTA** (`docs/roadmap/PHASE-10-polish-and-portrait.md`): 9 itens, nenhum toca `src/core/`.
 10.1 ✅ (higiene de branches: remoto e local só com `main`; `delete_branch_on_merge` LIGADO ⇒ head
@@ -91,7 +91,19 @@ item de largura resolvida não estica e **assenta à esquerda**; teto no filho +
 {align-items:center}` é o padrão de todas as outras telas. Fix 100% CSS, JSX intocado. Guarda
 `tests/app/screen-root-width.test.ts`: classe-raiz de tela com `max-width` **tem de** ter
 centralização no mesmo bloco — em ambiente node, porque `happy-dom` não faz layout).
-Próximo item: **10.6** (avatares de perfil). Ordem A→B→C→D, um item por PR.
+· 10.7 ✅ (**23 troféus**, +15: `TrophyStats` 6→**16 campos**; `MatchSummary` ganha `level/coins/
+powerups/mode/playedAt` **obrigatórios** — call site que esqueça `mode` quebra a compilação em vez
+de silenciar o troféu. **Power-ups contados FORA do core** (`src/render/pickups.ts`, diff de bitmask,
+`effectMask` migrado do `audioEvents.ts` e dono no `MatchController`) — **gotcha:** `killOrRevive`
+consome vida **e acende `shield` de graça**, então bloquear hit contava como pickup; guarda descarta
+o bit de `shield` quando `extraLives` cai. Storage: payload `v1→v2` **sem bumpar a `STORAGE_KEY`**
+(`trophies.v1` fica — bumpar apagaria desbloqueios, o oposto da 10.3) e `sanitizeStats` varre
+`Object.keys(emptyStats())`. `daysPlayed` é **marca d'água** (relógio para trás não duplica).
+Pódio conta 1×: local ⊻ central, lidos de um `centralAvailable` só; **semanal não tem rank central**
+⇒ sempre local. Schema Supabase já aceita ids novos (`trophy_id text`, sem `check`).
+Troféus de coleção ficaram de fora: acoplariam trophy a nest/wallet/entitlements).
+Próximo item: **10.6** (avatares de perfil — pulado a pedido do usuário, que escolheu 10.7 antes).
+Ordem A→B→C→D, um item por PR.
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
@@ -107,7 +119,7 @@ Próximo item: **10.6** (avatares de perfil). Ordem A→B→C→D, um item por P
 | 7 | PWA & deploy (instalável/offline, responsividade final, GitHub Pages, itch.io; 7.5 wrappers de loja ADIADO) | ✅ | 67 |
 | 8 | Arte AAA & packs (manifesto→sprite atlas, arte real entidades+dino animado, Tier-1 UI/fundos/parallax, packs=expansão ativa, gateway Ko-Fi/código, redesign UI W1→W9) | ✅ | 67 |
 | 9 | Melhorias estruturais (parallax alpha, obstáculos cobrindo hitbox, morte/idle animados, indicador de power-up, áudio generativo + toggle SFX, obstáculos novos, briefing+mods de desafio) | ✅ | 73 |
-| 10 | Polimento, meta e retrato (higiene de branches, versão na Home, purga pré-9.9, UI em moedas, briefing full-width, avatares, +15 troféus, Loja sem moeda grátis, gameplay em retrato) | 🚧 | 73* |
+| 10 | Polimento, meta e retrato (higiene de branches, versão na Home, purga pré-9.9, UI em moedas, briefing full-width, avatares, +15 troféus, Loja sem moeda grátis, gameplay em retrato) | 🚧 6/9 | 73* |
 
 \* Fase 10 **não toca `src/core/`** ⇒ det permanece 73 (ver invariante abaixo).
 
