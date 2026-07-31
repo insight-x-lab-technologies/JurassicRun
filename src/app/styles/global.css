@@ -1160,6 +1160,148 @@ img.expansion-card__avatar {
   overflow-wrap: anywhere;
   text-align: center;
 }
+/* ---- Loja (10.8) ---------------------------------------------------------- */
+/* O teto de largura vive nos FILHOS + margin-inline:auto — nunca na raiz `.screen shop`
+   (invariante do 10.5; guarda em tests/app/screen-root-width.test.ts). */
+.shop__balance,
+.shop__section,
+.shop__note,
+.shop__packs,
+.shop__free,
+.shop .redeem {
+  width: 100%;
+  max-width: 44rem;
+  margin-inline: auto;
+}
+.shop__balance {
+  font-size: var(--font-size-md);
+  color: var(--color-accent);
+}
+.shop__section {
+  font-size: var(--font-size-md);
+  text-align: left;
+  margin-block: var(--space-4) var(--space-2);
+}
+.shop__note {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: left;
+}
+.shop__note--muted {
+  opacity: 0.7;
+}
+.shop__packs {
+  list-style: none;
+  margin: var(--space-3) 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+/* Duas colunas: à esquerda o que se leva (quantidade + código do SKU), à direita o que se
+   paga (preço + botão). Em campo estreito o grid colapsa para uma coluna só. */
+.shop-pack {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'amount price'
+    'sku    buy';
+  gap: var(--space-1) var(--space-3);
+  align-items: center;
+  padding: var(--space-3);
+  border: 1px solid rgba(201, 162, 39, 0.28);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-1);
+  text-align: left;
+}
+.shop-pack__amount {
+  grid-area: amount;
+  font-weight: 700;
+}
+.shop-pack__price {
+  grid-area: price;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+  justify-self: end;
+}
+.shop-pack__sku {
+  grid-area: sku;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+.shop-pack .btn {
+  grid-area: buy;
+  justify-self: end;
+}
+.shop__free-list {
+  margin: 0;
+  padding-inline-start: var(--space-5);
+  text-align: left;
+}
+.shop__free-list li {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-block: var(--space-1);
+}
+
+/* ---- Resgate de código (8.4, restilizado na 10.8) -------------------------- */
+.redeem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  text-align: left;
+}
+.redeem__title {
+  font-size: var(--font-size-md);
+  margin: 0;
+}
+.redeem__help,
+.redeem__offline {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+.redeem__row {
+  display: flex;
+  gap: var(--space-2);
+}
+.redeem__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid rgba(201, 162, 39, 0.28);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+.redeem__input:disabled,
+.redeem .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.redeem__status {
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+/* Campo estreito: a dica do SKU é uma frase inteira e não cabe ao lado do botão nos 10
+   idiomas — o card empilha em vez de espremer a coluna. */
+@media (max-width: 640px) {
+  .shop-pack {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'amount price'
+      'sku    sku'
+      'buy    buy';
+  }
+  .shop-pack .btn {
+    justify-self: stretch;
+  }
+}
+
 /* conteúdo das sub-telas não fica sob a barra fixa */
 .screen {
   padding-bottom: calc(var(--space-6) + 4rem);
