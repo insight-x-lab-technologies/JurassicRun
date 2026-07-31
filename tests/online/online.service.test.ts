@@ -3,6 +3,7 @@ import { signal, computed, type ReadonlySignal } from '@preact/signals';
 import { onlineService } from '@services/online';
 import { memoryOnlineClient } from '@services/online/client';
 import type { Profile } from '@services/profile';
+import { defaultAvatarId } from '@services/profile/avatars';
 
 function fakeProfile(p: Profile | null) {
   const s = signal<Profile | null>(p);
@@ -12,7 +13,7 @@ function fakeProfile(p: Profile | null) {
   return { s, view };
 }
 
-const rex: Profile = { id: 'p1', name: 'Rex', createdAt: 0 };
+const rex: Profile = { id: 'p1', name: 'Rex', createdAt: 0, avatarId: defaultAvatarId('p1') };
 
 describe('OnlineService', () => {
   beforeEach(async () => {
@@ -47,9 +48,9 @@ describe('OnlineService', () => {
     const { s, view } = fakeProfile(rex);
     await onlineService.init({ config: { url: 'u', anonKey: 'k' }, client, profile: view });
     expect(client.upserts).toHaveLength(1);
-    s.value = { id: 'p2', name: 'Ptera', createdAt: 0 };
+    s.value = { id: 'p2', name: 'Ptera', createdAt: 0, avatarId: defaultAvatarId('p2') };
     expect(client.upserts).toHaveLength(2);
-    s.value = { id: 'p2', name: 'Ptera', createdAt: 0 }; // mesma assinatura
+    s.value = { id: 'p2', name: 'Ptera', createdAt: 0, avatarId: defaultAvatarId('p2') }; // mesma assinatura
     expect(client.upserts).toHaveLength(2);
   });
 

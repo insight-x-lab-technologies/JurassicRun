@@ -5,6 +5,7 @@ import {
   createProfile,
   setActive,
   renameProfile,
+  setAvatar as setAvatarIn,
   validateName,
   avatarFor,
   type Profile,
@@ -16,6 +17,7 @@ import {
   memoryProfileStorage,
   type ProfileStorage,
 } from './storage';
+import type { AvatarId } from './avatars';
 
 class ProfileService {
   private storage: ProfileStorage = memoryProfileStorage();
@@ -59,6 +61,13 @@ class ProfileService {
     return validateName(raw);
   }
 
+  setAvatar(avatarId: AvatarId): boolean {
+    const id = this._state.value.activeId;
+    if (id === null) return false;
+    this.commit(setAvatarIn(this._state.value, id, avatarId));
+    return true;
+  }
+
   private commit(state: ProfileState): void {
     this._state.value = state;
     this.storage.save(state);
@@ -68,3 +77,4 @@ class ProfileService {
 export const profileService = new ProfileService();
 export { avatarFor };
 export type { Profile, NameError, NameValidation } from './store';
+export { AVATARS, AVATAR_IDS, avatarDef, type AvatarId } from './avatars';

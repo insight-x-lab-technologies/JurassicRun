@@ -2,9 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { memoryOnlineClient } from '@services/online/client';
 import { OnlineService } from '@services/online';
 import { signal } from '@preact/signals';
+import { defaultAvatarId } from '@services/profile/avatars';
 
 function fakeProfile() {
-  return { activeProfile: signal({ id: 'p1', name: 'Rex', createdAt: 0 }) };
+  return {
+    activeProfile: signal({ id: 'p1', name: 'Rex', createdAt: 0, avatarId: defaultAvatarId('p1') }),
+  };
 }
 const config = { url: 'x', anonKey: 'y' };
 
