@@ -221,9 +221,18 @@ body {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
+  overflow: hidden;
   color: #fff;
   font-weight: 700;
   flex: none;
+}
+
+.avatar__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
 }
 
 .profile-header {

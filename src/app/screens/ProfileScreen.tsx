@@ -2,18 +2,10 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import type { VNode } from 'preact';
 import { back } from '../router';
 import { i18n } from '@services/i18n';
-import { profileService, avatarFor, type Profile } from '@services/profile';
+import { profileService } from '@services/profile';
 import { onlineService } from '@services/online';
 import { getHomeStats } from '../home/stats';
-
-function Avatar({ profile }: { profile: Profile }): VNode {
-  const { initial, hue } = avatarFor(profile);
-  return (
-    <span class="avatar" style={{ backgroundColor: `hsl(${hue}, 55%, 45%)` }}>
-      {initial}
-    </span>
-  );
-}
+import { Avatar } from '../components/Avatar';
 
 export function ProfileScreen(): VNode {
   const active = profileService.activeProfile.value;
