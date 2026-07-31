@@ -27,7 +27,7 @@ function RowStats({ distance, food, nearMisses }: {
         <span class="leaderboard__stat-value">{distance}</span>
       </span>
       <span class="leaderboard__stat">
-        <span class="leaderboard__stat-label">{i18n.t('leaderboard.food')}</span>
+        <span class="leaderboard__stat-label">{i18n.t('leaderboard.coins')}</span>
         <span class="leaderboard__stat-value">{food}</span>
       </span>
       <span class="leaderboard__stat">

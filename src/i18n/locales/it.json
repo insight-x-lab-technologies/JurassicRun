@@ -5,7 +5,7 @@
   },
   "hud": {
     "distance": "Dist: {{value}}m",
-    "food": "Cibo: {{value}}",
+    "coins": "Monete: {{value}}",
     "fps": "FPS: {{value}}",
     "level": "Liv {{value}}",
     "speed": "Vel: {{value}}",
@@ -20,7 +20,7 @@
   "gameover": {
     "title": "Game Over",
     "distance": "Distanza: {{value}} m",
-    "food": "Cibo: {{value}}",
+    "coins": "Monete: {{value}}",
     "nearMisses": "Quasi collisioni: {{value}}",
     "newRecord": "Nuovo record!",
     "coinsEarned": "+{{value}} monete",
@@ -151,7 +151,7 @@
     },
     "forager": {
       "name": "Raccoglitore",
-      "desc": "Raccogli 50 di cibo in totale."
+      "desc": "Raccogli 50 monete in totale."
     },
     "daredevil": {
       "name": "Temerario",
@@ -216,12 +216,12 @@
       "desc": "Calamita per monete permanente."
     },
     "doubleFood": {
-      "name": "Cibo doppio",
-      "desc": "Il cibo vale il doppio."
+      "name": "Monete doppie",
+      "desc": "Le monete valgono il doppio."
     },
     "tripleFood": {
-      "name": "Cibo triplo",
-      "desc": "Il cibo vale il triplo."
+      "name": "Monete triple",
+      "desc": "Le monete valgono il triplo."
     },
     "startLife": {
       "name": "Vita extra",
@@ -243,7 +243,7 @@
       "name": "Calamita"
     },
     "doubleCoin": {
-      "name": "Cibo doppio"
+      "name": "Monete doppie"
     },
     "extraLife": {
       "name": "Vita extra"
@@ -266,7 +266,7 @@
     "empty": "Nessun record ancora — gioca per stabilirne uno!",
     "score": "Punti",
     "distance": "Dist",
-    "food": "Cibo",
+    "coins": "Monete",
     "nearMisses": "Quasi collisioni",
     "player": "Giocatore",
     "verified": "Verificato",

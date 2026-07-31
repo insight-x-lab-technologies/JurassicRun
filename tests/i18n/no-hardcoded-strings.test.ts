@@ -192,7 +192,7 @@ describe('no-hardcoded-strings', () => {
     it('pega literal dentro de `.setText([...].join())` multi-linha e ignora array só-t() + separador', () => {
       const bad = `this.hud.setText([
         'Distance: ' + v.distance,
-        i18n.t('hud.food', { value: v.food }),
+        i18n.t('hud.coins', { value: v.food }),
       ].join('\\n'));`;
       const good = `this.hud.setText([
         i18n.t('hud.distance', { value: v.distance }),

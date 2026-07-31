@@ -5,7 +5,7 @@
   },
   "hud": {
     "distance": "Dist: {{value}}m",
-    "food": "Food: {{value}}",
+    "coins": "Coins: {{value}}",
     "fps": "FPS: {{value}}",
     "level": "Lv {{value}}",
     "speed": "Speed: {{value}}",
@@ -20,7 +20,7 @@
   "gameover": {
     "title": "Game Over",
     "distance": "Distance: {{value}}m",
-    "food": "Food: {{value}}",
+    "coins": "Coins: {{value}}",
     "nearMisses": "Near misses: {{value}}",
     "newRecord": "New record!",
     "coinsEarned": "+{{value}} coins",
@@ -151,7 +151,7 @@
     },
     "forager": {
       "name": "Forager",
-      "desc": "Collect 50 food in total."
+      "desc": "Collect 50 coins in total."
     },
     "daredevil": {
       "name": "Daredevil",
@@ -216,12 +216,12 @@
       "desc": "Permanent coin magnet."
     },
     "doubleFood": {
-      "name": "Double food",
-      "desc": "Food is worth double."
+      "name": "Double coins",
+      "desc": "Coins are worth double."
     },
     "tripleFood": {
-      "name": "Triple food",
-      "desc": "Food is worth triple."
+      "name": "Triple coins",
+      "desc": "Coins are worth triple."
     },
     "startLife": {
       "name": "Extra life",
@@ -243,7 +243,7 @@
       "name": "Magnet"
     },
     "doubleCoin": {
-      "name": "Double food"
+      "name": "Double coins"
     },
     "extraLife": {
       "name": "Extra life"
@@ -266,7 +266,7 @@
     "empty": "No records yet — play to set one!",
     "score": "Score",
     "distance": "Dist",
-    "food": "Food",
+    "coins": "Coins",
     "nearMisses": "Near misses",
     "player": "Player",
     "verified": "Verified",

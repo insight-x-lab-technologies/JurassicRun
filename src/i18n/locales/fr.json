@@ -5,7 +5,7 @@
   },
   "hud": {
     "distance": "Dist: {{value}}m",
-    "food": "Nourriture: {{value}}",
+    "coins": "Pièces: {{value}}",
     "fps": "FPS: {{value}}",
     "level": "Niv {{value}}",
     "speed": "Vit: {{value}}",
@@ -20,7 +20,7 @@
   "gameover": {
     "title": "Partie terminée",
     "distance": "Distance : {{value}} m",
-    "food": "Nourriture : {{value}}",
+    "coins": "Pièces : {{value}}",
     "nearMisses": "Quasi-collisions : {{value}}",
     "newRecord": "Nouveau record !",
     "coinsEarned": "+{{value}} pièces",
@@ -151,7 +151,7 @@
     },
     "forager": {
       "name": "Fourrageur",
-      "desc": "Collectez 50 de nourriture au total."
+      "desc": "Collectez 50 pièces au total."
     },
     "daredevil": {
       "name": "Casse-cou",
@@ -216,12 +216,12 @@
       "desc": "Aimant à pièces permanent."
     },
     "doubleFood": {
-      "name": "Nourriture double",
-      "desc": "La nourriture vaut le double."
+      "name": "Pièces doubles",
+      "desc": "Les pièces valent le double."
     },
     "tripleFood": {
-      "name": "Nourriture triple",
-      "desc": "La nourriture vaut le triple."
+      "name": "Pièces triples",
+      "desc": "Les pièces valent le triple."
     },
     "startLife": {
       "name": "Vie supplémentaire",
@@ -243,7 +243,7 @@
       "name": "Aimant"
     },
     "doubleCoin": {
-      "name": "Nourriture double"
+      "name": "Pièces doubles"
     },
     "extraLife": {
       "name": "Vie supplémentaire"
@@ -266,7 +266,7 @@
     "empty": "Pas encore de record — jouez pour en établir un !",
     "score": "Score",
     "distance": "Dist",
-    "food": "Nourriture",
+    "coins": "Pièces",
     "nearMisses": "Quasi-collisions",
     "player": "Joueur",
     "verified": "Vérifié",

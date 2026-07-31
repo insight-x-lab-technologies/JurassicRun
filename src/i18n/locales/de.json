@@ -5,7 +5,7 @@
   },
   "hud": {
     "distance": "Dist: {{value}}m",
-    "food": "Futter: {{value}}",
+    "coins": "Münzen: {{value}}",
     "fps": "FPS: {{value}}",
     "level": "Stufe {{value}}",
     "speed": "Tempo: {{value}}",
@@ -20,7 +20,7 @@
   "gameover": {
     "title": "Spiel vorbei",
     "distance": "Distanz: {{value}} m",
-    "food": "Futter: {{value}}",
+    "coins": "Münzen: {{value}}",
     "nearMisses": "Beinahe-Kollisionen: {{value}}",
     "newRecord": "Neuer Rekord!",
     "coinsEarned": "+{{value}} Münzen",
@@ -151,7 +151,7 @@
     },
     "forager": {
       "name": "Sammler",
-      "desc": "Sammle insgesamt 50 Nahrung."
+      "desc": "Sammle insgesamt 50 Münzen."
     },
     "daredevil": {
       "name": "Draufgänger",
@@ -216,12 +216,12 @@
       "desc": "Dauerhafter Münzmagnet."
     },
     "doubleFood": {
-      "name": "Doppelte Nahrung",
-      "desc": "Futter zählt doppelt."
+      "name": "Doppelte Münzen",
+      "desc": "Münzen zählen doppelt."
     },
     "tripleFood": {
-      "name": "Dreifache Nahrung",
-      "desc": "Futter zählt dreifach."
+      "name": "Dreifache Münzen",
+      "desc": "Münzen zählen dreifach."
     },
     "startLife": {
       "name": "Extraleben",
@@ -243,7 +243,7 @@
       "name": "Magnet"
     },
     "doubleCoin": {
-      "name": "Doppelte Nahrung"
+      "name": "Doppelte Münzen"
     },
     "extraLife": {
       "name": "Extraleben"
@@ -266,7 +266,7 @@
     "empty": "Noch keine Rekorde — spiele, um einen aufzustellen!",
     "score": "Punkte",
     "distance": "Dist",
-    "food": "Futter",
+    "coins": "Münzen",
     "nearMisses": "Beinahe-Kollisionen",
     "player": "Spieler",
     "verified": "Verifiziert",

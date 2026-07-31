@@ -80,7 +80,12 @@ manual do `package.json` ao fechar cada fase, ver `WORKFLOW.md`) · 10.3 ✅ (pu
 do leaderboard `v1→v2` e `purgeLegacyStorage()` na 1ª linha do `bootstrap()` apagando a lista
 **explícita** `leaderboard.v1` + `replays.v1/v2`; teste de invariante cruza a lista legada com os 8
 `STORAGE_KEY` vivos ⇒ **a entrada legada só pode entrar junto/depois do bump da chave viva**).
-**Frente A concluída.** Próximo item: **10.4** (UI falando "moedas"). Ordem A→B→C→D, um item por PR.
+**Frente A concluída.** · 10.4 ✅ (UI fala moedas: chaves `hud/gameover/leaderboard.food` → `.coins`
+nos 10 locales; Game Over sem a linha duplicada, exibindo `stats.coins` — o valor creditado — e não
+`stats.food`; `trait.doubleFood`/`tripleFood`/`powerup.doubleCoin`/`trophy.forager.desc` mudam só o
+TEXTO, o id é código; guarda `tests/i18n/no-food-keys.test.ts` proíbe segmento de chave `food`.
+Campo interno `food` intocado em core/serviços/banco).
+Próximo item: **10.5** (briefing de desafio full-width). Ordem A→B→C→D, um item por PR.
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 

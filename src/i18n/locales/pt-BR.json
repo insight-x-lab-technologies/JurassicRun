@@ -5,7 +5,7 @@
   },
   "hud": {
     "distance": "Dist: {{value}}m",
-    "food": "Comida: {{value}}",
+    "coins": "Moedas: {{value}}",
     "fps": "FPS: {{value}}",
     "level": "Nív {{value}}",
     "speed": "Vel: {{value}}",
@@ -20,7 +20,7 @@
   "gameover": {
     "title": "Fim de jogo",
     "distance": "Distância: {{value}} m",
-    "food": "Comida: {{value}}",
+    "coins": "Moedas: {{value}}",
     "nearMisses": "Quase colisões: {{value}}",
     "newRecord": "Novo recorde!",
     "coinsEarned": "+{{value}} moedas",
@@ -151,7 +151,7 @@
     },
     "forager": {
       "name": "Coletor",
-      "desc": "Colete 50 de comida no total."
+      "desc": "Colete 50 moedas no total."
     },
     "daredevil": {
       "name": "Destemido",
@@ -216,12 +216,12 @@
       "desc": "Ímã de moedas permanente."
     },
     "doubleFood": {
-      "name": "Comida dobrada",
-      "desc": "Comida vale o dobro."
+      "name": "Moedas dobradas",
+      "desc": "Moedas valem o dobro."
     },
     "tripleFood": {
-      "name": "Comida triplicada",
-      "desc": "Comida vale o triplo."
+      "name": "Moedas triplicadas",
+      "desc": "Moedas valem o triplo."
     },
     "startLife": {
       "name": "Vida extra",
@@ -243,7 +243,7 @@
       "name": "Ímã"
     },
     "doubleCoin": {
-      "name": "Comida dobrada"
+      "name": "Moedas dobradas"
     },
     "extraLife": {
       "name": "Vida extra"
@@ -266,7 +266,7 @@
     "empty": "Ainda não há recordes — jogue para bater um!",
     "score": "Pontos",
     "distance": "Dist",
-    "food": "Comida",
+    "coins": "Moedas",
     "nearMisses": "Quase colisões",
     "player": "Jogador",
     "verified": "Verificado",
