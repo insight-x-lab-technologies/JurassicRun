@@ -4,6 +4,7 @@ import {
   MIN_RENDER_SCALE,
   MAX_RENDER_SCALE,
   PARALLAX_SOURCE_WORLD_WIDTH,
+  RESCALE_EPSILON,
 } from './constants';
 
 /**
@@ -35,6 +36,20 @@ export function resolveRenderScale(cssWidth: number, cssHeight: number, dpr: num
   const fit = Math.min(cssWidth / VIEW_WIDTH, cssHeight / VIEW_HEIGHT);
   if (!Number.isFinite(fit) || fit <= 0) return MIN_RENDER_SCALE;
   return Math.min(MAX_RENDER_SCALE, Math.max(MIN_RENDER_SCALE, fit * density));
+}
+
+/**
+ * Vale a pena re-resolver o framebuffer para `next`?
+ *
+ * Só quando a diferença relativa passa de `RESCALE_EPSILON`. Redimensionar o canvas do Phaser
+ * recria texturas e é caro; e como o próprio `scale.resize` emite um evento de resize, sem esta
+ * porta a rotação entraria em laço. Entradas degeneradas (container 0×0 durante o relayout da
+ * rotação) nunca disparam resize.
+ */
+export function shouldRescale(current: number, next: number): boolean {
+  if (!Number.isFinite(current) || !Number.isFinite(next)) return false;
+  if (current <= 0 || next <= 0) return false;
+  return Math.abs(next - current) / current > RESCALE_EPSILON;
 }
 
 /** Converte unidade de mundo (simulação) em pixel de render (canvas). */

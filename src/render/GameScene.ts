@@ -60,7 +60,7 @@ import {
   AURA_BASE_MARGIN,
   AURA_LINE_WIDTH,
 } from './constants';
-import { toRenderPx, parallaxTileScale } from './resolution';
+import { toRenderPx, parallaxTileScale, resolveRenderScale, renderCanvasSize, shouldRescale } from './resolution';
 
 /** Renderiza o WorldState lido do core via MatchController. Não altera a simulação (REGRA 1). */
 export class GameScene extends Phaser.Scene {
@@ -121,8 +121,8 @@ export class GameScene extends Phaser.Scene {
   private readonly sfxScratch: SfxId[] = [];
   private lastAudioWorld: WorldState | null = null;
 
-  /** Px de render por unidade de mundo (W5). Fixo durante a vida da cena; ver resolution.ts. */
-  private readonly renderScale: number;
+  /** Px de render por unidade de mundo (W5). Re-resolvido na rotação (10.9); ver resolution.ts. */
+  private renderScale: number;
 
   constructor(match: MatchController, pause: PauseController, renderScale: number) {
     super('GameScene');
@@ -317,6 +317,56 @@ export class GameScene extends Phaser.Scene {
 
     // Teclado de restart em `dead` vive no caminho único de `bindGameControls` (evita a corrida
     // com este listener e o flap-de-início global). Aqui só o botão Reiniciar (ponteiro) reinicia.
+
+    // 10.9: girar o aparelho re-resolve o framebuffer. Sem isto o Scale.FIT estica por CSS o
+    // canvas da orientação anterior (upscale de 2,16× medido num 390×844 dpr 3) — a volta do
+    // bug W5 pela porta da rotação. A PARTIDA não é tocada: só o tamanho do canvas.
+    this.scale.on('resize', () => {
+      const parent = this.scale.parentSize;
+      const next = resolveRenderScale(parent.width, parent.height, window.devicePixelRatio);
+      if (!shouldRescale(this.renderScale, next)) return;
+      const { width, height } = renderCanvasSize(next);
+      this.applyRenderScale(next);
+      this.scale.resize(width, height);
+    });
+  }
+
+  /**
+   * Re-aplica a escala de render aos objetos ESTÁTICOS criados em `create()`. Tudo o que é
+   * desenhado por frame (`drawFrame`) lê `this.renderScale` e se corrige sozinho no frame
+   * seguinte — por isso aqui só entram os objetos posicionados/dimensionados uma vez.
+   *
+   * Chamado quando o aparelho gira: a partida, o `WorldState` e o passo fixo NÃO são tocados.
+   */
+  applyRenderScale(scale: number): void {
+    this.renderScale = scale;
+
+    this.bgImage.setDisplaySize(this.px(VIEW_WIDTH), this.px(VIEW_HEIGHT));
+
+    this.parallaxTiles.forEach((tile, index) => {
+      const v = PARALLAX_LAYERS[index]!.visual;
+      const y = v.kind === 'sprite' ? VIEW_HEIGHT - v.baseFromBottom - v.dispHeight : 0;
+      const h = v.kind === 'sprite' ? v.dispHeight : VIEW_HEIGHT;
+      tile.setPosition(0, this.px(y));
+      tile.setSize(this.px(VIEW_WIDTH), this.px(h));
+      const texWidth = this.textures.get(tile.texture.key).getSourceImage().width;
+      const tileScale = parallaxTileScale(texWidth, scale);
+      tile.setTileScale(tileScale, tileScale);
+    });
+
+    // Graphics desenham em unidades de mundo; a ESCALA do objeto converte para px de render.
+    this.bandsGfx.setScale(scale);
+    this.gfx.setScale(scale);
+    this.pauseOverlay.setScale(scale);
+    this.gameOverBg.setScale(scale);
+
+    // Textos legados in-canvas (invisíveis com domOverlays, mas mantidos corretos).
+    this.hudText.setScale(scale).setPosition(this.px(HUD_TEXT_X), this.px(HUD_TEXT_Y));
+    this.readyPrompt.setScale(scale).setPosition(this.px(VIEW_WIDTH / 2), this.px(VIEW_HEIGHT / 2));
+    this.gameOverTitle.setScale(scale).setPosition(this.px(VIEW_WIDTH / 2), this.px(36));
+    this.gameOverStats.setScale(scale).setPosition(this.px(VIEW_WIDTH / 2), this.px(78));
+    this.gameOverRestart.setScale(scale).setPosition(this.px(VIEW_WIDTH / 2 - 44), this.px(130));
+    this.gameOverQuit.setScale(scale).setPosition(this.px(VIEW_WIDTH / 2 + 44), this.px(130));
   }
 
   override update(_time: number, deltaMs: number): void {
