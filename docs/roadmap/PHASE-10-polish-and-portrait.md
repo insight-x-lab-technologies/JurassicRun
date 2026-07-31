@@ -376,32 +376,100 @@ teste que clica em TODOS os pacotes e prova saldo inalterado); resgate válido c
 
 ## Frente D — Gameplay em retrato (#5)
 
-### 10.9 Jogar em retrato, adaptando ao girar o aparelho
-- [ ] Hoje retrato + ponteiro grosso ⇒ **tela de "gire o aparelho"** (`shouldSuggestRotate`,
-      `PlayScreen.tsx:114`): não existe jogo em retrato.
-- [ ] **Decisão travada — letterbox do campo inteiro, não recorte:** o campo lógico 320×180
+### 10.9 Jogar em retrato, adaptando ao girar o aparelho ✅
+- [x] Hoje retrato + ponteiro grosso ⇒ **tela de "gire o aparelho"** (`shouldSuggestRotate`,
+      `PlayScreen.tsx:114`): não existe jogo em retrato. **CORRIGIDO NA INVESTIGAÇÃO:** existia, sim
+      — ver "causa-raiz medida" abaixo.
+- [x] **Decisão travada — letterbox do campo inteiro, não recorte:** o campo lógico 320×180
       continua idêntico; em retrato a escala é ditada pela **largura** e o jogo vira uma **faixa**.
       O espaço livre acima/abaixo **não** é barra preta: recebe (i) fundo/parallax sangrado na
       vertical (cosmético, fora do campo — mesmo truque da sangria do 9.4), (ii) HUD reposicionado
       acima da faixa, (iii) área de toque generosa abaixo (tap = flap).
-- [ ] **Por que não recortar a largura** (a hipótese do pedido): em 9:16, mostrar 180 de altura faria
+      *(i) entregue como **backdrop do pack em CSS**, não parallax sangrado — desvio consciente
+      documentado abaixo.*
+- [x] **Por que não recortar a largura** (a hipótese do pedido): em 9:16, mostrar 180 de altura faria
       a janela visível cair para ~100 unidades de mundo (de 320) ⇒ ~⅓ do tempo de reação. Isso muda
       a dificuldade real e torna incomparáveis os scores entre orientações — o leaderboard é global
       e o campo é travado justamente por isso. Letterbox mantém a partida **idêntica** em qualquer
       aparelho, ao custo de a faixa jogável ser menor na tela.
-- [ ] **Girar no meio da partida** deve adaptar o layout **sem reiniciar**: nada de perder estado,
-      nada de alterar o passo fixo, nada de recriar a cena do Phaser se der para só re-escalar.
-- [ ] Rotate-hint sai do caminho (removido ou vira opção em Configurações).
-- [ ] HUD, pause, Game Over e o indicador de power-up (9.5) precisam de layout em retrato.
-- [ ] Safe-area (notch/barra de gestos) em retrato.
-- [ ] Validar em 390×844 e 360×740, **medindo por número**; 60fps mantido; SW pode servir `dist`
-      velho na validação ⇒ unregister + clear caches + `?nocache`.
+- [x] **Girar no meio da partida** adapta o layout **sem reiniciar** — e agora também **re-resolve a
+      resolução de render**, em vez de esticar o framebuffer da orientação anterior.
+- [x] Rotate-hint **removido** do produto (hook, módulo puro, CSS e chave i18n nos 10 locales).
+- [x] HUD, pause, Game Over e o indicador de power-up (9.5) com layout de retrato.
+- [x] Safe-area (notch/barra de gestos) em retrato.
+- [x] Validado em 390×844 e 360×740, **medindo por número** (SW desregistrado + caches limpos +
+      `?nocache`). **fps NÃO certificado** — o ambiente de validação não tem GPU; ver abaixo.
 
-**Toca:** `src/render/{resolution,constants,game,GameScene}.ts`, parallax, `src/app/screens/
-PlayScreen.tsx`, `src/app/hooks/useRotateHint.ts`, `src/app/game/*`, CSS. **`src/core/` intocado.**
-**Aceite:** dá para jogar uma partida completa em retrato; girar o aparelho durante a partida
-mantém a partida e reflui o layout; o campo visível é o **mesmo** 320×180 nas duas orientações;
-nenhuma barra preta pura; 60fps.
+**Toca:** `src/render/{resolution,constants,GameScene}.ts`, `src/app/screens/PlayScreen.tsx`,
+`src/app/styles/global.css`, `src/i18n/locales/*` (10); **removidos** `src/render/orientation.ts` e
+`src/app/hooks/useRotateHint.ts`. **`src/core/` intocado.**
+**Aceite:** ✅ partida completa em retrato; girar durante a partida mantém a partida (mesma seed) e
+reflui o layout; campo visível é o **mesmo** 320×180 nas duas orientações; nenhuma barra preta pura.
+⚠️ 60fps **não medível** no ambiente de validação (SwiftShader, sem GPU) — ver ressalva.
+
+> **Executado em 2026-07-31** (spec: `docs/superpowers/specs/2026-07-31-10.9-portrait-gameplay-design.md`;
+> plano: `docs/superpowers/plans/2026-07-31-10.9-portrait-gameplay.md`). 6 commits.
+>
+> **CAUSA-RAIZ MEDIDA, e ela contradizia o enunciado.** "Não dá para jogar em retrato" era falso:
+> o `Scale.FIT` (`game.ts:45`) já encaixava a faixa 16:9 em retrato, e `bindGameControls` está
+> ligado ao **`window`** (`startGame.ts:179`), não ao canvas ⇒ o toque em qualquer ponto da tela já
+> batia as asas. A `rotate-hint` era `pointer-events: none` (`global.css:171`): **nunca bloqueou
+> nada** — só escurecia a tela inteira e pedia para girar. O item virou apresentação + um bug de
+> resolução que ninguém tinha visto.
+>
+> **O bug que estava escondido atrás do aviso:** `resolveRenderScale` roda **1×**, na montagem
+> (`game.ts:34`). Girar mantinha o framebuffer antigo e o FIT passava a esticá-lo por CSS —
+> 390×844 dpr 3 girado para paisagem = canvas de 1171 px esticado para ~2532 px de dispositivo,
+> **upscale de 2,16×**. É o bug W5 que a Fase 8 corrigiu, voltando pela porta da rotação. Agora
+> `shouldRescale` (puro, testado) + `GameScene.applyRenderScale` re-resolvem no evento `resize` do
+> `ScaleManager`. **ORDEM CRÍTICA:** `applyRenderScale(next)` vem **antes** de `scale.resize(...)`,
+> porque `scale.resize` reemite `'resize'` SÍNCRONO e reentra no próprio handler — como
+> `this.renderScale` já vale `next`, o `shouldRescale` devolve false e a recursão para no 1º nível.
+> Invertido, é estouro de pilha. Está comentado no código; nada na suíte pegaria a inversão.
+>
+> **Desvio consciente do roadmap:** o vão recebe o **backdrop do pack ativo em CSS**
+> (`--bg-screen`, que `theme.ts` já publica e troca ao vivo), não parallax sangrado. Sangrar
+> parallax de verdade exige o canvas largar o 16:9 e arrastar offset de câmera + relayout de todas
+> as camadas `scrollFactor(0)` dentro de `GameScene.ts` (754 linhas, arquivo de maior risco) por
+> ganho só cosmético. Mesma arte em zoom diferente ⇒ o vão lê como continuação da cena. Fica como
+> evolução possível se incomodar em aparelho real.
+>
+> **O chrome de retrato é 100% CSS** (precedente 10.5). Em qualquer viewport retrato a LARGURA é o
+> eixo limitante do FIT, então a altura da faixa é fechada: `--field-h: calc(100vw * 9 / 16)`; e
+> como o `autoCenter: CENTER_BOTH` centra o canvas no container `inset: 0`, as bordas da faixa são
+> `50% ∓ --field-h/2`. `PlayScreen.tsx` só ganhou o predicado puro `showTapZone` e o elemento
+> decorativo. **Gotcha caro, pego SÓ pela medição:** as regras base de `.hud`/`.effect-badges`
+> vivem ~1200 linhas depois do `@media` no `global.css` ⇒ com especificidade igual elas venciam por
+> ordem de cascata e o `top: auto` era ignorado **em silêncio** — o HUD saiu com `top: 8` E
+> `bottom: 300`, esticado em **292 px de altura**. Os seletores viraram `.play-screen .hud` (0,2,0),
+> imunes à posição dos blocos, e a guarda `tests/app/play-screen-css.test.ts` passou a **exigir** o
+> descendente em toda regra de retrato.
+>
+> **A zona de toque é afordância, não mecânica:** `pointer-events: none` é obrigatório — o flap
+> continua sendo tratado pelo listener de `window`. Ancorada ao RODAPÉ, não ao topo da banda
+> inferior, senão os chips de power-up (9.5, z-index 12) caem por cima dela.
+>
+> **VALIDAÇÃO POR NÚMERO** no `dist` servido (SW desregistrado + caches limpos + `?nocache`):
+> **390×844** — útil 390×844, faixa **390×219** (= largura×9/16, centrada em 312/531), framebuffer
+> **390×219 (1:1)**, HUD 163→300 (altura natural 137, borda inferior **12 px acima** da faixa),
+> chips em 544 (13 px abaixo da faixa), zona de toque 788→832 dentro da banda, `background-image` =
+> `bg.screen.classic.png`, `rotate-hint` **0**, `bodyOverflowX` **0** ·
+> **360×740** — faixa **360×202** (esperado 202,5; centrada em 268/470), framebuffer 360×203, HUD
+> 120→257, "Voltar" 12→60 sem colisão, zona de toque 684→728, overflow 0; pausa e Game Over cobrem
+> 360×740 sem estouro e a zona de toque **some** no Game Over ·
+> **ROTAÇÃO AO VIVO** (partida pausada durante o giro para o dino não morrer na janela de medição):
+> antes `seed=endless:3V2KT7E`, `dist=89`, framebuffer 390×219 → depois de girar para 844×390,
+> framebuffer **693×390** (re-resolvido) e, ao retomar, **a MESMA seed** com `dist` seguindo
+> 101 → 143 → 170. Partida preservada, framebuffer corrigido, zero erro no console.
+>
+> **RESSALVA DE fps — não certificado.** O ambiente de validação usa
+> `ANGLE (SwiftShader driver)`: rasterizador **por software, sem GPU**. Os números lidos ali (8 fps
+> em retrato com 85 410 px de framebuffer, 5 fps em paisagem com 270 270 px) medem CPU, não o
+> aparelho, e escalam inversamente com a contagem de pixels, como se espera de um rasterizador
+> fill-rate-bound. O que dá para afirmar: **retrato renderiza 3,2× MENOS pixels que paisagem**, e
+> nenhum trabalho por frame foi acrescentado (`applyRenderScale` só roda no evento de rotação) ⇒
+> retrato não pode ser a orientação mais lenta. O critério de 60 fps **precisa de um teste em
+> aparelho real** e fica em aberto.
 
 ---
 

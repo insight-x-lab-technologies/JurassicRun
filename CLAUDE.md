@@ -69,9 +69,9 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **73** testes · suíte **1081** testes · `check` limpo.
-Branch `main`. Fases 0–9 **CONCLUÍDAS** (9.1–9.9 feitos ⇒ Frentes A, B, C e D fechadas).
-**Fase 10 ABERTA** (`docs/roadmap/PHASE-10-polish-and-portrait.md`): 9 itens, nenhum toca `src/core/`.
+**Métricas correntes:** determinismo **73** testes · suíte **1093** testes · `check` limpo.
+Branch `main`. Fases 0–10 **CONCLUÍDAS**. Próxima: **Fase 11** (retenção & economia viva).
+**Fase 10 CONCLUÍDA** (`docs/roadmap/PHASE-10-polish-and-portrait.md`): 9 itens, nenhum toca `src/core/`.
 10.1 ✅ (higiene de branches: remoto e local só com `main`; `delete_branch_on_merge` LIGADO ⇒ head
 branch de PR some sozinho no merge daqui pra frente) · 10.2 ✅ (versão na Home: `__APP_VERSION__`
 injetado por `define` a partir do `package.json`; **`define` tem de ir em `vite.config.ts` E
@@ -123,8 +123,29 @@ usa `URL`, não concatenação: base com fragmento gerava `#tip?jr_sku=…` e o 
 "sem gateway" saiu do `if` do `ShopScreen` — que escondia a Loja inteira — e virou auto-desabilitar
 do `RedeemCodeForm`; as 3 seções coexistem sempre e comprar no Ko-fi não depende do nosso servidor.
 **Desvio consciente:** as fontes grátis citadas são **2**, não 3 — troféu NÃO credita moeda.)
-**Frentes B e C da Fase 10 concluídas.** Próximo item: **10.9** (jogar em retrato) — único item da
-Frente D e o maior da fase. Ordem A→B→C→D, um item por PR.
+**Frentes B e C da Fase 10 concluídas.**
+· 10.9 ✅ (**gameplay em retrato**; fecha a Frente D e a Fase 10). **A causa-raiz contradizia o
+enunciado:** retrato já rodava — `Scale.FIT` já letterboxava e o input está no **`window`**
+(`startGame.ts`), não no canvas, então tocar em qualquer ponto já batia asas; a `rotate-hint` era
+`pointer-events: none`, nunca bloqueou, só escurecia a tela. O item virou apresentação + **um bug de
+resolução escondido atrás do aviso**: `resolveRenderScale` rodava 1× na montagem, então girar
+mantinha o framebuffer velho e o FIT o esticava por CSS (**upscale 2,16×** num 390×844 dpr 3) — o
+bug W5 voltando pela porta da rotação. Agora `shouldRescale` (puro) + `GameScene.applyRenderScale`
+no evento `resize` do `ScaleManager`; **ORDEM CRÍTICA:** `applyRenderScale` **antes** de
+`scale.resize`, que reemite `'resize'` SÍNCRONO e reentra — com a escala já gravada a guarda corta a
+recursão no 1º nível; invertido, estoura a pilha (nada na suíte pegaria). Chrome de retrato **100%
+CSS** (precedente 10.5): a largura sempre limita o FIT ⇒ `--field-h: calc(100vw*9/16)` e as bordas
+da faixa são `50% ∓ --field-h/2`. **Gotcha caro, pego SÓ pela medição:** as regras base de
+`.hud`/`.effect-badges` vivem ~1200 linhas DEPOIS do `@media` ⇒ com especificidade igual venciam por
+ordem e o `top:auto` era ignorado em silêncio (HUD com `top` E `bottom`, esticado em 292 px);
+seletores viraram `.play-screen .hud` e a guarda exige o descendente. **Desvio consciente:** o vão é
+o backdrop do pack em **CSS** (`--bg-screen`), não parallax sangrado — sangrar exigiria o canvas
+largar o 16:9 e mexer em câmera/relayout no `GameScene.ts`. Rotate-hint removido do produto (hook,
+módulo, CSS, chave i18n ×10). Zona de toque é **afordância** (`pointer-events: none`), ancorada ao
+rodapé senão os chips 9.5 caem por cima. **fps NÃO certificado:** o ambiente de validação é
+SwiftShader (sem GPU); o que se afirma é que retrato renderiza **3,2× menos pixels** que paisagem e
+nada foi acrescentado por frame — 60 fps precisa de aparelho real.)
+**Fase 10 CONCLUÍDA (9/9).** Ordem A→B→C→D cumprida, um item por PR.
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
@@ -140,7 +161,7 @@ Frente D e o maior da fase. Ordem A→B→C→D, um item por PR.
 | 7 | PWA & deploy (instalável/offline, responsividade final, GitHub Pages, itch.io; 7.5 wrappers de loja ADIADO) | ✅ | 67 |
 | 8 | Arte AAA & packs (manifesto→sprite atlas, arte real entidades+dino animado, Tier-1 UI/fundos/parallax, packs=expansão ativa, gateway Ko-Fi/código, redesign UI W1→W9) | ✅ | 67 |
 | 9 | Melhorias estruturais (parallax alpha, obstáculos cobrindo hitbox, morte/idle animados, indicador de power-up, áudio generativo + toggle SFX, obstáculos novos, briefing+mods de desafio) | ✅ | 73 |
-| 10 | Polimento, meta e retrato (higiene de branches, versão na Home, purga pré-9.9, UI em moedas, briefing full-width, avatares, +15 troféus, Loja sem moeda grátis, gameplay em retrato) | 🚧 8/9 | 73* |
+| 10 | Polimento, meta e retrato (higiene de branches, versão na Home, purga pré-9.9, UI em moedas, briefing full-width, avatares, +15 troféus, Loja sem moeda grátis, gameplay em retrato) | ✅ | 73* |
 
 \* Fase 10 **não toca `src/core/`** ⇒ det permanece 73 (ver invariante abaixo).
 
