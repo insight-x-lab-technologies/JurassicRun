@@ -5,7 +5,7 @@
   },
   "hud": {
     "distance": "距离: {{value}}m",
-    "food": "食物: {{value}}",
+    "coins": "金币: {{value}}",
     "fps": "FPS: {{value}}",
     "level": "等级 {{value}}",
     "speed": "速度: {{value}}",
@@ -20,7 +20,7 @@
   "gameover": {
     "title": "游戏结束",
     "distance": "距离：{{value}} 米",
-    "food": "食物：{{value}}",
+    "coins": "金币：{{value}}",
     "nearMisses": "险些相撞：{{value}}",
     "newRecord": "新纪录！",
     "coinsEarned": "+{{value}} 金币",
@@ -266,7 +266,7 @@
     "empty": "还没有记录，快去创造一个吧！",
     "score": "分数",
     "distance": "距离",
-    "food": "食物",
+    "coins": "金币",
     "nearMisses": "险些相撞",
     "player": "玩家",
     "verified": "已验证",

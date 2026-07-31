@@ -484,7 +484,7 @@ export class GameScene extends Phaser.Scene {
     });
     this.hudText.setText([
       i18n.t('hud.distance', { value: v.distance }),
-      i18n.t('hud.food', { value: v.food }),
+      i18n.t('hud.coins', { value: v.food }),
       i18n.t('hud.fps', { value: v.fps }),
       i18n.t('hud.level', { value: v.level }),
       i18n.t('hud.speed', { value: v.speed }),
@@ -519,7 +519,7 @@ export class GameScene extends Phaser.Scene {
     const v = formatGameOverStats({ distance: w.distance, food: w.food, nearMisses: w.nearMisses });
     this.gameOverStats.setText([
       i18n.t('gameover.distance', { value: v.distance }),
-      i18n.t('gameover.food', { value: v.food }),
+      i18n.t('gameover.coins', { value: v.food }),
       i18n.t('gameover.nearMisses', { value: v.nearMisses }),
     ]);
   }

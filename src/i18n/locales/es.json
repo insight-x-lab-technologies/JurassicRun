@@ -5,7 +5,7 @@
   },
   "hud": {
     "distance": "Dist: {{value}}m",
-    "food": "Comida: {{value}}",
+    "coins": "Monedas: {{value}}",
     "fps": "FPS: {{value}}",
     "level": "Niv {{value}}",
     "speed": "Vel: {{value}}",
@@ -20,7 +20,7 @@
   "gameover": {
     "title": "Fin del juego",
     "distance": "Distancia: {{value}} m",
-    "food": "Comida: {{value}}",
+    "coins": "Monedas: {{value}}",
     "nearMisses": "Casi choques: {{value}}",
     "newRecord": "¡Nuevo récord!",
     "coinsEarned": "+{{value}} monedas",
@@ -266,7 +266,7 @@
     "empty": "Aún no hay récords — ¡juega para conseguir uno!",
     "score": "Puntos",
     "distance": "Dist",
-    "food": "Comida",
+    "coins": "Monedas",
     "nearMisses": "Casi choques",
     "player": "Jugador",
     "verified": "Verificado",

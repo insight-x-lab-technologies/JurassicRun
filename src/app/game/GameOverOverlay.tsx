@@ -21,9 +21,6 @@ export function GameOverOverlay(
           <span aria-hidden="true">📍</span> {i18n.t('gameover.distance', { value: v.distance })}
         </div>
         <div>
-          <span aria-hidden="true">🍖</span> {i18n.t('gameover.food', { value: v.food })}
-        </div>
-        <div>
           <span aria-hidden="true">⚠️</span> {i18n.t('gameover.nearMisses', { value: v.nearMisses })}
         </div>
       </dl>

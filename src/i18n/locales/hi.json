@@ -5,7 +5,7 @@
   },
   "hud": {
     "distance": "दूरी: {{value}}m",
-    "food": "भोजन: {{value}}",
+    "coins": "सिक्के: {{value}}",
     "fps": "FPS: {{value}}",
     "level": "स्तर {{value}}",
     "speed": "गति: {{value}}",
@@ -20,7 +20,7 @@
   "gameover": {
     "title": "गेम ओवर",
     "distance": "दूरी: {{value}} मी",
-    "food": "भोजन: {{value}}",
+    "coins": "सिक्के: {{value}}",
     "nearMisses": "करीबी टक्कर: {{value}}",
     "newRecord": "नया रिकॉर्ड!",
     "coinsEarned": "+{{value}} सिक्के",
@@ -266,7 +266,7 @@
     "empty": "अभी तक कोई रिकॉर्ड नहीं है — खेलकर पहला रिकॉर्ड बनाएँ!",
     "score": "स्कोर",
     "distance": "दूरी",
-    "food": "भोजन",
+    "coins": "सिक्के",
     "nearMisses": "करीबी टक्कर",
     "player": "खिलाड़ी",
     "verified": "सत्यापित",

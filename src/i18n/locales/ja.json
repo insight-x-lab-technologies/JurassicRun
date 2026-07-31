@@ -5,7 +5,7 @@
   },
   "hud": {
     "distance": "距離: {{value}}m",
-    "food": "エサ: {{value}}",
+    "coins": "コイン: {{value}}",
     "fps": "FPS: {{value}}",
     "level": "Lv {{value}}",
     "speed": "速度: {{value}}",
@@ -20,7 +20,7 @@
   "gameover": {
     "title": "ゲームオーバー",
     "distance": "距離: {{value}}m",
-    "food": "エサ: {{value}}",
+    "coins": "コイン: {{value}}",
     "nearMisses": "ニアミス: {{value}}",
     "newRecord": "新記録！",
     "coinsEarned": "+{{value}} コイン",
@@ -266,7 +266,7 @@
     "empty": "まだ記録がありません。プレイして記録を作ろう！",
     "score": "スコア",
     "distance": "距離",
-    "food": "エサ",
+    "coins": "コイン",
     "nearMisses": "ニアミス",
     "player": "プレイヤー",
     "verified": "確認済み",

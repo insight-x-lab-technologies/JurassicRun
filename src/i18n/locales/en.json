@@ -5,7 +5,7 @@
   },
   "hud": {
     "distance": "Dist: {{value}}m",
-    "food": "Food: {{value}}",
+    "coins": "Coins: {{value}}",
     "fps": "FPS: {{value}}",
     "level": "Lv {{value}}",
     "speed": "Speed: {{value}}",
@@ -20,7 +20,7 @@
   "gameover": {
     "title": "Game Over",
     "distance": "Distance: {{value}}m",
-    "food": "Food: {{value}}",
+    "coins": "Coins: {{value}}",
     "nearMisses": "Near misses: {{value}}",
     "newRecord": "New record!",
     "coinsEarned": "+{{value}} coins",
@@ -266,7 +266,7 @@
     "empty": "No records yet — play to set one!",
     "score": "Score",
     "distance": "Dist",
-    "food": "Food",
+    "coins": "Coins",
     "nearMisses": "Near misses",
     "player": "Player",
     "verified": "Verified",

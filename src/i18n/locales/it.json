@@ -5,7 +5,7 @@
   },
   "hud": {
     "distance": "Dist: {{value}}m",
-    "food": "Cibo: {{value}}",
+    "coins": "Monete: {{value}}",
     "fps": "FPS: {{value}}",
     "level": "Liv {{value}}",
     "speed": "Vel: {{value}}",
@@ -20,7 +20,7 @@
   "gameover": {
     "title": "Game Over",
     "distance": "Distanza: {{value}} m",
-    "food": "Cibo: {{value}}",
+    "coins": "Monete: {{value}}",
     "nearMisses": "Quasi collisioni: {{value}}",
     "newRecord": "Nuovo record!",
     "coinsEarned": "+{{value}} monete",
@@ -266,7 +266,7 @@
     "empty": "Nessun record ancora — gioca per stabilirne uno!",
     "score": "Punti",
     "distance": "Dist",
-    "food": "Cibo",
+    "coins": "Monete",
     "nearMisses": "Quasi collisioni",
     "player": "Giocatore",
     "verified": "Verificato",
