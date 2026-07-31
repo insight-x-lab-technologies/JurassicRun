@@ -15,7 +15,8 @@
     "seconds": "{{value}}s"
   },
   "match": {
-    "tapToStart": "Toca para empezar"
+    "tapToStart": "Toca para empezar",
+    "tapArea": "Toca en cualquier lugar para aletear"
   },
   "gameover": {
     "title": "Fin del juego",

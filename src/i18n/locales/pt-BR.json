@@ -15,7 +15,8 @@
     "seconds": "{{value}}s"
   },
   "match": {
-    "tapToStart": "Toque para começar"
+    "tapToStart": "Toque para começar",
+    "tapArea": "Toque em qualquer lugar para bater as asas"
   },
   "gameover": {
     "title": "Fim de jogo",

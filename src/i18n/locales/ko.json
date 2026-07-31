@@ -15,7 +15,8 @@
     "seconds": "{{value}}초"
   },
   "match": {
-    "tapToStart": "탭하여 시작"
+    "tapToStart": "탭하여 시작",
+    "tapArea": "아무 곳이나 탭하여 날갯짓"
   },
   "gameover": {
     "title": "게임 오버",

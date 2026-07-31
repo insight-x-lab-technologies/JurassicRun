@@ -173,6 +173,12 @@ body {
   z-index: 1; /* acima do escurecimento do vão */
 }
 
+/* 10.9: afordância da zona de toque — decorativa. O flap é tratado pelo listener de `window`
+   (bindGameControls), então ela NUNCA pode capturar ponteiro. Só existe em retrato. */
+.play-screen__tap {
+  display: none;
+}
+
 /* 10.9 — chrome de retrato. Em qualquer viewport retrato a LARGURA é o eixo limitante do
    Scale.FIT (todo retrato é mais alto que 16:9), então a altura da faixa jogável é fechada:
    largura × 9/16. O autoCenter:CENTER_BOTH do Phaser centra o canvas no container `inset: 0`,
@@ -194,6 +200,34 @@ body {
   .effect-badges {
     bottom: auto;
     top: calc(50% + var(--field-h) / 2 + var(--field-gap));
+  }
+
+  /* Afordância "toque em qualquer lugar": banda vazia abaixo da faixa jogável. Decorativa —
+     `pointer-events: none` é CRÍTICO, senão o toque para de chegar ao listener de `window` de
+     bindGameControls e o flap morre nesta área.
+     Ancorada ao RODAPÉ, não ao topo da banda: os chips de power-up (9.5) já ocupam o topo dela
+     (`.effect-badges`, z-index 12) e um painel que começasse logo abaixo da faixa ficaria por
+     baixo deles. Cada um fica com uma ponta da banda. */
+  .play-screen__tap {
+    display: flex;
+    position: absolute;
+    left: max(var(--space-3), env(safe-area-inset-left));
+    right: max(var(--space-3), env(safe-area-inset-right));
+    top: auto;
+    min-height: var(--space-6);
+    bottom: max(var(--space-3), env(safe-area-inset-bottom));
+    z-index: 11;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3);
+    border: 1px dashed color-mix(in srgb, var(--color-text) 25%, transparent);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--color-bg) 25%, transparent);
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+    text-align: center;
+    opacity: 0.75;
+    pointer-events: none; /* CRÍTICO: o toque tem de chegar ao listener de `window` */
   }
 }
 

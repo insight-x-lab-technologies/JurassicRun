@@ -15,7 +15,8 @@
     "seconds": "{{value}}秒"
   },
   "match": {
-    "tapToStart": "タップして開始"
+    "tapToStart": "タップして開始",
+    "tapArea": "画面のどこでもタップで羽ばたく"
   },
   "gameover": {
     "title": "ゲームオーバー",

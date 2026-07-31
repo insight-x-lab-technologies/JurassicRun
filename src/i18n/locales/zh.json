@@ -15,7 +15,8 @@
     "seconds": "{{value}}秒"
   },
   "match": {
-    "tapToStart": "点击开始"
+    "tapToStart": "点击开始",
+    "tapArea": "点击任意位置扇动翅膀"
   },
   "gameover": {
     "title": "游戏结束",

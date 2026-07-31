@@ -15,7 +15,8 @@
     "seconds": "{{value}}s"
   },
   "match": {
-    "tapToStart": "Tap to start"
+    "tapToStart": "Tap to start",
+    "tapArea": "Tap anywhere to flap"
   },
   "gameover": {
     "title": "Game Over",

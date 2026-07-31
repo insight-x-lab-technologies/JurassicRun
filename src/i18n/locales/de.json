@@ -15,7 +15,8 @@
     "seconds": "{{value}}s"
   },
   "match": {
-    "tapToStart": "Zum Starten tippen"
+    "tapToStart": "Zum Starten tippen",
+    "tapArea": "Tippe irgendwo, um zu flattern"
   },
   "gameover": {
     "title": "Spiel vorbei",

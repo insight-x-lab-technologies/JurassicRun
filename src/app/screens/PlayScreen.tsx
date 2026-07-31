@@ -12,6 +12,15 @@ import { PauseOverlay } from '../game/PauseOverlay';
 const INITIAL: MatchSnapshot = { phase: 'ready', paused: false, gameOver: null, dying: false };
 const HUD_INTERVAL_MS = 200; // ~5 Hz
 
+/**
+ * A zona de toque é uma AFORDÂNCIA: o flap já funciona em qualquer ponto porque o input está
+ * ligado ao `window` (bindGameControls). Ela aparece enquanto a partida está viva e some quando
+ * algum overlay assume a tela (pausa / Game Over).
+ */
+export function showTapZone(snap: MatchSnapshot): boolean {
+  return !snap.paused && snap.phase !== 'dead';
+}
+
 export function PlayScreen({
   mode = 'endless',
   onExit,
@@ -93,6 +102,11 @@ export function PlayScreen({
         {i18n.t('nav.back')}
       </button>
       <div class="play-screen__canvas" ref={containerRef} />
+      {showTapZone(snap) && (
+        <div class="play-screen__tap" aria-hidden="true">
+          {i18n.t('match.tapArea')}
+        </div>
+      )}
       {snap.phase === 'playing' && !snap.paused && hud !== null && (
         <>
           <Hud hud={hud.hud} fps={hud.fps} />
