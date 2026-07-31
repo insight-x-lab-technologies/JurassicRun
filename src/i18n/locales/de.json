@@ -385,9 +385,6 @@
       "error": "Etwas ist schiefgelaufen. Versuch es erneut."
     }
   },
-  "rotateHint": {
-    "message": "Drehe dein Gerät ins Querformat für das beste Erlebnis."
-  },
   "pause": {
     "title": "Pausiert",
     "resume": "Zum Fortsetzen tippen"

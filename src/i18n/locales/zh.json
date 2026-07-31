@@ -385,9 +385,6 @@
       "error": "出错了。请重试。"
     }
   },
-  "rotateHint": {
-    "message": "请将设备旋转为横屏以获得最佳体验。"
-  },
   "pause": {
     "title": "已暂停",
     "resume": "点按继续"

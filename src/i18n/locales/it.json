@@ -385,9 +385,6 @@
       "error": "Qualcosa è andato storto. Riprova."
     }
   },
-  "rotateHint": {
-    "message": "Ruota il dispositivo in orizzontale per un'esperienza migliore."
-  },
   "pause": {
     "title": "In pausa",
     "resume": "Tocca per riprendere"

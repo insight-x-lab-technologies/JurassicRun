@@ -1,7 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { back } from '../router';
 import { i18n } from '@services/i18n';
-import { useRotateHint } from '../hooks/useRotateHint';
 import type { MatchMode } from '@render/matchFactory';
 import type { GameHandle, MatchSnapshot, HudLive } from '../game/startGame';
 import { GameOverOverlay } from '../game/GameOverOverlay';
@@ -24,7 +23,6 @@ export function PlayScreen({
   const exit = onExit ?? back;
   const containerRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<GameHandle | null>(null);
-  const suggestRotate = useRotateHint();
   // `snap` guarda só o que dispara overlays (fase/pausa/gameover) — atualizado SÓ na mudança (gate).
   const [snap, setSnap] = useState<MatchSnapshot>(INITIAL);
   // HUD (stats vivos + fps) atualizado a ~5 Hz para não re-renderizar 60×/s.
@@ -109,14 +107,6 @@ export function PlayScreen({
           onRestart={() => handleRef.current?.restart()}
           onQuit={() => exit()}
         />
-      )}
-      {suggestRotate && (
-        <div class="rotate-hint" aria-live="polite">
-          <span class="rotate-hint__icon" aria-hidden="true">
-            📱↻
-          </span>
-          <p class="rotate-hint__text">{i18n.t('rotateHint.message')}</p>
-        </div>
       )}
     </div>
   );

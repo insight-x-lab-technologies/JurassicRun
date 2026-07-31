@@ -385,9 +385,6 @@
       "error": "Algo salió mal. Inténtalo de nuevo."
     }
   },
-  "rotateHint": {
-    "message": "Gira tu dispositivo a horizontal para una mejor experiencia."
-  },
   "pause": {
     "title": "En pausa",
     "resume": "Toca para reanudar"

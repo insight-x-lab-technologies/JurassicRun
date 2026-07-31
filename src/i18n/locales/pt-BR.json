@@ -385,9 +385,6 @@
       "error": "Algo deu errado. Tente de novo."
     }
   },
-  "rotateHint": {
-    "message": "Gire o dispositivo para a horizontal para uma experiência melhor."
-  },
   "pause": {
     "title": "Pausado",
     "resume": "Toque para retomar"

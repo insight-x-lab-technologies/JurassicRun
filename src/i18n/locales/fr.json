@@ -385,9 +385,6 @@
       "error": "Une erreur est survenue. Réessayez."
     }
   },
-  "rotateHint": {
-    "message": "Tournez votre appareil en mode paysage pour une meilleure expérience."
-  },
   "pause": {
     "title": "En pause",
     "resume": "Touchez pour reprendre"
