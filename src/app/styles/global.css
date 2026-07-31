@@ -1391,6 +1391,34 @@ img.expansion-card__avatar {
   margin: 0;
 }
 
+/* Seletor de avatar (10.6): grade de discos, o ativo destacado com anel dourado. */
+.avatar-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(3rem, 1fr));
+  gap: var(--space-2);
+}
+
+.avatar-picker__tile {
+  background: none;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  padding: 2px;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.avatar-picker__tile--on {
+  border-color: var(--color-gold);
+}
+
+.avatar-picker__img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
 /* Cartão de identidade: avatar grande, nome e agregados do jogador. */
 .profile-card {
   display: flex;

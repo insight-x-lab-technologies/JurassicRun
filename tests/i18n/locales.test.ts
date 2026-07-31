@@ -89,6 +89,12 @@ const IDENTICAL_TO_EN_ALLOWLIST: ReadonlySet<string> = new Set<string>([
   // 9.9: "—" é só o traço de "sem recorde ainda" — símbolo puro, sem palavra para traduzir
   // (molde de hud.extraLives/hud.seconds).
   ...LOCALES_NON_EN.map((l) => `${l}::challenge.brief.none`),
+  // 10.6: "Avatar" — mesma grafia em es/pt-BR/fr/it/de (origem francesa, empréstimo padrão em
+  // todas; molde de settings.volume). "Avatar {{n}}" idem, com o placeholder numérico.
+  'es::profile.avatar', 'pt-BR::profile.avatar', 'fr::profile.avatar', 'it::profile.avatar',
+  'de::profile.avatar',
+  'es::profile.avatarOption', 'pt-BR::profile.avatarOption', 'fr::profile.avatarOption',
+  'it::profile.avatarOption', 'de::profile.avatarOption',
 ]);
 
 // Valor que é só interpolação (ex.: "{{value}}") não tem o que traduzir.

@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import type { VNode } from 'preact';
 import { back } from '../router';
 import { i18n } from '@services/i18n';
-import { profileService } from '@services/profile';
+import { profileService, AVATARS } from '@services/profile';
 import { onlineService } from '@services/online';
 import { getHomeStats } from '../home/stats';
-import { Avatar } from '../components/Avatar';
+import { Avatar, avatarSrc } from '../components/Avatar';
 
 export function ProfileScreen(): VNode {
   const active = profileService.activeProfile.value;
@@ -91,6 +91,32 @@ export function ProfileScreen(): VNode {
         </section>
 
         <section class="profile__col profile__col--actions">
+          <h2 class="profile__heading">{i18n.t('profile.avatar')}</h2>
+          <div
+            class="avatar-picker"
+            data-testid="avatar-picker"
+            role="radiogroup"
+            aria-label={i18n.t('profile.avatar')}
+          >
+            {AVATARS.map((a, i) => (
+              <button
+                key={a.id}
+                type="button"
+                role="radio"
+                data-avatar={a.id}
+                aria-checked={active?.avatarId === a.id}
+                aria-label={i18n.t('profile.avatarOption', { n: i + 1 })}
+                class={
+                  'avatar-picker__tile' +
+                  (active?.avatarId === a.id ? ' avatar-picker__tile--on' : '')
+                }
+                onClick={() => profileService.setAvatar(a.id)}
+              >
+                <img class="avatar-picker__img" src={avatarSrc(a.id)} alt="" />
+              </button>
+            ))}
+          </div>
+
           <h2 class="profile__heading">{i18n.t('profile.rename')}</h2>
           <form class="form" data-testid="rename-form" onSubmit={submitRename}>
             <input

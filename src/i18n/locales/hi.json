@@ -84,7 +84,9 @@
     "players": "खिलाड़ी",
     "active": "सक्रिय",
     "newPlayer": "नया खिलाड़ी",
-    "create": "बनाएँ"
+    "create": "बनाएँ",
+    "avatar": "अवतार",
+    "avatarOption": "अवतार {{n}}"
   },
   "weather": {
     "clear": "साफ़",

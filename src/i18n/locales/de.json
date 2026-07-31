@@ -84,7 +84,9 @@
     "players": "Spieler",
     "active": "Aktiv",
     "newPlayer": "Neuer Spieler",
-    "create": "Erstellen"
+    "create": "Erstellen",
+    "avatar": "Avatar",
+    "avatarOption": "Avatar {{n}}"
   },
   "weather": {
     "clear": "Klar",
