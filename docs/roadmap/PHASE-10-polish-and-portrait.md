@@ -189,23 +189,50 @@ desktop) · **Semanal idêntico ao Diário** (seed `2026-W31`, mesmos números).
 > layout: `getBoundingClientRect()` devolve zeros e um teste de renderização não pegaria o bug.
 > Vale para qualquer tela futura, inclusive as do 10.6/10.9.
 
-### 10.6 Avatares de perfil (#3)
-- [ ] Hoje o avatar é `avatarFor(profile)` = inicial + `hsl(hue)` — a "bola vermelha" do relato
+### 10.6 Avatares de perfil (#3) ✅
+- [x] Hoje o avatar é `avatarFor(profile)` = inicial + `hsl(hue)` — a "bola vermelha" do relato
       (`src/app/screens/ProfileScreen.tsx:9`).
-- [ ] Entregar uma **grade de ~12 avatares pré-criados** (pterodáctilos/ícones do tema), com
+- [x] Entregar uma **grade de ~12 avatares pré-criados** (pterodáctilos/ícones do tema), com
       **asset-spec** (`docs/assets/specs/ui.avatars.md`) e entrada no pipeline `gen-ui.mjs`/atlas de
       UI. Vale o **padrão contra placeholder**: seletor e persistência entram já; a arte AAA dropa
       depois trocando os PNG-fonte (REGRA 2).
-- [ ] Campo novo `Profile.avatarId` com **migração**: perfil sem o campo deriva um índice
+- [x] Campo novo `Profile.avatarId` com **migração**: perfil sem o campo deriva um índice
       determinístico do id/nome (`avatarFor` vira fallback, nada quebra).
-- [ ] Seletor na tela de Perfil + reflexo no topo da Home e na lista de jogadores.
+- [x] Seletor na tela de Perfil + reflexo no topo da Home e na lista de jogadores.
 - [ ] **Sub-item opcional 10.6b — upload de foto local:** `<input type="file">` → canvas 128×128 →
       dataURL guardada no perfil, com teto de bytes e tratamento de quota cheia. **Recomendação:
       não fazer agora** (quota do localStorage é ~5 MB para tudo, e a grade já resolve o pedido).
+      **Não feito, por decisão** (fora do escopo desta fase).
 
 **Toca:** `src/services/profile/`, `ProfileScreen.tsx`, `HomeScreen.tsx`, pipeline de assets de UI,
-i18n. **Aceite:** trocar de avatar persiste entre reloads e entre trocas de perfil; perfis criados
+i18n. **Aceite:** ✅ trocar de avatar persiste entre reloads e entre trocas de perfil; perfis criados
 antes da mudança continuam com avatar válido; nenhuma string hardcoded.
+
+> **Executado em 2026-07-31** (spec: `docs/superpowers/sdd/2026-07-31-10.6-profile-avatars/`).
+> Catálogo puro `src/services/profile/avatars.ts`: 12 ids `a01`…`a12`, `hue = i*30`, com
+> `hashId`/`defaultAvatarId`/`resolveAvatarId` — id desconhecido (ou perfil pré-10.6, sem o campo)
+> cai num avatar determinístico derivado do próprio id do perfil, nunca aleatório. `Profile.avatarId`
+> passou a ser **obrigatório** no tipo (`createProfile` deriva do id; redutor puro `setAvatar`).
+> Storage: `STORAGE_KEY` de perfis **não foi bumpada** (`jurassicrun.profiles.v1` continua a mesma —
+> bumpar apagaria perfis existentes, o oposto do que a 10.3 fez de propósito com o leaderboard);
+> o payload sobe para `version: 2` e `parseState` normaliza via `resolveAvatarId`, então um perfil
+> salvo antes da mudança carrega com avatar válido sem migração destrutiva.
+> Arte **placeholder** (não a arte AAA final): `scripts/gen-avatar-placeholder.mjs`
+> (`npm run gen:avatars`) compõe 12 medalhões 128×128 — disco radial por matiz + aro dourado + o
+> pterodáctilo real de `public/ui/dino.starter.png` tingido — com a mesma guarda anti-sobrescrita da
+> Fase 9 (não regrava PNG existente sem `--force`). `tests/assets/avatars.test.ts` cruza o catálogo
+> TS × arquivos e prova que o gerador nunca diverge em ids/ordem/matiz do catálogo real.
+> Render: `src/app/components/Avatar.tsx` compartilhado por Home e Perfil (`<img>` com fallback de
+> `onError` para a inicial do nome) + seletor `role="radiogroup"` de 12 tiles na tela de Perfil.
+> i18n: `profile.avatar`/`profile.avatarOption` ("Avatar {{n}}") nos 10 idiomas — as 5 línguas
+> latinas foram para a `IDENTICAL_TO_EN_ALLOWLIST` de `tests/i18n/locales.test.ts` porque "Avatar" se
+> escreve igual em inglês. Online: `players.avatar` agora carrega o `avatarId` (coluna `text` sem
+> `check` ⇒ zero migração de schema). **10.6b (upload de foto) não foi feito**, por decisão
+> registrada na spec — a grade de 12 já resolve o pedido original sem o custo de quota/moderação.
+> **`src/core/` intocado** ⇒ determinismo segue **73**. Asset-spec: `docs/assets/specs/ui.avatars.md`
+> (com bloco de prompt para geração por IA e a entrada de pipeline `UI_SOURCES` a acrescentar quando
+> a arte real chegar — nessa hora, apagar `scripts/gen-avatar-placeholder.mjs`, precedente dos
+> geradores de placeholder da Fase 9).
 
 ---
 

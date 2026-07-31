@@ -69,7 +69,7 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **73** testes · suíte **1030** testes · `check` limpo.
+**Métricas correntes:** determinismo **73** testes · suíte **1054** testes · `check` limpo.
 Branch `main`. Fases 0–9 **CONCLUÍDAS** (9.1–9.9 feitos ⇒ Frentes A, B, C e D fechadas).
 **Fase 10 ABERTA** (`docs/roadmap/PHASE-10-polish-and-portrait.md`): 9 itens, nenhum toca `src/core/`.
 10.1 ✅ (higiene de branches: remoto e local só com `main`; `delete_branch_on_merge` LIGADO ⇒ head
@@ -102,8 +102,16 @@ o bit de `shield` quando `extraLives` cai. Storage: payload `v1→v2` **sem bump
 Pódio conta 1×: local ⊻ central, lidos de um `centralAvailable` só; **semanal não tem rank central**
 ⇒ sempre local. Schema Supabase já aceita ids novos (`trophy_id text`, sem `check`).
 Troféus de coleção ficaram de fora: acoplariam trophy a nest/wallet/entitlements).
-Próximo item: **10.6** (avatares de perfil — pulado a pedido do usuário, que escolheu 10.7 antes).
-Ordem A→B→C→D, um item por PR.
+· 10.6 ✅ (avatares de perfil: catálogo puro `src/services/profile/avatars.ts` com 12 ids
+`a01`…`a12`, `hue=i*30`; `Profile.avatarId` **obrigatório**, id desconhecido/perfil pré-10.6 cai num
+avatar determinístico via `defaultAvatarId(profileId)` — nunca aleatório. `STORAGE_KEY` de perfis
+**não bumpada** (`profiles.v1` fica; payload sobe a `version: 2`, `parseState` normaliza via
+`resolveAvatarId`). Arte placeholder por `scripts/gen-avatar-placeholder.mjs` (medalhão: disco por
+matiz + aro dourado + dino real tingido), com a mesma guarda anti-sobrescrita da Fase 9; asset-spec
+`docs/assets/specs/ui.avatars.md` já com prompt de IA e entrada de pipeline prontos para quando a
+arte real chegar. Seletor `role="radiogroup"` em `ProfileScreen`, reuso em `Avatar.tsx` na Home.
+**10.6b (upload de foto) não feito, por decisão** — a grade de 12 já resolve o pedido).
+Próximo item: **10.8** (Loja com compra real de moedas). Ordem A→B→C→D, um item por PR.
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
@@ -119,7 +127,7 @@ Ordem A→B→C→D, um item por PR.
 | 7 | PWA & deploy (instalável/offline, responsividade final, GitHub Pages, itch.io; 7.5 wrappers de loja ADIADO) | ✅ | 67 |
 | 8 | Arte AAA & packs (manifesto→sprite atlas, arte real entidades+dino animado, Tier-1 UI/fundos/parallax, packs=expansão ativa, gateway Ko-Fi/código, redesign UI W1→W9) | ✅ | 67 |
 | 9 | Melhorias estruturais (parallax alpha, obstáculos cobrindo hitbox, morte/idle animados, indicador de power-up, áudio generativo + toggle SFX, obstáculos novos, briefing+mods de desafio) | ✅ | 73 |
-| 10 | Polimento, meta e retrato (higiene de branches, versão na Home, purga pré-9.9, UI em moedas, briefing full-width, avatares, +15 troféus, Loja sem moeda grátis, gameplay em retrato) | 🚧 6/9 | 73* |
+| 10 | Polimento, meta e retrato (higiene de branches, versão na Home, purga pré-9.9, UI em moedas, briefing full-width, avatares, +15 troféus, Loja sem moeda grátis, gameplay em retrato) | 🚧 7/9 | 73* |
 
 \* Fase 10 **não toca `src/core/`** ⇒ det permanece 73 (ver invariante abaixo).
 

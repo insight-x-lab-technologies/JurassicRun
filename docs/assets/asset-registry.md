@@ -87,6 +87,7 @@ usada no manifesto de assets do render.
 | `ui.medal.bronze` | medalha de 3º lugar | spec | `specs/ui.medals.md` |
 | `ui.nav.bar` | fundo da barra de nav inferior (9-slice) | spec | `specs/ui.nav.bar.md` |
 | `icon.daily` `icon.weekly` `icon.nest` `icon.shop` `icon.expansions` `icon.leaderboard` `icon.settings` `icon.share` `icon.donate` `icon.back` | conjunto de 10 ícones de nav (dourados) | spec | `specs/ui.icons.md` |
+| `avatar.a01` … `avatar.a12` (10.6) | grade de 12 avatares de perfil (medalhão de pterodáctilo) | spec | `specs/ui.avatars.md` |
 
 ## Fundos de tela (Fase 8 — Tier 1, pintados)
 > Trocados pela expansão ativa (seam `activeExpansion`, 4.6).
