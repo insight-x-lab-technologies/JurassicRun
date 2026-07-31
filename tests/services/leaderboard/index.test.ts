@@ -59,4 +59,16 @@ describe('LeaderboardService', () => {
       expect(svc.dailyRankForSeed('daily:missing')).toBeUndefined();
     });
   });
+
+  it('weeklyRankForSeed devolve o rank 1-based da seed no board semanal', () => {
+    const svc = new LeaderboardService();
+    svc.init(memoryLeaderboardStorage());
+    svc.recordMatch({ mode: 'weekly', seed: '2026-W31', score: 100, distance: 10,
+                      food: 0, nearMisses: 0, level: 1, achievedAt: 1 });
+    svc.recordMatch({ mode: 'weekly', seed: '2026-W30', score: 500, distance: 50,
+                      food: 0, nearMisses: 0, level: 1, achievedAt: 2 });
+    expect(svc.weeklyRankForSeed('2026-W30')).toBe(1);
+    expect(svc.weeklyRankForSeed('2026-W31')).toBe(2);
+    expect(svc.weeklyRankForSeed('2026-W01')).toBeUndefined();
+  });
 });

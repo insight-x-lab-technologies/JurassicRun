@@ -234,4 +234,35 @@ describe('MatchController', () => {
     expect(m.deathElapsed).toBe(0);
     expect(m.dying).toBe(false);
   });
+
+  // --- 10.7: contador de power-ups apanhados (fora do core) ---------------------------------
+
+  it('conta power-ups apanhados na partida', () => {
+    const match = new MatchController(new NullInputSource(), makeFactory());
+    expect(match.powerupsCollected).toBe(0);
+
+    match.notifyFlap(); // ready → playing
+    // injeta um efeito no mundo corrente (o contador só lê `effects`/`extraLives`)
+    match.world.effects.push({ kind: 'shield', remaining: 60 });
+    match.advance(1 / 60);
+    expect(match.powerupsCollected).toBe(1);
+
+    match.advance(1 / 60);
+    expect(match.powerupsCollected).toBe(1); // efeito ainda ativo ⇒ não reconta
+  });
+
+  it('powerupsCollected zera de fato no restart (nova partida, novo baseline)', () => {
+    const match = new MatchController(new NullInputSource(), makeFactory());
+    match.notifyFlap(); // ready → playing
+    match.world.effects.push({ kind: 'shield', remaining: 60 });
+    match.advance(1 / 60);
+    expect(match.powerupsCollected).toBe(1);
+
+    advanceUntilDead(match);
+    match.advance(DEATH_ANIM_SECONDS); // espera `dying` acabar antes de reiniciar
+    match.restart();
+
+    expect(match.phase).toBe('ready');
+    expect(match.powerupsCollected).toBe(0);
+  });
 });

@@ -2,19 +2,8 @@
 // Diff de escalares guardados em campos primitivos ⇒ alocação-zero por frame (REGRA 3).
 // NÃO toca `src/core/`: só LÊ o estado que a simulação já produz.
 import type { WorldState } from '@core/sim';
-import type { PowerupKind } from '@core/powerup';
 import type { SfxId } from '@services/audio';
-
-/** Bitmask dos kinds temporários — comparar efeitos sem alocar Set/array por frame. */
-const KIND_BITS: Readonly<Record<PowerupKind, number>> = {
-  shield: 1, slowMo: 2, magnet: 4, doubleCoin: 8, extraLife: 16,
-};
-
-function effectMask(world: WorldState): number {
-  let mask = 0;
-  for (const e of world.effects) mask |= KIND_BITS[e.kind] ?? 0;
-  return mask;
-}
+import { effectMask } from './pickups';
 
 export class AudioEventDetector {
   private food = 0;

@@ -111,13 +111,37 @@ export function startGame(container: HTMLElement, mode: MatchMode = 'endless'): 
       leaderboardService.recordMatch(result);
 
       const online = leaderboardService.centralAvailable.value;
-      const localRank =
+      // DIÁRIO: o rank LOCAL só é usado quando o board central está indisponível; quando está, o
+      // pódio vem do `centralDailyRank` abaixo. Os dois caminhos dobram o MESMO contador de
+      // pódio — por isso são mutuamente exclusivos (ver TrophyService.recordDailyPodium).
+      const localDailyRank =
         mode === 'daily' && !online
           ? leaderboardService.dailyRankForSeed(match.seedLabel)
           : undefined;
+      // SEMANAL: sempre usa o rank LOCAL, online ou não — a Fase 6 só implementou board central
+      // DIÁRIO (`leaderboardService.centralDailyRank`); não existe `centralWeeklyRank` hoje.
+      // Se um rank central semanal for adicionado no futuro, ele precisará da MESMA guarda de
+      // exclusividade mútua que o diário tem acima, senão `weeklyPodiums` conta em dobro.
+      const localWeeklyRank =
+        mode === 'weekly' ? leaderboardService.weeklyRankForSeed(match.seedLabel) : undefined;
       trophyService.recordMatch(
-        { distance: w.distance, food: w.food, nearMisses: w.nearMisses, score: w.score },
-        localRank !== undefined ? { dailyRank: localRank } : undefined,
+        {
+          distance: w.distance,
+          food: w.food,
+          nearMisses: w.nearMisses,
+          score: w.score,
+          level: w.level,
+          coins: coinsForFood(w.food),
+          powerups: match.powerupsCollected,
+          mode,
+          playedAt: result.achievedAt,
+        },
+        localDailyRank !== undefined || localWeeklyRank !== undefined
+          ? {
+              ...(localDailyRank !== undefined ? { dailyRank: localDailyRank } : {}),
+              ...(localWeeklyRank !== undefined ? { weeklyRank: localWeeklyRank } : {}),
+            }
+          : undefined,
       );
       if (mode === 'daily' && online) {
         void leaderboardService

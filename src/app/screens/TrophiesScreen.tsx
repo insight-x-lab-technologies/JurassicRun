@@ -29,6 +29,10 @@ export function TrophiesScreen(): VNode {
     <div class="screen trophies">
       <h1 class="screen__title">{i18n.t('trophies.title')}</h1>
 
+      <p class="trophies__progress" data-testid="trophies-progress">
+        {i18n.t('trophies.progress', { unlocked: unlocked.length, total: TROPHY_CATALOG.length })}
+      </p>
+
       {unlocked.length === 0 && <p class="trophies__empty">{i18n.t('trophies.empty')}</p>}
 
       <ul class="trophies__grid">

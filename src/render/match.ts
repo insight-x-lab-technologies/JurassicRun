@@ -3,6 +3,7 @@ import type { InputTimeline } from '@core/replay';
 import { FixedStepLoop } from './loop';
 import type { InputSource } from './input';
 import { DEATH_ANIM_SECONDS } from './death';
+import { PowerupPickupCounter } from './pickups';
 
 export type MatchPhase = 'ready' | 'playing' | 'dead';
 
@@ -35,6 +36,9 @@ export class MatchController {
   // Relógio COSMÉTICO da fase `dying` (9.3): tempo REAL de frame (não steps — a sim
   // já congela em `dead`). Zerado em `startMatch` e na transição `playing → dead`.
   private _deathElapsed = 0;
+  // 10.7: power-ups apanhados na partida corrente. Derivado do WorldState (o core não conta isso);
+  // alimenta o agregado vitalício de troféus no game-over.
+  private readonly _pickups = new PowerupPickupCounter();
 
   constructor(input: InputSource, factory: () => MatchInit, hooks: MatchHooks = {}) {
     this.input = input;
@@ -63,6 +67,10 @@ export class MatchController {
   get dying(): boolean {
     return this._phase === 'dead' && this._deathElapsed < DEATH_ANIM_SECONDS;
   }
+  /** Power-ups apanhados na partida corrente (temporários + extraLife). */
+  get powerupsCollected(): number {
+    return this._pickups.count;
+  }
 
   /** Timeline dos inputs consumidos na partida corrente (para gravar o replay no game-over). */
   recordedTimeline(): InputTimeline {
@@ -79,6 +87,7 @@ export class MatchController {
     }
     if (this._phase !== 'playing') return;
     this._loop.advance(dtSeconds);
+    this._pickups.observe(this._world);
     if (!this._world.alive) {
       this._phase = 'dead';
       this._deathElapsed = 0;
@@ -108,6 +117,7 @@ export class MatchController {
     this._world = init.world;
     this._seedLabel = init.seedLabel;
     this._loop = new FixedStepLoop(this._world, this.input);
+    this._pickups.reset(this._world);
     this._phase = 'ready';
     this._deathElapsed = 0;
   }
