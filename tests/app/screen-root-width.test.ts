@@ -6,7 +6,15 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const SCREENS_DIR = fileURLToPath(new URL('../../src/app/screens', import.meta.url));
-const GLOBAL_CSS_PATH = fileURLToPath(new URL('../../src/app/styles/global.css', import.meta.url));
+const STYLES_DIR = fileURLToPath(new URL('../../src/app/styles', import.meta.url));
+
+// Todos os CSS da pasta de estilos, não só o `global.css`: se um estilo de tela migrar de arquivo,
+// a guarda não pode ficar cega para ele (achado do review da Task 1).
+function allStylesheets(): Array<{ file: string; css: string }> {
+  return readdirSync(STYLES_DIR)
+    .filter((file) => file.endsWith('.css'))
+    .map((file) => ({ file, css: readFileSync(`${STYLES_DIR}/${file}`, 'utf-8') }));
+}
 
 // Extrai as classes modificadoras usadas como raiz de tela, ex.: `class="screen challenge-brief"`
 // ⇒ `challenge-brief`. `class="screen"` sozinho (sem modificadora) não entra no conjunto.
@@ -45,24 +53,35 @@ describe('raiz de tela: teto de largura sem centralização assenta à esquerda'
     expect(classes.has('challenge-brief')).toBe(true);
   });
 
+  // O extrator só enxerga `class="screen X"` literal. Uma raiz montada dinamicamente
+  // (`class={`screen ${x}`}` / clsx) sairia do conjunto e desligaria a checagem daquela tela EM
+  // SILÊNCIO — o pior modo de falha de uma guarda. Aqui isso vira erro visível.
+  it('nenhuma tela monta a classe raiz dinamicamente (senão o extrator fica cego)', () => {
+    const dynamicRoots: string[] = [];
+    for (const file of readdirSync(SCREENS_DIR)) {
+      if (!file.endsWith('.tsx')) continue;
+      const source = readFileSync(`${SCREENS_DIR}/${file}`, 'utf-8');
+      for (const match of source.matchAll(/class=\{([^}]*)\}/g)) {
+        if (/\bscreen\b/.test(match[1] ?? '')) dynamicRoots.push(`${file}: ${match[0]}`);
+      }
+    }
+    expect(dynamicRoots, `classe raiz dinâmica: ${dynamicRoots.join(' | ')}`).toEqual([]);
+  });
+
   it('toda classe-raiz com max-width declara margin-inline:auto ou align-self:center no mesmo bloco', () => {
     const rootClasses = screenRootClasses();
-    const css = readFileSync(GLOBAL_CSS_PATH, 'utf-8');
-    const blocks = cssBlocks(css);
 
     const offenders: string[] = [];
-    for (const cls of rootClasses) {
-      const token = `.${cls}`;
-      for (const { selector, body } of blocks) {
-        // Token exato no seletor (evita casar `.challenge-brief__stats` quando procuramos
-        // `.challenge-brief`): separa por vírgula/espaço e compara o token inteiro.
-        const selectors = selector.split(',').flatMap((s) => s.trim().split(/\s+/));
-        if (!selectors.includes(token)) continue;
+    for (const { file, css } of allStylesheets()) {
+      for (const { selector, body } of cssBlocks(css)) {
         if (!/max-width\s*:/.test(body)) continue;
+        // Classes citadas no seletor, como tokens inteiros: `.screen.challenge-brief` (composto,
+        // sem espaço) conta, `.challenge-brief__stats` NÃO é `.challenge-brief` (achado do review).
+        const cited = new Set(selector.match(/\.[A-Za-z0-9_-]+/g) ?? []);
+        const hitsRoot = [...rootClasses].some((cls) => cited.has(`.${cls}`));
+        if (!hitsRoot) continue;
         const centered = /margin-inline\s*:\s*auto/.test(body) || /align-self\s*:\s*center/.test(body);
-        if (!centered) {
-          offenders.push(selector);
-        }
+        if (!centered) offenders.push(`${file}: ${selector}`);
       }
     }
     expect(offenders, `raiz(es) com max-width sem centralização: ${offenders.join(', ')}`).toEqual([]);
