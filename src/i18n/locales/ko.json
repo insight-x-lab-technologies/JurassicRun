@@ -151,7 +151,7 @@
     },
     "forager": {
       "name": "채집가",
-      "desc": "총 50개의 먹이를 모으세요."
+      "desc": "총 50개의 코인을 모으세요."
     },
     "daredevil": {
       "name": "무모한 도전자",
@@ -216,12 +216,12 @@
       "desc": "영구 코인 자석."
     },
     "doubleFood": {
-      "name": "먹이 2배",
-      "desc": "먹이 가치 2배."
+      "name": "코인 2배",
+      "desc": "코인 가치 2배."
     },
     "tripleFood": {
-      "name": "먹이 3배",
-      "desc": "먹이 가치 3배."
+      "name": "코인 3배",
+      "desc": "코인 가치 3배."
     },
     "startLife": {
       "name": "추가 목숨",
@@ -243,7 +243,7 @@
       "name": "자석"
     },
     "doubleCoin": {
-      "name": "먹이 2배"
+      "name": "코인 2배"
     },
     "extraLife": {
       "name": "추가 목숨"

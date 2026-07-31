@@ -151,7 +151,7 @@
     },
     "forager": {
       "name": "Fourrageur",
-      "desc": "Collectez 50 de nourriture au total."
+      "desc": "Collectez 50 pièces au total."
     },
     "daredevil": {
       "name": "Casse-cou",
@@ -216,12 +216,12 @@
       "desc": "Aimant à pièces permanent."
     },
     "doubleFood": {
-      "name": "Nourriture double",
-      "desc": "La nourriture vaut le double."
+      "name": "Pièces doubles",
+      "desc": "Les pièces valent le double."
     },
     "tripleFood": {
-      "name": "Nourriture triple",
-      "desc": "La nourriture vaut le triple."
+      "name": "Pièces triples",
+      "desc": "Les pièces valent le triple."
     },
     "startLife": {
       "name": "Vie supplémentaire",
@@ -243,7 +243,7 @@
       "name": "Aimant"
     },
     "doubleCoin": {
-      "name": "Nourriture double"
+      "name": "Pièces doubles"
     },
     "extraLife": {
       "name": "Vie supplémentaire"

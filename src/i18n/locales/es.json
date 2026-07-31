@@ -151,7 +151,7 @@
     },
     "forager": {
       "name": "Recolector",
-      "desc": "Recolecta 50 de comida en total."
+      "desc": "Recolecta 50 monedas en total."
     },
     "daredevil": {
       "name": "Temerario",
@@ -216,12 +216,12 @@
       "desc": "Imán de monedas permanente."
     },
     "doubleFood": {
-      "name": "Comida doble",
-      "desc": "La comida vale el doble."
+      "name": "Monedas dobles",
+      "desc": "Las monedas valen el doble."
     },
     "tripleFood": {
-      "name": "Comida triple",
-      "desc": "La comida vale el triple."
+      "name": "Monedas triples",
+      "desc": "Las monedas valen el triple."
     },
     "startLife": {
       "name": "Vida extra",
@@ -243,7 +243,7 @@
       "name": "Imán"
     },
     "doubleCoin": {
-      "name": "Comida doble"
+      "name": "Monedas dobles"
     },
     "extraLife": {
       "name": "Vida extra"

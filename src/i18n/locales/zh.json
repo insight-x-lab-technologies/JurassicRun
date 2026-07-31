@@ -151,7 +151,7 @@
     },
     "forager": {
       "name": "采集者",
-      "desc": "总共收集50个食物。"
+      "desc": "总共收集50枚金币。"
     },
     "daredevil": {
       "name": "冒险家",
@@ -216,12 +216,12 @@
       "desc": "永久金币磁铁。"
     },
     "doubleFood": {
-      "name": "双倍食物",
-      "desc": "食物价值翻倍。"
+      "name": "双倍金币",
+      "desc": "金币价值翻倍。"
     },
     "tripleFood": {
-      "name": "三倍食物",
-      "desc": "食物价值三倍。"
+      "name": "三倍金币",
+      "desc": "金币价值三倍。"
     },
     "startLife": {
       "name": "额外生命",
@@ -243,7 +243,7 @@
       "name": "磁铁"
     },
     "doubleCoin": {
-      "name": "双倍食物"
+      "name": "双倍金币"
     },
     "extraLife": {
       "name": "额外生命"
