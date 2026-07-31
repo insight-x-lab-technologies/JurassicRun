@@ -82,4 +82,20 @@ describe('PowerupPickupCounter', () => {
     c.observe(world(['shield']));
     expect(c.count).toBe(0);
   });
+
+  // `killOrRevive` (core) consome 1 extraLives E acende `shield` de graça no MESMO step.
+  // O escudo de graça é consequência do bloqueio, não um pickup — não pode contar.
+  it('bloquear um hit acende o shield de graça no mesmo step, mas isso NÃO conta como pickup', () => {
+    const c = new PowerupPickupCounter();
+    c.reset(world([], 1)); // 1 vida extra, sem efeitos
+    c.observe(world(['shield'], 0)); // bloqueou: extraLives caiu 1→0 e shield de graça acendeu
+    expect(c.count).toBe(0);
+  });
+
+  it('se o shield já estava ativo antes do bloqueio, também continua 0', () => {
+    const c = new PowerupPickupCounter();
+    c.reset(world(['shield'], 1)); // já com shield ativo + 1 vida extra
+    c.observe(world(['shield'], 0)); // bloqueou: extraLives caiu, shield continua aceso
+    expect(c.count).toBe(0);
+  });
 });

@@ -22,6 +22,20 @@ export function effectMask(world: WorldState): number {
  *
  * Limitação aceita: dois pickups do MESMO kind dentro de um único frame contam 1. O espaçamento
  * de spawn torna isso irrealizável; é a mesma aproximação que o SFX de power-up (9.6) já usa.
+ *
+ * Limitação aceita (invariante de amostragem): `observe` roda 1× por `advance()`, e `advance`
+ * pode consumir vários steps de sim de uma vez (`FixedStepLoop`, teto `MAX_FRAME_TIME` ⇒ até ~15
+ * steps). O contador só enxerga o estado NO INSTANTE da observação — um efeito com duração menor
+ * que esse teto poderia acender e expirar inteiramente entre duas observações e sumir da
+ * contagem. Hoje isso não acontece: toda duração de efeito temporário é bem maior que ~15 steps
+ * (`EXTRA_LIFE_GRACE_STEPS` é a mais curta). Se um efeito futuro vier com duração menor, esta
+ * classe precisa ser revisitada.
+ *
+ * Caso especial: `killOrRevive` (core) consome 1 `extraLives` E acende um `shield` de graça no
+ * MESMO step (`EXTRA_LIFE_GRACE_STEPS`). Esse escudo é consequência do bloqueio do hit, não um
+ * pickup, e não pode contar — mesmo que o bit `shield` suba de 0→1 na mesma observação. Política
+ * conservadora: se nesse mesmo instante o jogador também apanhou um escudo de verdade, ele é
+ * perdido na contagem (prefere subcontar a inflar o agregado vitalício de troféus).
  */
 export class PowerupPickupCounter {
   private effects = 0;
@@ -44,6 +58,9 @@ export class PowerupPickupCounter {
     const mask = effectMask(world);
     let gained = 0;
     let bits = mask & ~this.effects;
+    // `killOrRevive` (core) consome uma vida E acende um `shield` de graça no mesmo step.
+    // Esse escudo é consequência do bloqueio, não um pickup — não pode contar.
+    if (world.extraLives < this.extraLives) bits &= ~KIND_BITS.shield;
     while (bits !== 0) {
       bits &= bits - 1; // apaga o bit menos significativo aceso
       gained += 1;
