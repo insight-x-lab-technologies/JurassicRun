@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+
+// Varredura RECURSIVA: uma subpasta futura (`src/app/shop/<algo>/x.tsx`) entraria muda no
+// escopo com um readdir raso, e a guarda ficaria cega sem ninguém perceber.
+function filesUnder(dir: string): string[] {
+  return readdirSync(dir, { recursive: true })
+    .map((f) => join(dir, f as string))
+    .filter((p) => statSync(p).isFile());
+}
 
 // Arquivos que compõem a Loja e o resgate. Nenhum pode creditar moeda por conta própria:
 // o ÚNICO caminho de moeda paga é purchaseService.redeem → gateway → wallet.earn, dentro do
@@ -8,8 +16,8 @@ import { join } from 'node:path';
 // não. A guarda é sobre a CHAMADA (`.earn(`), não sobre o import — é a chamada que credita.
 const SHOP_FILES = [
   'src/app/screens/ShopScreen.tsx',
-  ...readdirSync('src/app/shop').map((f) => join('src/app/shop', f)),
-  ...readdirSync('src/app/purchase').map((f) => join('src/app/purchase', f)),
+  ...filesUnder('src/app/shop'),
+  ...filesUnder('src/app/purchase'),
 ];
 
 describe('a Loja não credita moedas', () => {

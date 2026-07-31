@@ -88,4 +88,17 @@ describe('storefront — checkoutUrlFor', () => {
       'https://ko-fi.com/x?ref=game&jr_sku=coins%3Alarge',
     );
   });
+
+  // Concatenar cegamente poria a query DENTRO do fragmento (`#foo?jr_sku=…`), onde nenhum
+  // parser HTTP a lê — o SKU se perderia em silêncio e o pedido chegaria sem rastreio.
+  it('põe o SKU na query, não dentro do fragmento', () => {
+    const sf = { ...DEFAULT_STOREFRONT, kofiUrl: 'https://ko-fi.com/x#tip' };
+    expect(checkoutUrlFor(sf, 'coins:small')).toBe('https://ko-fi.com/x?jr_sku=coins%3Asmall#tip');
+  });
+
+  it('URL base inválida não lança (cai na concatenação)', () => {
+    const sf = { ...DEFAULT_STOREFRONT, kofiUrl: 'nao-e-url' };
+    expect(() => checkoutUrlFor(sf, 'coins:small')).not.toThrow();
+    expect(checkoutUrlFor(sf, 'coins:small')).toContain('jr_sku=coins%3Asmall');
+  });
 });

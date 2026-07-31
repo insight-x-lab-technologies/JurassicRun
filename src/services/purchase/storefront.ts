@@ -101,8 +101,17 @@ export function formatPrice(price: PriceTag, locale: string): string {
  * (`supabase/README.md`). A UI também mostra o SKU, porque o Ko-fi não garante prefill de mensagem.
  */
 export function checkoutUrlFor(sf: Storefront, sku: Sku): string {
-  const sep = sf.kofiUrl.includes('?') ? '&' : '?';
-  return `${sf.kofiUrl}${sep}jr_sku=${encodeURIComponent(sku)}`;
+  try {
+    // `URL` põe o parâmetro na QUERY mesmo quando a base tem fragmento; concatenar cegamente
+    // geraria `#foo?jr_sku=…`, que vira parte do fragmento e some para qualquer parser HTTP.
+    const url = new URL(sf.kofiUrl);
+    url.searchParams.set('jr_sku', sku);
+    return url.toString();
+  } catch {
+    // URL base absurda vinda de env: melhor um link concatenado do que uma tela quebrada.
+    const sep = sf.kofiUrl.includes('?') ? '&' : '?';
+    return `${sf.kofiUrl}${sep}jr_sku=${encodeURIComponent(sku)}`;
+  }
 }
 
 /** Casca: lê o ambiente Vite. */
