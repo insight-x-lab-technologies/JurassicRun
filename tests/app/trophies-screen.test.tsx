@@ -5,6 +5,14 @@ import { TrophiesScreen } from '@app/screens/TrophiesScreen';
 import { i18n } from '@services/i18n';
 import { trophyService, TROPHY_CATALOG } from '@services/trophy';
 import { memoryTrophyStorage } from '@services/trophy/storage';
+import type { MatchSummary } from '@services/trophy/store';
+
+/** Helper: `MatchSummary` completo com defaults neutros, sobrescrevendo o que o teste precisar. */
+const match = (m: Partial<MatchSummary> = {}): MatchSummary => ({
+  distance: 0, food: 0, nearMisses: 0, score: 0,
+  level: 1, coins: 0, powerups: 0, mode: 'endless', playedAt: 0,
+  ...m,
+});
 
 describe('TrophiesScreen', () => {
   let container: HTMLDivElement;
@@ -33,10 +41,7 @@ describe('TrophiesScreen', () => {
   });
 
   it('marca desbloqueado vs bloqueado após uma partida (firstFlight)', async () => {
-    trophyService.recordMatch({
-      distance: 0, food: 0, nearMisses: 0, score: 0,
-      level: 1, coins: 0, powerups: 0, mode: 'endless', playedAt: 0,
-    });
+    trophyService.recordMatch(match({}));
     await Promise.resolve();
     render(<TrophiesScreen />, container);
     expect(
@@ -45,5 +50,20 @@ describe('TrophiesScreen', () => {
     expect(
       container.querySelector('[data-testid="trophy-card-centurion"]')?.getAttribute('data-unlocked'),
     ).toBe('false');
+  });
+
+  it('mostra o progresso desbloqueados/total', async () => {
+    trophyService.recordMatch(match({}));
+    await Promise.resolve();
+    render(<TrophiesScreen />, container);
+    const el = container.querySelector('[data-testid="trophies-progress"]');
+    expect(el).not.toBeNull();
+    expect(el?.textContent).toContain(String(TROPHY_CATALOG.length));
+    expect(el?.textContent).toContain('1');
+  });
+
+  it('renderiza os 23 cards do catálogo ampliado', () => {
+    render(<TrophiesScreen />, container);
+    expect(container.querySelectorAll('[data-testid^="trophy-card-"]').length).toBe(23);
   });
 });
