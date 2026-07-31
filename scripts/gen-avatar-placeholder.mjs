@@ -13,7 +13,14 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const SIZE = 128;
 const SUBJECT = { file: 'dino.starter.png', root: 'public/ui' };
 const RIM = [0xc9, 0xa2, 0x27]; // --color-gold
-const AVATAR_IDS = ['a01','a02','a03','a04','a05','a06','a07','a08','a09','a10','a11','a12'];
+// Espelha `AVATAR_IDS`/`hue` de `src/services/profile/avatars.ts` — exportado (e coberto por
+// `tests/assets/avatars.test.ts`) para que os dois catálogos nunca divirjam em silêncio.
+export const AVATAR_IDS = ['a01','a02','a03','a04','a05','a06','a07','a08','a09','a10','a11','a12'];
+
+/** Matiz (graus) usado para o avatar de índice `i` — mesma fórmula de `AVATARS` em avatars.ts. */
+export function hueFor(i) {
+  return i * 30;
+}
 
 /** HSL→RGB (h em graus, s/l em 0..1). */
 function hsl(h, s, l) {
@@ -92,7 +99,7 @@ function main() {
     // NÃO sobrescreve arte existente sem --force: o gotcha da Fase 9 foi um gerador de
     // placeholder apagando a arte real ao rodar de novo.
     if (existsSync(file) && !force) { console.log(`pulado ${id} (já existe)`); return; }
-    const png = encodePng(SIZE, SIZE, renderAvatar(SIZE, i * 30));
+    const png = encodePng(SIZE, SIZE, renderAvatar(SIZE, hueFor(i)));
     writeFileSync(file, png);
     console.log(`escrito public/ui/avatar.${id}.png (${png.length} bytes)`);
   });
