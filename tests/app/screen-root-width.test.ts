@@ -75,9 +75,16 @@ describe('raiz de tela: teto de largura sem centralização assenta à esquerda'
     for (const { file, css } of allStylesheets()) {
       for (const { selector, body } of cssBlocks(css)) {
         if (!/max-width\s*:/.test(body)) continue;
-        // Classes citadas no seletor, como tokens inteiros: `.screen.challenge-brief` (composto,
-        // sem espaço) conta, `.challenge-brief__stats` NÃO é `.challenge-brief` (achado do review).
-        const cited = new Set(selector.match(/\.[A-Za-z0-9_-]+/g) ?? []);
+        // Só o ALVO do seletor conta — o último composto de cada parte, depois do último
+        // combinador (` `, `>`, `+`, `~`). Assim `.leaderboard .foo { max-width }` (teto num
+        // DESCENDENTE, legítimo) não é acusado, mas `.screen.challenge-brief` (composto, sem
+        // espaço: é a própria raiz) é. Tokens inteiros ⇒ `.challenge-brief__stats` nunca conta
+        // como `.challenge-brief`.
+        const targets = selector
+          .split(',')
+          .flatMap((part) => part.trim().split(/[\s>+~]+/).slice(-1))
+          .flatMap((compound) => compound.match(/\.[A-Za-z0-9_-]+/g) ?? []);
+        const cited = new Set(targets);
         const hitsRoot = [...rootClasses].some((cls) => cited.has(`.${cls}`));
         if (!hitsRoot) continue;
         const centered = /margin-inline\s*:\s*auto/.test(body) || /align-self\s*:\s*center/.test(body);
