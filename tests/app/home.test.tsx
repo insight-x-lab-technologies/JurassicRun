@@ -125,4 +125,12 @@ describe('HomeScreen', () => {
       container.querySelector('.home__copyright [data-testid="app-version"]'),
     ).not.toBeNull();
   });
+
+  it('o topo mostra o avatar escolhido do perfil ativo', () => {
+    profileService.setAvatar('a08');
+    render(<HomeScreen />, container);
+    const img = container.querySelector('.home__identity img');
+    expect(img).not.toBeNull();
+    expect(img?.getAttribute('src')).toContain('avatar.a08.png');
+  });
 });

@@ -208,7 +208,7 @@ desktop) · **Semanal idêntico ao Diário** (seed `2026-W31`, mesmos números).
 i18n. **Aceite:** ✅ trocar de avatar persiste entre reloads e entre trocas de perfil; perfis criados
 antes da mudança continuam com avatar válido; nenhuma string hardcoded.
 
-> **Executado em 2026-07-31** (spec: `docs/superpowers/sdd/2026-07-31-10.6-profile-avatars/`).
+> **Executado em 2026-07-31** (spec: `.superpowers/sdd/2026-07-31-10.6-profile-avatars/`).
 > Catálogo puro `src/services/profile/avatars.ts`: 12 ids `a01`…`a12`, `hue = i*30`, com
 > `hashId`/`defaultAvatarId`/`resolveAvatarId` — id desconhecido (ou perfil pré-10.6, sem o campo)
 > cai num avatar determinístico derivado do próprio id do perfil, nunca aleatório. `Profile.avatarId`

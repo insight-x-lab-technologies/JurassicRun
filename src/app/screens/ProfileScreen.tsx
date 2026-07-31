@@ -91,12 +91,12 @@ export function ProfileScreen(): VNode {
         </section>
 
         <section class="profile__col profile__col--actions">
-          <h2 class="profile__heading">{i18n.t('profile.avatar')}</h2>
+          <h2 class="profile__heading" id="profile-avatar-heading">{i18n.t('profile.avatar')}</h2>
           <div
             class="avatar-picker"
             data-testid="avatar-picker"
             role="radiogroup"
-            aria-label={i18n.t('profile.avatar')}
+            aria-labelledby="profile-avatar-heading"
           >
             {AVATARS.map((a, i) => (
               <button
