@@ -16,7 +16,10 @@ describe('getHomeStats', () => {
 
   it('trophies reflete unlockedCount do trophyService reativamente', () => {
     expect(getHomeStats().trophies).toBe(0);
-    trophyService.recordMatch({ distance: 0, food: 0, nearMisses: 0, score: 0 });
+    trophyService.recordMatch({
+      distance: 0, food: 0, nearMisses: 0, score: 0,
+      level: 1, coins: 0, powerups: 0, mode: 'endless', playedAt: 0,
+    });
     expect(getHomeStats().trophies).toBe(1);
   });
 

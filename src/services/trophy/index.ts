@@ -3,11 +3,13 @@ import {
   initialTrophyState,
   recordMatch as recordMatchState,
   evaluate,
+  foldPodium,
   type MatchSummary,
   type TrophyState,
+  type TrophyStats,
 } from './store';
 import { localStorageTrophyStorage, memoryTrophyStorage, type TrophyStorage } from './storage';
-import { isKnownTrophyId } from './catalog';
+import { isKnownTrophyId, PODIUM_RANK } from './catalog';
 import type { TrophyOnline } from './online';
 
 export class TrophyService {
@@ -19,6 +21,8 @@ export class TrophyService {
 
   readonly unlockedIds: ReadonlySignal<readonly string[]> = computed(() => this._state.value.unlocked);
   readonly unlockedCount: ReadonlySignal<number> = computed(() => this._state.value.unlocked.length);
+  /** Agregado vitalício (10.7): telas de progresso leem daqui. */
+  readonly stats: ReadonlySignal<TrophyStats> = computed(() => this._state.value.stats);
 
   init(storage: TrophyStorage = localStorageTrophyStorage(), online?: TrophyOnline): void {
     this.storage = storage;
@@ -46,23 +50,32 @@ export class TrophyService {
   }
 
   /** Registra o resultado de uma partida; persiste se algo mudou. Retorna os ids recém-desbloqueados. */
-  recordMatch(m: MatchSummary, extra?: { readonly dailyRank?: number }): readonly string[] {
+  recordMatch(
+    m: MatchSummary,
+    extra?: { readonly dailyRank?: number; readonly weeklyRank?: number },
+  ): readonly string[] {
     const { state, newlyUnlocked } = recordMatchState(this._state.value, m, extra);
     this.commit(state); // stats sempre mudam (gamesPlayed++) ⇒ sempre persiste
     this.pushToServer(newlyUnlocked);
     return newlyUnlocked;
   }
 
-  /** Reavalia só o pódio diário com o rank central. Push best-effort. */
+  /**
+   * Reavalia o pódio diário com o rank CENTRAL (chega assíncrono). Push best-effort.
+   *
+   * INVARIANTE: este caminho e o `extra.dailyRank` de `recordMatch` contam o MESMO pódio.
+   * `startGame` usa o rank local só quando o board central está indisponível e o central só
+   * quando está — nunca os dois para a mesma partida.
+   */
   recordDailyPodium(dailyRank: number): readonly string[] {
-    const { state, newlyUnlocked } = evaluate(this._state.value, {
-      stats: this._state.value.stats,
-      dailyRank,
-    });
-    if (newlyUnlocked.length > 0) {
-      this.commit(state);
-      this.pushToServer(newlyUnlocked);
-    }
+    if (dailyRank > PODIUM_RANK) return [];
+    const stats = foldPodium(this._state.value.stats, 'daily');
+    const { state, newlyUnlocked } = evaluate(
+      { stats, unlocked: this._state.value.unlocked },
+      { stats, dailyRank },
+    );
+    this.commit(state); // o agregado mudou (dailyPodiums++) ⇒ persiste sempre
+    this.pushToServer(newlyUnlocked);
     return newlyUnlocked;
   }
 

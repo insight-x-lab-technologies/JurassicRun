@@ -2,9 +2,12 @@ import { describe, it, expect } from 'vitest';
 import { TrophyService } from '@services/trophy';
 import { memoryTrophyStorage } from '@services/trophy/storage';
 import { memoryTrophyOnline } from '@services/trophy/online';
-import { initialTrophyState } from '@services/trophy/store';
+import { initialTrophyState, type MatchSummary } from '@services/trophy/store';
 
-const summary = { distance: 0, food: 0, nearMisses: 0, score: 0 };
+const summary: MatchSummary = {
+  distance: 0, food: 0, nearMisses: 0, score: 0,
+  level: 1, coins: 0, powerups: 0, mode: 'endless', playedAt: 0,
+};
 
 describe('TrophyService online-aware', () => {
   it('recordMatch faz push dos recém-desbloqueados quando online', async () => {

@@ -84,6 +84,11 @@ export class LeaderboardService {
     return rankOf(this._state.value.daily, seed);
   }
 
+  /** Rank 1-based do recorde semanal dessa seed; undefined se não houver. */
+  weeklyRankForSeed(seed: string): number | undefined {
+    return rankOf(this._state.value.weekly, seed);
+  }
+
   /** Rank 1-based do jogador no board diário central da seed do `result` (undefined se offline/sem id/fora do board). */
   async centralDailyRank(result: LeaderboardResult): Promise<number | undefined> {
     const o = this.online;

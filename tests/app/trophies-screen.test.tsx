@@ -33,7 +33,10 @@ describe('TrophiesScreen', () => {
   });
 
   it('marca desbloqueado vs bloqueado após uma partida (firstFlight)', async () => {
-    trophyService.recordMatch({ distance: 0, food: 0, nearMisses: 0, score: 0 });
+    trophyService.recordMatch({
+      distance: 0, food: 0, nearMisses: 0, score: 0,
+      level: 1, coins: 0, powerups: 0, mode: 'endless', playedAt: 0,
+    });
     await Promise.resolve();
     render(<TrophiesScreen />, container);
     expect(
