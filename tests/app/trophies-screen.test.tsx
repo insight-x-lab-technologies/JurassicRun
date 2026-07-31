@@ -58,8 +58,10 @@ describe('TrophiesScreen', () => {
     render(<TrophiesScreen />, container);
     const el = container.querySelector('[data-testid="trophies-progress"]');
     expect(el).not.toBeNull();
-    expect(el?.textContent).toContain(String(TROPHY_CATALOG.length));
-    expect(el?.textContent).toContain('1');
+    // Exige a string interpolada NA ORDEM correta (unlocked / total), não as duas substrings
+    // soltas — senão uma troca acidental de `{{unlocked}}`/`{{total}}` no locale passaria mesmo
+    // assim (ex.: "23 / 1" também contém "23" e "1").
+    expect(el?.textContent).toContain(`1 / ${TROPHY_CATALOG.length}`);
   });
 
   it('renderiza os 23 cards do catálogo ampliado', () => {
