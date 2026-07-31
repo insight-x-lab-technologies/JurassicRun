@@ -916,10 +916,13 @@ body {
 
 /* Briefing de Desafio (Diário/Semanal) — item 9.9: seed/período, recordes e regras da seed
    antes da partida. Raiz reaproveita `.screen` (centralização + rolagem + safe-area, o mesmo
-   padrão de todas as outras telas), só os miolos são próprios. */
+   padrão de todas as outras telas), só os miolos são próprios.
+   Item 10.5: a raiz NÃO leva `max-width` — `#app` é flex column com `align-items: stretch`
+   (default), então um item com largura resolvida não estica e assenta encostado à esquerda em
+   vez de centralizar. O padrão do projeto (repetido em todas as outras telas) é raiz full-bleed
+   e o teto de largura nos blocos de conteúdo, centrados com `margin-inline: auto`. */
 .challenge-brief {
   width: 100%;
-  max-width: 32rem;
   gap: var(--space-4);
 }
 
@@ -938,7 +941,9 @@ body {
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-3);
   width: 100%;
+  max-width: 44rem;
   margin: 0;
+  margin-inline: auto;
   padding: var(--space-4);
   border-style: solid;
   border-color: transparent;
@@ -981,8 +986,10 @@ body {
 .challenge-brief__rules {
   list-style: none;
   margin: 0;
+  margin-inline: auto;
   padding: 0;
   width: 100%;
+  max-width: 44rem;
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -1002,6 +1009,8 @@ body {
   justify-content: center;
   gap: var(--space-3);
   width: 100%;
+  max-width: 44rem;
+  margin-inline: auto;
 }
 
 .home__logo {
