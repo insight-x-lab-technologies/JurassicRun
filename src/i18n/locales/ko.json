@@ -84,7 +84,9 @@
     "players": "플레이어",
     "active": "사용 중",
     "newPlayer": "새 플레이어",
-    "create": "만들기"
+    "create": "만들기",
+    "avatar": "아바타",
+    "avatarOption": "아바타 {{n}}"
   },
   "weather": {
     "clear": "맑음",

@@ -1,7 +1,12 @@
+import { defaultAvatarId, hashId, type AvatarId } from './avatars';
+
 export interface Profile {
   readonly id: string;
   readonly name: string;
   readonly createdAt: number;
+  /** Avatar escolhido. Obrigatório de propósito: um call site que crie perfil sem avatar
+   * quebra a compilação em vez de renderizar um perfil sem cara. */
+  readonly avatarId: AvatarId;
 }
 
 export interface ProfileState {
@@ -35,7 +40,7 @@ export function createProfile(
   name: string,
   createdAt: number,
 ): { state: ProfileState; profile: Profile } {
-  const profile: Profile = { id, name, createdAt };
+  const profile: Profile = { id, name, createdAt, avatarId: defaultAvatarId(id) };
   return {
     state: { profiles: [...state.profiles, profile], activeId: id },
     profile,
@@ -55,6 +60,14 @@ export function renameProfile(state: ProfileState, id: string, name: string): Pr
   };
 }
 
+export function setAvatar(state: ProfileState, id: string, avatarId: AvatarId): ProfileState {
+  if (!state.profiles.some((p) => p.id === id)) return state;
+  return {
+    ...state,
+    profiles: state.profiles.map((p) => (p.id === id ? { ...p, avatarId } : p)),
+  };
+}
+
 export function activeProfile(state: ProfileState): Profile | null {
   if (state.activeId === null) return null;
   return state.profiles.find((p) => p.id === state.activeId) ?? null;
@@ -62,9 +75,5 @@ export function activeProfile(state: ProfileState): Profile | null {
 
 export function avatarFor(profile: Profile): { initial: string; hue: number } {
   const initial = profile.name.trim().charAt(0).toUpperCase() || '?';
-  let h = 0;
-  for (let i = 0; i < profile.id.length; i++) {
-    h = (h * 31 + profile.id.charCodeAt(i)) >>> 0;
-  }
-  return { initial, hue: h % 360 };
+  return { initial, hue: hashId(profile.id) % 360 };
 }

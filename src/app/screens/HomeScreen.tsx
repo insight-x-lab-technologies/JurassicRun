@@ -1,9 +1,10 @@
 import type { VNode } from 'preact';
 import { navigate, type Screen } from '../router';
 import { i18n } from '@services/i18n';
-import { profileService, avatarFor, type Profile } from '@services/profile';
+import { profileService } from '@services/profile';
 import { getHomeStats } from '../home/stats';
 import { ShareLinks, defaultShareLinkProps } from '../components/ShareLinks';
+import { Avatar } from '../components/Avatar';
 
 /**
  * Destinos do menu, na ordem do roadmap 4.3 + `donate` no fim: a Doação virou TELA (mesmo padrão
@@ -33,15 +34,6 @@ const NAV_ICON: Record<string, string> = {
 };
 function navIcon(id: string): string {
   return `${import.meta.env.BASE_URL}ui/${id}.png`;
-}
-
-function Avatar({ profile }: { profile: Profile }): VNode {
-  const { initial, hue } = avatarFor(profile);
-  return (
-    <span class="avatar" style={{ backgroundColor: `hsl(${hue}, 55%, 45%)` }}>
-      {initial}
-    </span>
-  );
 }
 
 function StatChip({ glyph, label, value }: { glyph: string; label: string; value: number }): VNode {

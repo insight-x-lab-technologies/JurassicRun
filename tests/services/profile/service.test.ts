@@ -59,4 +59,17 @@ describe('ProfileService', () => {
     expect(profileService.profiles.value).toHaveLength(1);
     expect(profileService.activeProfile.value!.name).toBe('Rex');
   });
+
+  it('profileService.setAvatar altera o ativo e persiste', () => {
+    const storage = memoryProfileStorage(emptyState());
+    profileService.init(storage);
+    profileService.create('Rex');
+    expect(profileService.setAvatar('a09')).toBe(true);
+    expect(profileService.activeProfile.value!.avatarId).toBe('a09');
+    expect(storage.load().profiles[0]!.avatarId).toBe('a09');
+  });
+
+  it('setAvatar sem perfil ativo devolve false', () => {
+    expect(profileService.setAvatar('a09')).toBe(false);
+  });
 });

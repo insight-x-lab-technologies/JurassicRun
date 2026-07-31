@@ -85,4 +85,28 @@ describe('ProfileScreen', () => {
     render(<ProfileScreen />, container);
     expect(profileService.activeProfile.value!.name).toBe('RexII');
   });
+
+  it('mostra os 12 avatares e marca o do perfil ativo', () => {
+    render(<ProfileScreen />, container);
+    const picker = container.querySelector('[data-testid="avatar-picker"]')!;
+    const tiles = picker.querySelectorAll('button[role="radio"]');
+    expect(tiles).toHaveLength(12);
+    const checked = picker.querySelectorAll('[aria-checked="true"]');
+    expect(checked).toHaveLength(1);
+    expect(checked[0]!.getAttribute('data-avatar')).toBe(
+      profileService.activeProfile.value!.avatarId,
+    );
+  });
+
+  it('escolher um avatar troca o do jogador ativo', async () => {
+    render(<ProfileScreen />, container);
+    const tile = container.querySelector<HTMLButtonElement>('[data-avatar="a08"]')!;
+    tile.dispatchEvent(new Event('click', { bubbles: true }));
+    await Promise.resolve();
+    render(<ProfileScreen />, container);
+    expect(profileService.activeProfile.value!.avatarId).toBe('a08');
+    expect(
+      container.querySelector('[data-avatar="a08"]')!.getAttribute('aria-checked'),
+    ).toBe('true');
+  });
 });

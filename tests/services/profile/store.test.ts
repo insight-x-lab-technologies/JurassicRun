@@ -6,11 +6,13 @@ import {
   createProfile,
   setActive,
   renameProfile,
+  setAvatar,
   activeProfile,
   avatarFor,
   NAME_MAX,
   type Profile,
 } from '@services/profile/store';
+import { defaultAvatarId, AVATAR_IDS } from '@services/profile/avatars';
 
 describe('profile store — validação e normalização', () => {
   it('normalizeName faz trim e colapsa espaços internos', () => {
@@ -39,9 +41,33 @@ describe('profile store — operações', () => {
 
   it('createProfile adiciona e torna o novo o ativo', () => {
     const { state, profile } = createProfile(emptyState(), 'id-1', 'Rex', 1000);
-    expect(profile).toEqual({ id: 'id-1', name: 'Rex', createdAt: 1000 });
+    expect(profile).toEqual({
+      id: 'id-1',
+      name: 'Rex',
+      createdAt: 1000,
+      avatarId: defaultAvatarId('id-1'),
+    });
     expect(state.profiles).toEqual([profile]);
     expect(state.activeId).toBe('id-1');
+  });
+
+  it('createProfile deriva o avatar inicial do id', () => {
+    const { profile } = createProfile(emptyState(), 'p1', 'Rex', 0);
+    expect(profile.avatarId).toBe(defaultAvatarId('p1'));
+    expect(AVATAR_IDS).toContain(profile.avatarId);
+  });
+
+  it('setAvatar troca só o perfil alvo', () => {
+    let s = createProfile(emptyState(), 'p1', 'Rex', 0).state;
+    s = createProfile(s, 'p2', 'Ptero', 0).state;
+    const out = setAvatar(s, 'p1', 'a07');
+    expect(out.profiles.find((p) => p.id === 'p1')!.avatarId).toBe('a07');
+    expect(out.profiles.find((p) => p.id === 'p2')!.avatarId).toBe(defaultAvatarId('p2'));
+  });
+
+  it('setAvatar com id inexistente devolve o mesmo estado', () => {
+    const s = createProfile(emptyState(), 'p1', 'Rex', 0).state;
+    expect(setAvatar(s, 'nope', 'a07')).toBe(s);
   });
 
   it('createProfile preserva perfis anteriores e move o ativo para o novo', () => {
@@ -72,11 +98,19 @@ describe('profile store — operações', () => {
 
 describe('profile store — avatarFor', () => {
   it('inicial é a 1ª letra maiúscula do nome', () => {
-    expect(avatarFor({ id: 'id-1', name: 'rex', createdAt: 1 }).initial).toBe('R');
+    expect(
+      avatarFor({ id: 'id-1', name: 'rex', createdAt: 1, avatarId: defaultAvatarId('id-1') })
+        .initial,
+    ).toBe('R');
   });
 
   it('hue é determinístico por id e fica em [0,360)', () => {
-    const p: Profile = { id: 'abc', name: 'Rex', createdAt: 1 } as const;
+    const p: Profile = {
+      id: 'abc',
+      name: 'Rex',
+      createdAt: 1,
+      avatarId: defaultAvatarId('abc'),
+    } as const;
     const h1 = avatarFor(p).hue;
     const h2 = avatarFor({ ...p, name: 'Outro' }).hue; // hue depende do id, não do nome
     expect(h1).toBe(h2);

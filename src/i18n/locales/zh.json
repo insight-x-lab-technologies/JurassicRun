@@ -84,7 +84,9 @@
     "players": "玩家",
     "active": "使用中",
     "newPlayer": "新玩家",
-    "create": "创建"
+    "create": "创建",
+    "avatar": "头像",
+    "avatarOption": "头像 {{n}}"
   },
   "weather": {
     "clear": "晴朗",

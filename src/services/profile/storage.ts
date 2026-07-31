@@ -1,3 +1,4 @@
+import { resolveAvatarId } from './avatars';
 import { emptyState, type Profile, type ProfileState } from './store';
 
 export interface ProfileStorage {
@@ -17,7 +18,9 @@ export function memoryProfileStorage(initial: ProfileState = emptyState()): Prof
   };
 }
 
-function isProfile(value: unknown): value is Profile {
+/** Forma MÍNIMA persistida: `avatarId` NÃO é exigido aqui — payloads v1 não têm o campo e
+ * rejeitá-los descartaria perfis reais. A normalização (`toProfile`) é que materializa o avatar. */
+function isStoredProfile(value: unknown): value is { id: string; name: string; createdAt: number } {
   if (typeof value !== 'object' || value === null) return false;
   const v = value as Record<string, unknown>;
   return (
@@ -27,12 +30,17 @@ function isProfile(value: unknown): value is Profile {
   );
 }
 
+function toProfile(raw: { id: string; name: string; createdAt: number }): Profile {
+  const avatarId = resolveAvatarId((raw as Record<string, unknown>).avatarId, raw.id);
+  return { id: raw.id, name: raw.name, createdAt: raw.createdAt, avatarId };
+}
+
 function parseState(raw: string): ProfileState {
   const data: unknown = JSON.parse(raw);
   if (typeof data !== 'object' || data === null) return emptyState();
   const d = data as Record<string, unknown>;
-  if (!Array.isArray(d.profiles) || !d.profiles.every(isProfile)) return emptyState();
-  const profiles = d.profiles as Profile[];
+  if (!Array.isArray(d.profiles) || !d.profiles.every(isStoredProfile)) return emptyState();
+  const profiles = d.profiles.map(toProfile);
   // Se o activeId persistido não resolve mas há perfis, cai no primeiro em vez
   // de null — evita forçar re-onboarding (com perfis existentes) sob storage corrompido.
   const activeId =
@@ -55,7 +63,7 @@ export function localStorageProfileStorage(): ProfileStorage {
     },
     save(state: ProfileState): void {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, ...state }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 2, ...state }));
       } catch {
         // localStorage indisponível (modo privado); persistência é best-effort.
       }

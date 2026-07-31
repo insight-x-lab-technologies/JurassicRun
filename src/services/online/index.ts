@@ -1,5 +1,5 @@
 import { signal, computed, effect, type ReadonlySignal } from '@preact/signals';
-import { profileService, avatarFor, type Profile } from '@services/profile';
+import { profileService, type Profile } from '@services/profile';
 import { onlineConfig, type OnlineConfig } from './config';
 import {
   createSupabaseClient,
@@ -158,8 +158,9 @@ export class OnlineService {
     if (id === null) return;
     const active = this.profile.activeProfile.value;
     if (active === null) return;
-    const { hue } = avatarFor(active);
-    const player: OnlinePlayer = { id, name: active.name, avatar: String(hue) };
+    // `players.avatar` é `text` sem check (6.1): o id do avatar cabe e é mais útil que a matiz
+    // derivada — a chave de identidade `${id}|${name}|${avatar}` re-upserta ao trocar de avatar.
+    const player: OnlinePlayer = { id, name: active.name, avatar: active.avatarId };
     const sig = signatureOf(player);
     if (sig === this.lastSignature) return;
     this.lastSignature = sig;

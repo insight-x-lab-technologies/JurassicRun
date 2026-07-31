@@ -84,7 +84,9 @@
     "players": "プレイヤー",
     "active": "使用中",
     "newPlayer": "新しいプレイヤー",
-    "create": "作成"
+    "create": "作成",
+    "avatar": "アバター",
+    "avatarOption": "アバター {{n}}"
   },
   "weather": {
     "clear": "晴れ",

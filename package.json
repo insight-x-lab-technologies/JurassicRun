@@ -13,6 +13,7 @@
     "gen:icons": "node scripts/gen-app-icon.mjs",
     "gen:atlas": "node scripts/gen-atlas.mjs",
     "gen:ui": "node scripts/gen-ui.mjs",
+    "gen:avatars": "node scripts/gen-avatar-placeholder.mjs",
     "package:itch": "node scripts/package-itch.mjs"
   },
   "keywords": [],
