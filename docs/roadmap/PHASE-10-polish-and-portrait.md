@@ -88,18 +88,32 @@ literal `v1.0.0` e zero `__APP_VERSION__`.
 >    profundidade e tornava o helper novo invisível ao git. Corrigido para `/build/` (nada no
 >    projeto gera `build/` na raiz; a saída é `dist/`).
 
-### 10.3 Purga de dados pré-9.9 (#8)
-- [ ] `jurassicrun.leaderboard.v1` **→ `.v2`** (chave nova, dados antigos ignorados): mata o débito
+### 10.3 Purga de dados pré-9.9 (#8) ✅
+- [x] `jurassicrun.leaderboard.v1` **→ `.v2`** (chave nova, dados antigos ignorados): mata o débito
       conhecido do 9.9 — recorde da mesma seed obtido sob as regras VELHAS aparecendo como
       `yourBest` no briefing, indistinguível de um obtido sob os modificadores.
-- [ ] `purgeLegacyKeys()` puro + chamada no boot: remove a lista fixa de chaves órfãs
+- [x] `purgeLegacyKeys()` puro + chamada no boot: remove a lista fixa de chaves órfãs
       (`jurassicrun.replays.v1`, `jurassicrun.replays.v2`, `jurassicrun.leaderboard.v1`) dos
       aparelhos de teste que já têm o app instalado, para não deixar lixo ocupando quota.
-- [ ] Nada de migração/tradução de dados: descarte puro e simples (decisão do usuário; pré-lançamento).
+- [x] Nada de migração/tradução de dados: descarte puro e simples (decisão do usuário; pré-lançamento).
 
 **Toca:** `src/services/leaderboard/storage.ts`, novo helper de storage legado, `src/app/main.tsx`.
-**Aceite:** `localStorage` pré-populado com as chaves velhas ⇒ boot limpo, sem entrada fantasma no
+**Aceite:** ✅ `localStorage` pré-populado com as chaves velhas ⇒ boot limpo, sem entrada fantasma no
 briefing e sem exceção; teste cobrindo storage indisponível (modo privado) sem quebrar o boot.
+
+> **Executado em 2026-07-30** (spec: `docs/superpowers/specs/2026-07-30-10.3-legacy-data-purge.md`).
+> Novo `src/services/storage/legacy.ts` no molde puro×casca: `LEGACY_STORAGE_KEYS` (lista
+> **explícita**, nunca heurística de prefixo — o custo de apagar dado vivo é assimétrico),
+> `purgeLegacyKeys(store, keys?)` puro sobre a interface mínima `LegacyStore` e a casca
+> `purgeLegacyStorage()`, que engole erro do `localStorage` **inclusive no acesso à propriedade
+> global** (Safari privado lança ali, não só na chamada). Chamado na 1ª linha de `bootstrap()`,
+> antes de `i18n.init()` e de qualquer `*.init()` de serviço.
+>
+> **Gotcha de ORDEM entre as duas tasks:** o teste de invariante "nenhuma chave legada coincide com
+> uma chave viva" (cruza a lista contra os 8 `STORAGE_KEY` dos serviços) impede pôr
+> `leaderboard.v1` na lista legada **antes** de bumpar a chave viva para `.v2` — a entrada tem de
+> vir junto ou depois do bump. Essa invariante é o que impede um bump futuro de reciclar um nome
+> antigo e transformar a purga numa apagadora de dados vivos.
 
 ---
 

@@ -481,6 +481,10 @@ igualdade de seed. Mesmo padrão de risco já aceito para `challenge_entries.ver
 gate). Se um dia importar, a correção é versionar a chave do leaderboard como se fez com os
 replays (`v2→v3`).
 
+> **RESOLVIDO no item 10.3** (2026-07-30) pela correção prevista acima: chave viva bumpada para
+> `jurassicrun.leaderboard.v2` e a `v1` purgada no boot junto das chaves órfãs de replay
+> (`purgeLegacyStorage()` em `src/services/storage/legacy.ts`). Descarte, não migração.
+
 **Toca:** `src/core/challenge/` (novo), `src/core/sim/world.ts` (aplicação), `src/render/
 matchFactory.ts` (flag challenge), `src/app` (briefing screen), `src/services/online/
 verifyChallenge.ts` + bundle, i18n `challenge.brief.*`. **Core tocado (determinístico).**

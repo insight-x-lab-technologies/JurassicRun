@@ -69,15 +69,18 @@ Default para sessões de desenvolvimento (ex.: `/next-item`), salvo pedido em co
 > (`.claude/.../memory/deferred-*.md`, indexados em `MEMORY.md`) e nos docs de fase
 > (`docs/roadmap/PHASE-0X-*.md`). Consulte-os quando precisar de contexto de um item específico.
 
-**Métricas correntes:** determinismo **73** testes · suíte **973** testes · `check` limpo.
+**Métricas correntes:** determinismo **73** testes · suíte **981** testes · `check` limpo.
 Branch `main`. Fases 0–9 **CONCLUÍDAS** (9.1–9.9 feitos ⇒ Frentes A, B, C e D fechadas).
 **Fase 10 ABERTA** (`docs/roadmap/PHASE-10-polish-and-portrait.md`): 9 itens, nenhum toca `src/core/`.
 10.1 ✅ (higiene de branches: remoto e local só com `main`; `delete_branch_on_merge` LIGADO ⇒ head
 branch de PR some sozinho no merge daqui pra frente) · 10.2 ✅ (versão na Home: `__APP_VERSION__`
 injetado por `define` a partir do `package.json`; **`define` tem de ir em `vite.config.ts` E
 `vitest.config.ts`** — configs independentes, senão os testes da Home dão `ReferenceError`; bump
-manual do `package.json` ao fechar cada fase, ver `WORKFLOW.md`).
-Próximo item: **10.3** (purga de dados pré-9.9). Ordem A→B→C→D, um item por PR.
+manual do `package.json` ao fechar cada fase, ver `WORKFLOW.md`) · 10.3 ✅ (purga pré-9.9: chave viva
+do leaderboard `v1→v2` e `purgeLegacyStorage()` na 1ª linha do `bootstrap()` apagando a lista
+**explícita** `leaderboard.v1` + `replays.v1/v2`; teste de invariante cruza a lista legada com os 8
+`STORAGE_KEY` vivos ⇒ **a entrada legada só pode entrar junto/depois do bump da chave viva**).
+**Frente A concluída.** Próximo item: **10.4** (UI falando "moedas"). Ordem A→B→C→D, um item por PR.
 
 ### Fases (todas testadas/`check` limpo; det = nº de testes de determinismo ao fechar)
 
