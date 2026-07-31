@@ -138,7 +138,8 @@
   "trophies": {
     "title": "Troféus",
     "locked": "Bloqueado",
-    "empty": "Jogue para ganhar seu primeiro troféu!"
+    "empty": "Jogue para ganhar seu primeiro troféu!",
+    "progress": "{{unlocked}} / {{total}} desbloqueados"
   },
   "trophy": {
     "firstFlight": {
@@ -172,6 +173,66 @@
     "dailyPodium": {
       "name": "Pódio Diário",
       "desc": "Termine entre os 3 primeiros no Desafio Diário."
+    },
+    "explorer": {
+      "name": "Explorador",
+      "desc": "Alcance o nível 5 numa partida."
+    },
+    "skyLord": {
+      "name": "Senhor do Céu",
+      "desc": "Alcance o nível 10 numa partida."
+    },
+    "globetrotter": {
+      "name": "Globe-trotter",
+      "desc": "Percorra 50.000 de distância total."
+    },
+    "legend": {
+      "name": "Lenda",
+      "desc": "Faça 20.000 de pontos numa partida."
+    },
+    "veteran": {
+      "name": "Veterano",
+      "desc": "Jogue 100 partidas."
+    },
+    "stuntPilot": {
+      "name": "Piloto Acrobático",
+      "desc": "Faça 25 quase-colisões numa partida."
+    },
+    "closeShave": {
+      "name": "Por um Triz",
+      "desc": "Faça 250 quase-colisões no total."
+    },
+    "treasurer": {
+      "name": "Tesoureiro",
+      "desc": "Ganhe 500 moedas no total."
+    },
+    "tycoon": {
+      "name": "Magnata",
+      "desc": "Ganhe 5.000 moedas no total."
+    },
+    "empowered": {
+      "name": "Fortalecido",
+      "desc": "Colete 25 power-ups."
+    },
+    "powerHungry": {
+      "name": "Faminto por Poder",
+      "desc": "Colete 200 power-ups."
+    },
+    "challenger": {
+      "name": "Desafiante",
+      "desc": "Jogue 10 partidas de desafio."
+    },
+    "challengeAce": {
+      "name": "Ás do Desafio",
+      "desc": "Faça 5000 pontos numa partida de desafio."
+    },
+    "weeklyPodium": {
+      "name": "Pódio Semanal",
+      "desc": "Termine entre os 3 primeiros no Desafio Semanal."
+    },
+    "dedicated": {
+      "name": "Dedicado",
+      "desc": "Jogue em 7 dias diferentes."
     }
   },
   "dino": {

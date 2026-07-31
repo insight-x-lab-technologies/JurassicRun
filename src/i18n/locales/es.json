@@ -138,7 +138,8 @@
   "trophies": {
     "title": "Trofeos",
     "locked": "Bloqueado",
-    "empty": "¡Juega para ganar tu primer trofeo!"
+    "empty": "¡Juega para ganar tu primer trofeo!",
+    "progress": "{{unlocked}} / {{total}} desbloqueados"
   },
   "trophy": {
     "firstFlight": {
@@ -172,6 +173,66 @@
     "dailyPodium": {
       "name": "Podio Diario",
       "desc": "Termina entre los 3 primeros en el Reto Diario."
+    },
+    "explorer": {
+      "name": "Explorador",
+      "desc": "Alcanza el nivel 5 en una partida."
+    },
+    "skyLord": {
+      "name": "Señor del Cielo",
+      "desc": "Alcanza el nivel 10 en una partida."
+    },
+    "globetrotter": {
+      "name": "Trotamundos",
+      "desc": "Recorre 50.000 de distancia total."
+    },
+    "legend": {
+      "name": "Leyenda",
+      "desc": "Consigue 20.000 puntos en una partida."
+    },
+    "veteran": {
+      "name": "Veterano",
+      "desc": "Juega 100 partidas."
+    },
+    "stuntPilot": {
+      "name": "Piloto Acrobático",
+      "desc": "Consigue 25 casi-choques en una partida."
+    },
+    "closeShave": {
+      "name": "Por los Pelos",
+      "desc": "Consigue 250 casi-choques en total."
+    },
+    "treasurer": {
+      "name": "Tesorero",
+      "desc": "Gana 500 monedas en total."
+    },
+    "tycoon": {
+      "name": "Magnate",
+      "desc": "Gana 5.000 monedas en total."
+    },
+    "empowered": {
+      "name": "Empoderado",
+      "desc": "Recolecta 25 potenciadores."
+    },
+    "powerHungry": {
+      "name": "Hambriento de Poder",
+      "desc": "Recolecta 200 potenciadores."
+    },
+    "challenger": {
+      "name": "Retador",
+      "desc": "Juega 10 partidas de reto."
+    },
+    "challengeAce": {
+      "name": "As del Reto",
+      "desc": "Consigue 5000 puntos en una partida de reto."
+    },
+    "weeklyPodium": {
+      "name": "Podio Semanal",
+      "desc": "Termina entre los 3 primeros en el Reto Semanal."
+    },
+    "dedicated": {
+      "name": "Dedicado",
+      "desc": "Juega en 7 días diferentes."
     }
   },
   "dino": {

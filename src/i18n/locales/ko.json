@@ -138,7 +138,8 @@
   "trophies": {
     "title": "트로피",
     "locked": "잠김",
-    "empty": "게임을 플레이해 첫 트로피를 획득하세요!"
+    "empty": "게임을 플레이해 첫 트로피를 획득하세요!",
+    "progress": "{{unlocked}} / {{total}} 잠금 해제됨"
   },
   "trophy": {
     "firstFlight": {
@@ -172,6 +173,66 @@
     "dailyPodium": {
       "name": "일일 시상대",
       "desc": "일일 도전에서 3위 안에 들기."
+    },
+    "explorer": {
+      "name": "탐험가",
+      "desc": "한 판에서 레벨 5에 도달하세요."
+    },
+    "skyLord": {
+      "name": "하늘의 지배자",
+      "desc": "한 판에서 레벨 10에 도달하세요."
+    },
+    "globetrotter": {
+      "name": "세계 여행자",
+      "desc": "총 50,000 거리를 이동하세요."
+    },
+    "legend": {
+      "name": "전설",
+      "desc": "한 판에서 20,000점을 획득하세요."
+    },
+    "veteran": {
+      "name": "베테랑",
+      "desc": "100판을 플레이하세요."
+    },
+    "stuntPilot": {
+      "name": "스턴트 파일럿",
+      "desc": "한 판에서 아슬아슬한 회피를 25번 달성하세요."
+    },
+    "closeShave": {
+      "name": "아슬아슬한 탈출",
+      "desc": "총 250번의 아슬아슬한 회피를 달성하세요."
+    },
+    "treasurer": {
+      "name": "재무관",
+      "desc": "총 500개의 코인을 모으세요."
+    },
+    "tycoon": {
+      "name": "거물",
+      "desc": "총 5,000개의 코인을 모으세요."
+    },
+    "empowered": {
+      "name": "강화됨",
+      "desc": "파워업을 25개 모으세요."
+    },
+    "powerHungry": {
+      "name": "파워에 굶주린 자",
+      "desc": "파워업을 200개 모으세요."
+    },
+    "challenger": {
+      "name": "도전자",
+      "desc": "도전 모드를 10판 플레이하세요."
+    },
+    "challengeAce": {
+      "name": "도전의 달인",
+      "desc": "도전 모드에서 5000점을 획득하세요."
+    },
+    "weeklyPodium": {
+      "name": "주간 시상대",
+      "desc": "주간 도전에서 3위 안에 들기."
+    },
+    "dedicated": {
+      "name": "성실한 플레이어",
+      "desc": "서로 다른 7일 동안 플레이하세요."
     }
   },
   "dino": {

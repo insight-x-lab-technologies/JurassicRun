@@ -138,7 +138,8 @@
   "trophies": {
     "title": "Trophies",
     "locked": "Locked",
-    "empty": "Play to earn your first trophy!"
+    "empty": "Play to earn your first trophy!",
+    "progress": "{{unlocked}} / {{total}} unlocked"
   },
   "trophy": {
     "firstFlight": {
@@ -172,6 +173,66 @@
     "dailyPodium": {
       "name": "Daily Podium",
       "desc": "Finish top 3 on the Daily Challenge."
+    },
+    "explorer": {
+      "name": "Explorer",
+      "desc": "Reach level 5 in one run."
+    },
+    "skyLord": {
+      "name": "Sky Lord",
+      "desc": "Reach level 10 in one run."
+    },
+    "globetrotter": {
+      "name": "Globetrotter",
+      "desc": "Travel 50,000 total distance."
+    },
+    "legend": {
+      "name": "Legend",
+      "desc": "Score 20,000 in one run."
+    },
+    "veteran": {
+      "name": "Veteran",
+      "desc": "Play 100 games."
+    },
+    "stuntPilot": {
+      "name": "Stunt Pilot",
+      "desc": "Get 25 near-misses in one run."
+    },
+    "closeShave": {
+      "name": "Close Shave",
+      "desc": "Get 250 near-misses in total."
+    },
+    "treasurer": {
+      "name": "Treasurer",
+      "desc": "Earn 500 coins in total."
+    },
+    "tycoon": {
+      "name": "Tycoon",
+      "desc": "Earn 5,000 coins in total."
+    },
+    "empowered": {
+      "name": "Empowered",
+      "desc": "Collect 25 power-ups."
+    },
+    "powerHungry": {
+      "name": "Power Hungry",
+      "desc": "Collect 200 power-ups."
+    },
+    "challenger": {
+      "name": "Challenger",
+      "desc": "Play 10 challenge runs."
+    },
+    "challengeAce": {
+      "name": "Challenge Ace",
+      "desc": "Score 5000 in a challenge run."
+    },
+    "weeklyPodium": {
+      "name": "Weekly Podium",
+      "desc": "Finish top 3 on the Weekly Challenge."
+    },
+    "dedicated": {
+      "name": "Dedicated",
+      "desc": "Play on 7 different days."
     }
   },
   "dino": {

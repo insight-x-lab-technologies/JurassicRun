@@ -138,7 +138,8 @@
   "trophies": {
     "title": "奖杯",
     "locked": "未解锁",
-    "empty": "开始游戏，赢得你的第一个奖杯！"
+    "empty": "开始游戏，赢得你的第一个奖杯！",
+    "progress": "已解锁 {{unlocked}} / {{total}}"
   },
   "trophy": {
     "firstFlight": {
@@ -172,6 +173,66 @@
     "dailyPodium": {
       "name": "每日领奖台",
       "desc": "在每日挑战中进入前三名。"
+    },
+    "explorer": {
+      "name": "探险家",
+      "desc": "在一局中达到5级。"
+    },
+    "skyLord": {
+      "name": "天空之王",
+      "desc": "在一局中达到10级。"
+    },
+    "globetrotter": {
+      "name": "环球旅行者",
+      "desc": "累计行进50,000距离。"
+    },
+    "legend": {
+      "name": "传奇",
+      "desc": "在一局中得到20,000分。"
+    },
+    "veteran": {
+      "name": "老兵",
+      "desc": "游玩100局。"
+    },
+    "stuntPilot": {
+      "name": "特技飞行员",
+      "desc": "在一局中获得25次擦身而过。"
+    },
+    "closeShave": {
+      "name": "千钧一发",
+      "desc": "累计获得250次擦身而过。"
+    },
+    "treasurer": {
+      "name": "财务官",
+      "desc": "累计赚取500枚金币。"
+    },
+    "tycoon": {
+      "name": "大亨",
+      "desc": "累计赚取5,000枚金币。"
+    },
+    "empowered": {
+      "name": "强化者",
+      "desc": "收集25个道具。"
+    },
+    "powerHungry": {
+      "name": "渴求力量者",
+      "desc": "收集200个道具。"
+    },
+    "challenger": {
+      "name": "挑战者",
+      "desc": "游玩10局挑战模式。"
+    },
+    "challengeAce": {
+      "name": "挑战王牌",
+      "desc": "在挑战模式中得到5000分。"
+    },
+    "weeklyPodium": {
+      "name": "每周领奖台",
+      "desc": "在每周挑战中进入前三名。"
+    },
+    "dedicated": {
+      "name": "全勤者",
+      "desc": "在7个不同的日子里游玩。"
     }
   },
   "dino": {

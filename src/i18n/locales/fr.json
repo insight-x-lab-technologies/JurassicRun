@@ -138,7 +138,8 @@
   "trophies": {
     "title": "Trophées",
     "locked": "Verrouillé",
-    "empty": "Jouez pour gagner votre premier trophée !"
+    "empty": "Jouez pour gagner votre premier trophée !",
+    "progress": "{{unlocked}} / {{total}} débloqués"
   },
   "trophy": {
     "firstFlight": {
@@ -172,6 +173,66 @@
     "dailyPodium": {
       "name": "Podium Quotidien",
       "desc": "Terminez dans le top 3 du Défi Quotidien."
+    },
+    "explorer": {
+      "name": "Explorateur",
+      "desc": "Atteignez le niveau 5 en une partie."
+    },
+    "skyLord": {
+      "name": "Seigneur du Ciel",
+      "desc": "Atteignez le niveau 10 en une partie."
+    },
+    "globetrotter": {
+      "name": "Globe-trotter",
+      "desc": "Parcourez 50 000 de distance au total."
+    },
+    "legend": {
+      "name": "Légende",
+      "desc": "Marquez 20 000 points en une partie."
+    },
+    "veteran": {
+      "name": "Vétéran",
+      "desc": "Jouez 100 parties."
+    },
+    "stuntPilot": {
+      "name": "Pilote Cascadeur",
+      "desc": "Obtenez 25 quasi-collisions en une partie."
+    },
+    "closeShave": {
+      "name": "Échappée Belle",
+      "desc": "Obtenez 250 quasi-collisions au total."
+    },
+    "treasurer": {
+      "name": "Trésorier",
+      "desc": "Gagnez 500 pièces au total."
+    },
+    "tycoon": {
+      "name": "Magnat",
+      "desc": "Gagnez 5 000 pièces au total."
+    },
+    "empowered": {
+      "name": "Renforcé",
+      "desc": "Collectez 25 bonus."
+    },
+    "powerHungry": {
+      "name": "Avide de Pouvoir",
+      "desc": "Collectez 200 bonus."
+    },
+    "challenger": {
+      "name": "Prétendant",
+      "desc": "Jouez 10 parties de défi."
+    },
+    "challengeAce": {
+      "name": "As du Défi",
+      "desc": "Marquez 5000 points en une partie de défi."
+    },
+    "weeklyPodium": {
+      "name": "Podium Hebdomadaire",
+      "desc": "Terminez dans le top 3 du Défi Hebdomadaire."
+    },
+    "dedicated": {
+      "name": "Dévoué",
+      "desc": "Jouez sur 7 jours différents."
     }
   },
   "dino": {

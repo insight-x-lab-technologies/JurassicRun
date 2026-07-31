@@ -138,7 +138,8 @@
   "trophies": {
     "title": "Trophäen",
     "locked": "Gesperrt",
-    "empty": "Spiele, um deine erste Trophäe zu gewinnen!"
+    "empty": "Spiele, um deine erste Trophäe zu gewinnen!",
+    "progress": "{{unlocked}} / {{total}} freigeschaltet"
   },
   "trophy": {
     "firstFlight": {
@@ -172,6 +173,66 @@
     "dailyPodium": {
       "name": "Tages-Podium",
       "desc": "Erreiche die Top 3 in der Täglichen Herausforderung."
+    },
+    "explorer": {
+      "name": "Entdecker",
+      "desc": "Erreiche Level 5 in einem Lauf."
+    },
+    "skyLord": {
+      "name": "Himmelsherr",
+      "desc": "Erreiche Level 10 in einem Lauf."
+    },
+    "globetrotter": {
+      "name": "Weltenbummler",
+      "desc": "Lege insgesamt 50.000 Distanz zurück."
+    },
+    "legend": {
+      "name": "Legende",
+      "desc": "Erziele 20.000 Punkte in einem Lauf."
+    },
+    "veteran": {
+      "name": "Routinier",
+      "desc": "Spiele 100 Spiele."
+    },
+    "stuntPilot": {
+      "name": "Kunstflieger",
+      "desc": "Erziele 25 Beinahe-Zusammenstöße in einem Lauf."
+    },
+    "closeShave": {
+      "name": "Knapp Daneben",
+      "desc": "Erziele insgesamt 250 Beinahe-Zusammenstöße."
+    },
+    "treasurer": {
+      "name": "Schatzmeister",
+      "desc": "Verdiene insgesamt 500 Münzen."
+    },
+    "tycoon": {
+      "name": "Mogul",
+      "desc": "Verdiene insgesamt 5.000 Münzen."
+    },
+    "empowered": {
+      "name": "Gestärkt",
+      "desc": "Sammle 25 Power-ups."
+    },
+    "powerHungry": {
+      "name": "Machthungrig",
+      "desc": "Sammle 200 Power-ups."
+    },
+    "challenger": {
+      "name": "Herausforderer",
+      "desc": "Spiele 10 Herausforderungs-Läufe."
+    },
+    "challengeAce": {
+      "name": "Herausforderungs-Ass",
+      "desc": "Erziele 5000 Punkte in einem Herausforderungs-Lauf."
+    },
+    "weeklyPodium": {
+      "name": "Wochen-Podium",
+      "desc": "Erreiche die Top 3 in der Wöchentlichen Herausforderung."
+    },
+    "dedicated": {
+      "name": "Hingebungsvoll",
+      "desc": "Spiele an 7 verschiedenen Tagen."
     }
   },
   "dino": {
