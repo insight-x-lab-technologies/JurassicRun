@@ -321,11 +321,22 @@ export class GameScene extends Phaser.Scene {
     // 10.9: girar o aparelho re-resolve o framebuffer. Sem isto o Scale.FIT estica por CSS o
     // canvas da orientação anterior (upscale de 2,16× medido num 390×844 dpr 3) — a volta do
     // bug W5 pela porta da rotação. A PARTIDA não é tocada: só o tamanho do canvas.
+    //
+    // O `ScaleManager` é do **jogo**, não desta cena: quem remove este listener é
+    // `game.destroy(true)` (`startGame.stop`). Como `createGame` instancia um `Phaser.Game` novo
+    // por montagem do `PlayScreen` e `match.restart()` não mexe no ciclo de vida da cena, hoje
+    // `create()` roda 1× por `Game` e não há listener duplicado. Se algum dia alguém reusar a
+    // cena (`scene.restart()`) dentro do MESMO `Game`, tem de desligar isto no `shutdown`.
     this.scale.on('resize', () => {
       const parent = this.scale.parentSize;
       const next = resolveRenderScale(parent.width, parent.height, window.devicePixelRatio);
       if (!shouldRescale(this.renderScale, next)) return;
       const { width, height } = renderCanvasSize(next);
+      // ORDEM CRÍTICA, não reordenar: `scale.resize()` chama `refresh()`, que reemite 'resize'
+      // SÍNCRONO — este handler reentra na mesma pilha. Como `applyRenderScale` já escreveu
+      // `this.renderScale = next` antes, a reentrada compara `next` contra ele mesmo, o
+      // `shouldRescale` devolve false e a recursão para no primeiro nível. Invertido, a reentrada
+      // veria a escala ANTIGA e recursaria até estourar a pilha.
       this.applyRenderScale(next);
       this.scale.resize(width, height);
     });
