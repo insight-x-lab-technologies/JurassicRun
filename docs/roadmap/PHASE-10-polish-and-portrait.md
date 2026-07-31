@@ -325,7 +325,7 @@ preservando `unlocked`; paridade i18n verde; sync central sem rejeição; `npm t
 `.env.example`, `src/i18n/locales/*` (10). **`src/core/` intocado.**
 **Aceite:** ✅ **nenhum** caminho da UI credita moedas sem código válido (guarda de fonte +
 teste que clica em TODOS os pacotes e prova saldo inalterado); resgate válido continua creditando
-(testes 8.4 preservados); offline/sem gateway não quebra a tela; `npm test` **1079** verdes,
+(testes 8.4 preservados); offline/sem gateway não quebra a tela; `npm test` **1081** verdes,
 `check` limpo, determinismo **73** inalterado.
 
 > **Executado em 2026-07-31** (spec: `docs/superpowers/specs/2026-07-31-10.8-real-coin-purchase-design.md`;
