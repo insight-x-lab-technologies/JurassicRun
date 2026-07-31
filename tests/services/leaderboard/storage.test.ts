@@ -48,4 +48,14 @@ describe('localStorageLeaderboardStorage', () => {
     expect(loaded.daily).toEqual([]);
     expect(loaded.bestEndlessLevel).toBe(0);
   });
+
+  it('usa a chave v2 (dados pré-9.9 ficam na v1 e são ignorados)', () => {
+    expect(STORAGE_KEY).toBe('jurassicrun.leaderboard.v2');
+    localStorage.setItem('jurassicrun.leaderboard.v1', JSON.stringify({
+      version: 1,
+      endless: [{ seed: 'velho', score: 999, distance: 1, food: 1, nearMisses: 0, achievedAt: 1 }],
+      daily: [], weekly: [], bestEndlessLevel: 9,
+    }));
+    expect(localStorageLeaderboardStorage().load()).toEqual(initialLeaderboardState());
+  });
 });

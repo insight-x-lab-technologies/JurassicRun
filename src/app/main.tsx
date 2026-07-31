@@ -3,6 +3,7 @@ import './styles/fonts.css';
 import './styles/tokens.css';
 import './styles/global.css';
 import { i18n } from '@services/i18n';
+import { purgeLegacyStorage } from '@services/storage/legacy';
 import { profileService } from '@services/profile';
 import { nestService } from '@services/nest';
 import { walletService } from '@services/wallet';
@@ -21,6 +22,7 @@ import { bindPackTheme } from './theme';
 import { App } from './App';
 
 async function bootstrap(): Promise<void> {
+  purgeLegacyStorage(); // 10.3: apaga chaves órfãs antes de qualquer serviço ler o storage
   await i18n.init();
   await settingsService.init();
   profileService.init();
