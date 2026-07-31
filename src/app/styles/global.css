@@ -130,6 +130,9 @@ body {
   border: 0;
 }
 
+/* 10.9: o vão do letterbox (em retrato, a maior parte da tela) recebe a MESMA arte de fundo do
+   pack ativo que o jogo usa como backdrop, em zoom diferente — lê como continuação da cena, não
+   como moldura. `--bg-screen` já é publicada e trocada ao vivo por src/app/theme.ts. */
 .play-screen {
   position: relative;
   flex: 1;
@@ -137,7 +140,28 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 0;
-  background: var(--color-bg); /* barras de letterbox na cor do tema */
+  background-color: var(--color-bg); /* fallback antes de a arte carregar */
+  background-image: var(--bg-screen);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* Escurecimento do vão: mantém a faixa jogável como foco sem apagar a arte. Camada ESTÁTICA
+   (nunca repintada por frame) e atrás do canvas. */
+.play-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.72),
+    rgba(0, 0, 0, 0.55) 35%,
+    rgba(0, 0, 0, 0.55) 65%,
+    rgba(0, 0, 0, 0.72)
+  );
+  pointer-events: none;
 }
 
 /* Container do canvas Phaser: caixa de dimensões DEFINIDAS (absolute inset:0) para o
@@ -146,6 +170,31 @@ body {
 .play-screen__canvas {
   position: absolute;
   inset: 0;
+  z-index: 1; /* acima do escurecimento do vão */
+}
+
+/* 10.9 — chrome de retrato. Em qualquer viewport retrato a LARGURA é o eixo limitante do
+   Scale.FIT (todo retrato é mais alto que 16:9), então a altura da faixa jogável é fechada:
+   largura × 9/16. O autoCenter:CENTER_BOTH do Phaser centra o canvas no container `inset: 0`,
+   logo as bordas da faixa estão em 50% ∓ --field-h/2. Daí HUD e chips ancoram NA FAIXA, em vez
+   de nos cantos da tela (onde ficariam a ~300 px da ação num 390×844). */
+@media (orientation: portrait) {
+  .play-screen {
+    --field-h: calc(100vw * 9 / 16);
+    --field-gap: var(--space-3);
+  }
+
+  /* HUD logo ACIMA da faixa (continua alinhado à direita). */
+  .hud {
+    top: auto;
+    bottom: calc(50% + var(--field-h) / 2 + var(--field-gap));
+  }
+
+  /* Chips de power-up (9.5) logo ABAIXO da faixa. */
+  .effect-badges {
+    bottom: auto;
+    top: calc(50% + var(--field-h) / 2 + var(--field-gap));
+  }
 }
 
 .play-screen__back {
