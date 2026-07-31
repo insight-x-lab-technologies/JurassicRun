@@ -1,7 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { back } from '../router';
 import { i18n } from '@services/i18n';
-import { useRotateHint } from '../hooks/useRotateHint';
 import type { MatchMode } from '@render/matchFactory';
 import type { GameHandle, MatchSnapshot, HudLive } from '../game/startGame';
 import { GameOverOverlay } from '../game/GameOverOverlay';
@@ -12,6 +11,15 @@ import { PauseOverlay } from '../game/PauseOverlay';
 
 const INITIAL: MatchSnapshot = { phase: 'ready', paused: false, gameOver: null, dying: false };
 const HUD_INTERVAL_MS = 200; // ~5 Hz
+
+/**
+ * A zona de toque é uma AFORDÂNCIA: o flap já funciona em qualquer ponto porque o input está
+ * ligado ao `window` (bindGameControls). Ela aparece enquanto a partida está viva e some quando
+ * algum overlay assume a tela (pausa / Game Over).
+ */
+export function showTapZone(snap: MatchSnapshot): boolean {
+  return !snap.paused && snap.phase !== 'dead';
+}
 
 export function PlayScreen({
   mode = 'endless',
@@ -24,7 +32,6 @@ export function PlayScreen({
   const exit = onExit ?? back;
   const containerRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<GameHandle | null>(null);
-  const suggestRotate = useRotateHint();
   // `snap` guarda só o que dispara overlays (fase/pausa/gameover) — atualizado SÓ na mudança (gate).
   const [snap, setSnap] = useState<MatchSnapshot>(INITIAL);
   // HUD (stats vivos + fps) atualizado a ~5 Hz para não re-renderizar 60×/s.
@@ -95,6 +102,11 @@ export function PlayScreen({
         {i18n.t('nav.back')}
       </button>
       <div class="play-screen__canvas" ref={containerRef} />
+      {showTapZone(snap) && (
+        <div class="play-screen__tap" aria-hidden="true">
+          {i18n.t('match.tapArea')}
+        </div>
+      )}
       {snap.phase === 'playing' && !snap.paused && hud !== null && (
         <>
           <Hud hud={hud.hud} fps={hud.fps} />
@@ -109,14 +121,6 @@ export function PlayScreen({
           onRestart={() => handleRef.current?.restart()}
           onQuit={() => exit()}
         />
-      )}
-      {suggestRotate && (
-        <div class="rotate-hint" aria-live="polite">
-          <span class="rotate-hint__icon" aria-hidden="true">
-            📱↻
-          </span>
-          <p class="rotate-hint__text">{i18n.t('rotateHint.message')}</p>
-        </div>
       )}
     </div>
   );

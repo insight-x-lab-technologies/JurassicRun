@@ -15,7 +15,8 @@
     "seconds": "{{value}}s"
   },
   "match": {
-    "tapToStart": "Touchez pour commencer"
+    "tapToStart": "Touchez pour commencer",
+    "tapArea": "Touchez n'importe où pour battre des ailes"
   },
   "gameover": {
     "title": "Partie terminée",
@@ -384,9 +385,6 @@
       "unavailable": "L'utilisation de code est indisponible pour le moment.",
       "error": "Une erreur est survenue. Réessayez."
     }
-  },
-  "rotateHint": {
-    "message": "Tournez votre appareil en mode paysage pour une meilleure expérience."
   },
   "pause": {
     "title": "En pause",

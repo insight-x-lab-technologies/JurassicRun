@@ -15,7 +15,8 @@
     "seconds": "{{value}}s"
   },
   "match": {
-    "tapToStart": "Toque para começar"
+    "tapToStart": "Toque para começar",
+    "tapArea": "Toque em qualquer lugar para bater as asas"
   },
   "gameover": {
     "title": "Fim de jogo",
@@ -384,9 +385,6 @@
       "unavailable": "O resgate está indisponível no momento.",
       "error": "Algo deu errado. Tente de novo."
     }
-  },
-  "rotateHint": {
-    "message": "Gire o dispositivo para a horizontal para uma experiência melhor."
   },
   "pause": {
     "title": "Pausado",

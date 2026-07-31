@@ -5,8 +5,15 @@ import {
   MIN_RENDER_SCALE,
   MAX_RENDER_SCALE,
   PARALLAX_SOURCE_WORLD_WIDTH,
+  RESCALE_EPSILON,
 } from './constants';
-import { toRenderPx, renderCanvasSize, parallaxTileScale, resolveRenderScale } from './resolution';
+import {
+  toRenderPx,
+  renderCanvasSize,
+  parallaxTileScale,
+  resolveRenderScale,
+  shouldRescale,
+} from './resolution';
 
 describe('resolveRenderScale', () => {
   it('casa 1:1 com o display: o canvas ganha os px que a tela vai mostrar', () => {
@@ -63,6 +70,29 @@ describe('renderCanvasSize', () => {
   it('mantém a proporção do campo lógico 320x180 (16:9)', () => {
     const { width, height } = renderCanvasSize(4.2666);
     expect(width / height).toBeCloseTo(VIEW_WIDTH / VIEW_HEIGHT, 2);
+  });
+});
+
+describe('shouldRescale', () => {
+  it('escala idêntica não redimensiona (evita recursão com o próprio resize)', () => {
+    expect(shouldRescale(3.66, 3.66)).toBe(false);
+  });
+
+  it('variação abaixo da margem não redimensiona (a rotação dispara uma rajada de resizes)', () => {
+    const next = 4 * (1 + RESCALE_EPSILON / 2);
+    expect(shouldRescale(4, next)).toBe(false);
+  });
+
+  it('variação acima da margem redimensiona', () => {
+    expect(shouldRescale(3.66, 6)).toBe(true);
+    expect(shouldRescale(6, 3.66)).toBe(true);
+  });
+
+  it('entradas não finitas ou não positivas nunca redimensionam', () => {
+    expect(shouldRescale(4, Number.NaN)).toBe(false);
+    expect(shouldRescale(Number.NaN, 4)).toBe(false);
+    expect(shouldRescale(4, 0)).toBe(false);
+    expect(shouldRescale(0, 4)).toBe(false);
   });
 });
 

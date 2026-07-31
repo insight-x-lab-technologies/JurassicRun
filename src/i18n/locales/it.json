@@ -15,7 +15,8 @@
     "seconds": "{{value}}s"
   },
   "match": {
-    "tapToStart": "Tocca per iniziare"
+    "tapToStart": "Tocca per iniziare",
+    "tapArea": "Tocca ovunque per battere le ali"
   },
   "gameover": {
     "title": "Game Over",
@@ -384,9 +385,6 @@
       "unavailable": "Il riscatto non è disponibile al momento.",
       "error": "Qualcosa è andato storto. Riprova."
     }
-  },
-  "rotateHint": {
-    "message": "Ruota il dispositivo in orizzontale per un'esperienza migliore."
   },
   "pause": {
     "title": "In pausa",

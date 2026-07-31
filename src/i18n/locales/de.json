@@ -15,7 +15,8 @@
     "seconds": "{{value}}s"
   },
   "match": {
-    "tapToStart": "Zum Starten tippen"
+    "tapToStart": "Zum Starten tippen",
+    "tapArea": "Tippe irgendwo, um zu flattern"
   },
   "gameover": {
     "title": "Spiel vorbei",
@@ -384,9 +385,6 @@
       "unavailable": "Einlösen ist gerade nicht verfügbar.",
       "error": "Etwas ist schiefgelaufen. Versuch es erneut."
     }
-  },
-  "rotateHint": {
-    "message": "Drehe dein Gerät ins Querformat für das beste Erlebnis."
   },
   "pause": {
     "title": "Pausiert",

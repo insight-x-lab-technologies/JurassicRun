@@ -15,7 +15,8 @@
     "seconds": "{{value}}秒"
   },
   "match": {
-    "tapToStart": "タップして開始"
+    "tapToStart": "タップして開始",
+    "tapArea": "画面のどこでもタップで羽ばたく"
   },
   "gameover": {
     "title": "ゲームオーバー",
@@ -384,9 +385,6 @@
       "unavailable": "現在、引き換えはできません。",
       "error": "問題が発生しました。もう一度お試しください。"
     }
-  },
-  "rotateHint": {
-    "message": "最適な操作のために端末を横向きにしてください。"
   },
   "pause": {
     "title": "一時停止",

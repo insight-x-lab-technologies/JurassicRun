@@ -15,7 +15,8 @@
     "seconds": "{{value}}s"
   },
   "match": {
-    "tapToStart": "Tap to start"
+    "tapToStart": "Tap to start",
+    "tapArea": "Tap anywhere to flap"
   },
   "gameover": {
     "title": "Game Over",
@@ -384,9 +385,6 @@
       "unavailable": "Redeeming is unavailable right now.",
       "error": "Something went wrong. Try again."
     }
-  },
-  "rotateHint": {
-    "message": "Rotate your device to landscape for the best experience."
   },
   "pause": {
     "title": "Paused",

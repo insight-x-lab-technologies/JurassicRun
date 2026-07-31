@@ -10,6 +10,11 @@ export const VIEW_HEIGHT = 180;
 export const MIN_RENDER_SCALE = 1;
 export const MAX_RENDER_SCALE = 6;
 
+/** Margem relativa para re-resolver a escala de render (10.9). Girar o aparelho dispara uma
+ *  RAJADA de eventos de resize (e o nosso próprio `scale.resize` dispara mais um): sem margem,
+ *  isso vira thrash de framebuffer — ou recursão. 2% é abaixo do que o olho percebe em nitidez. */
+export const RESCALE_EPSILON = 0.02;
+
 /** Largura, em unidades de mundo, coberta por uma tira de parallax — independente da resolução
  *  em px da arte. Preserva o enquadramento do parallax ao mudar a densidade da textura. Fonte 9.1:
  *  2048px de largura na arte; a Task 4 calibra por verificação visual da frequência de emenda. */
