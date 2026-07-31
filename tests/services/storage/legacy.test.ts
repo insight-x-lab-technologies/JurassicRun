@@ -34,6 +34,7 @@ describe('purgeLegacyKeys', () => {
     const store = fakeStore({
       'jurassicrun.replays.v1': '{}',
       'jurassicrun.replays.v2': '{}',
+      'jurassicrun.leaderboard.v1': '{}',
     });
     const removed = purgeLegacyKeys(store);
     expect(removed.sort()).toEqual([...LEGACY_STORAGE_KEYS].sort());

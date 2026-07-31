@@ -10,7 +10,10 @@ export interface LeaderboardStorage {
   save(state: LeaderboardState): void;
 }
 
-export const STORAGE_KEY = 'jurassicrun.leaderboard.v1';
+// v2 (10.3): a 9.9 passou a aplicar modificadores derivados da seed nos desafios. Um recorde da
+// MESMA seed gravado antes disso foi obtido sob outras regras e apareceria como `yourBest` no
+// briefing, indistinguível de um legítimo. Chave nova ⇒ o histórico pré-9.9 é descartado.
+export const STORAGE_KEY = 'jurassicrun.leaderboard.v2';
 
 export function memoryLeaderboardStorage(
   initial: LeaderboardState = initialLeaderboardState(),
