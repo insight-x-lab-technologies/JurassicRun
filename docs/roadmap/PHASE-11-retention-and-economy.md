@@ -85,6 +85,53 @@ Endless sem revive byte-idêntico ao de hoje.
 **Toca:** `ShopScreen.tsx`, i18n. **Aceite:** 4 abas navegáveis em paisagem baixa e retrato;
 nenhum caminho credita moeda grátis (invariante 10.8 preservada).
 
+### 11.8 Entrega automática da compra Ko-fi (webhook + itens de Loja)
+
+> **Origem:** relato do usuário depois da 10.8 — "clico no pacote e cai numa página de doação".
+> A 10.8 entregou o encanamento (SKU, resgate single-use, Edge Function `redeem-code`), **não** o
+> fulfillment: hoje o dono do estúdio precisa ver o pedido, inventar um código, inserir no banco e
+> mandar por fora. **Decisão do usuário em 2026-07-31: variante "ticket + e-mail de reserva".**
+
+- [ ] **Itens de Loja no Ko-fi, um por pacote** (preço fixo). Hoje `Storefront.kofiUrl`
+      (`storefront.ts:13`) é **uma URL só** para os 3 pacotes e aponta para a página de doação, onde
+      o comprador digita o valor que quiser — a Loja mostra "US$ 4,99" e ele pode pagar US$ 1.
+      `Storefront` passa a ter URL **por SKU** + mapa `direct_link_code → Sku`. O
+      `direct_link_code` do item é o **único identificador confiável** que chega no webhook: o
+      `?jr_sku=` que `checkoutUrlFor` monta hoje **não volta** para o servidor.
+- [ ] **Edge Function nova `kofi-webhook`.** Dois detalhes que quebram em silêncio:
+      (a) o Ko-fi posta `application/x-www-form-urlencoded` com um campo **`data`** contendo o JSON
+      como **string** ⇒ `req.json()` NÃO serve, tem que ler o form e dar `JSON.parse` no `data`;
+      (b) o `verification_token` é **segredo de servidor** — vai em `supabase secrets set`, nunca
+      numa chave `VITE_*` (essas vão inteiras para o navegador).
+- [ ] **Idempotência:** `kofi_transaction_id` com índice único. O Ko-fi reenvia webhook; sem isso a
+      mesma compra credita duas vezes.
+- [ ] **Caminho principal — ticket.** A Loja mostra um ticket curto derivado do **id anônimo do
+      jogador** (Fase 6) antes de abrir o Ko-fi: "cole isto na mensagem". O webhook lê `message`,
+      extrai o ticket e marca o pedido como pertencente àquele jogador. Ao voltar à Loja, o cliente
+      **autenticado** pede seus pedidos pendentes e resgata sozinho — zero digitação.
+      **PRÉ-REQUISITO A CONFIRMAR no painel:** o checkout de item de Loja do Ko-fi oferece campo de
+      mensagem ao comprador? Se não oferecer, este caminho cai e sobra só o de e-mail.
+- [ ] **Fallback — e-mail.** Quem esquecer o ticket digita o e-mail usado no Ko-fi e recebe o código,
+      que cola no `RedeemCodeForm` já existente. **Risco aceito e explícito:** quem digitar o e-mail
+      certo de um comprador leva o código dele. Mitigar com rate-limit; o caminho principal
+      (autenticado) não tem essa brecha, então isto é exceção, não regra.
+- [ ] **Restrição dura que molda tudo:** a carteira é **100% `localStorage`**
+      (`wallet/storage.ts:8`) — **não existe saldo no servidor**. O webhook NUNCA credita ninguém
+      direto; quem aplica moeda é sempre o cliente, puxando e validando. Qualquer desenho que
+      pressuponha crédito server-side está errado.
+- [ ] Preço do item no Ko-fi × `VITE_SHOP_PRICE_*` são **duas fontes de verdade** sem guarda.
+      Documentar no `.env.example` e no `supabase/README.md`.
+
+**Toca:** `src/services/purchase/storefront.ts`, `ShopScreen.tsx`, `supabase/functions/kofi-webhook/`,
+migração de `redemption_codes` (colunas `kofi_transaction_id` único, `kofi_email`, `ticket`),
+`.env.example`, `supabase/README.md`, i18n. **`src/core/` intocado.**
+**Aceite:** pagar um item de Loja no Ko-fi com o ticket colado ⇒ voltar ao jogo e ver as moedas
+creditadas sem digitar nada; sem o ticket, o resgate por e-mail entrega o código; webhook reenviado
+não credita em dobro; token de verificação inválido ⇒ 401 e nada gravado.
+
+**Custo no Ko-fi:** venda de item cobra **5%** no plano grátis (+ taxa do Stripe/PayPal). Ko-fi Gold
+zera os 5% (fontes divergem: US$ 6 ou US$ 12/mês). Shop **não** exige Gold. Doação segue 0%.
+
 ### 11.7 Telemetria mínima anônima
 - [ ] Eventos contáveis: `session_start`, `run_end {mode, score, durationS}`, `shop_view`,
       `egg_hatched`. **Sem PII** — só o ID anônimo 6.2. Fila local + flush best-effort
@@ -97,8 +144,9 @@ rede; sem rede zero erro; opt-out interrompe envio.
 
 ## Ordem de execução
 
-11.1 → 11.2 → 11.3 → 11.4 → 11.6 → 11.7 → **11.5 por último** (único core, padrão D-por-último
-das fases 9/10). Um item por PR, SDD por subagentes.
+**11.8 primeiro** (destrava receita real e é o único item com dependência externa — configuração no
+painel do Ko-fi feita pelo usuário), depois 11.1 → 11.2 → 11.3 → 11.4 → 11.6 → 11.7 → **11.5 por
+último** (único core, padrão D-por-último das fases 9/10). Um item por PR, SDD por subagentes.
 
 ## Definição de pronto (fase)
 
